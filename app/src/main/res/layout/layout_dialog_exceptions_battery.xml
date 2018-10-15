@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/bottom_dialog_button_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:clickable="true"
+        android:background="?attr/selectableItemBackground"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="20dp"
+        android:textColor="@color/color_activity_taskgui_att"
+        android:text="@string/dialog_button_negative"/>
+
+    <TextView
+        android:id="@+id/bottom_dialog_button_confirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:clickable="true"
+        android:background="?attr/selectableItemBackground"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="20dp"
+        android:textColor="@color/color_activity_taskgui_att"
+        android:text="@string/dialog_button_positive"/>
+
+    <TextView
+        android:id="@+id/bottom_dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:textSize="16sp"
+        android:textColor="#000000"/>
+
+    <CheckBox
+        android:id="@+id/bottom_dialog_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/bottom_dialog_title"
+        android:text="@string/dialog_battery_checkbox_enabled"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/bottom_dialog_checkbox"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp">
+        <com.github.ghmxr.timeswitch.ui.WheelView
+            android:id="@+id/bottom_dialog_wheelview_first_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"/>
+        <TextView
+            android:id="@+id/bottom_dialog_wheelview_first_selection_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/bottom_dialog_wheelview_first_selection"
+            android:textSize="20sp" />
+        <com.github.ghmxr.timeswitch.ui.WheelView
+            android:id="@+id/bottom_dialog_wheelview_second_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/bottom_dialog_wheelview_first_selection_description"
+            android:layout_centerVertical="true"/>
+        <TextView
+            android:id="@+id/bottom_dialog_wheelview_second_selection_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/bottom_dialog_wheelview_second_selection"
+            android:textSize="20sp"/>
+    </RelativeLayout>
+
+
+</RelativeLayout>

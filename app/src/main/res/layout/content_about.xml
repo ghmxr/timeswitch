@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".activities.About"
+    tools:showIn="@layout/layout_about">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
+            android:textStyle="bold"
+            android:textColor="@color/color_text_normal"
+            android:text="@string/activity_about_content_title"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/text_margin"
+            android:textSize="15sp"
+            android:text="@string/large_text"
+            android:autoLink="all"/>
+
+        <ImageView
+            android:id="@+id/about_donate"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:clickable="true"
+            android:background="?attr/selectableItemBackground"
+            android:src="@drawable/icon_alipay"
+            android:layout_marginLeft="25dp"
+            android:layout_marginBottom="50dp"/>
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

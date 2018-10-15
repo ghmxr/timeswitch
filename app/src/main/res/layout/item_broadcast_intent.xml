@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="45dp">
+    <RadioButton
+        android:id="@+id/item_broadcast_ra"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:focusable="false"
+        android:clickable="false"
+        android:layout_marginLeft="15dp"
+        android:text="android.intent.action"/>
+
+</RelativeLayout>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/actions_log_ascend"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        android:icon="@drawable/ic_ascend"
+        android:title="@string/action_ascend"/>
+
+    <item
+        android:id="@+id/actions_log_descend"
+        android:orderInCategory="200"
+        app:showAsAction="never"
+        android:icon="@drawable/ic_descend"
+        android:title="@string/action_descend"/>
+
+    <item
+        android:id="@+id/actions_log_clear"
+        android:orderInCategory="300"
+        app:showAsAction="ifRoom"
+        android:title="@string/action_clean_logs"
+        android:icon="@android:drawable/ic_menu_delete"/>
+
+</menu>

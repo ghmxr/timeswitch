@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <LinearLayout 
+        android:id="@+id/layout_dialog_weekloop_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:orientation="vertical">
+        
+        <CheckBox 
+            android:id="@+id/layout_dialog_weekloop_cb_mon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="5dp"
+            android:text="@string/monday"/>
+        <CheckBox 
+            android:id="@+id/layout_dialog_weekloop_cb_tue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="@string/tuesday"/>
+        <CheckBox 
+            android:id="@+id/layout_dialog_weekloop_cb_wed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="@string/wednesday"/>
+        <CheckBox 
+            android:id="@+id/layout_dialog_weekloop_cb_thu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"           
+            android:textSize="18sp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="@string/thursday"/>
+        <CheckBox 
+            android:id="@+id/layout_dialog_weekloop_cb_fri"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="@string/friday"/>
+        <CheckBox 
+            android:id="@+id/layout_dialog_weekloop_cb_sat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="@string/saturday"/>
+        <CheckBox 
+            android:id="@+id/layout_dialog_weekloop_cb_sun"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="@string/sunday"/>
+    </LinearLayout>
+    
+
+</RelativeLayout>

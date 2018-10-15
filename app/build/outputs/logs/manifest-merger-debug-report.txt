@@ -1,0 +1,324 @@
+-- Merging decision tree log ---
+manifest
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:2:1-144:12
+INJECTED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:2:1-144:12
+INJECTED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:2:1-144:12
+INJECTED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:2:1-144:12
+MERGED from [com.android.support:design:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\design-27.1.1.aar\4032727f475986b897498814c86bc990\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-v4:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\support-v4-27.1.1.aar\0fc9b332cf49ae7daf73bdb7dadf340d\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:appcompat-v7:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\appcompat-v7-27.1.1.aar\2fe8226dcaa11a29ef95feb4b244c77c\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support.constraint:constraint-layout:1.1.2] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\constraint-layout-1.1.2.aar\868eb4a937e5708985991bc7ca26a9aa\AndroidManifest.xml:2:1-11:12
+MERGED from [com.android.support:support-media-compat:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\support-media-compat-27.1.1.aar\6ed5a1b63f1ed09aaacdb6b4f03ed40f\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-fragment:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\support-fragment-27.1.1.aar\224f0c65f2d4ed2e1ea3b7742650c1df\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:animated-vector-drawable:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\animated-vector-drawable-27.1.1.aar\a3c90375dc00f421f873313f3897353c\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:recyclerview-v7:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\recyclerview-v7-27.1.1.aar\b2334c872dacafe50d7f0c808ebd8e16\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-core-ui:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\support-core-ui-27.1.1.aar\0c49176b97987de7b2c1a0f4ca1936f4\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-core-utils:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\support-core-utils-27.1.1.aar\ea693699062249f0b85439dee151565f\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-vector-drawable:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\support-vector-drawable-27.1.1.aar\7d1826a1aa5b5a97afedb145bf97feaa\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:transition:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\transition-27.1.1.aar\d613d7f882bdd51a8466822e77d217c9\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-compat:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\support-compat-27.1.1.aar\731a0d75021abee4ece70d071aa08a82\AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.lifecycle:runtime:1.1.0] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\runtime-1.1.0.aar\1a608b1b0a2402b849d0f316bbad9622\AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.lifecycle:livedata-core:1.1.0] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\livedata-core-1.1.0.aar\ccf6a3fa3ddc40f3118266717b718f49\AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.lifecycle:viewmodel:1.1.0] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\viewmodel-1.1.0.aar\4fc5e6e198977ce0b3c1d84cd52ee75f\AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.core:runtime:1.1.0] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\runtime-1.1.0.aar\a9671f36d8857633426b3b9c98dd808f\AndroidManifest.xml:17:1-22:12
+INJECTED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:2:1-144:12
+INJECTED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:2:1-144:12
+INJECTED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:2:1-144:12
+	package
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:3:5-42
+		INJECTED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml
+	android:versionName
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:5:5-28
+		INJECTED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:2:11-69
+	android:versionCode
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:4:5-28
+		INJECTED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml
+uses-sdk
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:7:5-9:41
+INJECTED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:7:5-9:41
+INJECTED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:7:5-9:41
+MERGED from [com.android.support:design:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\design-27.1.1.aar\4032727f475986b897498814c86bc990\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:design:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\design-27.1.1.aar\4032727f475986b897498814c86bc990\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-v4:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\support-v4-27.1.1.aar\0fc9b332cf49ae7daf73bdb7dadf340d\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-v4:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\support-v4-27.1.1.aar\0fc9b332cf49ae7daf73bdb7dadf340d\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:appcompat-v7:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\appcompat-v7-27.1.1.aar\2fe8226dcaa11a29ef95feb4b244c77c\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:appcompat-v7:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\appcompat-v7-27.1.1.aar\2fe8226dcaa11a29ef95feb4b244c77c\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support.constraint:constraint-layout:1.1.2] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\constraint-layout-1.1.2.aar\868eb4a937e5708985991bc7ca26a9aa\AndroidManifest.xml:5:5-7:41
+MERGED from [com.android.support.constraint:constraint-layout:1.1.2] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\constraint-layout-1.1.2.aar\868eb4a937e5708985991bc7ca26a9aa\AndroidManifest.xml:5:5-7:41
+MERGED from [com.android.support:support-media-compat:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\support-media-compat-27.1.1.aar\6ed5a1b63f1ed09aaacdb6b4f03ed40f\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-media-compat:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\support-media-compat-27.1.1.aar\6ed5a1b63f1ed09aaacdb6b4f03ed40f\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-fragment:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\support-fragment-27.1.1.aar\224f0c65f2d4ed2e1ea3b7742650c1df\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-fragment:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\support-fragment-27.1.1.aar\224f0c65f2d4ed2e1ea3b7742650c1df\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:animated-vector-drawable:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\animated-vector-drawable-27.1.1.aar\a3c90375dc00f421f873313f3897353c\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:animated-vector-drawable:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\animated-vector-drawable-27.1.1.aar\a3c90375dc00f421f873313f3897353c\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:recyclerview-v7:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\recyclerview-v7-27.1.1.aar\b2334c872dacafe50d7f0c808ebd8e16\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:recyclerview-v7:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\recyclerview-v7-27.1.1.aar\b2334c872dacafe50d7f0c808ebd8e16\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-ui:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\support-core-ui-27.1.1.aar\0c49176b97987de7b2c1a0f4ca1936f4\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-ui:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\support-core-ui-27.1.1.aar\0c49176b97987de7b2c1a0f4ca1936f4\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-utils:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\support-core-utils-27.1.1.aar\ea693699062249f0b85439dee151565f\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-utils:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\support-core-utils-27.1.1.aar\ea693699062249f0b85439dee151565f\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\support-vector-drawable-27.1.1.aar\7d1826a1aa5b5a97afedb145bf97feaa\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\support-vector-drawable-27.1.1.aar\7d1826a1aa5b5a97afedb145bf97feaa\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:transition:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\transition-27.1.1.aar\d613d7f882bdd51a8466822e77d217c9\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:transition:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\transition-27.1.1.aar\d613d7f882bdd51a8466822e77d217c9\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-compat:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\support-compat-27.1.1.aar\731a0d75021abee4ece70d071aa08a82\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-compat:27.1.1] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\support-compat-27.1.1.aar\731a0d75021abee4ece70d071aa08a82\AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:runtime:1.1.0] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\runtime-1.1.0.aar\1a608b1b0a2402b849d0f316bbad9622\AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:runtime:1.1.0] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\runtime-1.1.0.aar\1a608b1b0a2402b849d0f316bbad9622\AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:livedata-core:1.1.0] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\livedata-core-1.1.0.aar\ccf6a3fa3ddc40f3118266717b718f49\AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:livedata-core:1.1.0] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\livedata-core-1.1.0.aar\ccf6a3fa3ddc40f3118266717b718f49\AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:viewmodel:1.1.0] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\viewmodel-1.1.0.aar\4fc5e6e198977ce0b3c1d84cd52ee75f\AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:viewmodel:1.1.0] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\viewmodel-1.1.0.aar\4fc5e6e198977ce0b3c1d84cd52ee75f\AndroidManifest.xml:20:5-44
+MERGED from [android.arch.core:runtime:1.1.0] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\runtime-1.1.0.aar\a9671f36d8857633426b3b9c98dd808f\AndroidManifest.xml:20:5-44
+MERGED from [android.arch.core:runtime:1.1.0] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\runtime-1.1.0.aar\a9671f36d8857633426b3b9c98dd808f\AndroidManifest.xml:20:5-44
+INJECTED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:7:5-9:41
+INJECTED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:7:5-9:41
+	android:targetSdkVersion
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:9:9-38
+		INJECTED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:8:9-35
+		INJECTED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:11:5-79
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:11:22-76
+uses-permission#android.permission.ACCESS_WIFI_STATE
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:12:5-76
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:12:22-73
+uses-permission#android.permission.BLUETOOTH
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:13:5-68
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:13:22-65
+uses-permission#android.permission.BLUETOOTH_ADMIN
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:14:5-74
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:14:22-71
+uses-permission#android.permission.CHANGE_WIFI_STATE
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:15:5-76
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:15:22-73
+uses-permission#android.permission.READ_PHONE_STATE
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:16:5-74
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:16:22-72
+uses-permission#android.permission.WAKE_LOCK
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:17:5-68
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:17:22-65
+uses-permission#android.permission.RECEIVE_BOOT_COMPLETED
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:18:5-81
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:18:22-78
+uses-permission#android.permission.VIBRATE
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:19:5-66
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:19:22-63
+uses-permission#android.permission.SET_WALLPAPER
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:20:5-71
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:20:22-69
+uses-permission#android.permission.READ_CONTACTS
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:21:5-71
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:21:22-69
+uses-permission#android.permission.SEND_SMS
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:22:5-66
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:22:22-64
+uses-permission#android.permission.READ_EXTERNAL_STORAGE
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:23:5-79
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:23:22-77
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:24:5-107
+	android:maxSdkVersion
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:24:79-105
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:24:22-78
+uses-permission#android.permission.WRITE_SETTINGS
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:25:5-73
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:25:22-70
+uses-permission#android.permission.WRITE_SECURE_SETTINGS
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:26:5-80
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:26:22-77
+application
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:28:5-142:19
+MERGED from [com.android.support.constraint:constraint-layout:1.1.2] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\constraint-layout-1.1.2.aar\868eb4a937e5708985991bc7ca26a9aa\AndroidManifest.xml:9:5-20
+MERGED from [com.android.support.constraint:constraint-layout:1.1.2] C:\Users\z003vpwn\.gradle\caches\transforms-1\files-1.1\constraint-layout-1.1.2.aar\868eb4a937e5708985991bc7ca26a9aa\AndroidManifest.xml:9:5-20
+	android:label
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:31:9-41
+	android:icon
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:30:9-45
+	android:allowBackup
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:29:9-35
+	android:theme
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:32:9-40
+activity#com.github.ghmxr.timeswitch.activities.Main
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:34:9-44:20
+	android:screenOrientation
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:38:13-49
+	android:label
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:36:13-45
+	android:theme
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:37:13-56
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:35:13-44
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:39:13-43:29
+action#android.intent.action.MAIN
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:40:17-69
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:40:25-66
+category#android.intent.category.LAUNCHER
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:42:17-77
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:42:27-74
+activity#com.github.ghmxr.timeswitch.activities.Exceptions
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:46:9-51:20
+	android:screenOrientation
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:50:13-49
+	android:label
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:48:13-70
+	android:theme
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:49:13-56
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:47:13-50
+activity#com.github.ghmxr.timeswitch.activities.Actions
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:53:9-58:20
+	android:screenOrientation
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:57:13-49
+	android:label
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:55:13-67
+	android:theme
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:56:13-56
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:54:13-47
+activity#com.github.ghmxr.timeswitch.activities.AddTask
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:60:9-65:20
+	android:screenOrientation
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:64:13-49
+	android:label
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:62:13-55
+	android:theme
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:63:13-56
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:61:13-47
+activity#com.github.ghmxr.timeswitch.activities.EditTask
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:67:9-72:20
+	android:screenOrientation
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:71:13-49
+	android:label
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:69:13-56
+	android:theme
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:70:13-56
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:68:13-48
+activity#com.github.ghmxr.timeswitch.activities.ActionOfChangingRingtones
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:74:9-79:20
+	android:screenOrientation
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:77:13-49
+	android:label
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:75:13-66
+	android:theme
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:76:13-56
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:74:19-71
+activity#com.github.ghmxr.timeswitch.activities.SmsActivity
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:81:9-86:20
+	android:screenOrientation
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:84:13-49
+	android:label
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:82:13-63
+	android:theme
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:83:13-56
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:81:19-57
+activity#com.github.ghmxr.timeswitch.activities.Settings
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:88:9-93:20
+	android:screenOrientation
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:92:13-49
+	android:label
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:90:13-60
+	android:theme
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:91:13-56
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:89:13-48
+activity#com.github.ghmxr.timeswitch.activities.Log
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:95:9-100:20
+	android:screenOrientation
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:99:13-49
+	android:label
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:97:13-49
+	android:theme
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:98:13-56
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:96:13-43
+activity#com.github.ghmxr.timeswitch.activities.Profile
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:102:9-107:20
+	android:screenOrientation
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:106:13-49
+	android:label
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:104:13-51
+	android:theme
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:105:13-56
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:103:13-47
+activity#com.github.ghmxr.timeswitch.activities.About
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:109:9-114:20
+	android:screenOrientation
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:113:13-49
+	android:label
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:111:13-57
+	android:theme
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:112:13-56
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:110:13-45
+service#com.github.ghmxr.timeswitch.services.TimeSwitchService
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:116:9-118:19
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:116:18-60
+receiver#com.github.ghmxr.timeswitch.receivers.AlarmReceiver
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:120:9-122:20
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:120:19-58
+receiver#com.github.ghmxr.timeswitch.receivers.BootReceiver
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:124:9-128:20
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:124:19-57
+intent-filter#action:name:android.intent.action.BOOT_COMPLETED
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:125:13-127:29
+action#android.intent.action.BOOT_COMPLETED
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:126:17-79
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:126:25-76
+receiver#com.github.ghmxr.timeswitch.receivers.SMSReceiver
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:130:9-134:20
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:130:19-56
+intent-filter#action:name:com.github.ghmxr.timeswitch.action.sms_sent
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:131:13-133:29
+action#com.github.ghmxr.timeswitch.action.sms_sent
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:132:17-85
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:132:25-83
+receiver#com.github.ghmxr.timeswitch.receivers.SMSReceiver$SMSReceiptReceiver
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:136:9-140:20
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:136:19-75
+intent-filter#action:name:com.github.ghmxr.timeswitch.action.sms_delivered
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:137:13-139:29
+action#com.github.ghmxr.timeswitch.action.sms_delivered
+ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:138:17-90
+	android:name
+		ADDED from C:\Users\z003vpwn\AndroidStudioProjects\com_mxrapp_timeswitch\app\src\main\AndroidManifest.xml:138:25-88

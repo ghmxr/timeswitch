@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/main_indicator">
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/main_swrlayout"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ListView
+                android:id="@+id/main_listview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            </ListView>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+        <RelativeLayout
+            android:id="@+id/main_no_task_att"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="?attr/actionBarSize">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:orientation="vertical">
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="51dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/icon_attface"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:textSize="16sp"
+                    android:text="@string/activity_main_att"/>
+            </LinearLayout>
+
+        </RelativeLayout>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
+            app:srcCompat="@drawable/ic_action_add" />
+    </android.support.design.widget.CoordinatorLayout>
+    <RelativeLayout
+        android:id="@+id/main_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        android:background="@color/color_transparent_popup_window">
+        <LinearLayout
+            android:id="@+id/main_indicator_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_alignParentTop="true"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:src="@drawable/icon_clock"/>
+            <TextView
+                android:id="@+id/main_indicator_time_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                android:textColor="@color/color_text_black_background"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:text="2018/08/21/21:00:00"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_below="@+id/main_indicator_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp">
+            <ImageView
+                android:id="@+id/main_indicator_battery_percentage_img"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:src="@drawable/icon_battery"/>
+            <TextView
+                android:id="@+id/main_indicator_battery_percentage_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:textColor="@color/color_text_black_background"
+                android:textSize="10sp"
+                android:text="--%"/>
+            <ImageView
+                android:id="@+id/main_indicator_temperature_img"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_marginLeft="15dp"
+                android:src="@drawable/icon_temperature"/>
+            <TextView
+                android:id="@+id/main_indicator_battery_temperature_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:textColor="@color/color_text_black_background"
+                android:textSize="10sp"
+                android:text="--℃"/>
+            <ImageView
+                android:id="@+id/main_indicator_battery_voltage_img"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_marginLeft="15dp"
+                android:src="@drawable/icon_flash"/>
+            <TextView
+                android:id="@+id/main_indicator_battery_voltage_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:textColor="@color/color_text_black_background"
+                android:textSize="10sp"
+                android:text="--V"/>
+
+            <TextView
+                android:id="@+id/main_indicator_battery_current_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="15dp"
+                android:textColor="@color/color_text_black_background"
+                android:textSize="10sp"
+                android:text="--mA"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>
+
+    
+
+
+

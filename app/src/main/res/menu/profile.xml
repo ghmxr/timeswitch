@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_profile_add"
+        android:orderInCategory="0"
+        app:showAsAction="always"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="@string/add"/>
+
+    <item
+        android:id="@+id/action_profile_delete"
+        android:orderInCategory="1"
+        app:showAsAction="always"
+        android:visible="false"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:title="@string/action_delete"/>
+
+    <item
+        android:id="@+id/action_profile_select_all"
+        android:orderInCategory="2"
+        app:showAsAction="ifRoom"
+        android:visible="false"
+        android:title="@string/action_selectall"/>
+
+    <item
+        android:id="@+id/action_profile_deselect_all"
+        android:orderInCategory="3"
+        app:showAsAction="ifRoom"
+        android:visible="false"
+        android:title="@string/action_deselectall"/>
+
+    <item
+        android:id="@+id/action_profile_import"
+        android:orderInCategory="4"
+        app:showAsAction="never"
+        android:visible="true"
+        android:icon="@drawable/ic_import"
+        android:title="@string/action_import"/>
+
+    <item
+        android:id="@+id/action_profile_export"
+        android:orderInCategory="5"
+        app:showAsAction="ifRoom"
+        android:visible="false"
+        android:icon="@drawable/ic_export"
+        android:title="@string/action_export"/>
+</menu>

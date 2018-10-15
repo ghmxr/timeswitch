@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>  
+<selector xmlns:android="http://schemas.android.com/apk/res/android">  
+   
+    <!-- normal -->  
+    <item android:state_enabled="true" android:state_focused="false" android:state_pressed="false">  
+        <layer-list>  
+             
+            <item android:bottom="15dp" android:left="15dp" android:right="15dp" android:top="15dp">  
+                <shape android:shape="oval">  
+                    
+                    <gradient android:angle="270" android:endColor="#882ecc71" android:startColor="#882ecc71" /> 
+                    
+                </shape>  
+            </item>  
+        </layer-list>  
+    </item>  
+   
+    <!-- pressed -->  
+    <item android:state_enabled="true" android:state_pressed="true">  
+        <layer-list>  
+            
+            <item android:bottom="15dp" android:left="15dp" android:right="15dp" android:top="15dp">  
+                <shape android:shape="oval">  
+                      
+                    <gradient android:angle="270" android:endColor="#aa27ae60" android:startColor="#aa27ae60" />  
+                </shape>  
+            </item>  
+        </layer-list>  
+    </item>  
+   
+    <!-- selected -->  
+    <item android:state_enabled="true" android:state_focused="true" android:state_pressed="false">  
+        <layer-list>  
+            
+            <item android:bottom="15dp" android:left="15dp" android:right="15dp" android:top="15dp">  
+                <shape android:shape="oval">  
+                    
+                    <gradient android:angle="270" android:endColor="#aa27ae60" android:startColor="#aa27ae60" />  
+                </shape>  
+            </item>  
+        </layer-list>  
+    </item>  
+   
+    <!-- ...... -->  
+</selector>  
