@@ -28,12 +28,12 @@
         "source": "C:\\Users\\z003vpwn\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\2fe8226dcaa11a29ef95feb4b244c77c\\res\\drawable-mdpi-v4\\abc_ic_star_half_black_36dp.png"
     },
     {
-        "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_notify_panel_notification_icon_bg.png.flat",
-        "source": "C:\\Users\\z003vpwn\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-27.1.1.aar\\731a0d75021abee4ece70d071aa08a82\\res\\drawable-xhdpi-v4\\notify_panel_notification_icon_bg.png"
-    },
-    {
         "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable_abc_tab_indicator_material.xml.flat",
         "source": "C:\\Users\\z003vpwn\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\2fe8226dcaa11a29ef95feb4b244c77c\\res\\drawable\\abc_tab_indicator_material.xml"
+    },
+    {
+        "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_notify_panel_notification_icon_bg.png.flat",
+        "source": "C:\\Users\\z003vpwn\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-27.1.1.aar\\731a0d75021abee4ece70d071aa08a82\\res\\drawable-xhdpi-v4\\notify_panel_notification_icon_bg.png"
     },
     {
         "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable_abc_ic_go_search_api_material.xml.flat",
@@ -44,28 +44,28 @@
         "source": "C:\\Users\\z003vpwn\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\2fe8226dcaa11a29ef95feb4b244c77c\\res\\drawable\\abc_btn_colored_material.xml"
     },
     {
-        "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable_icon_ring_normal.png.flat",
-        "source": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\src\\main\\res\\drawable\\icon_ring_normal.png"
+        "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable_drawable_arrow_right.xml.flat",
+        "source": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\src\\main\\res\\drawable\\drawable_arrow_right.xml"
     },
     {
         "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable-ldrtl-hdpi-v17_abc_ic_menu_cut_mtrl_alpha.png.flat",
         "source": "C:\\Users\\z003vpwn\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\2fe8226dcaa11a29ef95feb4b244c77c\\res\\drawable-ldrtl-hdpi-v17\\abc_ic_menu_cut_mtrl_alpha.png"
     },
     {
-        "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable_drawable_arrow_right.xml.flat",
-        "source": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\src\\main\\res\\drawable\\drawable_arrow_right.xml"
+        "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable_icon_ring_normal.png.flat",
+        "source": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\src\\main\\res\\drawable\\icon_ring_normal.png"
     },
     {
         "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_abc_scrubber_track_mtrl_alpha.9.png.flat",
         "source": "C:\\Users\\z003vpwn\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\2fe8226dcaa11a29ef95feb4b244c77c\\res\\drawable-xhdpi-v4\\abc_scrubber_track_mtrl_alpha.9.png"
     },
     {
-        "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4_abc_list_pressed_holo_dark.9.png.flat",
-        "source": "C:\\Users\\z003vpwn\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\2fe8226dcaa11a29ef95feb4b244c77c\\res\\drawable-xxhdpi-v4\\abc_list_pressed_holo_dark.9.png"
-    },
-    {
         "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable_icon_battery.png.flat",
         "source": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\src\\main\\res\\drawable\\icon_battery.png"
+    },
+    {
+        "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4_abc_list_pressed_holo_dark.9.png.flat",
+        "source": "C:\\Users\\z003vpwn\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\2fe8226dcaa11a29ef95feb4b244c77c\\res\\drawable-xxhdpi-v4\\abc_list_pressed_holo_dark.9.png"
     },
     {
         "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_design_ic_visibility.png.flat",
@@ -276,12 +276,12 @@
         "source": "C:\\Users\\z003vpwn\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\2fe8226dcaa11a29ef95feb4b244c77c\\res\\drawable-xhdpi-v4\\abc_list_pressed_holo_dark.9.png"
     },
     {
-        "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi_ic_more.png.flat",
-        "source": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\src\\main\\res\\drawable-mdpi\\ic_more.png"
-    },
-    {
         "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\layout_layout_dialog_exceptions_battery.xml.flat",
         "source": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\src\\main\\res\\layout\\layout_dialog_exceptions_battery.xml"
+    },
+    {
+        "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi_ic_more.png.flat",
+        "source": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\src\\main\\res\\drawable-mdpi\\ic_more.png"
     },
     {
         "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4_abc_btn_check_to_on_mtrl_000.png.flat",
@@ -304,12 +304,12 @@
         "source": "C:\\Users\\z003vpwn\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\2fe8226dcaa11a29ef95feb4b244c77c\\res\\drawable-mdpi-v4\\abc_textfield_activated_mtrl_alpha.9.png"
     },
     {
-        "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable_icon_brightness.png.flat",
-        "source": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\src\\main\\res\\drawable\\icon_brightness.png"
-    },
-    {
         "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\layout_item_ring_system.xml.flat",
         "source": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\src\\main\\res\\layout\\item_ring_system.xml"
+    },
+    {
+        "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable_icon_brightness.png.flat",
+        "source": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\src\\main\\res\\drawable\\icon_brightness.png"
     },
     {
         "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4_abc_list_selector_disabled_holo_dark.9.png.flat",
@@ -328,12 +328,12 @@
         "source": "C:\\Users\\z003vpwn\\.gradle\\caches\\transforms-1\\files-1.1\\design-27.1.1.aar\\4032727f475986b897498814c86bc990\\res\\layout\\design_layout_tab_icon.xml"
     },
     {
-        "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4_design_ic_visibility.png.flat",
-        "source": "C:\\Users\\z003vpwn\\.gradle\\caches\\transforms-1\\files-1.1\\design-27.1.1.aar\\4032727f475986b897498814c86bc990\\res\\drawable-hdpi-v4\\design_ic_visibility.png"
-    },
-    {
         "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4_abc_textfield_search_activated_mtrl_alpha.9.png.flat",
         "source": "C:\\Users\\z003vpwn\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\2fe8226dcaa11a29ef95feb4b244c77c\\res\\drawable-mdpi-v4\\abc_textfield_search_activated_mtrl_alpha.9.png"
+    },
+    {
+        "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4_design_ic_visibility.png.flat",
+        "source": "C:\\Users\\z003vpwn\\.gradle\\caches\\transforms-1\\files-1.1\\design-27.1.1.aar\\4032727f475986b897498814c86bc990\\res\\drawable-hdpi-v4\\design_ic_visibility.png"
     },
     {
         "merged": "C:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\res\\merged\\debug\\color-v23_abc_tint_switch_track.xml.flat",

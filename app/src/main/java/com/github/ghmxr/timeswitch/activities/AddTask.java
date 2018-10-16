@@ -26,7 +26,10 @@ public class AddTask extends TaskGui{
 	@Override
 	public void initialVariables() {
 		// TODO Auto-generated method stub
-		taskitem.name="新建任务"+(TimeSwitchService.list.size()+1);//this.taskname="新建任务";
+        if(TimeSwitchService.list==null) return;
+        int maxPos=TimeSwitchService.list.size()-1;
+        if(maxPos<0) maxPos=0;
+        taskitem.name="新建任务"+(TimeSwitchService.list.get(maxPos).id+1);//this.taskname="新建任务";
 	}
 
     @Override

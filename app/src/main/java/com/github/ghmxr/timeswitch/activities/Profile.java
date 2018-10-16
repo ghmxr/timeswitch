@@ -963,7 +963,7 @@ public class Profile extends BaseActivity {
                     for(int j=0;j<jsonarray.length();j++){
                         JSONObject jsonObject=(JSONObject)jsonarray.get(j);
                         ContentValues contentValues=new ContentValues();
-                        //contentValues.put(SQLConsts.SQL_TASK_COLUMN_ID,jsonObject.getInt(SQLConsts.SQL_TASK_COLUMN_ID));
+                        contentValues.put(SQLConsts.SQL_TASK_COLUMN_ID,jsonObject.getInt(SQLConsts.SQL_TASK_COLUMN_ID));
                         contentValues.put(SQLConsts.SQL_TASK_COLUMN_NAME,jsonObject.getString(SQLConsts.SQL_TASK_COLUMN_NAME));
                         contentValues.put(SQLConsts.SQL_TASK_COLUMN_ENABLED,jsonObject.getInt(SQLConsts.SQL_TASK_COLUMN_ENABLED));
                         contentValues.put(SQLConsts.SQL_TASK_COLUMN_TYPE,jsonObject.getInt(SQLConsts.SQL_TASK_COLUMN_TYPE));

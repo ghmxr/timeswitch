@@ -298,7 +298,7 @@
     <string name="popup_profile_delete">删除</string>
 	<string name="popup_profile_export">导出</string>
     <string name="title_activity_about">关于</string>
-	<string name="activity_about_content_title">Widget Trigger (Build 3)</string>
+	<string name="activity_about_content_title">Widget Trigger (Build 4)</string>
     <string name="large_text">
         这是一款用来定时自动触发执行一些任务的小工具应用。\n\n
 
@@ -318,7 +318,7 @@
 
 		本应用使用到了来自 http://www.easyicon.net 的图片资源。\n\n
 
-		Build 3 更新日志：修复无法获取Root的错误；其他已知问题的修复。\n\n
+		Build 4 更新日志：修复导入的任务“开启/关闭指定任务”行为对应的任务不一致的问题；\n\n
 
 		关于本应用的BUG以及其他建议反馈，可以将运行情况、截图和其他信息发送到我的邮箱。\n\n
 

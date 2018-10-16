@@ -166,21 +166,11 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		String taskname=taskitem.name;
 		if(taskname.length()>24) taskname=taskname.substring(0,24)+"...";
 		((TextView)findViewById(R.id.layout_taskgui_area_name_text)).setText(taskname);
-
 		((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autoclose_cb)).setChecked(taskitem.autoclose);
 		((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autodelete_cb)).setChecked(taskitem.autodelete);
 		activateTriggerType(taskitem.trigger_type);
 		refreshExceptionViews();
 		refreshActionStatus();
-		//((CheckBox)findViewById(R.id.layout_taskgui_area_additional_notify_cb)).setChecked(taskitem.notify);
-		/*((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autodelete_cb)).setChecked(taskitem.autodelete);
-		((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autoclose_cb)).setChecked(taskitem.autoclose);
-		((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autoclose_cb)).setEnabled(!taskitem.autodelete);
-		findViewById(R.id.layout_taskgui_area_additional_autoclose).setClickable(!taskitem.autodelete);
-		if(!((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autoclose_cb)).isEnabled()) ((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autoclose_cb)).setChecked(true);
-		((TextView)findViewById(R.id.layout_taskgui_additional_autoclose_att)).setTextColor(taskitem.autodelete?getResources().getColor(R.color.color_text_diabled)
-		:getResources().getColor(R.color.color_text_normal));  */
-
 	}
 
 	private void showSnackBarOfSuperuserRequest(){
@@ -471,28 +461,17 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 	public void activateTriggerType(int type){
 		taskitem.trigger_type =type;
         refreshTriggerView(type);
-
-        if(type==PublicConsts.TRIGGER_TYPE_SINGLE) setAutoCloseAreaEnabled(false);
-        else {
-        	setAutoCloseAreaEnabled(!((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autodelete_cb)).isChecked());
-		}
-
 		switch(type){
 			default:break;
 			case PublicConsts.TRIGGER_TYPE_SINGLE:{
                 clearExceptionsOfTimeType();
 				this.timepicker.setVisibility(View.VISIBLE);
-				//findViewById(R.id.layout_taskgui_area_additional_autodelete).setVisibility(View.VISIBLE);
-				//findViewById(R.id.layout_taskgui_area_additional_autoclose).setVisibility(View.GONE);
-				taskitem.autoclose=false;
 				refreshSingleTimeTextView();
 			}
 			break;
 
 			case PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME:{
 				this.timepicker.setVisibility(View.GONE);
-				//findViewById(R.id.layout_taskgui_area_additional_autoclose).setVisibility(View.GONE);
-				//findViewById(R.id.layout_taskgui_area_additional_autodelete).setVisibility(View.GONE);
 				refreshRepeatTextView();
 			}
 			break;
@@ -500,10 +479,6 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			case PublicConsts.TRIGGER_TYPE_LOOP_WEEK:{
                 clearExceptionsOfTimeType();
 				this.timepicker.setVisibility(View.VISIBLE);
-				//findViewById(R.id.layout_taskgui_area_additional_autodelete).setVisibility(View.GONE);
-				//findViewById(R.id.layout_taskgui_area_additional_autoclose).setVisibility(View.GONE);
-                taskitem.autoclose=false;
-                taskitem.autodelete=false;
 				refreshWeekLoopTextView();
 			}
 			break;
@@ -511,9 +486,6 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			case PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE:{
 				clearExceptionsOfBatteryPercentage();
 				timepicker.setVisibility(View.GONE);
-				//findViewById(R.id.layout_taskgui_area_additional_autoclose).setVisibility(View.VISIBLE);
-				//findViewById(R.id.layout_taskgui_area_additional_autodelete).setVisibility(View.GONE);
-				taskitem.autodelete=false;
 				refreshBatteryPercentageTextView();
 			}
 			break;
@@ -521,9 +493,6 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			case PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE:{
 			    clearExceptionsOfBatteryPercentage();
 				timepicker.setVisibility(View.GONE);
-				//findViewById(R.id.layout_taskgui_area_additional_autoclose).setVisibility(View.VISIBLE);
-				//findViewById(R.id.layout_taskgui_area_additional_autodelete).setVisibility(View.GONE);
-				taskitem.autodelete=false;
 				refreshBatteryPercentageTextView();
 			}
 			break;
@@ -531,9 +500,6 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			case PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE:{
 			    clearExceptionsOfBatteryTemperature();
 				timepicker.setVisibility(View.GONE);
-				//findViewById(R.id.layout_taskgui_area_additional_autoclose).setVisibility(View.VISIBLE);
-				//findViewById(R.id.layout_taskgui_area_additional_autodelete).setVisibility(View.GONE);
-				taskitem.autodelete=false;
 				refreshBatteryTemperatureTextView();
 			}
 			break;
@@ -541,9 +507,6 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			case PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE:{
 			    clearExceptionsOfBatteryTemperature();
 				timepicker.setVisibility(View.GONE);
-				//findViewById(R.id.layout_taskgui_area_additional_autoclose).setVisibility(View.VISIBLE);
-				//findViewById(R.id.layout_taskgui_area_additional_autodelete).setVisibility(View.GONE);
-				taskitem.autodelete=false;
 				refreshBatteryTemperatureTextView();
 			}
 			break;
@@ -552,6 +515,11 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				refreshBroadcastTextView();
 			}
 			break;
+		}
+
+		if(type==PublicConsts.TRIGGER_TYPE_SINGLE) setAutoCloseAreaEnabled(false);
+		else {
+			setAutoCloseAreaEnabled(!((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autodelete_cb)).isChecked());
 		}
 
 	}
@@ -975,11 +943,13 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		TextView tv_autoclose=findViewById(R.id.layout_taskgui_additional_autoclose_att);
 		rl_autoclose.setClickable(b);
 		cb_autoclose.setEnabled(b);
+		tv_autoclose.setTextColor(b?getResources().getColor(R.color.color_text_normal):getResources().getColor(R.color.color_text_disabled));
 		if(!b) {
 			cb_autoclose.setChecked(true);
 			taskitem.autoclose=true;
+		}else{
+			cb_autoclose.setChecked(taskitem.autoclose);
 		}
-		tv_autoclose.setTextColor(b?getResources().getColor(R.color.color_text_normal):getResources().getColor(R.color.color_text_disabled));
 	}
 
 	@Override
