@@ -102,6 +102,7 @@ public class MainListAdapter extends BaseAdapter {
             holder.icon_airplane_mode_off=views[i].findViewById(R.id.item_task_actions_airplane_mode_off);
             holder.icon_enable=views[i].findViewById(R.id.item_task_actions_enable);
             holder.icon_disable=views[i].findViewById(R.id.item_task_actions_disable);
+            holder.tv_more =views[i].findViewById(R.id.item_task_actions_more);
             holder.aSwitch=views[i].findViewById(R.id.item_task_switch);
             holder.checkbox=views[i].findViewById(R.id.item_task_checkbox);
             views[i].setTag(holder);
@@ -184,18 +185,19 @@ public class MainListAdapter extends BaseAdapter {
 
         String [] actions =list.get(i).actions;
         try{
-            int showCount=0;
+            int showCount=0,actionNum=0;
             if(Integer.parseInt(actions[PublicConsts.ACTION_WIFI_LOCALE])==PublicConsts.ACTION_OPEN){
                 //holder.actions.addView(this.newActionIcon(R.drawable.icon_wifi_on));
                 holder.icon_wifi_on.setVisibility(View.VISIBLE);
                 showCount++;
+                actionNum++;
                 holder.icon_wifi_off.setVisibility(View.GONE);
             }else if(Integer.parseInt(actions[PublicConsts.ACTION_WIFI_LOCALE])==PublicConsts.ACTION_CLOSE){
                 //  holder.actions.addView(this.newActionIcon(R.drawable.icon_wifi_off));
                 holder.icon_wifi_on.setVisibility(View.GONE);
                 holder.icon_wifi_off.setVisibility(View.VISIBLE);
                 showCount++;
-
+                actionNum++;
             }else{
                 holder.icon_wifi_on.setVisibility(View.GONE);
                 holder.icon_wifi_off.setVisibility(View.GONE);
@@ -204,13 +206,13 @@ public class MainListAdapter extends BaseAdapter {
             if(Integer.parseInt(actions[PublicConsts.ACTION_BLUETOOTH_LOCALE])==PublicConsts.ACTION_OPEN){
                 //holder.actions.addView(this.newActionIcon(R.drawable.icon_bluetooth_on));
                 holder.icon_bluetooth_on.setVisibility(View.VISIBLE);
-                showCount++;
+                showCount++;actionNum++;
                 holder.icon_bluetooth_off.setVisibility(View.GONE);
             }else if(Integer.parseInt(actions[PublicConsts.ACTION_BLUETOOTH_LOCALE])==PublicConsts.ACTION_CLOSE){
                 // holder.actions.addView(this.newActionIcon(R.drawable.icon_bluetooth_off));
                 holder.icon_bluetooth_on.setVisibility(View.GONE);
                 holder.icon_bluetooth_off.setVisibility(View.VISIBLE);
-                showCount++;
+                showCount++;actionNum++;
             }else{
                 holder.icon_bluetooth_on.setVisibility(View.GONE);
                 holder.icon_bluetooth_off.setVisibility(View.GONE);
@@ -219,21 +221,21 @@ public class MainListAdapter extends BaseAdapter {
             if(Integer.parseInt(actions[PublicConsts.ACTION_RING_MODE_LOCALE])==PublicConsts.ACTION_RING_VIBRATE){
                 // holder.actions.addView(this.newActionIcon(R.drawable.icon_ring_vibrate));
                 holder.icon_ring_vibrate.setVisibility(View.VISIBLE);
-                showCount++;
+                showCount++;actionNum++;
                 holder.icon_ring_off.setVisibility(View.GONE);
                 holder.icon_ring_normal.setVisibility(View.GONE);
             }else if(Integer.parseInt(actions[PublicConsts.ACTION_RING_MODE_LOCALE])==PublicConsts.ACTION_RING_OFF){
                 // holder.actions.addView(this.newActionIcon(R.drawable.icon_ring_off));
                 holder.icon_ring_vibrate.setVisibility(View.GONE);
                 holder.icon_ring_off.setVisibility(View.VISIBLE);
-                showCount++;
+                showCount++;actionNum++;
                 holder.icon_ring_normal.setVisibility(View.GONE);
             }else if(Integer.parseInt(actions[PublicConsts.ACTION_RING_MODE_LOCALE])==PublicConsts.ACTION_RING_NORMAL){
                 // holder.actions.addView(this.newActionIcon(R.drawable.icon_ring_normal));
                 holder.icon_ring_vibrate.setVisibility(View.GONE);
                 holder.icon_ring_off.setVisibility(View.GONE);
                 holder.icon_ring_normal.setVisibility(View.VISIBLE);
-                showCount++;
+                showCount++;actionNum++;
             }else{
                 holder.icon_ring_vibrate.setVisibility(View.GONE);
                 holder.icon_ring_off.setVisibility(View.GONE);
@@ -242,12 +244,12 @@ public class MainListAdapter extends BaseAdapter {
 
             if(Integer.parseInt(actions[PublicConsts.ACTION_BRIGHTNESS_LOCALE])==PublicConsts.ACTION_BRIGHTNESS_AUTO){
                 holder.icon_brightness_auto.setVisibility(View.VISIBLE);
-                showCount++;
+                showCount++;actionNum++;
                 holder.icon_brightness_manual.setVisibility(View.GONE);
             }else if(Integer.parseInt(actions[PublicConsts.ACTION_BRIGHTNESS_LOCALE])>=0&&Integer.parseInt(actions[PublicConsts.ACTION_BRIGHTNESS_LOCALE])<=PublicConsts.BRIGHTNESS_MAX){
                 holder.icon_brightness_auto.setVisibility(View.GONE);
                 holder.icon_brightness_manual.setVisibility(View.VISIBLE);
-                showCount++;
+                showCount++;actionNum++;
             }else{
                 holder.icon_brightness_auto.setVisibility(View.GONE);
                 holder.icon_brightness_manual.setVisibility(View.GONE);
@@ -257,37 +259,49 @@ public class MainListAdapter extends BaseAdapter {
             String[] ring_volumes=actions[PublicConsts.ACTION_RING_VOLUME_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
             if(Integer.parseInt(ring_volumes[PublicConsts.VOLUME_RING_LOCALE])>=0||Integer.parseInt(ring_volumes[PublicConsts.VOLUME_MEDIA_LOCALE])>=0
                    ||Integer.parseInt(ring_volumes[PublicConsts.VOLUME_NOTIFICATION_LOCALE])>=0||Integer.parseInt(ring_volumes[PublicConsts.VOLUME_ALARM_LOCALE])>=0){
+
                 holder.icon_ring_volume.setVisibility(View.VISIBLE);
-                showCount++;
+                showCount++;actionNum++;
             }
             else holder.icon_ring_volume.setVisibility(View.GONE);
 
             String [] ring_selections=actions[PublicConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
             if(Integer.parseInt(ring_selections[PublicConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE])>=0||Integer.parseInt(ring_selections[PublicConsts.RING_SELECTION_CALL_TYPE_LOCALE])>=0){
-                holder.icon_ring_selection.setVisibility(View.VISIBLE);
-                showCount++;
+                actionNum++;
+                if(showCount<ICON_COUNT_LIMIT){
+                    holder.icon_ring_selection.setVisibility(View.VISIBLE);
+                    showCount++;
+                }
             }
             else holder.icon_ring_selection.setVisibility(View.GONE);
 
             String[] wallpaper_values=actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
             if(Integer.parseInt(wallpaper_values[0])>=0){
-                holder.icon_wallpaper.setVisibility(View.VISIBLE);
-                showCount++;
+                actionNum++;
+                if(showCount<ICON_COUNT_LIMIT){
+                    holder.icon_wallpaper.setVisibility(View.VISIBLE);
+                    showCount++;
+                }
+
             }else {
                 holder.icon_wallpaper.setVisibility(View.GONE);
             }
 
             String[] notification_values=actions[PublicConsts.ACTION_NOTIFICATION_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
             if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_LOCALE])>=0){
-                holder.icon_notification.setVisibility(View.VISIBLE);
-                showCount++;
+                actionNum++;
+                if(showCount<ICON_COUNT_LIMIT){
+                    holder.icon_notification.setVisibility(View.VISIBLE);
+                    showCount++;
+                }
             }else {
                 holder.icon_notification.setVisibility(View.GONE);
             }
 
             String[] toast_values=actions[PublicConsts.ACTION_TOAST_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
             if(Integer.parseInt(toast_values[PublicConsts.TOAST_TYPE_LOCALE])>=0){
-                if(showCount<=ICON_COUNT_LIMIT){
+                actionNum++;
+                if(showCount<ICON_COUNT_LIMIT){
                     holder.icon_toast.setVisibility(View.VISIBLE);
                     showCount++;
                 }
@@ -298,7 +312,8 @@ public class MainListAdapter extends BaseAdapter {
 
             String sms_values[] = actions[PublicConsts.ACTION_SMS_LOCALE].split(PublicConsts.SEPERATOR_SECOND_LEVEL);
             if(Integer.parseInt(sms_values[PublicConsts.SMS_ENABLED_LOCALE])>=0){
-                if(showCount<=ICON_COUNT_LIMIT){
+                actionNum++;
+                if(showCount<ICON_COUNT_LIMIT){
                     holder.icon_sms.setVisibility(View.VISIBLE);
                     showCount++;
                 }
@@ -307,7 +322,8 @@ public class MainListAdapter extends BaseAdapter {
 
             String[] vibrate_values=actions[PublicConsts.ACTION_VIBRATE_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
             if(Integer.parseInt(vibrate_values[PublicConsts.VIBRATE_FREQUENCY_LOCALE])>=0){
-                if(showCount<=ICON_COUNT_LIMIT){
+                actionNum++;
+                if(showCount<ICON_COUNT_LIMIT){
                     holder.icon_vibrate.setVisibility(View.VISIBLE);
                     showCount++;
                 }
@@ -316,14 +332,16 @@ public class MainListAdapter extends BaseAdapter {
             }
 
             if(Integer.parseInt(actions[PublicConsts.ACTION_GPS_LOCALE])==PublicConsts.ACTION_OPEN){
-                if(showCount<=ICON_COUNT_LIMIT){
+                actionNum++;
+                if(showCount<ICON_COUNT_LIMIT){
                     holder.icon_gps_on.setVisibility(View.VISIBLE);
                     showCount++;
                 }
                 holder.icon_gps_off.setVisibility(View.GONE);
             }else if(Integer.parseInt(actions[PublicConsts.ACTION_GPS_LOCALE])==PublicConsts.ACTION_CLOSE){
                 holder.icon_gps_on.setVisibility(View.GONE);
-                if(showCount<=ICON_COUNT_LIMIT){
+                actionNum++;
+                if(showCount<ICON_COUNT_LIMIT){
                     holder.icon_gps_off.setVisibility(View.VISIBLE);
                     showCount++;
                 }
@@ -333,14 +351,16 @@ public class MainListAdapter extends BaseAdapter {
             }
 
             if(Integer.parseInt(actions[PublicConsts.ACTION_AIRPLANE_MODE_LOCALE])==PublicConsts.ACTION_OPEN){
-                if(showCount<=ICON_COUNT_LIMIT){
+                actionNum++;
+                if(showCount<ICON_COUNT_LIMIT){
                     holder.icon_airplane_mode_on.setVisibility(View.VISIBLE);
                     showCount++;
                 }
                 holder.icon_airplane_mode_off.setVisibility(View.GONE);
             }else if(Integer.parseInt(actions[PublicConsts.ACTION_AIRPLANE_MODE_LOCALE])==PublicConsts.ACTION_CLOSE){
+                actionNum++;
                 holder.icon_airplane_mode_on.setVisibility(View.GONE);
-                if(showCount<=ICON_COUNT_LIMIT){
+                if(showCount<ICON_COUNT_LIMIT){
                     holder.icon_airplane_mode_off.setVisibility(View.VISIBLE);
                     showCount++;
                 }
@@ -350,16 +370,18 @@ public class MainListAdapter extends BaseAdapter {
             }
 
             if(Integer.parseInt(actions[PublicConsts.ACTION_NET_LOCALE])==PublicConsts.ACTION_OPEN){
+                actionNum++;
                 //holder.actions.addView(this.newActionIcon(R.drawable.icon_celluar_on));
-                if(showCount<=ICON_COUNT_LIMIT){
+                if(showCount<ICON_COUNT_LIMIT){
                     holder.icon_net_on.setVisibility(View.VISIBLE);
                     showCount++;
                 }
                 holder.icon_net_off.setVisibility(View.GONE);
             }else if(Integer.parseInt(actions[PublicConsts.ACTION_NET_LOCALE])==PublicConsts.ACTION_CLOSE){
+                actionNum++;
                 //holder.actions.addView(this.newActionIcon(R.drawable.icon_cellular_off));
                 holder.icon_net_on.setVisibility(View.GONE);
-                if(showCount<=ICON_COUNT_LIMIT){
+                if(showCount<ICON_COUNT_LIMIT){
                     holder.icon_net_off.setVisibility(View.VISIBLE);
                     showCount++;
                 }
@@ -370,6 +392,7 @@ public class MainListAdapter extends BaseAdapter {
             }
 
             if(Integer.parseInt(actions[PublicConsts.ACTION_DEVICECONTROL_LOCALE])==PublicConsts.ACTION_DEVICECONTROL_REBOOT){
+                actionNum++;
                 // holder.actions.addView(this.newActionIcon(R.drawable.icon_reboot));
                 if(showCount<=ICON_COUNT_LIMIT){
                     holder.icon_device_reboot.setVisibility(View.VISIBLE);
@@ -377,9 +400,10 @@ public class MainListAdapter extends BaseAdapter {
                 }
                 holder.icon_device_shutdown.setVisibility(View.GONE);
             }else if(Integer.parseInt(actions[PublicConsts.ACTION_DEVICECONTROL_LOCALE])==PublicConsts.ACTION_DEVICECONTROL_SHUTDOWN){
+                actionNum++;
                 // holder.actions.addView(this.newActionIcon(R.drawable.icon_power));
                 holder.icon_device_reboot.setVisibility(View.GONE);
-                if(showCount<=ICON_COUNT_LIMIT){
+                if(showCount<ICON_COUNT_LIMIT){
                     holder.icon_device_shutdown.setVisibility(View.VISIBLE);
                     showCount++;
                 }
@@ -389,7 +413,8 @@ public class MainListAdapter extends BaseAdapter {
             }
 
             if(Integer.parseInt(actions[PublicConsts.ACTION_ENABLE_TASKS_LOCALE].split(PublicConsts.SEPERATOR_SECOND_LEVEL)[0])>=0){
-                if(showCount<=ICON_COUNT_LIMIT){
+                actionNum++;
+                if(showCount<ICON_COUNT_LIMIT){
                     holder.icon_enable.setVisibility(View.VISIBLE);
                     showCount++;
                 }else{
@@ -397,6 +422,21 @@ public class MainListAdapter extends BaseAdapter {
                 }
             }
 
+            if(Integer.parseInt(actions[PublicConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPERATOR_SECOND_LEVEL)[0])>=0){
+                actionNum++;
+                if(showCount<ICON_COUNT_LIMIT){
+                    holder.icon_disable.setVisibility(View.VISIBLE);
+                    showCount++;
+                }else {
+                    holder.icon_disable.setVisibility(View.GONE);
+                }
+            }
+
+            if(actionNum>ICON_COUNT_LIMIT) holder.tv_more.setVisibility(View.VISIBLE);
+            else  holder.tv_more.setVisibility(View.GONE);
+
+            Log.d("ADAPTER_ICON_COUNT",""+showCount);
+            Log.d("ADAPTER_ACTION_NUM",""+actionNum);
         }catch (NumberFormatException ne){
             ne.printStackTrace();
             new AlertDialog.Builder(context)
@@ -542,6 +582,7 @@ public class MainListAdapter extends BaseAdapter {
         public ImageView img,icon_wifi_on,icon_wifi_off,icon_bluetooth_on,icon_bluetooth_off,icon_net_on,icon_net_off,
                 icon_ring_normal,icon_ring_vibrate,icon_ring_off, icon_device_reboot,icon_device_shutdown,icon_brightness_auto,icon_brightness_manual,icon_gps_on,icon_gps_off,
                 icon_airplane_mode_on,icon_airplane_mode_off,icon_ring_volume,icon_ring_selection,icon_wallpaper,icon_notification,icon_vibrate,icon_sms,icon_toast,icon_enable,icon_disable;
+        TextView tv_more;
         public android.support.v7.widget.SwitchCompat aSwitch;
         public CheckBox checkbox;
        // public LinearLayout actions;

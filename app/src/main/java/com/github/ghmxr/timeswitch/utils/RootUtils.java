@@ -1,5 +1,7 @@
 package com.github.ghmxr.timeswitch.utils;
 
+import com.github.ghmxr.timeswitch.data.PublicConsts;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -7,7 +9,7 @@ import java.io.InputStreamReader;
 
 public class RootUtils {
 
-    public static final String COMMAND_GRANT_SECURE_PERMISSION="pm grant com.mxrapp.timeswitch android.permission.WRITE_SECURE_SETTINGS \n";
+    public static final String COMMAND_GRANT_SECURE_PERMISSION="pm grant "+ PublicConsts.PACKAGE_NAME+" android.permission.WRITE_SECURE_SETTINGS \n";
     public static final String COMMAND_ENABLE_CELLUAR_NETWORK="svc data enable \n";
     public static final String COMMAND_DISABLE_CELLUAR_NETWORK="svc data disable \n";
     public static final String COMMAND_ENABLE_GPS="settings put secure location_providers_allowed gps,network";

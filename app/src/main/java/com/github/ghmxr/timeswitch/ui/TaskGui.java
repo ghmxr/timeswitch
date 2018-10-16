@@ -1059,7 +1059,8 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 						isNull=false;
 				}
 				else if(i==PublicConsts.ACTION_RING_SELECTION_LOCALE){
-					if(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SEPERATOR_SECOND_LEVEL)[0])>=0) isNull=false;
+					if(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SEPERATOR_SECOND_LEVEL)[PublicConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE])>=0
+							||Integer.parseInt(taskitem.actions[PublicConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SEPERATOR_SECOND_LEVEL)[PublicConsts.RING_SELECTION_CALL_TYPE_LOCALE])>=0) isNull=false;
 				}
 				else if(i==PublicConsts.ACTION_SET_WALL_PAPER_LOCALE){
 					if(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL)[0])>=0) isNull=false;

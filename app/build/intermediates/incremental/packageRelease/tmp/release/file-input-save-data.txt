@@ -1,0 +1,7 @@
+#Internal package file, do not edit.
+#Tue Oct 16 12:44:12 CST 2018
+0.baseType=DIRECTORY
+0.base=C\:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\transforms\\dexMerger\\release\\0
+0.path=classes.dex
+0.set=DEX
+count=1

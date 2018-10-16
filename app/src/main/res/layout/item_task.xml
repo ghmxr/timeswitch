@@ -50,159 +50,193 @@
                 android:id="@+id/item_task_actions_wifi_on"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_wifi_on"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_wifi_off"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_wifi_off"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_bluetooth_on"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_bluetooth_on"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_bluetooth_off"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_bluetooth_off"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_ring_vibrate"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_ring_vibrate"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_ring_off"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_ring_off"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_ring_normal"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_ring_normal"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_ring_volume"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_ring_volume"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_ring_selection"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_music"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_brightness_auto"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_brightness_auto"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_brightness_manual"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_brightness_medium"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_wallpaper"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_wallpaper"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_notification"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_notification"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_toast"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_toast"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_sms"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_sms"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_vibrate"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_ring_vibrate"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_net_on"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_cellular_on"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_net_off"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_cellular_off"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_gps_on"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_location_on"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_gps_off"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_location_off"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_airplane_mode_on"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_airplanemode_on"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_airplane_mode_off"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_airplanemode_off"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_device_reboot"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_reboot"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_device_shutdown"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_power"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_enable"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_mark"
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/item_task_actions_disable"
                 android:layout_width="@dimen/size_item_icon"
                 android:layout_height="@dimen/size_item_icon"
+                android:layout_margin="@dimen/size_item_icon_margin"
                 android:src="@drawable/icon_cross"
                 android:visibility="gone"/>
-
+            <TextView
+                android:id="@+id/item_task_actions_more"
+                android:layout_width="@dimen/size_item_icon"
+                android:layout_height="@dimen/size_item_icon"
+                android:textStyle="bold"
+                android:gravity="center_vertical"
+                android:textSize="12sp"
+                android:text="..."
+                android:visibility="gone"/>
         </LinearLayout>
 
         <TextView

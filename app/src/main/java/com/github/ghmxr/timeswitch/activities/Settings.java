@@ -233,4 +233,5 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

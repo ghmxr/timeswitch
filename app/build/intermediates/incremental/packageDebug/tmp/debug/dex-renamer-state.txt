@@ -1,0 +1,4 @@
+#Tue Oct 16 12:40:54 CST 2018
+base.0=C\:\\Users\\z003vpwn\\AndroidStudioProjects\\com_mxrapp_timeswitch\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\0
+path.0=classes.dex
+renamed.0=classes.dex

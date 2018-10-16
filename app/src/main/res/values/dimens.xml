@@ -7,4 +7,5 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="size_item_icon">20dp</dimen>
+    <dimen name="size_item_icon_margin">1dp</dimen>
 </resources>

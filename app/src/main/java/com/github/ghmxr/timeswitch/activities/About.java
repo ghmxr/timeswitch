@@ -43,7 +43,6 @@ public class About extends BaseActivity {
             public void onClick(View v) {
                 try{
                     startActivity(Intent.parseUri("https://qr.alipay.com/FKX08041Y09ZGT6ZT91FA5",Intent.URI_INTENT_SCHEME));
-                    //startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("HTTPS://QR.ALIPAY.COM/FKX08041Y09ZGT6ZT91FA5".toLowerCase())));
                 }
                 catch (Exception e){
                     e.printStackTrace();

@@ -178,8 +178,11 @@
 	<string name="activity_settings_log_att">运行日志</string>
 	<string name="activity_settings_log_att_att">查看应用运行日志</string>
 	<string name="activity_settings_advanced_att">进阶选项</string>
+	<string name="activity_settings_others">其他信息</string>
 	<string name="activity_settings_about_att">关于</string>
 	<string name="activity_settings_about_att_att">帮助和关于</string>
+	<string name="activity_settings_update">检查更新</string>
+	<string name="activity_settings_update_att">获取本应用更新</string>
 	<string name="activity_settings_superuser_att">超级用户模式</string>
 	<string name="activity_settings_superuser_att_att">使用Root权限执行特定类型任务</string>
 	<string name="activity_settings_superuser_not_available">无法读取本机Root</string>
@@ -295,7 +298,7 @@
     <string name="popup_profile_delete">删除</string>
 	<string name="popup_profile_export">导出</string>
     <string name="title_activity_about">关于</string>
-	<string name="activity_about_content_title">Widget Trigger (Build 2)</string>
+	<string name="activity_about_content_title">Widget Trigger (Build 3)</string>
     <string name="large_text">
         这是一款用来定时自动触发执行一些任务的小工具应用。\n\n
 
@@ -305,14 +308,17 @@
 		本应用在使用Java Timer 作为定时器接口时，会保持设备唤醒，可能会增加设备耗电量。
 
 
-		\n\n\n
+		\n\n
 
 
-		开源地址: https://github.com/ghmxr/timeswitch \n\n\n
+		开源地址: https://github.com/ghmxr/timeswitch \n\n
+
+        获取更新地址: https://github.com/ghmxr/timeswitch/releases \n\n
 
 
 		本应用使用到了来自 http://www.easyicon.net 的图片资源。\n\n
 
+		Build 3 更新日志：修复无法获取Root的错误；其他已知问题的修复。\n\n
 
 		关于本应用的BUG以及其他建议反馈，可以将运行情况、截图和其他信息发送到我的邮箱。\n\n
 
