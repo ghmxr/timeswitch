@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">Widget Trigger</string>
 	<string name="activity_add_title">添加</string>
+	<string name="activity_add_name_mask">新建任务</string>
 	<string name="activity_edit_title">编辑</string>
 	<string name="activity_taskgui_exceptions_title">触发例外</string>
 	<string name="activity_taskgui_actions_title">触发操作</string>

@@ -901,7 +901,7 @@ public class ProcessTaskItem {
                         builder.setContentTitle(item.notification_title);
                         builder.setContentText(item.notification_message);
                     }
-                    PendingIntent pi =PendingIntent.getActivity(context,1,new Intent(context,Main.class),PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent pi =PendingIntent.getActivity(context,1,new Intent(),PendingIntent.FLAG_UPDATE_CURRENT);
                     builder.setContentIntent(pi);
                     builder.setAutoCancel(true);
                     builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);

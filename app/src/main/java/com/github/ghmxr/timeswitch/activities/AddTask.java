@@ -28,8 +28,11 @@ public class AddTask extends TaskGui{
 		// TODO Auto-generated method stub
         if(TimeSwitchService.list==null) return;
         int maxPos=TimeSwitchService.list.size()-1;
-        if(maxPos<0) maxPos=0;
-        taskitem.name="新建任务"+(TimeSwitchService.list.get(maxPos).id+1);//this.taskname="新建任务";
+        if(maxPos<0) {
+            taskitem.name=getResources().getString(R.string.activity_add_name_mask);
+        }else{
+            taskitem.name=getResources().getString(R.string.activity_add_name_mask)+(TimeSwitchService.list.get(maxPos).id+1);
+        }
 	}
 
     @Override

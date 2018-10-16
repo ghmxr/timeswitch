@@ -847,10 +847,10 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                 LogUtil.putExceptionLog(this,ne);
             }
 
-            if(action_ring==PublicConsts.ACTION_RING_NORMAL) rb_ring_normal.setChecked(true);//if(actions[PublicConsts.ACTION_RING_MODE_LOCALE]==PublicConsts.ACTION_RING_NORMAL) rb_ring_normal.setChecked(true);
-            if(action_ring==PublicConsts.ACTION_RING_VIBRATE) rb_ring_vibrate.setChecked(true);//if(actions[PublicConsts.ACTION_RING_MODE_LOCALE]==PublicConsts.ACTION_RING_VIBRATE) rb_ring_vibrate.setChecked(true);
-            if(action_ring==PublicConsts.ACTION_RING_OFF) rb_ring_off.setChecked(true);//if(actions[PublicConsts.ACTION_RING_MODE_LOCALE]==PublicConsts.ACTION_RING_OFF) rb_ring_off.setChecked(true);
-            if(action_ring==PublicConsts.ACTION_RING_UNSELECTED) rb_ring_unselected.setChecked(true);//if(actions[PublicConsts.ACTION_RING_MODE_LOCALE]==PublicConsts.ACTION_RING_UNSELECTED) rb_ring_unselected.setChecked(true);
+            if(action_ring==PublicConsts.ACTION_RING_NORMAL) rb_ring_normal.setChecked(true);
+            if(action_ring==PublicConsts.ACTION_RING_VIBRATE) rb_ring_vibrate.setChecked(true);
+            if(action_ring==PublicConsts.ACTION_RING_OFF) rb_ring_off.setChecked(true);
+            if(action_ring==PublicConsts.ACTION_RING_UNSELECTED) rb_ring_unselected.setChecked(true);
 
             rl_ring_vibrate.setOnClickListener(new View.OnClickListener() {
 
@@ -868,7 +868,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                 @Override
                 public void onClick(View v) {
                     // TODO Auto-generated method stub
-                    actions[PublicConsts.ACTION_RING_MODE_LOCALE]=String.valueOf(PublicConsts.ACTION_RING_VIBRATE);//TaskGui.this.actions[PublicConsts.ACTION_RING_MODE_LOCALE]=PublicConsts.ACTION_RING_OFF;
+                    actions[PublicConsts.ACTION_RING_MODE_LOCALE]=String.valueOf(PublicConsts.ACTION_RING_OFF);//TaskGui.this.actions[PublicConsts.ACTION_RING_MODE_LOCALE]=PublicConsts.ACTION_RING_OFF;
                     bdialog.cancel();
                     refreshActionStatus();
                 }
