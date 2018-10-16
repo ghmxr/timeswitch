@@ -309,15 +309,17 @@
 		本应用在使用Java Timer 作为定时器接口时，会保持设备唤醒，可能会增加设备耗电量。
 
 
-		\n\n
+		\n\n\n
 
 
-		开源地址: https://github.com/ghmxr/timeswitch \n\n
+		开源地址:\n
+		https://github.com/ghmxr/timeswitch \n\n
 
-        获取更新地址: https://github.com/ghmxr/timeswitch/releases \n\n
+        获取更新地址: \n
+		https://github.com/ghmxr/timeswitch/releases \n\n\n
 
 
-		本应用使用到了来自 http://www.easyicon.net 的图片资源。\n\n
+		本应用使用到了来自 http://www.easyicon.net 的图片资源。\n\n\n
 
 		Build 4 更新日志：修复导入的任务“开启/关闭指定任务”行为对应的任务不一致的问题；\n\n
 

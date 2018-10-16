@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.github.ghmxr.timeswitch"
     android:versionCode="4"
-    android:versionName="4">
+    android:versionName="Build 4">
 
     <uses-sdk
         android:minSdkVersion="14"
