@@ -85,6 +85,8 @@
 	<string name="dialog_profile_import_no_file_title">没有文件</string>
 	<string name="dialog_profile_import_no_file_att1">没有找到可以导入的文件。\n可以将要导入的列表文件(.json)拷贝到“存储/Android/data/</string>
 	<string name="dialog_profile_import_no_file_att2">/files”路径下然后重试。</string>
+	<string name="dialog_profile_delete_confirm">再点击一次确定删除</string>
+	<string name="dialog_profile_delete_no_selection">选择若干项来删除</string>
 	<string name="activity_main_toast_task_invalid">任务过期，请重新编辑保存</string>
 	<string name="activity_main_toast_task_invalid_action">修改</string>
 	<string name="activity_main_item_battery_more_than_percentage">电量大于</string>
@@ -276,6 +278,7 @@
 	<string name="top">顶部</string>
 	<string name="center">居中</string>
 	<string name="bottom">底部</string>
+	<string name="word_import">导入</string>
 	<string name="toast_location_default">默认位置</string>
 	<string name="toast_location_custom">自定义位置</string>
 	<string name="word_center"><u>居中</u></string>
@@ -299,13 +302,13 @@
     <string name="popup_profile_delete">删除</string>
 	<string name="popup_profile_export">导出</string>
     <string name="title_activity_about">关于</string>
-	<string name="activity_about_content_title">Widget Trigger (Build 4)</string>
+	<string name="activity_about_content_title">Widget Trigger (Build 5)</string>
     <string name="large_text">
         这是一款用来定时自动触发执行一些任务的小工具应用。\n\n
 
 
-		请允许本应用所申请的权限，并且添加到系统的清理白名单内，否则本应用可能无法正常执行。\n
-		请不要限制本应用的耗电，系统的一些省电策略可能会影响任务触发的准确性。\n
+		请允许本应用所申请的权限，并且添加到系统的清理白名单内，否则本应用可能无法正常运行。\n
+		<b>请不要限制本应用的耗电</b>，系统的一些省电策略可能会影响任务触发的准确性。\n
 		本应用在使用Java Timer 作为定时器接口时，会保持设备唤醒，可能会增加设备耗电量。
 
 
@@ -321,9 +324,12 @@
 
 		本应用使用到了来自 http://www.easyicon.net 的图片资源。\n\n\n
 
-		Build 4 更新日志：修复导入的任务“开启/关闭指定任务”行为对应的任务不一致的问题；\n\n
+		<b>Build 5 更新日志：\n
+			修复定时类任务不准确的问题(秒数误差，之前保存的定时类任务请重新再保存一遍以刷新数据库内的毫秒数据);\n
+			导入列表对话框加入删除按钮；\n
+		</b>\n\n
 
-		关于本应用的BUG以及其他建议反馈，可以将运行情况、截图和其他信息发送到我的邮箱。\n\n
+		关于本应用的BUG以及其他建议反馈，可以将运行情况、截图和其他信息发送到我的邮箱，或者在github发送issue。\n\n
 
 
 		mxremail@qq.com \n\n

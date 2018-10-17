@@ -20,19 +20,17 @@ public class AddTask extends TaskGui{
     @Override
 	public void onCreate(Bundle mybundle){
 		super.onCreate(mybundle);
-		this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		try{this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);}catch (Exception e){e.printStackTrace();}
 	}
 
 	@Override
 	public void initialVariables() {
 		// TODO Auto-generated method stub
-        if(TimeSwitchService.list==null) return;
-        int maxPos=TimeSwitchService.list.size()-1;
-        if(maxPos<0) {
-            taskitem.name=getResources().getString(R.string.activity_add_name_mask);
-        }else{
-            taskitem.name=getResources().getString(R.string.activity_add_name_mask)+(TimeSwitchService.list.get(maxPos).id+1);
+        if(TimeSwitchService.list==null){
+            taskitem.name=getResources().getString(R.string.activity_add_name_mask)+1;
+            return;
         }
+        taskitem.name=getResources().getString(R.string.activity_add_name_mask)+(TimeSwitchService.list.size()+1);
 	}
 
     @Override

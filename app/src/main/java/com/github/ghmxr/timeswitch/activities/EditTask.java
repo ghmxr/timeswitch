@@ -24,8 +24,6 @@ import com.github.ghmxr.timeswitch.utils.MySQLiteOpenHelper;
 public class EditTask extends TaskGui {
 
     private int taskid=0;
-    //private int position=0;
-    SQLiteDatabase database;
     private TaskItem taskitem_read;
 
     public static final String TAG_EDITTASK_KEY  = "taskkey";
@@ -52,8 +50,6 @@ public class EditTask extends TaskGui {
         if(taskitem_read.trigger_type==PublicConsts.TRIGGER_TYPE_SINGLE||taskitem_read.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_WEEK) {
             calendar.setTimeInMillis(taskitem.time);
         }
-
-        database= MySQLiteOpenHelper.getInstance(this).getWritableDatabase();
     }
 
     @Override
@@ -84,8 +80,8 @@ public class EditTask extends TaskGui {
             }
         }
         if(item.getItemId()==R.id.action_edit_delete){
-            int rows=database.delete(SQLConsts.getCurrentTableName(this),SQLConsts.SQL_TASK_COLUMN_ID +"="+this.taskid,null);
-            if(rows==1) {
+            SQLiteDatabase database= MySQLiteOpenHelper.getInstance(this).getWritableDatabase();
+            if(database.delete(SQLConsts.getCurrentTableName(this),SQLConsts.SQL_TASK_COLUMN_ID +"="+this.taskid,null)==1) {
                 setResult(ACTIVITY_EDIT_RESULT_SUCCESS);
                 this.finish();
             }

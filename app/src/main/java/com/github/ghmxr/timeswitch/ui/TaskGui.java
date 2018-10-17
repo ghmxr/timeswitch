@@ -28,13 +28,11 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.activities.Actions;
@@ -73,7 +71,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 
 		calendar=Calendar.getInstance();
 		calendar.setTimeInMillis(System.currentTimeMillis()+10*60*1000);
-
+		calendar.set(Calendar.SECOND,0);
 		timepicker.setIs24HourView(true);
 		findViewById(R.id.layout_taskgui_area_name).setOnClickListener(this);
 
@@ -744,6 +742,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		// TODO Auto-generated method stub
 		calendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
 		calendar.set(Calendar.MINUTE,minute);
+		calendar.set(Calendar.SECOND,0);
 		if(taskitem.trigger_type ==PublicConsts.TRIGGER_TYPE_SINGLE) refreshSingleTimeTextView();
 		
 	}

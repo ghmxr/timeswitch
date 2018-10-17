@@ -75,6 +75,7 @@ public class Profile extends BaseActivity {
     AlertDialog file_dialog;
     Thread thread_getalljsonfiles;
     GetAllJSONFiles getAllJSONFiles;
+    long delete_firstclicked=0;
 
     //public static final int RESULT_NOTHING_CHANGED=0x000000;
     public static final int RESULT_PROFILE_CHANGED=0x000001;
@@ -215,6 +216,43 @@ public class Profile extends BaseActivity {
                                 file_dialog=null;
                                 showWaitDialog();
                                 new Thread(new ReadFilesAndSave2Tables(files)).start();
+                            }
+                        });
+                        file_dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                long clickedTime=System.currentTimeMillis();
+                                boolean[] isSelected=adapter.getIsSelected();
+                                List<File> files=new ArrayList<>();
+                                for(int i=0;i<isSelected.length;i++){
+                                    if(isSelected[i]) files.add(jsonFiles.get(i));
+                                }
+                                if(files.size()<=0){
+                                    Snackbar.make(view,getResources().getString(R.string.dialog_profile_delete_no_selection),Snackbar.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                if((clickedTime-delete_firstclicked)>1000){
+                                    delete_firstclicked=clickedTime;
+                                    Toast.makeText(Profile.this,getResources().getString(R.string.dialog_profile_delete_confirm),Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                for(int i=0;i<isSelected.length;i++){
+                                    if(isSelected[i]){
+                                        try{jsonFiles.get(i).delete();}catch (Exception e){e.printStackTrace();}
+                                    }
+                                }
+                                if(getAllJSONFiles!=null){
+                                    getAllJSONFiles.isInterrupted=true;
+                                    getAllJSONFiles=null;
+                                }
+                                if(thread_getalljsonfiles!=null){
+                                    thread_getalljsonfiles.interrupt();
+                                    thread_getalljsonfiles=null;
+                                }
+                                getAllJSONFiles=new GetAllJSONFiles();
+                                thread_getalljsonfiles=new Thread(getAllJSONFiles);
+                                thread_getalljsonfiles.start();
+
                             }
                         });
                     }else{
@@ -378,7 +416,7 @@ public class Profile extends BaseActivity {
                 file_dialog=new AlertDialog.Builder(this)
                         .setTitle(getResources().getString(R.string.dialog_profile_import_title))
                         .setView(dialog_view)
-                        .setPositiveButton(getResources().getString(R.string.dialog_button_positive),null)
+                        .setPositiveButton(getResources().getString(R.string.word_import),null)
                         .setNegativeButton(getResources().getString(R.string.dialog_button_negative), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -386,6 +424,7 @@ public class Profile extends BaseActivity {
                                 file_dialog=null;
                             }
                         })
+                        .setNeutralButton(getResources().getString(R.string.action_delete), null)
                         .show();
                 if(getAllJSONFiles!=null){
                     getAllJSONFiles.isInterrupted=true;
