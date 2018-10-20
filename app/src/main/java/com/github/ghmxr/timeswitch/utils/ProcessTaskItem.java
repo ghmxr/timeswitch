@@ -989,20 +989,7 @@ public class ProcessTaskItem {
                     Cursor cursor=database.rawQuery("select * from "+ SQLConsts.getCurrentTableName(context)+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
                     if(cursor.getCount()>0){
                         int position=getPosition(id);
-                        if(TimeSwitchService.list!=null&&position>=0&&position<TimeSwitchService.list.size()){
-                            if(TimeSwitchService.list.get(position).trigger_type==PublicConsts.TRIGGER_TYPE_SINGLE&&TimeSwitchService.list.get(position).time<=System.currentTimeMillis()) continue;
-                           if(enableOrDisable==0) {
-                               TimeSwitchService.list.get(position).isenabled=true;
-                               TimeSwitchService.list.get(position).activateTrigger(context);
-                           }
-                           else {
-                               TimeSwitchService.list.get(position).isenabled=false;
-                               TimeSwitchService.list.get(position).cancelTrigger();
-                           }
-                        }
-                        database.execSQL("update "+SQLConsts.getCurrentTableName(context)
-                                +" set "+SQLConsts.SQL_TASK_COLUMN_ENABLED +"="+(enableOrDisable==0?1:0)+
-                                " where "+SQLConsts.SQL_TASK_COLUMN_ID +"="+id);
+                        setTaskEnabled(context,position,enableOrDisable==0);
                     }
                     cursor.close();
                 }
@@ -1012,6 +999,43 @@ public class ProcessTaskItem {
             e.printStackTrace();
             LogUtil.putExceptionLog(context,e);
         }
+    }
+
+    /**
+     * 启用或者关闭指定任务，更新list，刷新数据库
+     * @param position list的位置int值
+     */
+    public static void setTaskEnabled(Context context,int position,boolean enabled){
+        if(TimeSwitchService.list==null) return;
+        if(position<0||position>=TimeSwitchService.list.size()) return;
+        if(TimeSwitchService.list.get(position).trigger_type==PublicConsts.TRIGGER_TYPE_SINGLE&&TimeSwitchService.list.get(position).time<=System.currentTimeMillis()) return;
+        TimeSwitchService.list.get(position).isenabled=enabled;
+
+        SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
+
+        database.execSQL("update "+SQLConsts.getCurrentTableName(context)
+                +" set "+SQLConsts.SQL_TASK_COLUMN_ENABLED +"="+(enabled?1:0)+
+                " where "+SQLConsts.SQL_TASK_COLUMN_ID +"="+TimeSwitchService.list.get(position).id);
+
+        if(TimeSwitchService.list.get(position).trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME&&enabled){
+            TimeSwitchService.list.get(position).time=System.currentTimeMillis();
+            Cursor cursor=database.rawQuery("select * from "+ SQLConsts.getCurrentTableName(context)+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+TimeSwitchService.list.get(position).id,null);
+            if(cursor.moveToFirst()){
+                long[] values_read=ValueUtils.string2longArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_TRIGGER_VALUES)));
+                if(values_read.length==2){
+                    long interval_read=values_read[1];
+                    long values_put[]=new long[2];
+                    values_put[0]=System.currentTimeMillis();
+                    values_put[1]=interval_read;
+                    ContentValues contentValues=new ContentValues();
+                    contentValues.put(SQLConsts.SQL_TASK_COLUMN_TRIGGER_VALUES,ValueUtils.longArray2String(values_put));
+                    database.update(SQLConsts.getCurrentTableName(context),contentValues,SQLConsts.SQL_TASK_COLUMN_ID+"="+TimeSwitchService.list.get(position).id,null);
+                }
+            }
+            cursor.close();
+        }
+
+        if(enabled) TimeSwitchService.list.get(position).activateTrigger(context); else TimeSwitchService.list.get(position).cancelTrigger();
     }
 
 }

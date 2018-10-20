@@ -26,6 +26,7 @@ import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,7 +53,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
     boolean isFabVisible=true;
 	public MainListAdapter adapter;
 	SwipeRefreshLayout swrlayout;
-	public List<TaskItem> list=new ArrayList<TaskItem>();
+	public List<TaskItem> list=new ArrayList<>();
 	//private List<TaskItem> list_private;
 	Thread  thread_delete;
 	boolean isMultiSelectMode=false;
@@ -249,7 +250,6 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
                 adapter.setOnSwitchChangedListener(new MainListAdapter.SwitchChangedListener() {
                     @Override
                     public void onCheckedChanged(final int position,boolean b) {
-                        //final int m_position=position;
                         if(b&&list.get(position).trigger_type == PublicConsts.TRIGGER_TYPE_SINGLE&&(list.get(position).time<System.currentTimeMillis())){
                             Snackbar.make(fab,getResources().getString(R.string.activity_main_toast_task_invalid),Snackbar.LENGTH_SHORT)
                                     .setAction(getResources().getString(R.string.activity_main_toast_task_invalid_action), new View.OnClickListener() {
@@ -262,50 +262,9 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
                             adapter.notifyDataSetChanged();
                             return;
                         }
-
-                        list.get(position).isenabled=b;
-
-                        SQLiteDatabase database=MySQLiteOpenHelper.getInstance(Main.this).getWritableDatabase();
-
-                        database.execSQL("update "+SQLConsts.getCurrentTableName(Main.this)
-                        +" set "+SQLConsts.SQL_TASK_COLUMN_ENABLED +"="+(b?1:0)+
-                        " where "+SQLConsts.SQL_TASK_COLUMN_ID +"="+list.get(position).id);
-
-                        if(list.get(position).trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME&&b){
-                            list.get(position).time=System.currentTimeMillis();
-                            Cursor cursor=database.rawQuery("select * from "+ SQLConsts.getCurrentTableName(Main.this)+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+list.get(position).id,null);
-                            if(cursor.moveToFirst()){
-                                long[] values_read=ValueUtils.string2longArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_TRIGGER_VALUES)));
-                                if(values_read.length==2){
-                                    long interval_read=values_read[1];
-                                    long values_put[]=new long[2];
-                                    values_put[0]=System.currentTimeMillis();
-                                    values_put[1]=interval_read;
-                                    ContentValues contentValues=new ContentValues();
-                                    contentValues.put(SQLConsts.SQL_TASK_COLUMN_TRIGGER_VALUES,ValueUtils.longArray2String(values_put));
-                                    database.update(SQLConsts.getCurrentTableName(Main.this),contentValues,SQLConsts.SQL_TASK_COLUMN_ID+"="+list.get(position).id,null);
-                                }
-                            }
-                            cursor.close();
-                        }
-
-                        if(b)list.get(position).activateTrigger(Main.this); else list.get(position).cancelTrigger();
+                        ProcessTaskItem.setTaskEnabled(Main.this,position,b);
                     }
                 });
-                /*ProcessTaskItem.setOnTaskItemStatusChangedListener(new ProcessTaskItem.OnTaskItemStatusChangedListener() {
-                    @Override
-                    public void onTaskItemsChanged() {
-                        myHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
-
-
-                    }
-                });  */
-
                 listview.setOnItemClickListener(this);
                 listview.setOnItemLongClickListener(this);
                 setListViewScrollListener();
@@ -346,7 +305,9 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
         if(listview==null) return;
         listview.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {}
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                Log.d("listview","scrolled");
+            }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
