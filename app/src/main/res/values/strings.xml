@@ -11,6 +11,7 @@
     <string name="activity_log">日志</string>
 	<string name="activity_profile">切换列表</string>
 	<string name="activity_main_att">当前任务为空</string>
+	<string name="activity_action_switch_task_null">列表中没有任务</string>
     <string name="dialog_button_positive">确定</string>
     <string name="dialog_button_negative">取消</string>
 	<string name="dialog_button_yes">是</string>
@@ -27,6 +28,7 @@
 	<string name="dialog_trigger_type_per_certain_time_out_of_range">数值超过范围</string>
 	<string name="dialog_edit_changed_not_saved_title">未保存修改</string>
 	<string name="dialog_edit_changed_not_saved_message">当前修改没有保存，是否退出？</string>
+	<string name="snackbar_changes_not_saved_back">当前没有保存更改，再按一次确认退出</string>
 	<string name="dialog_task_name_title">任务名称</string>
 	<string name="dialog_task_name_invalid">输入任务名称</string>
 	<string name="dialog_exceptions_day_of_week_title">指定不触发日期</string>

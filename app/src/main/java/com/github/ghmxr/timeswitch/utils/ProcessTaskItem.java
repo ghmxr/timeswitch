@@ -102,13 +102,13 @@ public class ProcessTaskItem {
             int dayofweek=c.get(Calendar.DAY_OF_WEEK);
             switch (dayofweek){
                 default:break;
-                case Calendar.MONDAY:if(!item.week_repeat[PublicConsts.WEEK_MONDAY]) canTrigger=false; break;
-                case Calendar.TUESDAY:if(!item.week_repeat[PublicConsts.WEEK_TUESDAY]) canTrigger=false; break;
-                case Calendar.WEDNESDAY:if(!item.week_repeat[PublicConsts.WEEK_WEDNESDAY]) canTrigger=false; break;
-                case Calendar.THURSDAY:if(!item.week_repeat[PublicConsts.WEEK_THURSDAY]) canTrigger=false; break;
-                case Calendar.FRIDAY:if(!item.week_repeat[PublicConsts.WEEK_FRIDAY]) canTrigger=false; break;
-                case Calendar.SATURDAY:if(!item.week_repeat[PublicConsts.WEEK_SATURDAY]) canTrigger=false; break;
-                case Calendar.SUNDAY:if(!item.week_repeat[PublicConsts.WEEK_SUNDAY]) canTrigger=false; break;
+                case Calendar.MONDAY:if(!item.week_repeat[PublicConsts.WEEK_MONDAY]) return;//canTrigger=false; break;
+                case Calendar.TUESDAY:if(!item.week_repeat[PublicConsts.WEEK_TUESDAY]) return;//canTrigger=false; break;
+                case Calendar.WEDNESDAY:if(!item.week_repeat[PublicConsts.WEEK_WEDNESDAY]) return;//canTrigger=false; break;
+                case Calendar.THURSDAY:if(!item.week_repeat[PublicConsts.WEEK_THURSDAY]) return;//canTrigger=false; break;
+                case Calendar.FRIDAY:if(!item.week_repeat[PublicConsts.WEEK_FRIDAY]) return;//canTrigger=false; break;
+                case Calendar.SATURDAY:if(!item.week_repeat[PublicConsts.WEEK_SATURDAY]) return;//canTrigger=false; break;
+                case Calendar.SUNDAY:if(!item.week_repeat[PublicConsts.WEEK_SUNDAY]) return;//canTrigger=false; break;
             }
         }
 

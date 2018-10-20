@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -23,15 +24,17 @@ import com.github.ghmxr.timeswitch.utils.MySQLiteOpenHelper;
  */
 public class EditTask extends TaskGui {
 
-    private int taskid=0;
+    //private int taskid=0;
     private TaskItem taskitem_read;
 
-    public static final String TAG_EDITTASK_KEY  = "taskkey";
+    //public static final String TAG_EDITTASK_KEY  = "taskkey";
     public static final String TAG_SELECTED_ITEM_POSITION ="position";
 
     public static final int ACTIVITY_EDIT_RESULT_CANCEL         =   0x00000;
     public static final int ACTIVITY_EDIT_RESULT_SUCCESS        =   0x00001;
 
+    private long first_click_time_back =0;
+    private long first_click_time_delete=0;
     @Override
     public void onCreate(Bundle mybundle) {
         super.onCreate(mybundle);
@@ -40,7 +43,7 @@ public class EditTask extends TaskGui {
 
     @Override
     public void initialVariables() {
-        this.taskid=getIntent().getIntExtra(TAG_EDITTASK_KEY,0);
+        //this.taskid=getIntent().getIntExtra(TAG_EDITTASK_KEY,0);
         int position=getIntent().getIntExtra(TAG_SELECTED_ITEM_POSITION,-1);
         //int position=ProcessTaskItem.getPosition(taskid);
         taskitem_read=TimeSwitchService.list.get(position);
@@ -56,6 +59,7 @@ public class EditTask extends TaskGui {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode==KeyEvent.KEYCODE_BACK){
             checkIfChangedAndExit();
+            return true;
         }
         return super.onKeyDown(keyCode,event);
     }
@@ -80,8 +84,14 @@ public class EditTask extends TaskGui {
             }
         }
         if(item.getItemId()==R.id.action_edit_delete){
+            long clickedTime=System.currentTimeMillis();
+            if(clickedTime-first_click_time_delete>1000){
+                first_click_time_delete=clickedTime;
+                Snackbar.make(findViewById(R.id.layout_taskgui_root),getResources().getString(R.string.dialog_profile_delete_confirm),Snackbar.LENGTH_SHORT).show();
+                return false;
+            }
             SQLiteDatabase database= MySQLiteOpenHelper.getInstance(this).getWritableDatabase();
-            if(database.delete(SQLConsts.getCurrentTableName(this),SQLConsts.SQL_TASK_COLUMN_ID +"="+this.taskid,null)==1) {
+            if(database.delete(SQLConsts.getCurrentTableName(this),SQLConsts.SQL_TASK_COLUMN_ID +"="+taskitem.id,null)==1) {
                 setResult(ACTIVITY_EDIT_RESULT_SUCCESS);
                 this.finish();
             }
@@ -99,14 +109,21 @@ public class EditTask extends TaskGui {
         if(isChanged){
             Log.i("taskitem_old",taskitem_read.toString());
             Log.i("taskitem_new",taskitem.toString());
-            showChangesNotSaveDialog();
-            return;
+            //showChangesNotSaveDialog();
+            long currentTime=System.currentTimeMillis();
+            if(currentTime- first_click_time_back >1000){
+                first_click_time_back =currentTime;
+                Snackbar.make(findViewById(R.id.layout_taskgui_root),getResources().getString(R.string.snackbar_changes_not_saved_back),Snackbar.LENGTH_SHORT).show();
+                return;
+            }
+            setResult(ACTIVITY_EDIT_RESULT_CANCEL);
+            finish();
         }
         setResult(ACTIVITY_EDIT_RESULT_CANCEL);
         finish();
     }
 
-    private void showChangesNotSaveDialog(){
+    /*private void showChangesNotSaveDialog(){
         new AlertDialog.Builder(this)
                 .setTitle(getResources().getString(R.string.dialog_edit_changed_not_saved_title))
                 .setIcon(R.drawable.icon_warn)
@@ -125,5 +142,5 @@ public class EditTask extends TaskGui {
                     }
                 })
                 .show();
-    }
+    }  */
 }

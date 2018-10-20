@@ -72,6 +72,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
             notification_title="",notification_message="",toast="",
             sms_address="",sms_message="";
     String checkString ="";
+    private long first_clicked_back_time=0;
     private int taskid=-1;
     private static final int TASK_ENABLE=0;
     private static final int TASK_DISABLE=1;
@@ -580,10 +581,18 @@ public class Actions extends BaseActivity implements View.OnClickListener{
             }
             break;
             case R.id.actions_enable:{
+                if(TimeSwitchService.list==null||TimeSwitchService.list.size()<=0){
+                    Snackbar.make(findViewById(R.id.layout_actions_root),getResources().getString(R.string.activity_action_switch_task_null),Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
                showTaskSelectionDialog(TASK_ENABLE);
             }
             break;
             case R.id.actions_disable:{
+                if(TimeSwitchService.list==null||TimeSwitchService.list.size()<=0){
+                    Snackbar.make(findViewById(R.id.layout_actions_root),getResources().getString(R.string.activity_action_switch_task_null),Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
                 showTaskSelectionDialog(TASK_DISABLE);
             }
             break;
@@ -673,7 +682,13 @@ public class Actions extends BaseActivity implements View.OnClickListener{
             setResult(RESULT_CANCELED);
             finish();
         }else {
-            new AlertDialog.Builder(this)
+            long clickedTime=System.currentTimeMillis();
+            if(clickedTime-first_clicked_back_time>1000){
+                first_clicked_back_time=clickedTime;
+                Snackbar.make(findViewById(R.id.layout_actions_root),getResources().getString(R.string.snackbar_changes_not_saved_back),Toast.LENGTH_SHORT).show();
+                return;
+            }
+          /*  new AlertDialog.Builder(this)
                     .setTitle(getResources().getString(R.string.dialog_edit_changed_not_saved_title))
                     .setMessage(getResources().getString(R.string.dialog_edit_changed_not_saved_message))
                     .setPositiveButton(getResources().getString(R.string.dialog_button_positive), new DialogInterface.OnClickListener() {
@@ -689,7 +704,9 @@ public class Actions extends BaseActivity implements View.OnClickListener{
 
                         }
                     })
-                    .show();
+                    .show();  */
+            setResult(RESULT_CANCELED);
+            finish();
         }
     }
 

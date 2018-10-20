@@ -48,6 +48,7 @@ public class SmsActivity extends BaseActivity {
     CheckBox cb_receipt_toast;
     //public static final String SPLIT_RECEIVERS=",";
     private String checkString="";
+    private long first_click_back_time=0;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -237,8 +238,8 @@ public class SmsActivity extends BaseActivity {
 
     private void checkAndExit(){
         if(!toCheckString().equals(checkString)){
-            Log.e("SmsCheck",toCheckString()+"\n"+checkString);
-           new AlertDialog.Builder(this)
+            Log.d("SmsCheck",toCheckString()+"\n"+checkString);
+           /*new AlertDialog.Builder(this)
            .setTitle(getResources().getString(R.string.dialog_edit_changed_not_saved_title))
            .setMessage(getResources().getString(R.string.dialog_edit_changed_not_saved_message))
            .setPositiveButton(getResources().getString(R.string.dialog_button_positive), new DialogInterface.OnClickListener() {
@@ -254,7 +255,15 @@ public class SmsActivity extends BaseActivity {
 
                }
            })
-           .show();
+           .show(); */
+           long clickedTime=System.currentTimeMillis();
+           if(clickedTime-first_click_back_time>1000){
+               first_click_back_time=clickedTime;
+               Snackbar.make(findViewById(R.id.layout_sms_root),getResources().getString(R.string.snackbar_changes_not_saved_back),Snackbar.LENGTH_SHORT).show();
+               return;
+           }
+           setResult(RESULT_CANCELED);
+           finish();
         }
         else {
             setResult(RESULT_CANCELED);

@@ -7,6 +7,7 @@ import com.github.ghmxr.timeswitch.data.SQLConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.utils.MySQLiteOpenHelper;
+import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import android.app.Activity;
@@ -74,7 +75,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
 
 	private BroadcastReceiver batteryReceiver;
 	private boolean isBatteryReceiverRegistered=false;
-
+    private long first_click_delete=0;
    // public static LinkedList<Main> queue=new LinkedList<>();
   /*  public static Handler handler=new Handler(){
         @Override
@@ -198,12 +199,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         if(!isMultiSelectMode) {
-            int taskkey = list.get(i).id;
-            Intent intent = new Intent();
-            intent.putExtra(EditTask.TAG_EDITTASK_KEY, taskkey);
-            intent.putExtra(EditTask.TAG_SELECTED_ITEM_POSITION,i);
-            intent.setClass(this, EditTask.class);
-            startActivityForResult(intent,REQUEST_CODE_ACTIVITY_EDIT);
+            editTask(i);
         }else{
             adapter.onMultiSelectModeItemClicked(i);
             boolean ifHasSelectedItem=false;
@@ -213,6 +209,15 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
             }
             this.menu.getItem(0).setEnabled(ifHasSelectedItem);
         }
+    }
+
+    private void editTask(int position){
+        //int taskkey = list.get(i).id;
+        Intent intent = new Intent();
+        //intent.putExtra(EditTask.TAG_EDITTASK_KEY, taskkey);
+        intent.putExtra(EditTask.TAG_SELECTED_ITEM_POSITION,position);
+        intent.setClass(this, EditTask.class);
+        startActivityForResult(intent,REQUEST_CODE_ACTIVITY_EDIT);
     }
 
     @Override
@@ -243,19 +248,17 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
                 this.swrlayout.setRefreshing(false);
                 adapter.setOnSwitchChangedListener(new MainListAdapter.SwitchChangedListener() {
                     @Override
-                    public void onCheckedChanged(int position,boolean b) {
-                        final int m_position=position;
+                    public void onCheckedChanged(final int position,boolean b) {
+                        //final int m_position=position;
                         if(b&&list.get(position).trigger_type == PublicConsts.TRIGGER_TYPE_SINGLE&&(list.get(position).time<System.currentTimeMillis())){
                             Snackbar.make(fab,getResources().getString(R.string.activity_main_toast_task_invalid),Snackbar.LENGTH_SHORT)
                                     .setAction(getResources().getString(R.string.activity_main_toast_task_invalid_action), new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                            Intent i=new Intent(Main.this,EditTask.class);
-                                            i.putExtra(EditTask.TAG_SELECTED_ITEM_POSITION,m_position);
-                                            startActivity(i);
+                                            editTask(position);
                                         }
                                     }).show();
-                            list.get(m_position).isenabled=false;
+                            list.get(position).isenabled=false;
                             adapter.notifyDataSetChanged();
                             return;
                         }
@@ -551,6 +554,12 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
             this.menu.getItem(0).setEnabled(false);
         }
         if(item.getItemId()==R.id.action_delete_selected){
+            long clickedTime=System.currentTimeMillis();
+            if(clickedTime-first_click_delete>1000){
+                first_click_delete=clickedTime;
+                Snackbar.make(fab,getResources().getString(R.string.dialog_profile_delete_confirm),Snackbar.LENGTH_SHORT).show();
+                return false;
+            }
             closeMultiSelectMode();
             swrlayout.setRefreshing(true);
             this.thread_delete=new Thread(new Runnable() {

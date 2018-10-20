@@ -117,6 +117,8 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		findViewById(R.id.layout_taskgui_area_exception_airplane_mode_disabled).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_exception_gps_enabled_cancel).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_exception_gps_disabled_cancel).setOnClickListener(this);
+		findViewById(R.id.layout_taskgui_area_exception_airplane_mode_enabled_cancel).setOnClickListener(this);
+		findViewById(R.id.layout_taskgui_area_exception_airplane_mode_disabled_cancel).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_area_exception_battery_percentage_cancel).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_area_exception_battery_temperature_cancel).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_area_exception_day_of_week_cancel).setOnClickListener(this);
