@@ -37,7 +37,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_gravity="center_horizontal"
-                android:theme="@android:style/Theme.Holo.Light" />
+                android:theme="@android:style/Theme.Holo.Light"
+                android:visibility="gone"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -87,16 +88,79 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
                 android:text="@string/activity_taskgui_att_condition"
                 android:textColor="@color/color_activity_taskgui_att"
                 android:textSize="15sp" />
+
+            <RelativeLayout
+                android:id="@+id/layout_taskgui_trigger"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true">
+
+                <ImageView
+                    android:id="@+id/layout_taskgui_trigger_icon"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/icon_repeat_single" />
+
+                <LinearLayout
+                    android:id="@+id/layout_taskgui_trigger_textviewarea"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@+id/layout_taskgui_trigger_icon"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/layout_taskgui_trigger_att"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/activity_taskgui_condition_single_att"
+                        android:textColor="@color/color_text_normal"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/layout_taskgui_trigger_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="88:88"
+                        android:textColor="@color/color_activity_taskgui_value"
+                        android:textSize="12sp" />
+
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/layout_taskgui_trigger_arrow"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dp"
+                    android:src="@drawable/drawable_arrow_right" />
+
+
+            </RelativeLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#dddddd" />
 
             <RelativeLayout
                 android:id="@+id/layout_taskgui_area_condition_single"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:background="?android:attr/selectableItemBackground"
-                android:clickable="true">
+                android:clickable="true"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/layout_taskgui_condition_single_icon"
@@ -147,17 +211,15 @@
 
             </RelativeLayout>
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="#dddddd" />
+
 
             <RelativeLayout
                 android:id="@+id/layout_taskgui_area_condition_percertaintime"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:background="?android:attr/selectableItemBackground"
-                android:clickable="true">
+                android:clickable="true"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/layout_taskgui_condition_percertaintime_icon"
@@ -207,17 +269,15 @@
 
             </RelativeLayout>
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="#dddddd" />
+
 
             <RelativeLayout
                 android:id="@+id/layout_taskgui_area_condition_weekloop"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:background="?android:attr/selectableItemBackground"
-                android:clickable="true">
+                android:clickable="true"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/layout_taskgui_condition_weekloop_icon"
@@ -266,17 +326,15 @@
 
             </RelativeLayout>
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="#dddddd" />
+
 
             <RelativeLayout
                 android:id="@+id/layout_taskgui_area_condition_battery_percentage"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:background="?android:attr/selectableItemBackground"
-                android:clickable="true">
+                android:clickable="true"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/layout_taskgui_condition_battery_percentage_icon"
@@ -325,17 +383,15 @@
 
             </RelativeLayout>
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="#dddddd" />
+
 
             <RelativeLayout
                 android:id="@+id/layout_taskgui_area_condition_battery_temperature"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:background="?android:attr/selectableItemBackground"
-                android:clickable="true">
+                android:clickable="true"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/layout_taskgui_condition_battery_temperature_icon"
@@ -384,17 +440,15 @@
 
             </RelativeLayout>
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="#dddddd" />
+
 
             <RelativeLayout
                 android:id="@+id/layout_taskgui_area_condition_received_broadcast"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:background="?android:attr/selectableItemBackground"
-                android:clickable="true">
+                android:clickable="true"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/layout_taskgui_area_condition_received_broadcast_icon"

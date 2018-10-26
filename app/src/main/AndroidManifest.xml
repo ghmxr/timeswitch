@@ -42,7 +42,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activities.Triggers"
+            android:label="@string/activity_triggers"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
 
+        </activity>
         <activity
             android:name=".activities.Exceptions"
             android:label="@string/activity_taskgui_exceptions_title"

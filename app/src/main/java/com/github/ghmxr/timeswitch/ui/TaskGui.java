@@ -28,6 +28,7 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
@@ -38,6 +39,7 @@ import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.activities.Actions;
 import com.github.ghmxr.timeswitch.activities.BaseActivity;
 import com.github.ghmxr.timeswitch.activities.Exceptions;
+import com.github.ghmxr.timeswitch.activities.Triggers;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.SQLConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
@@ -49,32 +51,37 @@ import com.github.ghmxr.timeswitch.utils.ValueUtils;
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
  */
-public abstract class TaskGui extends BaseActivity implements View.OnClickListener,TimePicker.OnTimeChangedListener,DatePickerDialog.OnDateSetListener{
+public abstract class TaskGui extends BaseActivity implements View.OnClickListener{
 
-	public CustomTimePicker timepicker;
-	public Calendar calendar;
+	//public CustomTimePicker timepicker;
+	public Calendar calendar=Calendar.getInstance();
 	public TaskItem taskitem=new TaskItem();
-	private static final int REQUEST_CODE_EXCEPTIONS=0;
-	private static final int REQUEST_CODE_ACTIONS=1;
+	private static final int REQUEST_CODE_TRIGGERS=0;
+	private static final int REQUEST_CODE_EXCEPTIONS=1;
+	private static final int REQUEST_CODE_ACTIONS=2;
 
 	public void onCreate(Bundle mybundle){
 		super.onCreate(mybundle);
 		setContentView(R.layout.layout_taskgui);
 		Toolbar toolbar =findViewById(R.id.taskgui_toolbar);
 		setSupportActionBar(toolbar);
-		timepicker=findViewById(R.id.layout_taskgui_timepicker);
+		//timepicker=findViewById(R.id.layout_taskgui_timepicker);
 
 		/*Calendar current=Calendar.getInstance();
 		current.setTimeInMillis(System.currentTimeMillis());
 		calendar.set(current.get(Calendar.YEAR),current.get(Calendar.MONTH),current.get(Calendar.DAY_OF_MONTH),current.get(Calendar.HOUR_OF_DAY),current.get(Calendar.MINUTE));
 		calendar.setTimeInMillis(calendar.getTimeInMillis()+10*60*1000);*/
 
-		calendar=Calendar.getInstance();
+		Calendar calendar=Calendar.getInstance();
 		calendar.setTimeInMillis(System.currentTimeMillis()+10*60*1000);
 		calendar.set(Calendar.SECOND,0);
-		timepicker.setIs24HourView(true);
+		//timepicker.setIs24HourView(true);
+
+		taskitem.time=calendar.getTimeInMillis();
+
 		findViewById(R.id.layout_taskgui_area_name).setOnClickListener(this);
 
+		findViewById(R.id.layout_taskgui_trigger).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_area_condition_single).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_area_condition_percertaintime).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_area_condition_weekloop).setOnClickListener(this);
@@ -153,22 +160,23 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 
 		//do set the views of the variables.
 
-		if(Build.VERSION.SDK_INT<23){
+		/*if(Build.VERSION.SDK_INT<23){
 			timepicker.setCurrentHour(calendar.get(Calendar.HOUR_OF_DAY));
 			timepicker.setCurrentMinute(calendar.get(Calendar.MINUTE));
 
 		}else{
 			timepicker.setHour(calendar.get(Calendar.HOUR_OF_DAY));
 			timepicker.setMinute(calendar.get(Calendar.MINUTE));
-		}
-		timepicker.setOnTimeChangedListener(this);
+		} */
+		//timepicker.setOnTimeChangedListener(this);
 
 		String taskname=taskitem.name;
 		if(taskname.length()>24) taskname=taskname.substring(0,24)+"...";
 		((TextView)findViewById(R.id.layout_taskgui_area_name_text)).setText(taskname);
 		((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autoclose_cb)).setChecked(taskitem.autoclose);
 		((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autodelete_cb)).setChecked(taskitem.autodelete);
-		activateTriggerType(taskitem.trigger_type);
+		//activateTriggerType(taskitem.trigger_type);
+		refreshTriggerDisplayValue();
 		refreshExceptionViews();
 		refreshActionStatus();
 	}
@@ -245,7 +253,50 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 
     }
 
-	public void activateTriggerType(int type){
+    private void refreshTriggerDisplayValue(){
+		ImageView icon=findViewById(R.id.layout_taskgui_trigger_icon);
+		TextView value=findViewById(R.id.layout_taskgui_trigger_value);
+		switch(taskitem.trigger_type){
+			default:break;
+			case PublicConsts.TRIGGER_TYPE_SINGLE:{
+				icon.setImageResource(R.drawable.icon_repeat_single);
+				value.setText(Triggers.getSingleTimeDisplayValue(this,taskitem.time));
+			}
+			break;
+			case PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME:{
+				icon.setImageResource(R.drawable.icon_repeat_percertaintime);
+				value.setText(Triggers.getCertainLoopTimeDisplayValue(this,taskitem.interval_milliseconds));
+			}
+			break;
+			case PublicConsts.TRIGGER_TYPE_LOOP_WEEK:{
+				icon.setImageResource(R.drawable.icon_repeat_weekloop);
+				value.setText(Triggers.getWeekLoopDisplayValue(this,taskitem.week_repeat));
+			}
+			break;
+			case PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE:{
+				icon.setImageResource(R.drawable.icon_temperature);
+				value.setText(Triggers.getBatteryTemperatureDisplayValue(this,taskitem.trigger_type,taskitem.battery_temperature));
+			}
+			break;
+			case PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE:{
+				icon.setImageResource(R.drawable.icon_temperature);
+				value.setText(Triggers.getBatteryTemperatureDisplayValue(this,taskitem.trigger_type,taskitem.battery_temperature));
+			}
+			break;
+			case PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE:{
+				icon.setImageResource(R.drawable.icon_battery_high);
+				value.setText(Triggers.getBatteryPercentageDisplayValue(this,taskitem.trigger_type,taskitem.battery_percentage));
+			}
+			break;
+			case PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE:{
+				icon.setImageResource(R.drawable.icon_battery_low);
+				value.setText(Triggers.getBatteryPercentageDisplayValue(this,taskitem.trigger_type,taskitem.battery_percentage));
+			}
+			break;
+		}
+	}
+
+	/*public void activateTriggerType(int type){
 		taskitem.trigger_type =type;
         refreshTriggerView(type);
 		switch(type){
@@ -253,7 +304,8 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			case PublicConsts.TRIGGER_TYPE_SINGLE:{
                 clearExceptionsOfTimeType();
 				this.timepicker.setVisibility(View.VISIBLE);
-				refreshSingleTimeTextView();
+				//refreshSingleTimeTextView();
+
 			}
 			break;
 
@@ -309,7 +361,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			setAutoCloseAreaEnabled(!((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autodelete_cb)).isChecked());
 		}
 
-	}
+	}  */
 
 	@Override
 	public void onClick(View v) {
@@ -344,12 +396,57 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				});
 			}
 			break;
-			case R.id.layout_taskgui_area_condition_single:{
+			case R.id.layout_taskgui_trigger:{
+				Intent i=new Intent();
+				i.setClass(this,Triggers.class);
+				i.putExtra(Triggers.EXTRA_TRIGGER_TYPE,taskitem.trigger_type);
+				String trigger_values[]=null;
+				switch (taskitem.trigger_type){
+					default:break;
+					case PublicConsts.TRIGGER_TYPE_SINGLE:{
+						trigger_values=new String[1];
+						trigger_values[0]=String.valueOf(taskitem.time);
+					}
+					break;
+					case PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME:{
+						trigger_values=new String[1];
+						trigger_values[0]=String.valueOf(taskitem.interval_milliseconds);
+					}
+					break;
+					case PublicConsts.TRIGGER_TYPE_LOOP_WEEK:{
+						trigger_values=new String[8];
+						trigger_values[0]=String.valueOf(taskitem.time);
+						for(int j=1;j<trigger_values.length;j++){
+							trigger_values[j]=taskitem.week_repeat[j-1]?String.valueOf(1):String.valueOf(0);
+						}
+					}
+					break;
+					case PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE: case PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE: {
+						trigger_values=new String[1];
+						trigger_values[0]=String.valueOf(taskitem.battery_temperature);
+					}
+					break;
+					case PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE: case PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE:{
+						trigger_values=new String[1];
+						trigger_values[0]=String.valueOf(taskitem.battery_percentage);
+					}
+					case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST:{
+						trigger_values=new String[1];
+						trigger_values[0]=String.valueOf(taskitem.selectedAction);
+					}
+					break;
+				}
+				if(trigger_values==null) break;
+				i.putExtra(Triggers.EXTRA_TRIGGER_VALUES,trigger_values);
+				startActivityForResult(i,REQUEST_CODE_TRIGGERS);
+			}
+			break;
+			/*case R.id.layout_taskgui_area_condition_single:{
 				activateTriggerType(PublicConsts.TRIGGER_TYPE_SINGLE);
 				new DatePickerDialog(this,this,calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH)).show();
 			}
-			break;
-			case R.id.layout_taskgui_area_condition_percertaintime:{
+			break;  */
+			/*case R.id.layout_taskgui_area_condition_percertaintime:{
 				activateTriggerType(PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME);
 				BottomDialogForInterval dialog=new BottomDialogForInterval(this);
 				dialog.setVariables((int)(taskitem.interval_milliseconds/(1000*60*60*24)),
@@ -366,8 +463,8 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 					}
 				});
 			}
-			break;
-			case R.id.layout_taskgui_area_condition_weekloop:{
+			break; */
+			/*case R.id.layout_taskgui_area_condition_weekloop:{
 				activateTriggerType(PublicConsts.TRIGGER_TYPE_LOOP_WEEK);
 				LayoutInflater inflater=LayoutInflater.from(this);
 				View dialogview=inflater.inflate(R.layout.layout_dialog_weekloop, null);	
@@ -442,8 +539,8 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 					}
 				});
 			}
-			break;
-			case R.id.layout_taskgui_area_condition_battery_percentage:{
+			break; */
+			/*case R.id.layout_taskgui_area_condition_battery_percentage:{
 				if(taskitem.trigger_type!=PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE&&taskitem.trigger_type!=PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE){
 					activateTriggerType(PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE);
 				}else{
@@ -477,8 +574,8 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				});
 				dialog.show();
 			}
-			break;
-			case R.id.layout_taskgui_area_condition_battery_temperature:{
+			break; */
+			/*case R.id.layout_taskgui_area_condition_battery_temperature:{
 				if(taskitem.trigger_type!=PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE &&taskitem.trigger_type!=PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE){
 					activateTriggerType(PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE);
 				}else{
@@ -511,8 +608,8 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				});
 				dialog.show();
 			}
-			break;
-			case R.id.layout_taskgui_area_condition_received_broadcast:{
+			break; */
+			/*case R.id.layout_taskgui_area_condition_received_broadcast:{
 				activateTriggerType(PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST);
 				View dialogView=LayoutInflater.from(this).inflate(R.layout.layout_dialog_with_listview,null);
 				final BroadcastSelectionAdapter adapter=new BroadcastSelectionAdapter(taskitem.selectedAction);
@@ -546,20 +643,8 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 					}
 				});
 
-				//final RadioGroup group=(dialog.findViewById(R.id.layout_dialog_broadcast_radio_group));
-
-				/*group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-					@Override
-					public void onCheckedChanged(RadioGroup radioGroup, int checkedID) {
-						dialog.cancel();
-						taskitem.selectedAction=((RadioButton)dialog.findViewById(checkedID)).getText().toString();
-						activateTriggerType(PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST);
-						refreshBroadcastTextView();
-						//Toast.makeText(TaskGui.this,((RadioButton)dialog.findViewById(checkedID)).getText(),Toast.LENGTH_SHORT).show();
-					}
-				});  */
 			}
-			break;
+			break; */
 			case R.id.layout_taskgui_area_exception_bluetooth_disabled: case R.id.layout_taskgui_area_exception_bluetooth_enabled:
 			case R.id.layout_taskgui_area_exception_lockscreen: case R.id.layout_taskgui_area_exception_unlockscreen:
 			case R.id.layout_taskgui_area_exception_wifi_disabled: case R.id.layout_taskgui_area_exception_wifi_enabled:
@@ -739,7 +824,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		}
 	}
 
-	@Override
+	/*@Override
 	public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
 		// TODO Auto-generated method stub
 		calendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
@@ -747,14 +832,14 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		calendar.set(Calendar.SECOND,0);
 		if(taskitem.trigger_type ==PublicConsts.TRIGGER_TYPE_SINGLE) refreshSingleTimeTextView();
 		
-	}
+	}  */
 	
-	@Override
+	/*@Override
 	public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 		// TODO Auto-generated method stub
 		this.calendar.set(year, month, dayOfMonth);
 		TaskGui.this.activateTriggerType(PublicConsts.TRIGGER_TYPE_SINGLE);
-	}
+	}  */
 	
 	
 	public void refreshExceptionViews(){
@@ -790,7 +875,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			((TextView)findViewById(R.id.layout_taskgui_area_exception_day_of_week_value)).setText(value.toString().equals("")?getResources().getString(R.string.not_activated):value.toString());
 			findViewById(R.id.layout_taskgui_area_exception_day_of_week).setVisibility(value.toString().equals("")?View.GONE:View.VISIBLE);
 
-			findViewById(R.id.layout_taskgui_area_exception_period).setVisibility((Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_START_TIME])!=-1&&Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_END_TIME])!=-1)?View.VISIBLE:View.GONE);
+			findViewById(R.id.layout_taskgui_area_exception_period).setVisibility((Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_START_TIME])>=0&&Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_END_TIME])>=0)?View.VISIBLE:View.GONE);
 			((TextView)findViewById(R.id.layout_taskgui_area_exception_period_value)).setText((Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_START_TIME])!=-1&&Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_END_TIME])!=-1)?
 					ValueUtils.format(Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_START_TIME])/60)+":"+ ValueUtils.format(Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_START_TIME])%60)+"~"+ ValueUtils.format(Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_END_TIME])/60)+":"+ ValueUtils.format(Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_END_TIME])%60)
 					:getResources().getString(R.string.not_activated));
@@ -997,6 +1082,73 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		super.onActivityResult(requestCode, resultCode, data);
 		switch(requestCode){
 			default:break;
+			case REQUEST_CODE_TRIGGERS:{
+				if(resultCode==RESULT_OK){
+					if(data==null) return;
+					taskitem.trigger_type=data.getIntExtra(Triggers.EXTRA_TRIGGER_TYPE,0);
+					switch (taskitem.trigger_type){
+						default:break;
+						case PublicConsts.TRIGGER_TYPE_SINGLE:{
+							try{
+								taskitem.time=Long.parseLong(data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[0]);
+							}catch (Exception e){
+								e.printStackTrace();
+								LogUtil.putExceptionLog(this,e);
+							}
+						}
+						break;
+						case PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME:{
+							try {
+								taskitem.interval_milliseconds=Long.parseLong(data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[0]);
+							}catch (Exception e){
+								e.printStackTrace();
+								LogUtil.putExceptionLog(this,e);
+							}
+						}
+						break;
+						case PublicConsts.TRIGGER_TYPE_LOOP_WEEK:{
+							try{
+								taskitem.time=Long.parseLong(data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[0]);
+								for(int i=1;i<data.getStringExtra(Triggers.EXTRA_TRIGGER_VALUES).length();i++){
+									taskitem.week_repeat[i-1]=Integer.parseInt(data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[i])==1;
+								}
+							}catch (Exception e){
+								e.printStackTrace();
+							}
+						}
+						break;
+						case PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE: case PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE:{
+							try{
+								taskitem.battery_percentage=Integer.parseInt(data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[0]);
+							}catch (Exception e){
+								e.printStackTrace();
+								LogUtil.putExceptionLog(this,e);
+							}
+						}
+						break;
+						case PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE: case PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE:{
+							try{
+								taskitem.battery_temperature=Integer.parseInt(data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[0]);
+							}catch (Exception e){
+								e.printStackTrace();
+								LogUtil.putExceptionLog(this,e);
+							}
+						}
+						break;
+						case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST:{
+							try{
+								taskitem.selectedAction=String.valueOf(data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[0]);
+							}catch (Exception e){
+								e.printStackTrace();
+								LogUtil.putExceptionLog(this,e);
+							}
+						}
+						break;
+					}
+					refreshTriggerDisplayValue();
+				}
+			}
+			break;
 			case REQUEST_CODE_EXCEPTIONS:{
 				if(resultCode==Exceptions.EXCEPTIONS_RESULT_SUCCESS) {
 					String[] result =null;

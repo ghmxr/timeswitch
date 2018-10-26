@@ -132,6 +132,8 @@ public class TaskItem implements Comparable<TaskItem>{
         exceptions[PublicConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]=String.valueOf(-1);
         exceptions[PublicConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]=String.valueOf(-1);
         exceptions[PublicConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]=String.valueOf(-1);
+        exceptions[PublicConsts.EXCEPTION_START_TIME]=String.valueOf(-1);
+        exceptions[PublicConsts.EXCEPTION_END_TIME]=String.valueOf(-1);
 
         for(int i=0;i<actions.length;i++){
             actions[i]=String.valueOf(-1);

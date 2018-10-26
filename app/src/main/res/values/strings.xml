@@ -4,6 +4,7 @@
 	<string name="activity_add_title">添加</string>
 	<string name="activity_add_name_mask">新建任务</string>
 	<string name="activity_edit_title">编辑</string>
+	<string name="activity_triggers">触发条件</string>
 	<string name="activity_taskgui_exceptions_title">触发例外</string>
 	<string name="activity_taskgui_actions_title">触发操作</string>
 	<string name="activity_taskgui_sms_title">发送短信</string>
@@ -103,6 +104,9 @@
 	<string name="activity_taskgui_condition_weekloop_att">按周重复</string>
 	<string name="activity_taskgui_condition_battery_percentage_att">电池电量</string>
 	<string name="activity_taskgui_condition_battery_temperature_att">电池温度</string>
+	<string name="activity_trigger_wifi_connected_att">WiFi连接上时</string>
+	<string name="activity_trigger_wifi_disconnected_att">WiFi断开连接时</string>
+	<string name="activity_trigger_widget_changed_att">系统开关变化</string>
 	<string name="activity_taskgui_condition_received_broadcast_att">收到系统广播（高级）</string>
 	<string name="activity_taskgui_root_required">选择此操作需要Root权限。</string>
 	<string name="activity_taskgui_root_required_action">前往设置</string>

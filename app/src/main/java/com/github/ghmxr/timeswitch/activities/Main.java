@@ -250,6 +250,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
                 adapter.setOnSwitchChangedListener(new MainListAdapter.SwitchChangedListener() {
                     @Override
                     public void onCheckedChanged(final int position,boolean b) {
+                        if(list==null||position>=list.size()||position<0) return;
                         if(b&&list.get(position).trigger_type == PublicConsts.TRIGGER_TYPE_SINGLE&&(list.get(position).time<System.currentTimeMillis())){
                             Snackbar.make(fab,getResources().getString(R.string.activity_main_toast_task_invalid),Snackbar.LENGTH_SHORT)
                                     .setAction(getResources().getString(R.string.activity_main_toast_task_invalid_action), new View.OnClickListener() {
@@ -262,7 +263,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
                             adapter.notifyDataSetChanged();
                             return;
                         }
-                        ProcessTaskItem.setTaskEnabled(Main.this,position,b);
+                        ProcessTaskItem.setTaskEnabled(Main.this,list.get(position).id,b);
                     }
                 });
                 listview.setOnItemClickListener(this);
