@@ -48,7 +48,7 @@ public class ActionOfChangingRingtones extends BaseActivity implements View.OnCl
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         try{
-            String ring_values[]=getIntent().getStringExtra(EXTRA_RING_VALUES).split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+            String ring_values[]=getIntent().getStringExtra(EXTRA_RING_VALUES).split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             selection_notification=Integer.parseInt(ring_values[PublicConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE]);
             selection_phone=Integer.parseInt(ring_values[PublicConsts.RING_SELECTION_CALL_TYPE_LOCALE]);
             //value_notification_uri =ring_values[PublicConsts.RING_SELECTION_NOTIFICATION_VALUE_LOCALE];
@@ -90,7 +90,7 @@ public class ActionOfChangingRingtones extends BaseActivity implements View.OnCl
             case R.id.action_ring_selection_confirm:{
                 Intent i=new Intent();
                 String returnValue=String.valueOf(selection_notification)
-                        +PublicConsts.SEPERATOR_SECOND_LEVEL
+                        +PublicConsts.SEPARATOR_SECOND_LEVEL
                         +String.valueOf(selection_phone);
                 i.putExtra(EXTRA_RING_VALUES,returnValue);
                 i.putExtra(EXTRA_RING_URI_NOTIFICATION,value_notification_uri);

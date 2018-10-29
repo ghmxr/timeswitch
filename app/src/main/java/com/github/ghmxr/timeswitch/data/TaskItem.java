@@ -139,13 +139,13 @@ public class TaskItem implements Comparable<TaskItem>{
             actions[i]=String.valueOf(-1);
         }
 
-        actions[PublicConsts.ACTION_RING_VOLUME_LOCALE]=String.valueOf(-1)+PublicConsts.SEPERATOR_SECOND_LEVEL +String.valueOf(-1)+PublicConsts.SEPERATOR_SECOND_LEVEL +String.valueOf(-1)+PublicConsts.SEPERATOR_SECOND_LEVEL+String.valueOf(-1);
-        actions[PublicConsts.ACTION_RING_SELECTION_LOCALE]=String.valueOf(-1)+PublicConsts.SEPERATOR_SECOND_LEVEL+String.valueOf(-1);
-    	//actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE]=String.valueOf(-1)+PublicConsts.SEPERATOR_SECOND_LEVEL+String.valueOf(" ");
-    	actions[PublicConsts.ACTION_VIBRATE_LOCALE]=String.valueOf(-1)+PublicConsts.SEPERATOR_SECOND_LEVEL+String.valueOf(-1)+PublicConsts.SEPERATOR_SECOND_LEVEL+String.valueOf(-1);
-		actions[PublicConsts.ACTION_NOTIFICATION_LOCALE]=String.valueOf(PublicConsts.NOTIFICATION_TYPE_UNSELECTED)+PublicConsts.SEPERATOR_SECOND_LEVEL+String.valueOf(PublicConsts.NOTIFICATION_TYPE_DEFAULT);
-		actions[PublicConsts.ACTION_TOAST_LOCALE]=String.valueOf(-1)+PublicConsts.SEPERATOR_SECOND_LEVEL+String.valueOf(0)+PublicConsts.SEPERATOR_SECOND_LEVEL+String.valueOf(0);
-		actions[PublicConsts.ACTION_SMS_LOCALE]=String.valueOf(-1)+PublicConsts.SEPERATOR_SECOND_LEVEL+String.valueOf(-1)+PublicConsts.SEPERATOR_SECOND_LEVEL+String.valueOf(0);
+        actions[PublicConsts.ACTION_RING_VOLUME_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1);
+        actions[PublicConsts.ACTION_RING_SELECTION_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1);
+    	//actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL+String.valueOf(" ");
+    	actions[PublicConsts.ACTION_VIBRATE_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1);
+		actions[PublicConsts.ACTION_NOTIFICATION_LOCALE]=String.valueOf(PublicConsts.NOTIFICATION_TYPE_UNSELECTED)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(PublicConsts.NOTIFICATION_TYPE_DEFAULT);
+		actions[PublicConsts.ACTION_TOAST_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(0)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(0);
+		actions[PublicConsts.ACTION_SMS_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(0);
 	}
 
     public TaskItem(TaskItem item){

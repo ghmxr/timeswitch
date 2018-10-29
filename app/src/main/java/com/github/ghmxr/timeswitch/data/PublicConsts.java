@@ -7,10 +7,10 @@ package com.github.ghmxr.timeswitch.data;
 public class PublicConsts {
 	public static final String PACKAGE_NAME="com.github.ghmxr.timeswitch";
 
-	public static final String SEPARATOR_FIRST_LEVEL =";";//"|";
-	public static final String SEPERATOR_SECOND_LEVEL =":";//">";
-	public static final String SPLIT_SEPERATOR_FIRST_LEVEL =SEPARATOR_FIRST_LEVEL;//"\\|";
-	public static final String SPLIT_SEPERATOR_SECOND_LEVEL =SEPERATOR_SECOND_LEVEL;//"\\>";
+	public static final String SEPARATOR_FIRST_LEVEL =";";
+	public static final String SEPARATOR_SECOND_LEVEL =":";
+	public static final String SPLIT_SEPARATOR_FIRST_LEVEL =SEPARATOR_FIRST_LEVEL;
+	public static final String SPLIT_SEPARATOR_SECOND_LEVEL = SEPARATOR_SECOND_LEVEL;
 
 	public static final String SEPARATOR_SMS_RECEIVERS =",";
 

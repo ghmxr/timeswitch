@@ -70,7 +70,7 @@ public class ActionDisplayValue {
     public static String getRingVolumeDisplayValue(@NonNull Context context,@NonNull String values){
         try{
             AudioManager manager=(AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-            String[] volume_values=values.split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+            String[] volume_values=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             int volume_ring=Integer.parseInt(volume_values[PublicConsts.VOLUME_RING_LOCALE]);
             int volume_media=Integer.parseInt(volume_values[PublicConsts.VOLUME_MEDIA_LOCALE]);
             int volume_notification=Integer.parseInt(volume_values[PublicConsts.VOLUME_NOTIFICATION_LOCALE]);
@@ -122,7 +122,7 @@ public class ActionDisplayValue {
 
     public static String getRingSelectionDisplayValue(@NonNull Context context,@NonNull String values){
         try{
-            String ring_selection_values[]=values.split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+            String ring_selection_values[]=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             int ring_notification_selection= Integer.parseInt(ring_selection_values[PublicConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE]);
             int ring_phone_selection=Integer.parseInt(ring_selection_values[PublicConsts.RING_SELECTION_CALL_TYPE_LOCALE]);
             StringBuilder displayBuilder=new StringBuilder("");
@@ -160,7 +160,7 @@ public class ActionDisplayValue {
 
     public static String getVibrateDisplayValue(@NonNull Context context,@NonNull String value){
         try{
-            String[] vibrate_values=value.split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+            String[] vibrate_values=value.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             StringBuilder displayValue=new StringBuilder("");
             int frequency=Integer.parseInt(vibrate_values[PublicConsts.VIBRATE_FREQUENCY_LOCALE]);
             int duration=Integer.parseInt(vibrate_values[PublicConsts.VIBRATE_DURATION_LOCALE]);
@@ -192,7 +192,7 @@ public class ActionDisplayValue {
     public static String getNotificationDisplayValue(@NonNull Context context,String value){
         try{
             StringBuilder builder=new StringBuilder("");
-            String[] notification_values=value.split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+            String[] notification_values=value.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_LOCALE])==PublicConsts.NOTIFICATION_TYPE_UNSELECTED){
                 builder.append("");
             }else if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_LOCALE])==PublicConsts.NOTIFICATION_TYPE_VIBRATE){
@@ -222,7 +222,7 @@ public class ActionDisplayValue {
 
     public static String getSMSDisplayValue(Context context,String value){
         try{
-            String sms_values[]=value.split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+            String sms_values[]=value.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             StringBuilder builder=new StringBuilder("");
             if(Integer.parseInt(sms_values[PublicConsts.SMS_ENABLED_LOCALE])>=0 ){
                 builder.append(context.getResources().getString(R.string.activity_taskgui_actions_sms_enabled));
@@ -241,7 +241,7 @@ public class ActionDisplayValue {
 
     public static String getToastDisplayValue(@NonNull String value,@NonNull String toast){
         try{
-            String toast_values[]=value.split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+            String toast_values[]=value.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             if(Integer.parseInt(toast_values[0])>=0) {
                 if(toast.length()>15) toast=toast.substring(0,15)+"...";
                 return toast;
@@ -254,7 +254,7 @@ public class ActionDisplayValue {
 
     public static String getTaskSwitchDisplayValue(@NonNull String value){
         try{
-            String[] values=value.split(PublicConsts.SEPERATOR_SECOND_LEVEL);
+            String[] values=value.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
             if(Integer.parseInt(values[0])>=0) {
                 StringBuilder builder=new StringBuilder("");
                 for (String id:values){

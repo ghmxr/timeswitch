@@ -59,7 +59,7 @@ public class ValueUtils {
         String[] sarray;
 
         try{
-            sarray=text.split(PublicConsts.SPLIT_SEPERATOR_FIRST_LEVEL);
+            sarray=text.split(PublicConsts.SPLIT_SEPARATOR_FIRST_LEVEL);
             if(sarray.length<=0) return new boolean[0];
             if(sarray.length==1){
                 array=new boolean [1];
@@ -126,7 +126,7 @@ public class ValueUtils {
         else{
             int[] values=null;
             try{
-                String[] svalues=text.split(PublicConsts.SPLIT_SEPERATOR_FIRST_LEVEL);
+                String[] svalues=text.split(PublicConsts.SPLIT_SEPARATOR_FIRST_LEVEL);
                 if(svalues.length<=0) return new int[0];
                 if(svalues.length==1){
                     values=new int[1];
@@ -162,7 +162,7 @@ public class ValueUtils {
         else{
             long[] values=null;
             try{
-                String[] svalues=text.split(PublicConsts.SPLIT_SEPERATOR_FIRST_LEVEL);
+                String[] svalues=text.split(PublicConsts.SPLIT_SEPARATOR_FIRST_LEVEL);
                 if(svalues.length<=0) return new long[0];
                 if(svalues.length==1){
                     values=new long[1];
@@ -236,7 +236,7 @@ public class ValueUtils {
         if(value==null||value.equals("")) return new String[0];
         String [] values;
         try{
-            values=value.split(PublicConsts.SPLIT_SEPERATOR_FIRST_LEVEL);
+            values=value.split(PublicConsts.SPLIT_SEPARATOR_FIRST_LEVEL);
         }catch (Exception e){
             e.printStackTrace();
             return new String[0];

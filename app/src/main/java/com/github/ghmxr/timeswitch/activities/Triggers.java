@@ -17,7 +17,9 @@ import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,7 +51,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
 
     private int trigger_type=0;
    // private long time=0;
-    private boolean[] week_repeat=new boolean[7];
+    private boolean[] week_repeat=new boolean[]{true,true,true,true,true,true,true};
     private long interval=60*1000;
     private int battery_percentage=50,battery_temperature=35;
     private String wifi_connected_ssidinfo="";
@@ -57,6 +59,9 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
 
     CustomTimePicker timePicker;
     Calendar calendar;
+
+    private String checkString="";
+    private long first_clicked=0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -112,14 +117,14 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                     try{
                         calendar.setTimeInMillis(Long.parseLong(trigger_values[0]));
                         calendar.set(Calendar.SECOND,0);
+                        for(int i=1;i<trigger_values.length;i++){
+                            week_repeat[i-1]=Integer.parseInt(trigger_values[i])==1;
+                        }
                     }catch (Exception e){
                         e.printStackTrace();
                         LogUtil.putExceptionLog(this,e);
                     }
 
-                    for(int i=1;i<trigger_values.length;i++){
-                        week_repeat[i-1]=Integer.parseInt(trigger_values[i])==1;
-                    }
                 }
                 break;
                 case PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE: case PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE:{
@@ -142,6 +147,8 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
             e.printStackTrace();
         }
 
+        checkString=toCheckString();
+
         //set the views
         if(Build.VERSION.SDK_INT<23){
             timePicker.setCurrentHour(calendar.get(Calendar.HOUR_OF_DAY));
@@ -153,6 +160,19 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         timePicker.setOnTimeChangedListener(this);
 
         activateTriggerType(trigger_type);
+    }
+
+    public String toCheckString() {
+        return "Triggers{" +
+                "trigger_type=" + trigger_type +
+                ", week_repeat=" + Arrays.toString(week_repeat) +
+                ", interval=" + interval +
+                ", battery_percentage=" + battery_percentage +
+                ", battery_temperature=" + battery_temperature +
+                ", wifi_connected_ssidinfo='" + wifi_connected_ssidinfo + '\'' +
+                ", broadcast_intent_action='" + broadcast_intent_action + '\'' +
+                ", calendar=" + calendar.getTimeInMillis() +
+                '}';
     }
 
     private void activateTriggerType(int type){
@@ -447,6 +467,9 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                     case PublicConsts.TRIGGER_TYPE_LOOP_WEEK:{
                         trigger_values=new String[8];
                         trigger_values[0]=String.valueOf(calendar.getTimeInMillis());
+                        for(int i=1;i<trigger_values.length;i++){
+                            trigger_values[i]=week_repeat[i-1]?String.valueOf(1):String.valueOf(0);
+                        }
                     }
                     break;
                     case PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE: case PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE:{
@@ -481,6 +504,14 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode==KeyEvent.KEYCODE_BACK){
+            checkAndExit();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
     public static String getSingleTimeDisplayValue(@NonNull Context context, long millis){
        // TextView tv_condition_single_value=findViewById(R.id.trigger_single_value);
@@ -585,6 +616,19 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         tv_wifi_disconnected.setText(unchoose);
         tv_widget_changed.setText(unchoose);
         tv_condition_broadcast.setText(unchoose);
+    }
+
+    private void checkAndExit(){
+        if(!toCheckString().equals(checkString)){
+            long thisTime=System.currentTimeMillis();
+            if(thisTime-first_clicked>1000){
+                first_clicked=thisTime;
+                Snackbar.make(findViewById(R.id.trigger_root),getResources().getString(R.string.snackbar_changes_not_saved_back),Snackbar.LENGTH_SHORT).show();
+                return;
+            }
+            finish();
+        }
+        finish();
     }
 
     private class BroadcastSelectionAdapter extends BaseAdapter {

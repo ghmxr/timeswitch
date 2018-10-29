@@ -1,7 +1,5 @@
 package com.github.ghmxr.timeswitch.activities;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -61,7 +59,7 @@ public class SmsActivity extends BaseActivity {
         spinner=findViewById(R.id.layout_sms_spinner);
         cb_receipt_toast=findViewById(R.id.layout_sms_toast_cb);
         try{
-            String sms_values[]=getIntent().getStringExtra(EXTRA_SMS_VALUES).split(PublicConsts.SEPERATOR_SECOND_LEVEL);
+            String sms_values[]=getIntent().getStringExtra(EXTRA_SMS_VALUES).split(PublicConsts.SEPARATOR_SECOND_LEVEL);
             enabled=Integer.parseInt(sms_values[PublicConsts.SMS_ENABLED_LOCALE])>=0;
             subid=Integer.parseInt(sms_values[PublicConsts.SMS_SUBINFO_LOCALE]);
             edit_addresses.setText(getIntent().getStringExtra(EXTRA_SMS_ADDRESS));
@@ -214,8 +212,8 @@ public class SmsActivity extends BaseActivity {
                     return false;
                 }
                 Intent data=new Intent();
-                String sms_values=String.valueOf(enabled?0:-1)+PublicConsts.SEPERATOR_SECOND_LEVEL
-                        +String.valueOf(subid)+PublicConsts.SEPERATOR_SECOND_LEVEL
+                String sms_values=String.valueOf(enabled?0:-1)+PublicConsts.SEPARATOR_SECOND_LEVEL
+                        +String.valueOf(subid)+PublicConsts.SEPARATOR_SECOND_LEVEL
                         +String.valueOf(cb_receipt_toast.isChecked()?0:-1);
                 data.putExtra(EXTRA_SMS_VALUES,sms_values);
                 data.putExtra(EXTRA_SMS_ADDRESS,addresses);

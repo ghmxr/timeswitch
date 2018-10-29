@@ -183,7 +183,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
 
                 try{
                     volumeValues=actions[PublicConsts.ACTION_RING_VOLUME_LOCALE];
-                    volumeArray=volumeValues.split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+                    volumeArray=volumeValues.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
                     sb_ring.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
                     sb_media.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
                     sb_notification.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION));
@@ -250,9 +250,9 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                         if(cb_media.isChecked()) volume_media=sb_media.getProgress();
                         if(cb_notification.isChecked()) volume_notification=sb_notification.getProgress();
                         if(cb_alarmclock.isChecked()) volume_alarmclock=sb_alarmclock.getProgress();
-                        String volume_values=String.valueOf(volume_ring)+PublicConsts.SEPERATOR_SECOND_LEVEL
-                                +String.valueOf(volume_media)+PublicConsts.SEPERATOR_SECOND_LEVEL
-                                +String.valueOf(volume_notification)+PublicConsts.SEPERATOR_SECOND_LEVEL
+                        String volume_values=String.valueOf(volume_ring)+PublicConsts.SEPARATOR_SECOND_LEVEL
+                                +String.valueOf(volume_media)+PublicConsts.SEPARATOR_SECOND_LEVEL
+                                +String.valueOf(volume_notification)+PublicConsts.SEPARATOR_SECOND_LEVEL
                                 +String.valueOf(volume_alarmclock);
                         actions[PublicConsts.ACTION_RING_VOLUME_LOCALE]=volume_values;
                         dialog.cancel();
@@ -282,7 +282,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                 final BottomDialog dialog=new BottomDialog(this);
                 dialog.setContentView(R.layout.layout_dialog_actions_selection_wallpaper);
                 try{
-                    //String[] wallpaper_values=taskitem.actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+                    //String[] wallpaper_values=taskitem.actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
                     ((RadioButton)dialog.findViewById(R.id.dialog_wallpaper_unselected_rb)).setChecked(Integer.parseInt(actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE])==PublicConsts.ACTION_UNSELECTED);
                     ((RadioButton)dialog.findViewById(R.id.dialog_wallpaper_select_rb)).setChecked(Integer.parseInt(actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE])>=0);
                 }catch (Exception e){
@@ -294,7 +294,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                     @Override
                     public void onClick(View view) {
                         dialog.cancel();
-                        actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE]=String.valueOf(-1);//+PublicConsts.SEPERATOR_SECOND_LEVEL+String.valueOf(" ");
+                        actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE]=String.valueOf(-1);//+PublicConsts.SEPARATOR_SECOND_LEVEL+String.valueOf(" ");
                         refreshActionStatus();
                     }
                 });
@@ -312,7 +312,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
             case R.id.actions_vibrate:{
                 try{
                     final BottomDialogForVibrate dialog=new BottomDialogForVibrate(this);
-                    String[] vibrate_values=actions[PublicConsts.ACTION_VIBRATE_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+                    String[] vibrate_values=actions[PublicConsts.ACTION_VIBRATE_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
                     dialog.setVariables(Integer.parseInt(vibrate_values[PublicConsts.VIBRATE_FREQUENCY_LOCALE])>0,
                             Integer.parseInt(vibrate_values[PublicConsts.VIBRATE_FREQUENCY_LOCALE]),
                             Integer.parseInt(vibrate_values[PublicConsts.VIBRATE_DURATION_LOCALE]),
@@ -322,12 +322,12 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                         @Override
                         public void onBottomDialogForVibrateConfirmed(boolean isEnabled, int frequency, int duration, int interval) {
                             if(isEnabled){
-                                actions[PublicConsts.ACTION_VIBRATE_LOCALE]=String.valueOf(frequency)+PublicConsts.SEPERATOR_SECOND_LEVEL
-                                        +String.valueOf(duration)+PublicConsts.SEPERATOR_SECOND_LEVEL
+                                actions[PublicConsts.ACTION_VIBRATE_LOCALE]=String.valueOf(frequency)+PublicConsts.SEPARATOR_SECOND_LEVEL
+                                        +String.valueOf(duration)+PublicConsts.SEPARATOR_SECOND_LEVEL
                                         +String.valueOf(interval);
                             }
-                            else actions[PublicConsts.ACTION_VIBRATE_LOCALE]=String.valueOf(-1)+PublicConsts.SEPERATOR_SECOND_LEVEL
-                                    +String.valueOf(-1)+PublicConsts.SEPERATOR_SECOND_LEVEL
+                            else actions[PublicConsts.ACTION_VIBRATE_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL
+                                    +String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL
                                     +String.valueOf(-1);
                             refreshActionStatus();
                         }
@@ -343,7 +343,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                 dialog.setContentView(R.layout.layout_dialog_notification);
                 dialog.show();
                 try{
-                    String[] notification_values=actions[PublicConsts.ACTION_NOTIFICATION_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+                    String[] notification_values=actions[PublicConsts.ACTION_NOTIFICATION_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
                     int type=Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_LOCALE]);
                     int type_custom=Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE]);
                     final String title=notification_title;//notification_values[PublicConsts.NOTIFICATION_TITLE_LOCALE];
@@ -405,7 +405,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                             int type_if_custom=ra_custom.isChecked()?PublicConsts.NOTIFICATION_TYPE_CUSTOM:PublicConsts.NOTIFICATION_TYPE_DEFAULT;
                             String custom_title=edit_title.getText().toString();
                             String custom_message=edit_message.getText().toString();
-                            actions[PublicConsts.ACTION_NOTIFICATION_LOCALE]=String.valueOf(type)+PublicConsts.SEPERATOR_SECOND_LEVEL
+                            actions[PublicConsts.ACTION_NOTIFICATION_LOCALE]=String.valueOf(type)+PublicConsts.SEPARATOR_SECOND_LEVEL
                                     +String.valueOf(type_if_custom);
                             notification_title=custom_title;
                             notification_message=custom_message;
@@ -446,7 +446,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                 final LinearLayout location_selection_area=dialog.findViewById(R.id.dialog_toast_location);
                 final Button button=dialog.findViewById(R.id.dialog_toast_preview);
                 try{
-                    String toast_values[]=actions[PublicConsts.ACTION_TOAST_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+                    String toast_values[]=actions[PublicConsts.ACTION_TOAST_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
                     boolean isenabled=Integer.parseInt(toast_values[PublicConsts.TOAST_TYPE_LOCALE])>=0;
                     int type=Integer.parseInt(toast_values[PublicConsts.TOAST_TYPE_LOCALE]);
                     cb_enabled.setChecked(isenabled);
@@ -553,8 +553,8 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                         public void onClick(View view) {
                             dialog.cancel();
                             actions[PublicConsts.ACTION_TOAST_LOCALE]=String.valueOf(!cb_enabled.isChecked()?-1:
-                                    (ra_location_custom.isChecked()?1:0))+PublicConsts.SEPERATOR_SECOND_LEVEL
-                                    +String.valueOf(sb_x.getProgress())+PublicConsts.SEPERATOR_SECOND_LEVEL
+                                    (ra_location_custom.isChecked()?1:0))+PublicConsts.SEPARATOR_SECOND_LEVEL
+                                    +String.valueOf(sb_x.getProgress())+PublicConsts.SEPARATOR_SECOND_LEVEL
                                     +String.valueOf(sb_y.getProgress());
                             toast=editText.getText().toString();
                             refreshActionStatus();
@@ -614,7 +614,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                 .show();
         final TaskAdapter adapter=new TaskAdapter();
         try{
-            String [] values=actions[enableOrDisable==TASK_ENABLE?PublicConsts.ACTION_ENABLE_TASKS_LOCALE:PublicConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPERATOR_SECOND_LEVEL);
+            String [] values=actions[enableOrDisable==TASK_ENABLE?PublicConsts.ACTION_ENABLE_TASKS_LOCALE:PublicConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
             if(Integer.parseInt(values[0])>=0) adapter.setSelectedItems(values);
         }catch (Exception e){
             e.printStackTrace();
@@ -650,7 +650,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                         actionValue.append(TimeSwitchService.list.get(j).id);
                         selectedCount++;
                         if(selectedCount<adapter.getSelectedCount()&&adapter.getSelectedCount()>1)
-                            actionValue.append(PublicConsts.SEPERATOR_SECOND_LEVEL);
+                            actionValue.append(PublicConsts.SEPARATOR_SECOND_LEVEL);
                     }
                 }
                 if(allUnchecked) actionValue=new StringBuilder(String.valueOf(-1));

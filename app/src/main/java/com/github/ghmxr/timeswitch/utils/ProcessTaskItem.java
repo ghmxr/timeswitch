@@ -572,7 +572,7 @@ public class ProcessTaskItem {
                     }
                 }
                 try{
-                    String [] volumes=item.actions[PublicConsts.ACTION_RING_VOLUME_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+                    String [] volumes=item.actions[PublicConsts.ACTION_RING_VOLUME_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
                     int volume_ring=Integer.parseInt(volumes[PublicConsts.VOLUME_RING_LOCALE]);
                     int volume_media=Integer.parseInt(volumes[PublicConsts.VOLUME_MEDIA_LOCALE]);
                     int volume_notification=Integer.parseInt(volumes[PublicConsts.VOLUME_NOTIFICATION_LOCALE]);
@@ -611,7 +611,7 @@ public class ProcessTaskItem {
             }
             try{
                // RingtoneManager ringtoneManager=new RingtoneManager(context);
-               String ring_selection_values[]=item.actions[PublicConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+               String ring_selection_values[]=item.actions[PublicConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
                int ring_notification_selection= Integer.parseInt(ring_selection_values[PublicConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE]);
                int ring_phone_selection=Integer.parseInt(ring_selection_values[PublicConsts.RING_SELECTION_CALL_TYPE_LOCALE]);
                //String ring_value_notification=ring_selection_values[PublicConsts.RING_SELECTION_NOTIFICATION_VALUE_LOCALE];
@@ -655,7 +655,7 @@ public class ProcessTaskItem {
             }
 
             try{
-              // String wallpaper_values[]=item.actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+              // String wallpaper_values[]=item.actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
                if(Integer.parseInt(item.actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE])>=0){
                    log_taskitem.append(context.getResources().getString(R.string.action_set_wallpaper));
                    WallpaperManager wallpaperManager=WallpaperManager.getInstance(context);
@@ -677,7 +677,7 @@ public class ProcessTaskItem {
             }
 
             try{
-               String vibrate_values[]=item.actions[PublicConsts.ACTION_VIBRATE_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+               String vibrate_values[]=item.actions[PublicConsts.ACTION_VIBRATE_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
                long frequency=Long.parseLong(vibrate_values[PublicConsts.VIBRATE_FREQUENCY_LOCALE]);
                long duration=Long.parseLong(vibrate_values[PublicConsts.VIBRATE_DURATION_LOCALE]);
                long interval=Long.parseLong(vibrate_values[PublicConsts.VIBRATE_INTERVAL_LOCALE]);
@@ -699,7 +699,7 @@ public class ProcessTaskItem {
             }
 
             try{
-               String toast_values[]=item.actions[PublicConsts.ACTION_TOAST_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+               String toast_values[]=item.actions[PublicConsts.ACTION_TOAST_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
                int type=Integer.parseInt(toast_values[PublicConsts.TOAST_TYPE_LOCALE]);
                if(type>=0){
                   /* Toast toast=Toast.makeText(context,item.toast,Toast.LENGTH_SHORT);
@@ -721,7 +721,7 @@ public class ProcessTaskItem {
             }
 
             try{
-               String sms_values[]=item.actions[PublicConsts.ACTION_SMS_LOCALE].split(PublicConsts.SEPERATOR_SECOND_LEVEL);
+               String sms_values[]=item.actions[PublicConsts.ACTION_SMS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
                if(Integer.parseInt(sms_values[PublicConsts.SMS_ENABLED_LOCALE])>=0){
                    SmsManager manager;
                    int subscriptionId=Integer.parseInt(sms_values[PublicConsts.SMS_SUBINFO_LOCALE]);
@@ -883,7 +883,7 @@ public class ProcessTaskItem {
           }  */
 
             try{
-                String notification_values[]=item.actions[PublicConsts.ACTION_NOTIFICATION_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+                String notification_values[]=item.actions[PublicConsts.ACTION_NOTIFICATION_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
                 int type=Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_LOCALE]);
                 if(type==PublicConsts.NOTIFICATION_TYPE_VIBRATE||type==PublicConsts.NOTIFICATION_TYPE_NO_VIBRATE){
                     NotificationManagerCompat managerCompat=NotificationManagerCompat.from(context);
@@ -982,7 +982,7 @@ public class ProcessTaskItem {
     private void switchTasks(int enableOrDisable){
         SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
         try{
-            String[] switch_values=item.actions[enableOrDisable==0?PublicConsts.ACTION_ENABLE_TASKS_LOCALE:PublicConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPERATOR_SECOND_LEVEL);
+            String[] switch_values=item.actions[enableOrDisable==0?PublicConsts.ACTION_ENABLE_TASKS_LOCALE:PublicConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
             if(Integer.parseInt(switch_values[0])>=0){
                 for(String s:switch_values){
                     int id=Integer.parseInt(s);

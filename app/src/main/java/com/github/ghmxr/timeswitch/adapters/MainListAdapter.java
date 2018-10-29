@@ -256,7 +256,7 @@ public class MainListAdapter extends BaseAdapter {
             }
 
 
-            String[] ring_volumes=actions[PublicConsts.ACTION_RING_VOLUME_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+            String[] ring_volumes=actions[PublicConsts.ACTION_RING_VOLUME_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             if(Integer.parseInt(ring_volumes[PublicConsts.VOLUME_RING_LOCALE])>=0||Integer.parseInt(ring_volumes[PublicConsts.VOLUME_MEDIA_LOCALE])>=0
                    ||Integer.parseInt(ring_volumes[PublicConsts.VOLUME_NOTIFICATION_LOCALE])>=0||Integer.parseInt(ring_volumes[PublicConsts.VOLUME_ALARM_LOCALE])>=0){
 
@@ -265,7 +265,7 @@ public class MainListAdapter extends BaseAdapter {
             }
             else holder.icon_ring_volume.setVisibility(View.GONE);
 
-            String [] ring_selections=actions[PublicConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+            String [] ring_selections=actions[PublicConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             if(Integer.parseInt(ring_selections[PublicConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE])>=0||Integer.parseInt(ring_selections[PublicConsts.RING_SELECTION_CALL_TYPE_LOCALE])>=0){
                 actionNum++;
                 if(showCount<ICON_COUNT_LIMIT){
@@ -275,7 +275,7 @@ public class MainListAdapter extends BaseAdapter {
             }
             else holder.icon_ring_selection.setVisibility(View.GONE);
 
-            String[] wallpaper_values=actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+            String[] wallpaper_values=actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             if(Integer.parseInt(wallpaper_values[0])>=0){
                 actionNum++;
                 if(showCount<ICON_COUNT_LIMIT){
@@ -287,7 +287,7 @@ public class MainListAdapter extends BaseAdapter {
                 holder.icon_wallpaper.setVisibility(View.GONE);
             }
 
-            String[] notification_values=actions[PublicConsts.ACTION_NOTIFICATION_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+            String[] notification_values=actions[PublicConsts.ACTION_NOTIFICATION_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_LOCALE])>=0){
                 actionNum++;
                 if(showCount<ICON_COUNT_LIMIT){
@@ -298,7 +298,7 @@ public class MainListAdapter extends BaseAdapter {
                 holder.icon_notification.setVisibility(View.GONE);
             }
 
-            String[] toast_values=actions[PublicConsts.ACTION_TOAST_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+            String[] toast_values=actions[PublicConsts.ACTION_TOAST_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             if(Integer.parseInt(toast_values[PublicConsts.TOAST_TYPE_LOCALE])>=0){
                 actionNum++;
                 if(showCount<ICON_COUNT_LIMIT){
@@ -310,7 +310,7 @@ public class MainListAdapter extends BaseAdapter {
                 holder.icon_toast.setVisibility(View.GONE);
             }
 
-            String sms_values[] = actions[PublicConsts.ACTION_SMS_LOCALE].split(PublicConsts.SEPERATOR_SECOND_LEVEL);
+            String sms_values[] = actions[PublicConsts.ACTION_SMS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
             if(Integer.parseInt(sms_values[PublicConsts.SMS_ENABLED_LOCALE])>=0){
                 actionNum++;
                 if(showCount<ICON_COUNT_LIMIT){
@@ -320,7 +320,7 @@ public class MainListAdapter extends BaseAdapter {
                 else holder.icon_sms.setVisibility(View.GONE);
             }
 
-            String[] vibrate_values=actions[PublicConsts.ACTION_VIBRATE_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+            String[] vibrate_values=actions[PublicConsts.ACTION_VIBRATE_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             if(Integer.parseInt(vibrate_values[PublicConsts.VIBRATE_FREQUENCY_LOCALE])>=0){
                 actionNum++;
                 if(showCount<ICON_COUNT_LIMIT){
@@ -412,7 +412,7 @@ public class MainListAdapter extends BaseAdapter {
                 holder.icon_device_shutdown.setVisibility(View.GONE);
             }
 
-            if(Integer.parseInt(actions[PublicConsts.ACTION_ENABLE_TASKS_LOCALE].split(PublicConsts.SEPERATOR_SECOND_LEVEL)[0])>=0){
+            if(Integer.parseInt(actions[PublicConsts.ACTION_ENABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[0])>=0){
                 actionNum++;
                 if(showCount<ICON_COUNT_LIMIT){
                     holder.icon_enable.setVisibility(View.VISIBLE);
@@ -422,7 +422,7 @@ public class MainListAdapter extends BaseAdapter {
                 }
             }
 
-            if(Integer.parseInt(actions[PublicConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPERATOR_SECOND_LEVEL)[0])>=0){
+            if(Integer.parseInt(actions[PublicConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[0])>=0){
                 actionNum++;
                 if(showCount<ICON_COUNT_LIMIT){
                     holder.icon_disable.setVisibility(View.VISIBLE);

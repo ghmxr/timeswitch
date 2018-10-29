@@ -1,19 +1,15 @@
 package com.github.ghmxr.timeswitch.ui;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -23,17 +19,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.activities.Actions;
@@ -220,32 +212,32 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			findViewById(R.id.taskgui_operations_area_wifi).setVisibility(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_WIFI_LOCALE])>=0?View.VISIBLE:View.GONE);
 			findViewById(R.id.taskgui_operations_area_bluetooth).setVisibility(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_BLUETOOTH_LOCALE])>=0?View.VISIBLE:View.GONE);
 			findViewById(R.id.taskgui_operations_area_ring_mode).setVisibility(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_RING_MODE_LOCALE])>=0?View.VISIBLE:View.GONE);
-			String ring_volume_values[]=taskitem.actions[PublicConsts.ACTION_RING_VOLUME_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+			String ring_volume_values[]=taskitem.actions[PublicConsts.ACTION_RING_VOLUME_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
 			findViewById(R.id.taskgui_operations_area_ring_volume).setVisibility(
 					(Integer.parseInt(ring_volume_values[PublicConsts.VOLUME_RING_LOCALE])>=0||Integer.parseInt(ring_volume_values[PublicConsts.VOLUME_MEDIA_LOCALE])>=0
 							||Integer.parseInt(ring_volume_values[PublicConsts.VOLUME_NOTIFICATION_LOCALE])>=0||Integer.parseInt(ring_volume_values[PublicConsts.VOLUME_ALARM_LOCALE])>=0)
 							?View.VISIBLE:View.GONE);
-			String[] ring_selection_values=taskitem.actions[PublicConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL);
+			String[] ring_selection_values=taskitem.actions[PublicConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
 			findViewById(R.id.taskgui_operations_area_ring_selection).setVisibility((Integer.parseInt(ring_selection_values[PublicConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE])>=0||
 					Integer.parseInt(ring_selection_values[PublicConsts.RING_SELECTION_CALL_TYPE_LOCALE])>=0
 					)?View.VISIBLE:View.GONE);
 			findViewById(R.id.taskgui_operations_area_brightness).setVisibility(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_BRIGHTNESS_LOCALE])>=0?View.VISIBLE:View.GONE);
 			findViewById(R.id.taskgui_operations_area_vibrate).setVisibility(
-					Integer.parseInt(taskitem.actions[PublicConsts.ACTION_VIBRATE_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL)[PublicConsts.VIBRATE_FREQUENCY_LOCALE])>=0?
+					Integer.parseInt(taskitem.actions[PublicConsts.ACTION_VIBRATE_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[PublicConsts.VIBRATE_FREQUENCY_LOCALE])>=0?
 					View.VISIBLE:View.GONE);
 			findViewById(R.id.taskgui_operations_area_wallpaper).setVisibility(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE])>=0?View.VISIBLE:View.GONE);
 			findViewById(R.id.taskgui_operations_area_sms).setVisibility(
-					Integer.parseInt(taskitem.actions[PublicConsts.ACTION_SMS_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL)[PublicConsts.SMS_ENABLED_LOCALE])>=0?View.VISIBLE:View.GONE);
+					Integer.parseInt(taskitem.actions[PublicConsts.ACTION_SMS_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[PublicConsts.SMS_ENABLED_LOCALE])>=0?View.VISIBLE:View.GONE);
 			findViewById(R.id.taskgui_operations_area_notification).setVisibility(
-					Integer.parseInt(taskitem.actions[PublicConsts.ACTION_NOTIFICATION_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL)[PublicConsts.NOTIFICATION_TYPE_LOCALE])>=0?
+					Integer.parseInt(taskitem.actions[PublicConsts.ACTION_NOTIFICATION_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[PublicConsts.NOTIFICATION_TYPE_LOCALE])>=0?
 							View.VISIBLE:View.GONE);
-			findViewById(R.id.taskgui_operations_area_toast).setVisibility(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_TOAST_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL)[PublicConsts.TOAST_TYPE_LOCALE])>=0?View.VISIBLE:View.GONE);
+			findViewById(R.id.taskgui_operations_area_toast).setVisibility(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_TOAST_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[PublicConsts.TOAST_TYPE_LOCALE])>=0?View.VISIBLE:View.GONE);
 			findViewById(R.id.taskgui_operations_area_airplane_mode).setVisibility(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_AIRPLANE_MODE_LOCALE])>=0?View.VISIBLE:View.GONE);
 			findViewById(R.id.taskgui_operations_area_net).setVisibility(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_NET_LOCALE])>=0?View.VISIBLE:View.GONE);
 			findViewById(R.id.taskgui_operations_area_gps).setVisibility(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_GPS_LOCALE])>=0?View.VISIBLE:View.GONE);
 			findViewById(R.id.taskgui_operations_area_devicecontrol).setVisibility(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_DEVICECONTROL_LOCALE])>=0?View.VISIBLE:View.GONE);
-			findViewById(R.id.taskgui_operations_area_enable).setVisibility(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_ENABLE_TASKS_LOCALE].split(PublicConsts.SEPERATOR_SECOND_LEVEL)[0])>=0?View.VISIBLE:View.GONE);
-			findViewById(R.id.taskgui_operations_area_disable).setVisibility(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPERATOR_SECOND_LEVEL)[0])>=0?View.VISIBLE:View.GONE);
+			findViewById(R.id.taskgui_operations_area_enable).setVisibility(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_ENABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[0])>=0?View.VISIBLE:View.GONE);
+			findViewById(R.id.taskgui_operations_area_disable).setVisibility(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[0])>=0?View.VISIBLE:View.GONE);
 		}catch (Exception e){
 			e.printStackTrace();
 			LogUtil.putExceptionLog(this,e);
@@ -255,44 +247,58 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 
     private void refreshTriggerDisplayValue(){
 		ImageView icon=findViewById(R.id.layout_taskgui_trigger_icon);
+		TextView att=findViewById(R.id.layout_taskgui_trigger_att);
 		TextView value=findViewById(R.id.layout_taskgui_trigger_value);
 		switch(taskitem.trigger_type){
 			default:break;
 			case PublicConsts.TRIGGER_TYPE_SINGLE:{
 				icon.setImageResource(R.drawable.icon_repeat_single);
+				att.setText(getResources().getString(R.string.activity_taskgui_condition_single_att));
 				value.setText(Triggers.getSingleTimeDisplayValue(this,taskitem.time));
 			}
 			break;
 			case PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME:{
 				icon.setImageResource(R.drawable.icon_repeat_percertaintime);
+				att.setText(getResources().getString(R.string.activity_taskgui_condition_percertaintime_att));
 				value.setText(Triggers.getCertainLoopTimeDisplayValue(this,taskitem.interval_milliseconds));
 			}
 			break;
 			case PublicConsts.TRIGGER_TYPE_LOOP_WEEK:{
 				icon.setImageResource(R.drawable.icon_repeat_weekloop);
+				att.setText(getResources().getString(R.string.activity_taskgui_condition_weekloop_att));
 				value.setText(Triggers.getWeekLoopDisplayValue(this,taskitem.week_repeat));
 			}
 			break;
 			case PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE:{
 				icon.setImageResource(R.drawable.icon_temperature);
+				att.setText(getResources().getString(R.string.activity_taskgui_condition_battery_temperature_att));
 				value.setText(Triggers.getBatteryTemperatureDisplayValue(this,taskitem.trigger_type,taskitem.battery_temperature));
 			}
 			break;
 			case PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE:{
 				icon.setImageResource(R.drawable.icon_temperature);
+				att.setText(getResources().getString(R.string.activity_taskgui_condition_battery_temperature_att));
 				value.setText(Triggers.getBatteryTemperatureDisplayValue(this,taskitem.trigger_type,taskitem.battery_temperature));
 			}
 			break;
 			case PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE:{
 				icon.setImageResource(R.drawable.icon_battery_high);
+				att.setText(getResources().getString(R.string.activity_taskgui_condition_battery_percentage_att));
 				value.setText(Triggers.getBatteryPercentageDisplayValue(this,taskitem.trigger_type,taskitem.battery_percentage));
 			}
 			break;
 			case PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE:{
 				icon.setImageResource(R.drawable.icon_battery_low);
+				att.setText(getResources().getString(R.string.activity_taskgui_condition_battery_percentage_att));
 				value.setText(Triggers.getBatteryPercentageDisplayValue(this,taskitem.trigger_type,taskitem.battery_percentage));
 			}
 			break;
+            case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST:{
+                icon.setImageResource(R.drawable.icon_broadcast);
+                att.setText(getResources().getString(R.string.activity_taskgui_condition_received_broadcast_att));
+                value.setText(Triggers.getBroadcastDisplayValue(taskitem.selectedAction));
+            }
+            break;
 		}
 	}
 
@@ -430,6 +436,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 						trigger_values=new String[1];
 						trigger_values[0]=String.valueOf(taskitem.battery_percentage);
 					}
+					break;
 					case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST:{
 						trigger_values=new String[1];
 						trigger_values[0]=String.valueOf(taskitem.selectedAction);
@@ -896,35 +903,35 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		for(int i=0;i<taskitem.actions.length;i++){//for(int i=0;i<actions.length;i++){
 			try{
 				if(i==PublicConsts.ACTION_RING_VOLUME_LOCALE){
-					String volume_values[]=taskitem.actions[PublicConsts.ACTION_RING_VOLUME_LOCALE].split(PublicConsts.SEPERATOR_SECOND_LEVEL);
+					String volume_values[]=taskitem.actions[PublicConsts.ACTION_RING_VOLUME_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
 					if(Integer.parseInt(volume_values[PublicConsts.VOLUME_RING_LOCALE])>=0||Integer.parseInt(volume_values[PublicConsts.VOLUME_MEDIA_LOCALE])>=0
 							||Integer.parseInt(volume_values[PublicConsts.VOLUME_NOTIFICATION_LOCALE])>=0||Integer.parseInt(volume_values[PublicConsts.VOLUME_ALARM_LOCALE])>=0)
 						isNull=false;
 				}
 				else if(i==PublicConsts.ACTION_RING_SELECTION_LOCALE){
-					if(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SEPERATOR_SECOND_LEVEL)[PublicConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE])>=0
-							||Integer.parseInt(taskitem.actions[PublicConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SEPERATOR_SECOND_LEVEL)[PublicConsts.RING_SELECTION_CALL_TYPE_LOCALE])>=0) isNull=false;
+					if(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[PublicConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE])>=0
+							||Integer.parseInt(taskitem.actions[PublicConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[PublicConsts.RING_SELECTION_CALL_TYPE_LOCALE])>=0) isNull=false;
 				}
 				else if(i==PublicConsts.ACTION_SET_WALL_PAPER_LOCALE){
-					if(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL)[0])>=0) isNull=false;
+					if(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[0])>=0) isNull=false;
 				}
 				else if(i==PublicConsts.ACTION_VIBRATE_LOCALE){
-					if(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_VIBRATE_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL)[PublicConsts.VIBRATE_FREQUENCY_LOCALE])>0) isNull=false;
+					if(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_VIBRATE_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[PublicConsts.VIBRATE_FREQUENCY_LOCALE])>0) isNull=false;
 				}
 				else if(i==PublicConsts.ACTION_NOTIFICATION_LOCALE){
-					if(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_NOTIFICATION_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL)[PublicConsts.NOTIFICATION_TYPE_LOCALE])!=PublicConsts.NOTIFICATION_TYPE_UNSELECTED) isNull=false;
+					if(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_NOTIFICATION_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[PublicConsts.NOTIFICATION_TYPE_LOCALE])!=PublicConsts.NOTIFICATION_TYPE_UNSELECTED) isNull=false;
 				}
 				else if(i==PublicConsts.ACTION_SMS_LOCALE){
-					if(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_SMS_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL)[0])>=0) isNull=false;
+					if(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_SMS_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[0])>=0) isNull=false;
 				}
 				else if(i==PublicConsts.ACTION_TOAST_LOCALE){
-					if(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_TOAST_LOCALE].split(PublicConsts.SPLIT_SEPERATOR_SECOND_LEVEL)[PublicConsts.TOAST_TYPE_LOCALE])>=0) isNull=false;
+					if(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_TOAST_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[PublicConsts.TOAST_TYPE_LOCALE])>=0) isNull=false;
 				}
 				else if(i==PublicConsts.ACTION_ENABLE_TASKS_LOCALE){
-					if(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_ENABLE_TASKS_LOCALE].split(PublicConsts.SEPERATOR_SECOND_LEVEL)[0])>=0) isNull=false;
+					if(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_ENABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[0])>=0) isNull=false;
 				}
 				else if(i==PublicConsts.ACTION_DISABLE_TASKS_LOCALE){
-					if(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPERATOR_SECOND_LEVEL)[0])>=0) isNull=false;
+					if(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[0])>=0) isNull=false;
 				}
 				else if(Integer.parseInt(taskitem.actions[i])!= PublicConsts.ACTION_UNSELECTED) isNull=false;
 			}catch (NumberFormatException ne){
@@ -1109,11 +1116,12 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 						case PublicConsts.TRIGGER_TYPE_LOOP_WEEK:{
 							try{
 								taskitem.time=Long.parseLong(data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[0]);
-								for(int i=1;i<data.getStringExtra(Triggers.EXTRA_TRIGGER_VALUES).length();i++){
+								for(int i=1;i<data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES).length;i++){
 									taskitem.week_repeat[i-1]=Integer.parseInt(data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[i])==1;
 								}
 							}catch (Exception e){
 								e.printStackTrace();
+								LogUtil.putExceptionLog(this,e);
 							}
 						}
 						break;
