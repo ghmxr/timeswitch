@@ -11,6 +11,7 @@ import android.os.Build;
 import com.github.ghmxr.timeswitch.receivers.AlarmReceiver;
 import com.github.ghmxr.timeswitch.receivers.BatteryReceiver;
 import com.github.ghmxr.timeswitch.receivers.CustomBroadcastReceiver;
+import com.github.ghmxr.timeswitch.receivers.WifiReceiver;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.timers.CustomTimerTask;
 
@@ -239,6 +240,12 @@ public class TaskItem implements Comparable<TaskItem>{
 			triggerObject=new CustomBroadcastReceiver(context,selectedAction,this);
 			((CustomBroadcastReceiver)triggerObject).registerReceiver();
 		}
+
+		if(trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED||trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED
+				||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF){
+			triggerObject=new WifiReceiver(context,this);
+			((WifiReceiver)triggerObject).registerReceiver();
+		}
 	}
 
 	public void cancelTrigger(){
@@ -253,6 +260,8 @@ public class TaskItem implements Comparable<TaskItem>{
 			((BatteryReceiver) triggerObject).unregisterReceiver();
 		}else if(triggerObject instanceof CustomBroadcastReceiver){
 			((CustomBroadcastReceiver)triggerObject).unRegisterReceiver();
+		}else if(triggerObject instanceof  WifiReceiver){
+			((WifiReceiver)triggerObject).unregisterReceiver();
 		}
 
 	}

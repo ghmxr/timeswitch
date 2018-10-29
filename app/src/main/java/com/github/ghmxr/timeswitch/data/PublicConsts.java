@@ -5,18 +5,20 @@ package com.github.ghmxr.timeswitch.data;
  */
 
 public class PublicConsts {
-	public static final String PACKAGE_NAME="com.github.ghmxr.timeswitch";
 
+	//Following variables are written to storage and can not be changed
+	public static final String PACKAGE_NAME="com.github.ghmxr.timeswitch";
 	public static final String SEPARATOR_FIRST_LEVEL =";";
 	public static final String SEPARATOR_SECOND_LEVEL =":";
 	public static final String SPLIT_SEPARATOR_FIRST_LEVEL =SEPARATOR_FIRST_LEVEL;
 	public static final String SPLIT_SEPARATOR_SECOND_LEVEL = SEPARATOR_SECOND_LEVEL;
-
 	public static final String SEPARATOR_SMS_RECEIVERS =",";
 
+	//internal variables ,can changed for other uses.
 	public static final String ACTION_SMS_SENT=PACKAGE_NAME+".action.sms_sent";
 	public static final String ACTION_SMS_DELIVERED=PACKAGE_NAME+".action.sms_delivered";
 
+	//Following variables are written to storage and can not be changed
 	public static final int TRIGGER_TYPE_SINGLE										=	0	;
 	public static final int TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME						=	1	;
 	public static final int TRIGGER_TYPE_LOOP_WEEK									=	2	;
@@ -27,6 +29,13 @@ public class PublicConsts {
 	public static final int TRIGGER_TYPE_WIFI_CONNECTED								=	7;
 	public static final int TRIGGER_TYPE_WIFI_DISCONNECTED							=	8;
 	public static final int TRIGGER_TYPE_RECEIVED_BROADTCAST						=	9;
+
+	public static final int TRIGGER_TYPE_WIDGET_WIFI_ON					=		11;
+	public static final int TRIGGER_TYPE_WIDGET_WIFI_OFF				=		12;
+	public static final int TRIGGER_TYPE_WIDGET_BLUETOOTH_ON			=		13;
+	public static final int TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF			=		14;
+
+
 
 	public static final int WEEK_SUNDAY=0;
 	public static final int WEEK_MONDAY=1;

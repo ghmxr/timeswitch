@@ -299,6 +299,12 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
                 value.setText(Triggers.getBroadcastDisplayValue(taskitem.selectedAction));
             }
             break;
+			case PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED:{
+				icon.setImageResource(R.drawable.icon_wifi_connected);
+				att.setText("Wifi连接上时");
+				value.setText("已选择");
+			}
+			break;
 		}
 	}
 
@@ -944,7 +950,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			Snackbar.make(findViewById(R.id.layout_taskgui_root),getResources().getString(R.string.activity_taskgui_toast_no_actions),Snackbar.LENGTH_SHORT).show();
 			return -1;
 		}
-		if(taskitem.trigger_type ==PublicConsts.TRIGGER_TYPE_SINGLE&&calendar.getTimeInMillis()<System.currentTimeMillis()){
+		if(taskitem.trigger_type ==PublicConsts.TRIGGER_TYPE_SINGLE&&taskitem.time<System.currentTimeMillis()){
 			Snackbar.make(findViewById(R.id.layout_taskgui_root),getResources().getString(R.string.activity_taskgui_toast_time_invalid),Snackbar.LENGTH_SHORT).show();
 			return -1;
 		}
@@ -1150,6 +1156,10 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 								e.printStackTrace();
 								LogUtil.putExceptionLog(this,e);
 							}
+						}
+						break;
+						case PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED:{
+
 						}
 						break;
 					}

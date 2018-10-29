@@ -210,6 +210,11 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 timePicker.setVisibility(View.GONE);
             }
             break;
+            case PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED:{
+                ((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText("choose");
+                timePicker.setVisibility(View.GONE);
+            }
+            break;
         }
     }
 
@@ -430,6 +435,11 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 });
             }
             break;
+            case R.id.trigger_wifi_connected:{
+                trigger_type=PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED;
+
+            }
+            break;
         }
     }
 
@@ -487,6 +497,10 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                         trigger_values[0]=String.valueOf(broadcast_intent_action);
                     }
                     break;
+                    case PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED:{
+                        trigger_values=new String[1];
+                    }
+                    break;
                 }
                 if(trigger_values==null) return false;
                 Intent i=new Intent();
@@ -497,8 +511,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
             }
             break;
             case android.R.id.home:{
-                setResult(RESULT_CANCELED);
-                finish();
+                checkAndExit();
             }
         }
         return super.onOptionsItemSelected(item);
