@@ -14,6 +14,7 @@
 	<string name="activity_main_att">当前任务为空</string>
 	<string name="activity_action_switch_task_null">列表中没有任务</string>
 	<string name="activity_trigger_wifi_dialog_att">指定SSID</string>
+	<string name="activity_trigger_wifi_no_ssid_assigned">任何WiFi网络</string>
     <string name="dialog_button_positive">确定</string>
     <string name="dialog_button_negative">取消</string>
 	<string name="dialog_button_yes">是</string>
@@ -109,6 +110,8 @@
 	<string name="activity_trigger_wifi_disconnected_att">WiFi断开连接时</string>
 	<string name="activity_trigger_widget_changed_att">系统开关变化</string>
 	<string name="activity_taskgui_condition_received_broadcast_att">收到系统广播（高级）</string>
+	<string name="activity_taskgui_condition_wifi_connected">WiFi连接上时</string>
+	<string name="activity_taskgui_condition_wifi_disconnected">WiFi断开连接时</string>
 	<string name="activity_taskgui_root_required">选择此操作需要Root权限。</string>
 	<string name="activity_taskgui_root_required_action">前往设置</string>
 	<string name="activity_taskgui_root_toast_attention">请打开“超级用户模式”</string>

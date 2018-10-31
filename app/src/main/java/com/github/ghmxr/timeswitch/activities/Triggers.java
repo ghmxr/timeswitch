@@ -146,7 +146,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
 
                 case PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED: case PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:{
                     wifi_ssidinfo=String.valueOf(trigger_values[0]);
-                    Log.d("wifi ssids" ,wifi_ssidinfo);
+                    //Log.d("wifi ssids" ,wifi_ssidinfo);
                 }
                 break;
 
@@ -181,6 +181,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 ", wifi_ssidinfo='" + wifi_ssidinfo + '\'' +
                 ", broadcast_intent_action='" + broadcast_intent_action + '\'' +
                 ", calendar=" + calendar.getTimeInMillis() +
+                ", wifi_ssidinfo=" + wifi_ssidinfo +
                 '}';
     }
 
@@ -220,12 +221,12 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
             }
             break;
             case PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED:{
-                ((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText("choose");
+                ((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText(getWifiConnectionDisplayValue(this,wifi_ssidinfo));
                 timePicker.setVisibility(View.GONE);
             }
             break;
             case PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:{
-                ((TextView)findViewById(R.id.trigger_wifi_disconnected_value)).setText("choose");
+                ((TextView)findViewById(R.id.trigger_wifi_disconnected_value)).setText(getWifiConnectionDisplayValue(this,wifi_ssidinfo));
                 timePicker.setVisibility(View.GONE);
             }
             break;
@@ -241,7 +242,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 View dialogview=LayoutInflater.from(this).inflate(R.layout.layout_dialog_with_listview,null);
                 ListView wifi_list=dialogview.findViewById(R.id.layout_dialog_listview);
                 final WifiInfoListAdapter adapter=new WifiInfoListAdapter((List<WifiConfiguration>)msg.obj, wifi_ssidinfo);
-                Log.d("wifi ssids ",wifi_ssidinfo);
+                //Log.d("wifi ssids ",wifi_ssidinfo);
                 wifi_list.setAdapter(adapter);
                 wifi_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
@@ -257,6 +258,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 activateTriggerType(PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED);
                                 wifi_ssidinfo =adapter.getSelectedIDs();
+                                ((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText(getWifiConnectionDisplayValue(Triggers.this,wifi_ssidinfo));
                             }
                         })
                         .setNegativeButton(getResources().getString(R.string.dialog_button_negative), new DialogInterface.OnClickListener() {
@@ -485,8 +487,8 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 });
             }
             break;
-            case R.id.trigger_wifi_connected:{
-                trigger_type=PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED;
+            case R.id.trigger_wifi_connected: {
+                //trigger_type=PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED;
                 activateTriggerType(PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED);
                 dialog_wait=new AlertDialog.Builder(this)
                         .setTitle(getResources().getString(R.string.dialog_wait_att))
@@ -677,6 +679,14 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         //    tv_broadcast.setText(taskitem.selectedAction);
        // }
         return  intent_action;
+    }
+
+    public static String getWifiConnectionDisplayValue(Context context, String ssids){
+        if(context==null||ssids==null) return "";
+        if(ssids.length()==0) return context.getResources().getString(R.string.activity_trigger_wifi_no_ssid_assigned);
+        //WifiManager wifiManager=(WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+       // if(wifiManager==null) return "";
+        return ssids;
     }
 
     private void refreshTriggerDisplayValues(int type){

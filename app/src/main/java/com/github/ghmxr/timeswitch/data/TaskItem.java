@@ -185,6 +185,7 @@ public class TaskItem implements Comparable<TaskItem>{
 		notification_message=new String(item.notification_message);
 		toast=new String(item.toast);
 		selectedAction=new String(item.selectedAction);
+		wifiIds=new String(item.wifiIds);
 		this.notify=item.notify;
 		this.autodelete=item.autodelete;
 		this.autoclose=item.autoclose;
@@ -201,6 +202,7 @@ public class TaskItem implements Comparable<TaskItem>{
 				", interval_milliseconds=" + interval_milliseconds +
 				", battery_percentage=" + battery_percentage +
 				", battery_temperature=" + battery_temperature +
+				", wifiIds=" + wifiIds +
 				", exceptions=" + Arrays.toString(exceptions) +
 				", actions=" + Arrays.toString(actions) +
 				", uri_ring_notification='" + uri_ring_notification + '\'' +

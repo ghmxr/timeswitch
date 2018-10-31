@@ -301,14 +301,14 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
             break;
 			case PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED:{
 				icon.setImageResource(R.drawable.icon_wifi_connected);
-				att.setText("Wifi连接上时");
-				value.setText("已选择");
+				att.setText(getResources().getString(R.string.activity_taskgui_condition_wifi_connected));
+				value.setText(Triggers.getWifiConnectionDisplayValue(this,taskitem.wifiIds));
 			}
 			break;
 			case PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:{
 				icon.setImageResource(R.drawable.icon_wifi_disconnected);
-				att.setText("wifi断开时");
-				value.setText("choose");
+				att.setText(getResources().getString(R.string.activity_taskgui_condition_wifi_disconnected));
+				value.setText(Triggers.getWifiConnectionDisplayValue(this,taskitem.wifiIds));
 			}
 			break;
 		}
