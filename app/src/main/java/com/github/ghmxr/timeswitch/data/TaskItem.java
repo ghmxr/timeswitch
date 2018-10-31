@@ -11,7 +11,7 @@ import android.os.Build;
 import com.github.ghmxr.timeswitch.receivers.AlarmReceiver;
 import com.github.ghmxr.timeswitch.receivers.BatteryReceiver;
 import com.github.ghmxr.timeswitch.receivers.CustomBroadcastReceiver;
-import com.github.ghmxr.timeswitch.receivers.WifiReceiver;
+import com.github.ghmxr.timeswitch.receivers.NetworkReceiver;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.timers.CustomTimerTask;
 
@@ -48,6 +48,11 @@ public class TaskItem implements Comparable<TaskItem>{
 	 * 时间--绝对时间。用于single 和 weekloop
 	 */
 	public long time=0;
+
+	/**
+	 * 触发条件连接/断开指定Wifi的信息(networkid)
+	 */
+	public String wifiIds="";
 
 	/**
 	 * 触发类型
@@ -243,8 +248,8 @@ public class TaskItem implements Comparable<TaskItem>{
 
 		if(trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED||trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED
 				||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF){
-			triggerObject=new WifiReceiver(context,this);
-			((WifiReceiver)triggerObject).registerReceiver();
+			triggerObject=new NetworkReceiver(context,this);
+			((NetworkReceiver)triggerObject).registerReceiver();
 		}
 	}
 
@@ -260,8 +265,8 @@ public class TaskItem implements Comparable<TaskItem>{
 			((BatteryReceiver) triggerObject).unregisterReceiver();
 		}else if(triggerObject instanceof CustomBroadcastReceiver){
 			((CustomBroadcastReceiver)triggerObject).unRegisterReceiver();
-		}else if(triggerObject instanceof  WifiReceiver){
-			((WifiReceiver)triggerObject).unregisterReceiver();
+		}else if(triggerObject instanceof NetworkReceiver){
+			((NetworkReceiver)triggerObject).unregisterReceiver();
 		}
 
 	}

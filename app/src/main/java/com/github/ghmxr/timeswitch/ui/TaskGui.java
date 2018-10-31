@@ -305,6 +305,12 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				value.setText("已选择");
 			}
 			break;
+			case PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:{
+				icon.setImageResource(R.drawable.icon_wifi_disconnected);
+				att.setText("wifi断开时");
+				value.setText("choose");
+			}
+			break;
 		}
 	}
 
@@ -446,6 +452,11 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 					case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST:{
 						trigger_values=new String[1];
 						trigger_values[0]=String.valueOf(taskitem.selectedAction);
+					}
+					break;
+					case PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED: case PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:{
+						trigger_values=new String[1];
+						trigger_values[0]=taskitem.wifiIds;
 					}
 					break;
 				}
@@ -989,6 +1000,10 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			triggerValues=new String[1];
 			triggerValues[0]=String.valueOf(taskitem.selectedAction);
 		}
+		if(taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED||taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED){
+			triggerValues=new String[1];
+			triggerValues[0]=String.valueOf(taskitem.wifiIds);
+		}
 
 		values.put(SQLConsts.SQL_TASK_COLUMN_ENABLED,taskitem.isenabled?1:0);
 		values.put(SQLConsts.SQL_TASK_COLUMN_TYPE,taskitem.trigger_type);
@@ -1158,8 +1173,9 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 							}
 						}
 						break;
-						case PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED:{
-
+						case PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED: case PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:{
+							//Log.d("wifi ssids ",data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[0]);
+							taskitem.wifiIds=data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[0];
 						}
 						break;
 					}

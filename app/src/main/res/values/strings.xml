@@ -13,6 +13,7 @@
 	<string name="activity_profile">切换列表</string>
 	<string name="activity_main_att">当前任务为空</string>
 	<string name="activity_action_switch_task_null">列表中没有任务</string>
+	<string name="activity_trigger_wifi_dialog_att">指定SSID</string>
     <string name="dialog_button_positive">确定</string>
     <string name="dialog_button_negative">取消</string>
 	<string name="dialog_button_yes">是</string>

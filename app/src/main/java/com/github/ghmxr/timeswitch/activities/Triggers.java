@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,22 +41,21 @@ import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForBattery;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForInterval;
 import com.github.ghmxr.timeswitch.ui.CustomTimePicker;
-import com.github.ghmxr.timeswitch.ui.TaskGui;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
-
-import org.w3c.dom.Text;
 
 public class Triggers extends BaseActivity implements View.OnClickListener,TimePicker.OnTimeChangedListener{
     public static final String EXTRA_TRIGGER_TYPE="trigger_type";
     public static final String EXTRA_TRIGGER_VALUES="trigger_values";
+
+    private static final int MESSAGE_GET_SSID_COMPLETE=0x00001;
 
     private int trigger_type=0;
    // private long time=0;
     private boolean[] week_repeat=new boolean[]{true,true,true,true,true,true,true};
     private long interval=60*1000;
     private int battery_percentage=50,battery_temperature=35;
-    private String wifi_connected_ssidinfo="";
+    private String wifi_ssidinfo ="";
     private String broadcast_intent_action="android.intent.ANSWER";
 
     CustomTimePicker timePicker;
@@ -62,6 +63,8 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
 
     private String checkString="";
     private long first_clicked=0;
+
+    private AlertDialog dialog_wait;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -141,6 +144,12 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 }
                 break;
 
+                case PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED: case PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:{
+                    wifi_ssidinfo=String.valueOf(trigger_values[0]);
+                    Log.d("wifi ssids" ,wifi_ssidinfo);
+                }
+                break;
+
             }
         }catch (Exception e){
             LogUtil.putExceptionLog(this,e);
@@ -169,7 +178,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 ", interval=" + interval +
                 ", battery_percentage=" + battery_percentage +
                 ", battery_temperature=" + battery_temperature +
-                ", wifi_connected_ssidinfo='" + wifi_connected_ssidinfo + '\'' +
+                ", wifi_ssidinfo='" + wifi_ssidinfo + '\'' +
                 ", broadcast_intent_action='" + broadcast_intent_action + '\'' +
                 ", calendar=" + calendar.getTimeInMillis() +
                 '}';
@@ -215,11 +224,52 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 timePicker.setVisibility(View.GONE);
             }
             break;
+            case PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:{
+                ((TextView)findViewById(R.id.trigger_wifi_disconnected_value)).setText("choose");
+                timePicker.setVisibility(View.GONE);
+            }
+            break;
         }
     }
 
     @Override
-    public void processMessage(Message msg) {}
+    public void processMessage(Message msg) {
+        switch (msg.what){
+            default:break;
+            case MESSAGE_GET_SSID_COMPLETE:{
+                if(dialog_wait!=null) dialog_wait.cancel();
+                View dialogview=LayoutInflater.from(this).inflate(R.layout.layout_dialog_with_listview,null);
+                ListView wifi_list=dialogview.findViewById(R.id.layout_dialog_listview);
+                final WifiInfoListAdapter adapter=new WifiInfoListAdapter((List<WifiConfiguration>)msg.obj, wifi_ssidinfo);
+                Log.d("wifi ssids ",wifi_ssidinfo);
+                wifi_list.setAdapter(adapter);
+                wifi_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        adapter.onItemClicked(i);
+                    }
+                });
+               new AlertDialog.Builder(this)
+                        .setTitle(getResources().getString(R.string.activity_trigger_wifi_dialog_att))
+                        .setView(dialogview)
+                        .setPositiveButton(getResources().getString(R.string.dialog_button_positive), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                activateTriggerType(PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED);
+                                wifi_ssidinfo =adapter.getSelectedIDs();
+                            }
+                        })
+                        .setNegativeButton(getResources().getString(R.string.dialog_button_negative), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        })
+                        .show();
+            }
+            break;
+        }
+    }
 
     @Override
     public void onClick(View v){
@@ -366,7 +416,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 dialog.show();
             }
             break;
-            case R.id.exceptions_battery_temperature:{
+            case R.id.trigger_battery_temperature:{
                 if(trigger_type!=PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE &&trigger_type!=PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE){
                     activateTriggerType(PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE);
                 }else{
@@ -437,7 +487,38 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
             break;
             case R.id.trigger_wifi_connected:{
                 trigger_type=PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED;
+                activateTriggerType(PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED);
+                dialog_wait=new AlertDialog.Builder(this)
+                        .setTitle(getResources().getString(R.string.dialog_wait_att))
+                        .setView(LayoutInflater.from(this).inflate(R.layout.layout_dialog_wait,null))
+                        .setCancelable(false)
+                        .show();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Message msg=new Message();
+                        msg.what=MESSAGE_GET_SSID_COMPLETE;
 
+                        WifiManager wifiManager=(WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+                        if(wifiManager==null){
+                            Log.e("Triggers","WifiManager is null !!");
+                            msg.obj=new ArrayList<WifiConfiguration>();
+                            sendMessage(msg);
+                            return;
+                        }
+
+                        msg.obj=wifiManager.getConfiguredNetworks();
+
+                        sendMessage(msg);
+                    }
+                }).start();
+
+            }
+            break;
+            case R.id.trigger_wifi_disconnected:{
+                trigger_type=PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED;
+                activateTriggerType(PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED);
             }
             break;
         }
@@ -497,8 +578,9 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                         trigger_values[0]=String.valueOf(broadcast_intent_action);
                     }
                     break;
-                    case PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED:{
+                    case PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED: case PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:{
                         trigger_values=new String[1];
+                        trigger_values[0]= wifi_ssidinfo;
                     }
                     break;
                 }
@@ -607,6 +689,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         TextView tv_wifi_disconnected=findViewById(R.id.trigger_wifi_disconnected_value);
         TextView tv_widget_changed=findViewById(R.id.trigger_widget_changed_value);
         TextView tv_condition_broadcast=findViewById(R.id.trigger_received_broadcast_value);
+        //TextView tv_wifi_connected
 
         String unchoose=this.getResources().getString(R.string.activity_taskgui_att_unchoose);
 
@@ -615,10 +698,12 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         ((RadioButton)findViewById(R.id.trigger_weekloop_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_LOOP_WEEK);
         ((RadioButton)findViewById(R.id.trigger_battery_percentage_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE||type==PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE);
         ((RadioButton)findViewById(R.id.trigger_battery_temperature_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE||type==PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE);
-        ((RadioButton)findViewById(R.id.trigger_wifi_connected_ra)).setChecked(false);
-        ((RadioButton)findViewById(R.id.trigger_wifi_disconnected_ra)).setChecked(false);
-        ((RadioButton)findViewById(R.id.trigger_widget_changed_ra)).setChecked(false);
+        //((RadioButton)findViewById(R.id.trigger_wifi_connected_ra)).setChecked(false);
+        //((RadioButton)findViewById(R.id.trigger_wifi_disconnected_ra)).setChecked(false);
+        //((RadioButton)findViewById(R.id.trigger_widget_changed_ra)).setChecked(false);
         ((RadioButton)findViewById(R.id.trigger_received_broadcast_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST);
+        ((RadioButton)findViewById(R.id.trigger_wifi_connected_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED);
+        ((RadioButton)findViewById(R.id.trigger_wifi_disconnected_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED);
 
         tv_condition_single_value.setText(unchoose);
         tv_condition_percertaintime_value.setText(unchoose);
@@ -629,6 +714,8 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         tv_wifi_disconnected.setText(unchoose);
         tv_widget_changed.setText(unchoose);
         tv_condition_broadcast.setText(unchoose);
+        tv_wifi_connected.setText(unchoose);
+        tv_wifi_disconnected.setText(unchoose);
     }
 
     private void checkAndExit(){
@@ -701,6 +788,74 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
 
         public String getSelectedAction(){
             return intent_list.get(selectedPosition);
+        }
+    }
+
+    private class WifiInfoListAdapter extends BaseAdapter{
+        private List<WifiConfiguration> list;
+        private boolean[] isSelected;
+        public WifiInfoListAdapter(List<WifiConfiguration> list,String selected_ids) {
+            if(list==null||selected_ids==null) return;
+            this.list=list;
+            isSelected=new boolean[list.size()];
+            if(selected_ids.equals("")) return;
+            try{
+                String[] ids=selected_ids.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+                for(String id:ids){
+                    for(int i=0;i<list.size();i++){
+                        if(list.get(i).networkId==Integer.parseInt(id)) {
+                            isSelected[i]=true;
+                            break;
+                        }
+                    }
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+                LogUtil.putExceptionLog(Triggers.this,e);
+            }
+
+        }
+
+        @Override
+        public int getCount() {
+            return list==null?0:list.size();
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            if(list==null) return null;
+            if(view==null){
+                view=LayoutInflater.from(Triggers.this).inflate(R.layout.item_wifiinfo,viewGroup,false);
+            }
+            ((TextView)view.findViewById(R.id.item_wifiinfo_ssid)).setText(list.get(i).SSID);
+            ((CheckBox)view.findViewById(R.id.item_wifiinfo_cb)).setChecked(isSelected[i]);
+            return view;
+        }
+
+        public void onItemClicked(int position){
+            isSelected[position]=!isSelected[position];
+            notifyDataSetChanged();
+        }
+
+        public String getSelectedIDs(){
+            String ids="";
+            for(int i=0;i<isSelected.length;i++){
+                if(isSelected[i]) {
+                    if(!ids.equals("")) ids+=PublicConsts.SEPARATOR_SECOND_LEVEL;
+                    ids+=list.get(i).networkId;
+                }
+            }
+            return ids;
         }
     }
 
