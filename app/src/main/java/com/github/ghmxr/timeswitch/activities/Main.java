@@ -12,12 +12,10 @@ import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.BatteryManager;
 import android.os.Build;

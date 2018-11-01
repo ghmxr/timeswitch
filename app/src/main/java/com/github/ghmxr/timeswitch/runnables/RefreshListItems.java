@@ -95,7 +95,9 @@ public class RefreshListItems implements Runnable {
                 }
 
                 if(item.trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED||item.trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED){
-                    item.wifiIds=String.valueOf(trigger_values[0]);
+                    if(trigger_values==null||trigger_values.length<1){
+                        item.wifiIds="";
+                    }else item.wifiIds=String.valueOf(trigger_values[0]);
                 }
                 //exceptions ，应用预留长度>=数据库读取返回的数组长度，即 read_exceptions.length<=item.exceptions.length
                 String [] read_exceptions=ValueUtils.string2StringArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_EXCEPTIONS)));

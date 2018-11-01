@@ -168,6 +168,12 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autoclose_cb)).setChecked(taskitem.autoclose);
 		((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autodelete_cb)).setChecked(taskitem.autodelete);
 		//activateTriggerType(taskitem.trigger_type);
+
+		if(taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_SINGLE) setAutoCloseAreaEnabled(false);
+		else {
+			setAutoCloseAreaEnabled(!((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autodelete_cb)).isChecked());
+		}
+
 		refreshTriggerDisplayValue();
 		refreshExceptionViews();
 		refreshActionStatus();
@@ -1180,6 +1186,11 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 						break;
 					}
 					refreshTriggerDisplayValue();
+
+					if(taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_SINGLE) setAutoCloseAreaEnabled(false);
+					else {
+						setAutoCloseAreaEnabled(!((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autodelete_cb)).isChecked());
+					}
 				}
 			}
 			break;

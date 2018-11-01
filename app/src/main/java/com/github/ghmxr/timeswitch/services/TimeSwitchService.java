@@ -20,6 +20,7 @@ import com.github.ghmxr.timeswitch.activities.Settings;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
 import com.github.ghmxr.timeswitch.receivers.BatteryReceiver;
+import com.github.ghmxr.timeswitch.receivers.NetworkReceiver;
 import com.github.ghmxr.timeswitch.runnables.RefreshListItems;
 import com.github.ghmxr.timeswitch.timers.CustomTimerTask;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
@@ -61,6 +62,8 @@ public class TimeSwitchService extends Service {
 
     private BatteryReceiver batteryReceiver;
 
+    private NetworkReceiver networkReceiver;
+
     public static  PowerManager.WakeLock wakelock;
 
     @Override
@@ -83,6 +86,11 @@ public class TimeSwitchService extends Service {
            // Log.e("TimeSwitchService","batteryReceiver is null");
             batteryReceiver=new BatteryReceiver(this);
             batteryReceiver.registerReceiver();
+        }
+
+        if(networkReceiver==null){
+            networkReceiver=new NetworkReceiver(this,null);
+            networkReceiver.registerReceiver();
         }
 
         refreshTaskItems();
@@ -157,6 +165,10 @@ public class TimeSwitchService extends Service {
         if(batteryReceiver!=null) {
             batteryReceiver.unregisterReceiver();
             batteryReceiver=null;
+        }
+        if(networkReceiver!=null){
+            networkReceiver.unregisterReceiver();
+            networkReceiver=null;
         }
         if(service_queue.contains(this)) service_queue.remove(this);
         if(wakelock!=null) {

@@ -373,4 +373,8 @@ public class ValueUtils {
         }
     }
 
+    public static String toDisplaySSIDString(String ssid){
+        if(ssid==null||ssid.length()<2) return "";
+        return ssid.substring(1,ssid.length()-1);
+    }
 }

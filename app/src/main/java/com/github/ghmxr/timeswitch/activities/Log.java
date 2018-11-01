@@ -198,15 +198,9 @@ public class Log extends BaseActivity {
             }
             TextView time=convertView.findViewById(R.id.item_log_time);
             TextView value=convertView.findViewById(R.id.item_log_value);
-            //Calendar calendar=Calendar.getInstance();
-            //try{calendar.setTimeInMillis(Long.parseLong(keys[position].toString()));}catch (Exception e){e.printStackTrace();}
-            //calendar.setTimeInMillis(loglist.get(position).log_time);
-            //int month=calendar.get(Calendar.MONTH)+1;
-            //trigger_value.setText(calendar.get(Calendar.YEAR)+"/"+ ValueUtils.format(month)+"/"+ValueUtils.format(calendar.get(Calendar.DAY_OF_MONTH))+"("+ValueUtils.getDayOfWeek(loglist.get(position).log_time)+")/"+ValueUtils.format(calendar.get(Calendar.HOUR_OF_DAY))+":"+ValueUtils.format(calendar.get(Calendar.MINUTE))+":"+ValueUtils.format(calendar.get(Calendar.SECOND)));
             time.setText(ValueUtils.getFormatDateTime(loglist.get(position).log_time));
-            //value.setText(log_hashmap.get(keys[position]).toString());
             String display_value=loglist.get(position).log_value;
-            if(display_value.length()>15) display_value=display_value.substring(0,15)+"...";
+            if(display_value.length()>50) display_value=display_value.substring(0,50)+"...";
             value.setText(display_value);
             return convertView;
         }

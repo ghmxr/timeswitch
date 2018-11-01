@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.ghmxr.timeswitch.R;
+import com.github.ghmxr.timeswitch.activities.Triggers;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
 import com.github.ghmxr.timeswitch.utils.DisplayDensity;
@@ -113,7 +114,7 @@ public class MainListAdapter extends BaseAdapter {
 
         if(this.list.get(i).trigger_type ==PublicConsts.TRIGGER_TYPE_SINGLE){
             holder.img.setImageResource(R.drawable.icon_repeat_single);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
+            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,10);
         }else if(this.list.get(i).trigger_type ==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){
             holder.img.setImageResource(R.drawable.icon_repeat_percertaintime);
             holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,14);
@@ -132,13 +133,21 @@ public class MainListAdapter extends BaseAdapter {
         }else if(list.get(i).trigger_type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST){
             holder.img.setImageResource(R.drawable.icon_broadcast);
             holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,10);
+        }else if(list.get(i).trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED){
+            holder.img.setImageResource(R.drawable.icon_wifi_connected);
+            holder.trigger_value.setTextSize(10);
+        }else if(list.get(i).trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED){
+            holder.img.setImageResource(R.drawable.icon_wifi_disconnected);
+            holder.trigger_value.setTextSize(10);
         }
 
         if(this.list.get(i).trigger_type ==PublicConsts.TRIGGER_TYPE_SINGLE){
             Calendar calendar=Calendar.getInstance();
             calendar.setTimeInMillis(list.get(i).time);
             int month=calendar.get(Calendar.MONTH)+1;
-            holder.trigger_value.setText( ValueUtils.format(calendar.get(Calendar.HOUR_OF_DAY))+":"+ ValueUtils.format(calendar.get(Calendar.MINUTE)));
+            holder.trigger_value.setText( calendar.get(Calendar.YEAR)+"/"+ValueUtils.format(calendar.get(Calendar.MONTH))+"/"+ValueUtils.format(month)+"/"+ValueUtils.getDayOfWeek(list.get(i).time)+"/"+
+                    "\n"+ValueUtils.format(calendar.get(Calendar.HOUR_OF_DAY))+":"+ ValueUtils.format(calendar.get(Calendar.MINUTE)));
+            //holder.trigger_value.setText(Triggers.getSingleTimeDisplayValue(context,list.get(i).time));
            // holder.task_name.setText(context.getResources().getString(R.string.adapter_single)+" "+ ValueUtils.format(calendar.get(Calendar.YEAR))+"/"+ ValueUtils.format(month)+"/"+ ValueUtils.format(calendar.get(Calendar.DAY_OF_MONTH))+"("+ValueUtils.getDayOfWeek(calendar.getTimeInMillis())+")");
         }
 
@@ -177,6 +186,12 @@ public class MainListAdapter extends BaseAdapter {
             String action=list.get(i).selectedAction;
             if(action.length()>16) action=action.substring(0,16)+"...";
             holder.trigger_value.setText(action);
+        }
+
+        if(list.get(i).trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED||list.get(i).trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED){
+            String ssidinfo= Triggers.getWifiConnectionDisplayValue(context,list.get(i).wifiIds);
+            if(ssidinfo.length()>16) ssidinfo=ssidinfo.substring(0,16)+"...";
+            holder.trigger_value.setText(ssidinfo);
         }
 
         String name=list.get(i).name;
