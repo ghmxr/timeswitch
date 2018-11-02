@@ -30,10 +30,23 @@ public class PublicConsts {
 	public static final int TRIGGER_TYPE_WIFI_DISCONNECTED							=	8;
 	public static final int TRIGGER_TYPE_RECEIVED_BROADTCAST						=	9;
 
-	public static final int TRIGGER_TYPE_WIDGET_WIFI_ON					=		11;
-	public static final int TRIGGER_TYPE_WIDGET_WIFI_OFF				=		12;
-	public static final int TRIGGER_TYPE_WIDGET_BLUETOOTH_ON			=		13;
-	public static final int TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF			=		14;
+	public static final int TRIGGER_TYPE_WIDGET_WIFI_ON					=		101;
+	public static final int TRIGGER_TYPE_WIDGET_WIFI_OFF				=		102;
+	public static final int TRIGGER_TYPE_WIDGET_BLUETOOTH_ON			=		103;
+	public static final int TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF			=		104;
+	public static final int TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE		=		105;
+	public static final int TRIGGER_TYPE_WIDGET_RING_MODE_OFF			=		106;
+	public static final int TRIGGER_TYPE_WIDGET_RING_NORMAL				=		107;
+	public static final int TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON		=		108;
+	public static final int TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF		=		109;
+	public static final int TRIGGER_TYPE_WIDGET_AP_ENABLED				=		110;
+	public static final int TRIGGER_TYPE_WIDGET_AP_DISABLED				=		111;
+
+	public static final int TRIGGER_TYPE_SCREEN_ON						=		201;
+	public static final int TRIGGER_TYPE_SCREEN_OFF						=		202;
+	public static final int TRIGGER_TYPE_POWER_CONNECTED				=		203;
+	public static final int TRIGGER_TYPE_POWER_DISCONNECTED				=		204;
+
 
 
 

@@ -201,7 +201,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
             }
             break;
             case PublicConsts.TRIGGER_TYPE_LOOP_WEEK:{
-                ((TextView)findViewById(R.id.trigger_weekloop_value)).setText(getWeekLoopDisplayValue(this,week_repeat));
+                ((TextView)findViewById(R.id.trigger_weekloop_value)).setText(getWeekLoopDisplayValue(this,week_repeat,calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE)));
                 timePicker.setVisibility(View.VISIBLE);
             }
             break;
@@ -356,7 +356,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                                 break;
                             }
                         }
-                        ((TextView)findViewById(R.id.trigger_weekloop_value)).setText(getWeekLoopDisplayValue(Triggers.this,week_repeat));
+                        ((TextView)findViewById(R.id.trigger_weekloop_value)).setText(getWeekLoopDisplayValue(Triggers.this,week_repeat,calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE)));
                         if(allunchecked){
                             activateTriggerType(PublicConsts.TRIGGER_TYPE_SINGLE);
                             dialog_weekloop.cancel();
@@ -587,7 +587,10 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         calendar.set(Calendar.HOUR_OF_DAY,hour);
         calendar.set(Calendar.MINUTE,minute);
         calendar.set(Calendar.SECOND,0);
-        ((TextView)findViewById(R.id.trigger_single_value)).setText(getSingleTimeDisplayValue(this,calendar.getTimeInMillis()));
+        if(trigger_type==PublicConsts.TRIGGER_TYPE_SINGLE) ((TextView)findViewById(R.id.trigger_single_value)).setText(getSingleTimeDisplayValue(this,calendar.getTimeInMillis()));
+        if(trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_WEEK){
+            ((TextView)findViewById(R.id.trigger_weekloop_value)).setText(getWeekLoopDisplayValue(this,week_repeat,calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE)));
+        }
     }
 
     @Override
@@ -681,7 +684,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         return context.getResources().getString(R.string.adapter_per)+ ValueUtils.getFormatTime(context,loopmillis)+context.getResources().getString(R.string.adapter_trigger);
     }
 
-    public static String getWeekLoopDisplayValue(Context context,boolean week_repeat []){
+    public static String getWeekLoopDisplayValue(Context context,boolean week_repeat [],int hourOfDay,int minute){
         if(context==null||week_repeat==null||week_repeat.length!=7) return "";
         String tv_value="";
         //TextView tv_condition_weekloop_value=findViewById(R.id.layout_taskgui_area_condition_weekloop_value);
@@ -700,8 +703,10 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 break;
             }
         }
-        if(everyday) return context.getResources().getString(R.string.everyday);
-        return  tv_value;
+
+        String time=ValueUtils.format(hourOfDay)+":"+ValueUtils.format(minute);
+        if(everyday) return context.getResources().getString(R.string.everyday)+" "+time;
+        return  tv_value+" "+time;
     }
 
     public static String getBatteryPercentageDisplayValue(Context context,int trigger_type,int percentage){

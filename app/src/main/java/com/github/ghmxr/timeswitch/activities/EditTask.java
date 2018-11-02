@@ -46,13 +46,17 @@ public class EditTask extends TaskGui {
         //this.taskid=getIntent().getIntExtra(TAG_EDITTASK_KEY,0);
         int position=getIntent().getIntExtra(TAG_SELECTED_ITEM_POSITION,-1);
         //int position=ProcessTaskItem.getPosition(taskid);
+        if(position<0) {
+            Toast.makeText(this,"Can not get the task position",Toast.LENGTH_SHORT).show();
+            return;
+        }
         taskitem_read=TimeSwitchService.list.get(position);
         taskitem=new TaskItem(taskitem_read);
         //if(taskid==0) taskid=taskitem.id;
         Log.i("EDIT","task id is "+taskitem.id);
-        if(taskitem_read.trigger_type==PublicConsts.TRIGGER_TYPE_SINGLE||taskitem_read.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_WEEK) {
-            calendar.setTimeInMillis(taskitem.time);
-        }
+        //if(taskitem_read.trigger_type==PublicConsts.TRIGGER_TYPE_SINGLE||taskitem_read.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_WEEK) {
+            //calendar.setTimeInMillis(taskitem.time);
+       // }
     }
 
     @Override

@@ -46,6 +46,9 @@ import com.github.ghmxr.timeswitch.utils.ValueUtils;
 public abstract class TaskGui extends BaseActivity implements View.OnClickListener{
 
 	//public CustomTimePicker timepicker;
+	/**
+	 * @deprecated
+	 */
 	public Calendar calendar=Calendar.getInstance();
 	public TaskItem taskitem=new TaskItem();
 	private static final int REQUEST_CODE_TRIGGERS=0;
@@ -272,7 +275,9 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			case PublicConsts.TRIGGER_TYPE_LOOP_WEEK:{
 				icon.setImageResource(R.drawable.icon_repeat_weekloop);
 				att.setText(getResources().getString(R.string.activity_taskgui_condition_weekloop_att));
-				value.setText(Triggers.getWeekLoopDisplayValue(this,taskitem.week_repeat));
+				Calendar c=Calendar.getInstance();
+				c.setTimeInMillis(taskitem.time);
+				value.setText(Triggers.getWeekLoopDisplayValue(this,taskitem.week_repeat,c.get(Calendar.HOUR_OF_DAY),c.get(Calendar.MINUTE)));
 			}
 			break;
 			case PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE:{
@@ -980,7 +985,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		String[] triggerValues=new String[1];
 		if(this.taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_SINGLE){//0（仅一次）--{time};
 			triggerValues=new String[1];
-			triggerValues[0]=String.valueOf(this.calendar.getTimeInMillis());
+			triggerValues[0]=String.valueOf(taskitem.time);
 		}
 		if(this.taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){//1（指定时间长度重复） --{time,period};
 			triggerValues=new String[2];
@@ -989,7 +994,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		}
 		if(this.taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_WEEK){//2(周重复) --{time,SUNDAY,MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY};
 			triggerValues=new String[8];
-			triggerValues[0]=String.valueOf(this.calendar.getTimeInMillis());
+			triggerValues[0]=String.valueOf(taskitem.time);
 			for(int i=1;i<triggerValues.length;i++){
 				triggerValues[i]=String.valueOf(this.taskitem.week_repeat[i-1]?1:0);
 			}
