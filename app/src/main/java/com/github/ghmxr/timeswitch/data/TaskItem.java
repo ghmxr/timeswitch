@@ -8,10 +8,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 
+import com.github.ghmxr.timeswitch.receivers.APReceiver;
+import com.github.ghmxr.timeswitch.receivers.AirplaneModeReceiver;
 import com.github.ghmxr.timeswitch.receivers.AlarmReceiver;
 import com.github.ghmxr.timeswitch.receivers.BatteryReceiver;
+import com.github.ghmxr.timeswitch.receivers.BluetoothReceiver;
 import com.github.ghmxr.timeswitch.receivers.CustomBroadcastReceiver;
 import com.github.ghmxr.timeswitch.receivers.NetworkReceiver;
+import com.github.ghmxr.timeswitch.receivers.RingModeReceiver;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.timers.CustomTimerTask;
 
@@ -249,10 +253,38 @@ public class TaskItem implements Comparable<TaskItem>{
 		}
 
 		if(trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED||trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED
-				||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF){
+				||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF
+				||trigger_type==PublicConsts.TRIGGER_TYPE_NET_ON||trigger_type==PublicConsts.TRIGGER_TYPE_NET_OFF){
 			triggerObject=new NetworkReceiver(context,this);
 			((NetworkReceiver)triggerObject).registerReceiver();
 		}
+
+		//if(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF){
+		//	triggerObject=new NetworkReceiver(context,this);
+		//	((NetworkReceiver)triggerObject).registerReceiver();
+		//}
+
+		if(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF){
+			triggerObject=new BluetoothReceiver(context,this);
+			((BluetoothReceiver)triggerObject).registerReceiver();
+		}
+
+		if(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE
+				||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF){
+			triggerObject=new RingModeReceiver(context,this);
+			((RingModeReceiver)triggerObject).registerReceiver();
+		}
+
+		if(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF){
+			triggerObject=new AirplaneModeReceiver(context,this);
+			((AirplaneModeReceiver)triggerObject).registerReceiver();
+		}
+
+		if(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED){
+			triggerObject=new APReceiver(context,this);
+			((APReceiver)triggerObject).registerReceiver();
+		}
+
 	}
 
 	public void cancelTrigger(){
@@ -269,6 +301,14 @@ public class TaskItem implements Comparable<TaskItem>{
 			((CustomBroadcastReceiver)triggerObject).unRegisterReceiver();
 		}else if(triggerObject instanceof NetworkReceiver){
 			((NetworkReceiver)triggerObject).unregisterReceiver();
+		}else if(triggerObject instanceof BluetoothReceiver){
+			((BluetoothReceiver)triggerObject).unRegisterReceiver();
+		}else if(triggerObject instanceof RingModeReceiver){
+			((RingModeReceiver)triggerObject).unRegisterReceiver();
+		}else if(triggerObject instanceof APReceiver){
+			((APReceiver)triggerObject).unRegisterReceiver();
+		}else if(triggerObject instanceof AirplaneModeReceiver){
+			((AirplaneModeReceiver)triggerObject).unRegisterReceiver();
 		}
 
 	}

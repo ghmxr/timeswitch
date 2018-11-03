@@ -41,6 +41,8 @@ public class PublicConsts {
 	public static final int TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF		=		109;
 	public static final int TRIGGER_TYPE_WIDGET_AP_ENABLED				=		110;
 	public static final int TRIGGER_TYPE_WIDGET_AP_DISABLED				=		111;
+	public static final int TRIGGER_TYPE_NET_ON							=		112;
+	public static final int TRIGGER_TYPE_NET_OFF						=		113;
 
 	public static final int TRIGGER_TYPE_SCREEN_ON						=		201;
 	public static final int TRIGGER_TYPE_SCREEN_OFF						=		202;

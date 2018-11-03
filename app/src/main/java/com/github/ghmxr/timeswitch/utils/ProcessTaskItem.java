@@ -112,41 +112,7 @@ public class ProcessTaskItem {
             }
         }
 
-        if(item.autoclose){
-            item.cancelTrigger();
-            item.isenabled=false;
-            try{
-                ContentValues values=new ContentValues();
-                values.put(SQLConsts.SQL_TASK_COLUMN_ENABLED,0);
-                database.update(SQLConsts.getCurrentTableName(this.context),values,SQLConsts.SQL_TASK_COLUMN_ID +"="+item.id,null);
-               // int position=getPosition(item.id);
-                //if(TimeSwitchService.list!=null&&position>=0&&position<TimeSwitchService.list.size()) {
-                //    TimeSwitchService.list.get(position).isenabled=false;
-              //      TimeSwitchService.list.get(position).cancelTrigger();
-               // }
-                Main.sendEmptyMessage(Main.MESSAGE_REQUEST_UPDATE_LIST);
-            }catch (Exception e){
-                e.printStackTrace();
-                LogUtil.putExceptionLog(context,e);
-            }
-        }
-        //do if delete this taskitem
-        if(item.autodelete){
-            try{
-                item.cancelTrigger();
-                int rows=database.delete(SQLConsts.getCurrentTableName(this.context),SQLConsts.SQL_TASK_COLUMN_ID +"="+item.id,null);
-                Log.i(TAG,"receiver deleted "+rows+" rows");
-                int position=getPosition(item.id);
-                if(TimeSwitchService.list!=null&&position>=0&&position<TimeSwitchService.list.size()) {
-                  //  TimeSwitchService.list.get(position).cancelTrigger();
-                   TimeSwitchService.list.remove(position);
-                }
-                Main.sendEmptyMessage(Main.MESSAGE_REQUEST_UPDATE_LIST);
-            }catch (Exception e){
-                e.printStackTrace();
-                LogUtil.putExceptionLog(context,e);
-            }
-        }
+
 
         //boolean breakException=false;
         StringBuilder log_exception=new StringBuilder("");
@@ -463,6 +429,36 @@ public class ProcessTaskItem {
             log_taskitem.append(" ÒÑ´¥·¢ ");
         }
         Log.i(TAG,"canTrigger is "+this.canTrigger);
+
+        if(item.autoclose&&canTrigger){
+            item.cancelTrigger();
+            item.isenabled=false;
+            try{
+                ContentValues values=new ContentValues();
+                values.put(SQLConsts.SQL_TASK_COLUMN_ENABLED,0);
+                database.update(SQLConsts.getCurrentTableName(this.context),values,SQLConsts.SQL_TASK_COLUMN_ID +"="+item.id,null);
+                Main.sendEmptyMessage(Main.MESSAGE_REQUEST_UPDATE_LIST);
+            }catch (Exception e){
+                e.printStackTrace();
+                LogUtil.putExceptionLog(context,e);
+            }
+        }
+        //do if delete this taskitem
+        if(item.autodelete&&canTrigger){
+            try{
+                item.cancelTrigger();
+                int rows=database.delete(SQLConsts.getCurrentTableName(this.context),SQLConsts.SQL_TASK_COLUMN_ID +"="+item.id,null);
+                Log.i(TAG,"receiver deleted "+rows+" rows");
+                int position=getPosition(item.id);
+                if(TimeSwitchService.list!=null&&position>=0&&position<TimeSwitchService.list.size()) {
+                    TimeSwitchService.list.remove(position);
+                }
+                Main.sendEmptyMessage(Main.MESSAGE_REQUEST_UPDATE_LIST);
+            }catch (Exception e){
+                e.printStackTrace();
+                LogUtil.putExceptionLog(context,e);
+            }
+        }
 
         if(canTrigger){
            log_taskitem.append(" ");

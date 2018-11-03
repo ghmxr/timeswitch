@@ -16,6 +16,7 @@ public class RingModeReceiver extends BroadcastReceiver implements Runnable {
     private Context context;
     private TaskItem item;
     private boolean isRegistered=false;
+    private boolean mLock=true;
 
     public RingModeReceiver(Context context,TaskItem item) {
         this.context=context;
@@ -32,18 +33,24 @@ public class RingModeReceiver extends BroadcastReceiver implements Runnable {
                 case PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF:{
                     if(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE,-1)==AudioManager.RINGER_MODE_SILENT){
                         activate();
+                    }else{
+                        mLock=false;
                     }
                 }
                 break;
                 case PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE:{
                     if(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE,-1)==AudioManager.RINGER_MODE_VIBRATE){
                         activate();
+                    }else {
+                        mLock=false;
                     }
                 }
                 break;
                 case PublicConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL:{
                     if(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE,-1)==AudioManager.RINGER_MODE_NORMAL){
                         activate();
+                    }else {
+                        mLock=false;
                     }
                 }
                 break;
@@ -66,7 +73,11 @@ public class RingModeReceiver extends BroadcastReceiver implements Runnable {
     }
 
     private void activate(){
-        new Thread(this).start();
+        if(!mLock){
+            new Thread(this).start();
+            mLock=true;
+        }
+
     }
 
     @Override

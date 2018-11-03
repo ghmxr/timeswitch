@@ -322,6 +322,84 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				value.setText(Triggers.getWifiConnectionDisplayValue(this,taskitem.wifiIds));
 			}
 			break;
+			case PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON:{
+				icon.setImageResource(R.drawable.icon_wifi_on);
+				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				value.setText("");
+			}
+			break;
+			case PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF:{
+				icon.setImageResource(R.drawable.icon_wifi_off);
+				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				value.setText("");
+			}
+			break;
+			case PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON:{
+				icon.setImageResource(R.drawable.icon_bluetooth_on);
+				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				value.setText("");
+			}
+			break;
+            case PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF:{
+                icon.setImageResource(R.drawable.icon_bluetooth_off);
+                att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+                value.setText("");
+            }
+            break;
+			case PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF:{
+				icon.setImageResource(R.drawable.icon_ring_off);
+				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				value.setText("");
+			}
+			break;
+			case PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE:{
+				icon.setImageResource(R.drawable.icon_ring_vibrate);
+				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				value.setText("");
+			}
+			break;
+			case PublicConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL:{
+				icon.setImageResource(R.drawable.icon_ring_normal);
+				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				value.setText("");
+			}
+			break;
+			case PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF:{
+				icon.setImageResource(R.drawable.icon_airplanemode_off);
+				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				value.setText("");
+			}
+			break;
+			case PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON:{
+				icon.setImageResource(R.drawable.icon_airplanemode_on);
+				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				value.setText("");
+			}
+			break;
+			case PublicConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED:{
+				icon.setImageResource(R.drawable.icon_ap_on);
+				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				value.setText("");
+			}
+			break;
+			case PublicConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED:{
+				icon.setImageResource(R.drawable.icon_ap_off);
+				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				value.setText("");
+			}
+			break;
+			case PublicConsts.TRIGGER_TYPE_NET_ON:{
+				icon.setImageResource(R.drawable.icon_cellular_on);
+				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				value.setText("");
+			}
+			break;
+			case PublicConsts.TRIGGER_TYPE_NET_OFF:{
+				icon.setImageResource(R.drawable.icon_cellular_off);
+				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				value.setText("");
+			}
+			break;
 		}
 	}
 
@@ -429,7 +507,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				Intent i=new Intent();
 				i.setClass(this,Triggers.class);
 				i.putExtra(Triggers.EXTRA_TRIGGER_TYPE,taskitem.trigger_type);
-				String trigger_values[]=null;
+				String trigger_values[]=new String[1];
 				switch (taskitem.trigger_type){
 					default:break;
 					case PublicConsts.TRIGGER_TYPE_SINGLE:{
@@ -471,7 +549,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 					}
 					break;
 				}
-				if(trigger_values==null) break;
+				//if(trigger_values==null) break;
 				i.putExtra(Triggers.EXTRA_TRIGGER_VALUES,trigger_values);
 				startActivityForResult(i,REQUEST_CODE_TRIGGERS);
 			}

@@ -14,6 +14,7 @@ public class APReceiver extends BroadcastReceiver implements Runnable {
     private Context context;
     private TaskItem item;
     private boolean isRegistered=false;
+    private boolean mLock=true;
 
     public static final String ACTION_AP_STATE_CHANGED="android.net.wifi.WIFI_AP_STATE_CHANGED";
     public static int AP_STATE_DISABLING=10;
@@ -29,7 +30,7 @@ public class APReceiver extends BroadcastReceiver implements Runnable {
     public void registerReceiver(){
         if(!isRegistered) {
             IntentFilter filter=new IntentFilter();
-            filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);//"android.net.wifi.WIFI_AP_STATE_CHANGED"
+            filter.addAction(ACTION_AP_STATE_CHANGED);//"android.net.wifi.WIFI_AP_STATE_CHANGED"
             context.registerReceiver(this,filter);
             isRegistered=true;
         }
@@ -50,15 +51,22 @@ public class APReceiver extends BroadcastReceiver implements Runnable {
             if(item==null) return;
             if(item.trigger_type== PublicConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED&&state==AP_STATE_ENABLED){
                 activate();
+            }else{
+                mLock=false;
             }
             if(item.trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED&&state==AP_STATE_DISABLED){
                 activate();
+            }else{
+                mLock=false;
             }
         }
     }
 
     private void activate(){
-        new Thread(this).start();
+        if(!mLock){
+            new Thread(this).start();
+            mLock=true;
+        }
     }
 
     @Override

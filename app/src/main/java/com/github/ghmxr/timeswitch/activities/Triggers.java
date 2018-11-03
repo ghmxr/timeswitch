@@ -230,6 +230,15 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 timePicker.setVisibility(View.GONE);
             }
             break;
+            case PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON: case PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF: case PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON:
+            case PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF: case PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF: case PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE:
+            case PublicConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL: case PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON: case PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF:
+            case PublicConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED: case PublicConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED: case PublicConsts.TRIGGER_TYPE_NET_ON:
+            case PublicConsts.TRIGGER_TYPE_NET_OFF:{
+                ((TextView)findViewById(R.id.trigger_widget_changed_value)).setText(getWidgetDisplayValue(this,type));
+                timePicker.setVisibility(View.GONE);
+            }
+            break;
         }
     }
 
@@ -578,6 +587,120 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                         .show();
             }
             break;
+            case R.id.trigger_widget_changed:{
+                if(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON
+                        ||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE
+                        ||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF
+                        ||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED||trigger_type==PublicConsts.TRIGGER_TYPE_NET_ON
+                        ||trigger_type==PublicConsts.TRIGGER_TYPE_NET_OFF){
+                    activateTriggerType(trigger_type);
+                }else{
+                    activateTriggerType(PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON);
+                }
+                View dialogView=LayoutInflater.from(this).inflate(R.layout.layout_dialog_triggers_widget,null);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_wifi_on_ra)).setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_wifi_off_ra)).setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_bluetooth_on_ra)).setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_bluetooth_off_ra)).setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_ring_off_ra)).setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_ring_vibrate_ra)).setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_ring_normal_ra)).setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_airplane_mode_on_ra)).setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_airplane_mode_off_ra)).setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_ap_on_ra)).setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_ap_off_ra)).setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_net_on_ra)).setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_NET_ON);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_net_off_ra)).setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_NET_OFF);
+                final AlertDialog dialog=new AlertDialog.Builder(this)
+                        .setTitle("Ñ¡Ôñ¿ª¹Ø")
+                        .setView(dialogView)
+                        .setNegativeButton(getResources().getString(R.string.dialog_button_negative), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
+                        .create();
+                View.OnClickListener listener=new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int triggerType=PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON;
+                        switch (v.getId()){
+                            default:break;
+                            case R.id.triggers_widget_wifi_on:{
+                                triggerType=PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON;
+                            }
+                            break;
+                            case R.id.triggers_widget_wifi_off:{
+                                triggerType=PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF;
+                            }
+                            break;
+                            case R.id.triggers_widget_bluetooth_on:{
+                                triggerType=PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON;
+                            }
+                            break;
+                            case R.id.triggers_widget_bluetooth_off:{
+                                triggerType=PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF;
+                            }
+                            break;
+                            case R.id.triggers_widget_ring_off:{
+                                triggerType=PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF;
+                            }
+                            break;
+                            case R.id.triggers_widget_ring_vibrate:{
+                                triggerType=PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE;
+                            }
+                            break;
+                            case R.id.triggers_widget_ring_normal:{
+                                triggerType=PublicConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL;
+                            }
+                            break;
+                            case R.id.triggers_widget_airplane_mode_on:{
+                                triggerType=PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON;
+                            }
+                            break;
+                            case R.id.triggers_widget_airplane_mode_off:{
+                                triggerType=PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF;
+                            }
+                            break;
+                            case R.id.triggers_widget_ap_on:{
+                                triggerType=PublicConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED;
+                            }
+                            break;
+                            case R.id.triggers_widget_ap_off:{
+                                triggerType=PublicConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED;
+                            }
+                            break;
+                            case R.id.triggers_widget_net_on:{
+                                triggerType=PublicConsts.TRIGGER_TYPE_NET_ON;
+                            }
+                            break;
+                            case R.id.triggers_widget_net_off:{
+                                triggerType=PublicConsts.TRIGGER_TYPE_NET_OFF;
+                            }
+                            break;
+                        }
+                        activateTriggerType(triggerType);
+                       // ((TextView)findViewById(R.id.trigger_widget_changed_value)).setText(getWidgetDisplayValue(Triggers.this,triggerType));
+                        dialog.cancel();
+                    }
+                };
+                dialog.show();
+                dialogView.findViewById(R.id.triggers_widget_wifi_on).setOnClickListener(listener);
+                dialogView.findViewById(R.id.triggers_widget_wifi_off).setOnClickListener(listener);
+                dialogView.findViewById(R.id.triggers_widget_bluetooth_on).setOnClickListener(listener);
+                dialogView.findViewById(R.id.triggers_widget_bluetooth_off).setOnClickListener(listener);
+                dialogView.findViewById(R.id.triggers_widget_ring_off).setOnClickListener(listener);
+                dialogView.findViewById(R.id.triggers_widget_ring_vibrate).setOnClickListener(listener);
+                dialogView.findViewById(R.id.triggers_widget_ring_normal).setOnClickListener(listener);
+                dialogView.findViewById(R.id.triggers_widget_airplane_mode_on).setOnClickListener(listener);
+                dialogView.findViewById(R.id.triggers_widget_airplane_mode_off).setOnClickListener(listener);
+                dialogView.findViewById(R.id.triggers_widget_ap_on).setOnClickListener(listener);
+                dialogView.findViewById(R.id.triggers_widget_ap_off).setOnClickListener(listener);
+                dialogView.findViewById(R.id.triggers_widget_net_on).setOnClickListener(listener);
+                dialogView.findViewById(R.id.triggers_widget_net_off).setOnClickListener(listener);
+            }
+            break;
 
         }
     }
@@ -604,7 +727,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         switch(item.getItemId()){
             default:break;
             case R.id.action_triggers_confirm:{
-                String trigger_values []=null;
+                String trigger_values []=new String[1];
                 switch(trigger_type){
                     default:break;
                     case PublicConsts.TRIGGER_TYPE_SINGLE:{
@@ -646,7 +769,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                     }
                     break;
                 }
-                if(trigger_values==null) return false;
+                //if(trigger_values==null) return false;
                 Intent i=new Intent();
                 i.putExtra(EXTRA_TRIGGER_TYPE,trigger_type);
                 i.putExtra(EXTRA_TRIGGER_VALUES,trigger_values);
@@ -769,6 +892,26 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         return displayValue;
     }
 
+    public static String getWidgetDisplayValue(Context context,int triggerType){
+        switch (triggerType){
+            default:break;
+            case PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON: return context.getResources().getString(R.string.dialog_triggers_widget_wifi_on);
+            case PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF:return context.getResources().getString(R.string.dialog_triggers_widget_wifi_off);
+            case PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON: return context.getResources().getString(R.string.dialog_triggers_widget_bluetooth_on);
+            case PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF: return context.getResources().getString(R.string.dialog_triggers_widget_bluetooth_off);
+            case PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF: return context.getResources().getString(R.string.dialog_triggers_widget_ring_mode_off);
+            case PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE: return context.getResources().getString(R.string.dialog_triggers_widget_ring_mode_vibrate);
+            case PublicConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL: return context.getResources().getString(R.string.dialog_triggers_widget_ring_mode_normal);
+            case PublicConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED: return context.getResources().getString(R.string.dialog_triggers_widget_ap_on);
+            case PublicConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED: return context.getResources().getString(R.string.dialog_triggers_widget_ap_off);
+            case PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON: return context.getResources().getString(R.string.dialog_triggers_widget_airplane_mode_on);
+            case PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF: return context.getResources().getString(R.string.dialog_triggers_widget_airplane_mode_off);
+            case PublicConsts.TRIGGER_TYPE_NET_ON: return context.getResources().getString(R.string.dialog_triggers_widget_net_on);
+            case PublicConsts.TRIGGER_TYPE_NET_OFF: return context.getResources().getString(R.string.dialog_triggers_widget_net_off);
+        }
+        return "";
+    }
+
     private void refreshTriggerDisplayValues(int type){
         TextView tv_condition_single_value=findViewById(R.id.trigger_single_value);
         TextView tv_condition_percertaintime_value=findViewById(R.id.trigger_percertaintime_value);
@@ -790,6 +933,13 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         ((RadioButton)findViewById(R.id.trigger_received_broadcast_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST);
         ((RadioButton)findViewById(R.id.trigger_wifi_connected_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED);
         ((RadioButton)findViewById(R.id.trigger_wifi_disconnected_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED);
+        ((RadioButton)findViewById(R.id.trigger_widget_changed_ra)).setChecked(
+                type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON||type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF
+        ||type==PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON||type==PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF
+        ||type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF||type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE
+        ||type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL||type==PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON
+        ||type==PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF||type==PublicConsts.TRIGGER_TYPE_NET_ON
+        ||type==PublicConsts.TRIGGER_TYPE_NET_OFF||type==PublicConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED||type==PublicConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED);
 
         tv_condition_single_value.setText(unchoose);
         tv_condition_percertaintime_value.setText(unchoose);
