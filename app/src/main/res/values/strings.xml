@@ -298,6 +298,7 @@
 	<string name="silent">静音</string>
 	<string name="ring_silent">静音模式</string>
 	<string name="unselected">不选择此操作</string>
+	<string name="selected">已选择</string>
 	<string name="ring_normal">正常响铃</string>
 	<string name="not_activated">未启用</string>
 	<string name="subinfo_no_sim_found">未读取到Sim卡</string>

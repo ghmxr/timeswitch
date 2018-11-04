@@ -158,7 +158,32 @@ public class MainListAdapter extends BaseAdapter {
             String ssidinfo= Triggers.getWifiConnectionDisplayValue(context,list.get(i).wifiIds);
             if(ssidinfo.length()>16) ssidinfo=ssidinfo.substring(0,16)+"...";
             holder.trigger_value.setText(ssidinfo);
-        }else if(list.get(i).trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON){
+        }
+
+
+        else if(list.get(i).trigger_type==PublicConsts.TRIGGER_TYPE_SCREEN_ON){
+            holder.img.setImageResource(R.drawable.icon_screen_unlocked);
+            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
+            holder.trigger_value.setText(context.getResources().getString(R.string.activity_triggers_screen_on));
+        }
+        else if(list.get(i).trigger_type==PublicConsts.TRIGGER_TYPE_SCREEN_OFF){
+            holder.img.setImageResource(R.drawable.icon_screen_locked);
+            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
+            holder.trigger_value.setText(context.getResources().getString(R.string.activity_triggers_screen_off));
+        }
+        else if(list.get(i).trigger_type==PublicConsts.TRIGGER_TYPE_POWER_CONNECTED){
+            holder.img.setImageResource(R.drawable.icon_power_connected);
+            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
+            holder.trigger_value.setText(context.getResources().getString(R.string.activity_triggers_power_connected));
+        }
+        else if(list.get(i).trigger_type==PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED){
+            holder.img.setImageResource(R.drawable.icon_power_disconnected);
+            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
+            holder.trigger_value.setText(context.getResources().getString(R.string.activity_triggers_power_disconnected));
+        }
+
+
+        else if(list.get(i).trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON){
             holder.img.setImageResource(R.drawable.icon_wifi_on);
             holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
             holder.trigger_value.setText(Triggers.getWidgetDisplayValue(context,list.get(i).trigger_type));

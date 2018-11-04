@@ -452,6 +452,246 @@
                 android:background="#dddddd" />
 
             <RelativeLayout
+                android:id="@+id/trigger_screen_on"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true">
+
+                <ImageView
+                    android:id="@+id/trigger_screen_on_icon"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/icon_screen_unlocked" />
+
+                <LinearLayout
+                    android:id="@+id/trigger_screen_on_textviewarea"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@+id/trigger_screen_on_icon"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/trigger_screen_on_att"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/color_text_normal"
+                        android:text="@string/activity_triggers_screen_on"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/trigger_screen_on_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="未选择"
+                        android:textColor="@color/color_activity_taskgui_value"
+                        android:textSize="12sp"
+                        android:layout_marginRight="50dp"/>
+
+                </LinearLayout>
+
+                <RadioButton
+                    android:id="@+id/trigger_screen_on_ra"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dp"
+                    android:clickable="false" />
+
+            </RelativeLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#dddddd" />
+
+            <RelativeLayout
+                android:id="@+id/trigger_screen_off"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true">
+
+                <ImageView
+                    android:id="@+id/trigger_screen_off_icon"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/icon_screen_locked" />
+
+                <LinearLayout
+                    android:id="@+id/trigger_screen_off_textviewarea"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@+id/trigger_screen_off_icon"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/trigger_screen_off_att"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/color_text_normal"
+                        android:text="@string/activity_triggers_screen_off"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/trigger_screen_off_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="未选择"
+                        android:textColor="@color/color_activity_taskgui_value"
+                        android:textSize="12sp"
+                        android:layout_marginRight="50dp"/>
+
+                </LinearLayout>
+
+                <RadioButton
+                    android:id="@+id/trigger_screen_off_ra"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dp"
+                    android:clickable="false" />
+
+            </RelativeLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#dddddd" />
+
+            <RelativeLayout
+                android:id="@+id/trigger_power_connected"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true">
+
+                <ImageView
+                    android:id="@+id/trigger_power_connected_icon"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/icon_power_connected" />
+
+                <LinearLayout
+                    android:id="@+id/trigger_power_connected_textviewarea"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@+id/trigger_power_connected_icon"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/trigger_power_connected_att"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/color_text_normal"
+                        android:text="@string/activity_triggers_power_connected"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/trigger_power_connected_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="未选择"
+                        android:textColor="@color/color_activity_taskgui_value"
+                        android:textSize="12sp"
+                        android:layout_marginRight="50dp"/>
+
+                </LinearLayout>
+
+                <RadioButton
+                    android:id="@+id/trigger_power_connected_ra"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dp"
+                    android:clickable="false" />
+
+            </RelativeLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#dddddd" />
+
+            <RelativeLayout
+                android:id="@+id/trigger_power_disconnected"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true">
+
+                <ImageView
+                    android:id="@+id/trigger_power_disconnected_icon"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/icon_power_disconnected" />
+
+                <LinearLayout
+                    android:id="@+id/trigger_power_disconnected_textviewarea"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@+id/trigger_power_disconnected_icon"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/trigger_power_disconnected_att"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/color_text_normal"
+                        android:text="@string/activity_triggers_power_disconnected"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/trigger_power_disconnected_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="未选择"
+                        android:textColor="@color/color_activity_taskgui_value"
+                        android:textSize="12sp"
+                        android:layout_marginRight="50dp"/>
+
+                </LinearLayout>
+
+                <RadioButton
+                    android:id="@+id/trigger_power_disconnected_ra"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dp"
+                    android:clickable="false" />
+
+            </RelativeLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#dddddd" />
+
+            <RelativeLayout
                 android:id="@+id/trigger_widget_changed"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"

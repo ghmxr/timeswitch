@@ -252,6 +252,26 @@ public class TaskItem implements Comparable<TaskItem>{
 			((CustomBroadcastReceiver)triggerObject).registerReceiver();
 		}
 
+		if(trigger_type==PublicConsts.TRIGGER_TYPE_SCREEN_ON){
+			triggerObject=new CustomBroadcastReceiver(context,Intent.ACTION_SCREEN_ON,this);
+			((CustomBroadcastReceiver)triggerObject).registerReceiver();
+		}
+
+		if(trigger_type==PublicConsts.TRIGGER_TYPE_SCREEN_OFF){
+			triggerObject=new CustomBroadcastReceiver(context,Intent.ACTION_SCREEN_OFF,this);
+			((CustomBroadcastReceiver)triggerObject).registerReceiver();
+		}
+
+		if(trigger_type==PublicConsts.TRIGGER_TYPE_POWER_CONNECTED){
+			triggerObject=new CustomBroadcastReceiver(context,Intent.ACTION_POWER_CONNECTED,this);
+			((CustomBroadcastReceiver)triggerObject).registerReceiver();
+		}
+
+		if(trigger_type==PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED){
+			triggerObject=new CustomBroadcastReceiver(context,Intent.ACTION_POWER_DISCONNECTED,this);
+			((CustomBroadcastReceiver)triggerObject).registerReceiver();
+		}
+
 		if(trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED||trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED
 				||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF
 				||trigger_type==PublicConsts.TRIGGER_TYPE_NET_ON||trigger_type==PublicConsts.TRIGGER_TYPE_NET_OFF){

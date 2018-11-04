@@ -1056,6 +1056,25 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                 case PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE: case PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE:
                     imgRes=R.drawable.icon_temperature;break;
                 case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST:imgRes=R.drawable.icon_broadcast;break;
+                case PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON:imgRes=R.drawable.icon_wifi_on;break;
+                case PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF:imgRes=R.drawable.icon_wifi_off;break;
+                case PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON:imgRes=R.drawable.icon_bluetooth_on;break;
+                case PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF:imgRes=R.drawable.icon_bluetooth_off;break;
+                case PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF:imgRes=R.drawable.icon_ring_off;break;
+                case PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE:imgRes=R.drawable.icon_ring_vibrate;break;
+                case PublicConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL:imgRes=R.drawable.icon_ring_normal;break;
+                case PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON:imgRes=R.drawable.icon_airplanemode_on;break;
+                case PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF:imgRes=R.drawable.icon_airplanemode_off;break;
+                case PublicConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED:imgRes=R.drawable.icon_ap_on;break;
+                case PublicConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED:imgRes=R.drawable.icon_ap_off;break;
+                case PublicConsts.TRIGGER_TYPE_NET_ON:imgRes=R.drawable.icon_cellular_on;break;
+                case PublicConsts.TRIGGER_TYPE_NET_OFF:imgRes=R.drawable.icon_cellular_off;break;
+                case PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED:imgRes=R.drawable.icon_wifi_connected;break;
+                case PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:imgRes=R.drawable.icon_wifi_disconnected;break;
+                case PublicConsts.TRIGGER_TYPE_SCREEN_ON:imgRes=R.drawable.icon_screen_unlocked;break;
+                case PublicConsts.TRIGGER_TYPE_SCREEN_OFF:imgRes=R.drawable.icon_screen_locked;break;
+                case PublicConsts.TRIGGER_TYPE_POWER_CONNECTED:imgRes=R.drawable.icon_power_connected;break;
+                case PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED:imgRes=R.drawable.icon_power_disconnected;break;
             }
             ((ImageView)view.findViewById(R.id.item_dialog_task_img)).setImageResource(imgRes);
             ((TextView)view.findViewById(R.id.item_dialog_task_name)).setText(item.name);

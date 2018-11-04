@@ -322,6 +322,30 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				value.setText(Triggers.getWifiConnectionDisplayValue(this,taskitem.wifiIds));
 			}
 			break;
+			case PublicConsts.TRIGGER_TYPE_SCREEN_ON:{
+				icon.setImageResource(R.drawable.icon_screen_unlocked);
+				att.setText(getResources().getString(R.string.activity_triggers_screen_on));
+				value.setText("");
+			}
+			break;
+			case PublicConsts.TRIGGER_TYPE_SCREEN_OFF:{
+				icon.setImageResource(R.drawable.icon_screen_locked);
+				att.setText(getResources().getString(R.string.activity_triggers_screen_off));
+				value.setText("");
+			}
+			break;
+			case PublicConsts.TRIGGER_TYPE_POWER_CONNECTED:{
+				icon.setImageResource(R.drawable.icon_power_connected);
+				att.setText(getResources().getString(R.string.activity_triggers_power_connected));
+				value.setText("");
+			}
+			break;
+			case PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED:{
+				icon.setImageResource(R.drawable.icon_power_disconnected);
+				att.setText(getResources().getString(R.string.activity_triggers_power_disconnected));
+				value.setText("");
+			}
+			break;
 			case PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON:{
 				icon.setImageResource(R.drawable.icon_wifi_on);
 				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));

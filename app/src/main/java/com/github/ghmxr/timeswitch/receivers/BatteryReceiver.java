@@ -97,12 +97,11 @@ public class BatteryReceiver extends BroadcastReceiver implements Runnable{
     }
 
     public void registerReceiver(){
-        this.context.registerReceiver(this,new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        this.isRegistered=true;
-        //if(item==null) return;
-        //if(!isRegistered&&item.isenabled) {
-        Log.i("BatteryReceiver","Battery Receiver registered!!!");
-        //}
+        if(!isRegistered){
+            this.context.registerReceiver(this,new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+            this.isRegistered=true;
+            Log.i("BatteryReceiver","Battery Receiver registered!!!");
+        }
     }
 
     @Override

@@ -92,7 +92,10 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         findViewById(R.id.trigger_wifi_disconnected).setOnClickListener(this);
         findViewById(R.id.trigger_widget_changed).setOnClickListener(this);
         findViewById(R.id.trigger_received_broadcast).setOnClickListener(this);
-
+        findViewById(R.id.trigger_screen_on).setOnClickListener(this);
+        findViewById(R.id.trigger_screen_off).setOnClickListener(this);
+        findViewById(R.id.trigger_power_connected).setOnClickListener(this);
+        findViewById(R.id.trigger_power_disconnected).setOnClickListener(this);
         //initialize the values
         try{
             trigger_type=getIntent().getIntExtra(EXTRA_TRIGGER_TYPE,0);
@@ -227,6 +230,16 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
             break;
             case PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:{
                 ((TextView)findViewById(R.id.trigger_wifi_disconnected_value)).setText(getWifiConnectionDisplayValue(this,wifi_ssidinfo));
+                timePicker.setVisibility(View.GONE);
+            }
+            break;
+            case PublicConsts.TRIGGER_TYPE_SCREEN_ON:{
+                ((TextView)findViewById(R.id.trigger_screen_on_value)).setText(getResources().getString(R.string.selected));
+                timePicker.setVisibility(View.GONE);
+            }
+            break;
+            case PublicConsts.TRIGGER_TYPE_SCREEN_OFF:{
+                ((TextView)findViewById(R.id.trigger_screen_off_value)).setText(getResources().getString(R.string.selected));
                 timePicker.setVisibility(View.GONE);
             }
             break;
@@ -701,7 +714,22 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 dialogView.findViewById(R.id.triggers_widget_net_off).setOnClickListener(listener);
             }
             break;
-
+            case R.id.trigger_screen_on:{
+                activateTriggerType(PublicConsts.TRIGGER_TYPE_SCREEN_ON);
+            }
+            break;
+            case R.id.trigger_screen_off:{
+                activateTriggerType(PublicConsts.TRIGGER_TYPE_SCREEN_OFF);
+            }
+            break;
+            case R.id.trigger_power_connected:{
+                activateTriggerType(PublicConsts.TRIGGER_TYPE_POWER_CONNECTED);
+            }
+            break;
+            case R.id.trigger_power_disconnected:{
+                activateTriggerType(PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED);
+            }
+            break;
         }
     }
 
@@ -922,6 +950,10 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         TextView tv_wifi_disconnected=findViewById(R.id.trigger_wifi_disconnected_value);
         TextView tv_widget_changed=findViewById(R.id.trigger_widget_changed_value);
         TextView tv_condition_broadcast=findViewById(R.id.trigger_received_broadcast_value);
+        TextView tv_screen_on=findViewById(R.id.trigger_screen_on_value);
+        TextView tv_screen_off=findViewById(R.id.trigger_screen_off_value);
+        TextView tv_power_connected=findViewById(R.id.trigger_power_connected_value);
+        TextView tv_power_disconnected=findViewById(R.id.trigger_power_disconnected_value);
 
         String unchoose=this.getResources().getString(R.string.activity_taskgui_att_unchoose);
 
@@ -941,6 +973,11 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         ||type==PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF||type==PublicConsts.TRIGGER_TYPE_NET_ON
         ||type==PublicConsts.TRIGGER_TYPE_NET_OFF||type==PublicConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED||type==PublicConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED);
 
+        ((RadioButton)findViewById(R.id.trigger_screen_on_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_SCREEN_ON);
+        ((RadioButton)findViewById(R.id.trigger_screen_off_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_SCREEN_OFF);
+        ((RadioButton)findViewById(R.id.trigger_power_connected_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_POWER_CONNECTED);
+        ((RadioButton)findViewById(R.id.trigger_power_disconnected_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED);
+
         tv_condition_single_value.setText(unchoose);
         tv_condition_percertaintime_value.setText(unchoose);
         tv_condition_weekloop_value.setText(unchoose);
@@ -952,6 +989,10 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         tv_condition_broadcast.setText(unchoose);
         tv_wifi_connected.setText(unchoose);
         tv_wifi_disconnected.setText(unchoose);
+        tv_screen_on.setText(unchoose);
+        tv_screen_off.setText(unchoose);
+        tv_power_connected.setText(unchoose);
+        tv_power_disconnected.setText(unchoose);
     }
 
     private void checkAndExit(){
