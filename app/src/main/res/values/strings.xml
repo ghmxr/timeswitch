@@ -27,7 +27,7 @@
     <string name="dialog_battery_compare_higher_than">高于</string>
     <string name="dialog_battery_compare_lower_than">低于</string>
 	<string name="dialog_battery_not_enabled">未启用</string>
-	<string name="dialog_triggers_widget_att">*注意:其他触发了开关的任务可能会触发此任务。</string>
+	<string name="dialog_triggers_widget_att">*注意:其他触发了开关的任务可能会触发此触发器。</string>
 	<string name="dialog_triggers_widget_wifi_on">WiFi打开时</string>
 	<string name="dialog_triggers_widget_wifi_off">WiFi关闭时</string>
 	<string name="dialog_triggers_widget_bluetooth_on">蓝牙打开时</string>
@@ -332,7 +332,7 @@
     <string name="popup_profile_delete">删除</string>
 	<string name="popup_profile_export">导出</string>
     <string name="title_activity_about">关于</string>
-	<string name="activity_about_content_title">Widget Trigger (Build 5)</string>
+	<string name="activity_about_content_title">Widget Trigger (Build 6)</string>
     <string name="large_text">
         这是一款用来定时自动触发执行一些任务的小工具应用。\n\n
 
@@ -354,16 +354,15 @@
 
 		本应用使用到了来自 http://www.easyicon.net 的图片资源。\n\n\n
 
-		<b>Build 5 更新日志：\n
-			修复定时类任务不准确的问题(秒数误差，之前保存的定时类任务请重新再保存一遍以刷新数据库内的毫秒数据);\n
-			导入列表对话框加入删除按钮；\n
+		<b>Build 6 更新日志：\n
+			修复启用指定时间重复类型任务时时间没有刷新的问题；\n
+			修复其他已发现的问题；\n
+			新增：部分新的触发器\n
 		</b>\n\n
-
-		关于本应用的BUG以及其他建议反馈，可以将运行情况、截图和其他信息发送到我的邮箱，或者在github发送issue。\n\n
 
 
 		mxremail@qq.com \n\n
 
-		本应用无后门及广告，为作者兴趣和自学之作，如果您喜欢本应用，欢迎您捐赠来支持作者。
+		本应用无后门及广告，如果您喜欢本应用，欢迎您捐赠来支持作者。
     </string>
 </resources>

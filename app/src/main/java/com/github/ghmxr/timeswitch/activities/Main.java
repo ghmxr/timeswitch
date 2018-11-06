@@ -72,7 +72,21 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
 	private static final int REQUEST_CODE_ACTIVITY_SETTINGS=0x00102;
 	private static final int REQUEST_CODE_ACTIVITY_PROFILE=0x00103;
 
-	private BroadcastReceiver batteryReceiver;
+	private BroadcastReceiver batteryReceiver=new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent==null) return;
+            final String ACTION=intent.getAction();
+            if(ACTION==null) return;
+            if(ACTION.equals(Intent.ACTION_BATTERY_CHANGED)){
+                Message msg=new Message();
+                msg.what=Main.MESSAGE_BATTERY_CHANGED;
+                msg.obj=intent;
+                sendMessage(msg);
+            }
+        }
+    };
+
 	private boolean isBatteryReceiverRegistered=false;
     private long first_click_delete=0;
    // public static LinkedList<Main> queue=new LinkedList<>();
@@ -373,27 +387,10 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
 
     private void startRefreshingIndicator(){
         this.ifRefresh=true;
-        if(batteryReceiver==null){
-            batteryReceiver=new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    if(intent==null) return;
-                    final String ACTION=intent.getAction();
-                    if(ACTION==null) return;
-                    if(ACTION.equals(Intent.ACTION_BATTERY_CHANGED)){
-                        Message msg=new Message();
-                        msg.what=Main.MESSAGE_BATTERY_CHANGED;
-                        msg.obj=intent;
-                        sendMessage(msg);
-                    }
-                }
-            };
-            if(!isBatteryReceiverRegistered){
-                registerReceiver(batteryReceiver,new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-                this.isBatteryReceiverRegistered=true;
-            }
+        if(!isBatteryReceiverRegistered){
+            registerReceiver(batteryReceiver,new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+            isBatteryReceiverRegistered=true;
         }
-
 
        myHandler.post(new Runnable() {
            @Override
@@ -471,13 +468,10 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
     public void finish(){
         super.finish();
         this.ifRefresh=false;
-        if(batteryReceiver!=null) {
+        if(isBatteryReceiverRegistered) {
             unregisterReceiver(batteryReceiver);
-            this.isBatteryReceiverRegistered=false;
-            batteryReceiver=null;
+            isBatteryReceiverRegistered=false;
         }
-        //if(queue.contains(this)) queue.remove(this);
-        //mhandler=null;
     }
 
     @Override

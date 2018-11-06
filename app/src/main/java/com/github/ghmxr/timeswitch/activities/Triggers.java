@@ -243,6 +243,16 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 timePicker.setVisibility(View.GONE);
             }
             break;
+            case PublicConsts.TRIGGER_TYPE_POWER_CONNECTED:{
+                ((TextView)findViewById(R.id.trigger_power_connected_value)).setText(getResources().getString(R.string.selected));
+                timePicker.setVisibility(View.GONE);
+            }
+            break;
+            case PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED:{
+                ((TextView)findViewById(R.id.trigger_wifi_disconnected_value)).setText(getResources().getString(R.string.selected));
+                timePicker.setVisibility(View.GONE);
+            }
+            break;
             case PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON: case PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF: case PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON:
             case PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF: case PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF: case PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE:
             case PublicConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL: case PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON: case PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF:

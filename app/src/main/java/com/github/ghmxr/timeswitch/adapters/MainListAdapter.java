@@ -118,7 +118,7 @@ public class MainListAdapter extends BaseAdapter {
             Calendar calendar=Calendar.getInstance();
             calendar.setTimeInMillis(list.get(i).time);
             int month=calendar.get(Calendar.MONTH)+1;
-            holder.trigger_value.setText( calendar.get(Calendar.YEAR)+"/"+ValueUtils.format(calendar.get(Calendar.MONTH))+"/"+ValueUtils.format(month)+"/"+ValueUtils.getDayOfWeek(list.get(i).time)+"/"+
+            holder.trigger_value.setText( calendar.get(Calendar.YEAR)+"/"+ValueUtils.format(month)+"/"+ValueUtils.format(calendar.get(Calendar.DAY_OF_MONTH))+"/"+ValueUtils.getDayOfWeek(list.get(i).time)+"/"+
                     "\n"+ValueUtils.format(calendar.get(Calendar.HOUR_OF_DAY))+":"+ ValueUtils.format(calendar.get(Calendar.MINUTE)));
         }else if(this.list.get(i).trigger_type ==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){
             holder.img.setImageResource(R.drawable.icon_repeat_percertaintime);
@@ -152,8 +152,14 @@ public class MainListAdapter extends BaseAdapter {
             String action=list.get(i).selectedAction;
             if(action.length()>16) action=action.substring(0,16)+"...";
             holder.trigger_value.setText(action);
-        }else if(list.get(i).trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED||list.get(i).trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED){
+        }else if(list.get(i).trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED){
             holder.img.setImageResource(R.drawable.icon_wifi_connected);
+            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,10);
+            String ssidinfo= Triggers.getWifiConnectionDisplayValue(context,list.get(i).wifiIds);
+            if(ssidinfo.length()>16) ssidinfo=ssidinfo.substring(0,16)+"...";
+            holder.trigger_value.setText(ssidinfo);
+        }else if(list.get(i).trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED){
+            holder.img.setImageResource(R.drawable.icon_wifi_disconnected);
             holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,10);
             String ssidinfo= Triggers.getWifiConnectionDisplayValue(context,list.get(i).wifiIds);
             if(ssidinfo.length()>16) ssidinfo=ssidinfo.substring(0,16)+"...";
