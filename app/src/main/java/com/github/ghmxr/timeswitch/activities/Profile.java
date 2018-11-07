@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.ColorDrawable;
@@ -898,6 +899,8 @@ public class Profile extends BaseActivity {
             final List<String> exceptions=new ArrayList<>();
             for(int i=0;i<table_names.size();i++){
                 try{
+                    JSONObject head=new JSONObject();
+                    head.put(PublicConsts.JSON_HEAD_VERSION_CODE,getPackageManager().getPackageInfo(getApplicationInfo().packageName, PackageManager.COMPONENT_ENABLED_STATE_DEFAULT).versionCode);
                     JSONArray jsonArray=new JSONArray();
                     Cursor cursor=database.rawQuery("select * from "+table_names.get(i)+" ;",null);
                     while (cursor.moveToNext()){
@@ -923,7 +926,7 @@ public class Profile extends BaseActivity {
                     cursor.close();
                     OutputStream out=new FileOutputStream(new File(file_path+"/"+filename_mask+"-"+(i+1)+".json"));
                     Writer writer=new OutputStreamWriter(out);
-                    writer.write(jsonArray.toString());
+                    writer.write(head.toString()+"\n"+jsonArray.toString());
                     writer.flush();
                     writer.close();
                 }catch (Exception e){
@@ -992,7 +995,21 @@ public class Profile extends BaseActivity {
                     while((line=reader.readLine())!=null){
                         builder.append(line);
                     }
-                    JSONArray jsonarray = (JSONArray) new JSONTokener(builder.toString()).nextValue();
+
+                    JSONTokener jsonTokener=new JSONTokener(builder.toString());
+                    Object object=jsonTokener.nextValue();
+
+                    if(object instanceof JSONObject){
+                        int version_code_read=((JSONObject) object).getInt(PublicConsts.JSON_HEAD_VERSION_CODE);
+                        int version_current=getApplication().getPackageManager().getPackageInfo(getApplication().getPackageName(),PackageManager.COMPONENT_ENABLED_STATE_DEFAULT).versionCode;
+                        if(version_code_read>version_current){
+                            exceptions.add("目标文件 "+files.get(i).getName()+" 为新版本应用生成:(当前应用版本:"+version_current+"， 目标文件版本:"+version_code_read+")");
+                            continue;
+                        }
+                        object=jsonTokener.nextValue();
+                    }
+
+                    JSONArray jsonarray = (JSONArray) object;
                     String newTableName=SQLConsts.SQL_DATABASE_TABLE_NAME_FONT+getNotUsedMinimalId();
                     database.execSQL(MySQLiteOpenHelper.getCreateTableSQLCommand(newTableName));
                     String display_name=files.get(i).getName().substring(0,files.get(i).getName().lastIndexOf("."));

@@ -249,7 +249,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
             }
             break;
             case PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED:{
-                ((TextView)findViewById(R.id.trigger_wifi_disconnected_value)).setText(getResources().getString(R.string.selected));
+                ((TextView)findViewById(R.id.trigger_power_disconnected_value)).setText(getResources().getString(R.string.selected));
                 timePicker.setVisibility(View.GONE);
             }
             break;

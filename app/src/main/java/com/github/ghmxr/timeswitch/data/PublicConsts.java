@@ -230,4 +230,9 @@ public class PublicConsts {
 
 	public static final String PREFERENCES_LOGS_NAME	="Logs";
 
+	/**
+	 * 获取Json File 对应的应用的VersionCode
+	 */
+	public static final String JSON_HEAD_VERSION_CODE="version_code";
+
 }
