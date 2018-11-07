@@ -3,6 +3,7 @@ package com.github.ghmxr.timeswitch.utils;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.WallpaperManager;
 import android.bluetooth.BluetoothAdapter;
@@ -882,10 +883,13 @@ public class ProcessTaskItem {
                 String notification_values[]=item.actions[PublicConsts.ACTION_NOTIFICATION_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
                 int type=Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_LOCALE]);
                 if(type==PublicConsts.NOTIFICATION_TYPE_VIBRATE||type==PublicConsts.NOTIFICATION_TYPE_NO_VIBRATE){
-                    NotificationManagerCompat managerCompat=NotificationManagerCompat.from(context);
+                    NotificationManager manager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
                     NotificationCompat.Builder builder;
                     if(Build.VERSION.SDK_INT>=26){
-                        builder=new NotificationCompat.Builder(context,NotificationChannel.DEFAULT_CHANNEL_ID);
+                        String channel_id="channel_default";
+                        NotificationChannel channel=new NotificationChannel(channel_id,"Default", NotificationManager.IMPORTANCE_DEFAULT);
+                        manager.createNotificationChannel(channel);
+                        builder=new NotificationCompat.Builder(context,channel_id);
                     }else{
                         builder=new NotificationCompat.Builder(context);
                     }
@@ -902,7 +906,7 @@ public class ProcessTaskItem {
                     builder.setAutoCancel(true);
                     builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
                     builder.setFullScreenIntent(pi,false);
-                    managerCompat.notify(0,builder.build());
+                    manager.notify(0,builder.build());
                     log_taskitem.append(context.getResources().getString(R.string.activity_taskgui_actions_notification));
                     log_taskitem.append(" ");
                 }

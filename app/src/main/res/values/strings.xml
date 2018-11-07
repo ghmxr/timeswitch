@@ -334,7 +334,7 @@
     <string name="title_activity_about">关于</string>
 	<string name="activity_about_content_title">Widget Trigger (Build 6)</string>
     <string name="large_text">
-        这是一款用来定时自动触发执行一些任务的小工具应用。\n\n
+        这是一个通过定时来自动触发并执行一些任务的Application。\n\n
 
 
 		请允许本应用所申请的权限，并且添加到系统的清理白名单内，否则本应用可能无法正常运行。\n
@@ -355,14 +355,15 @@
 		本应用使用到了来自 http://www.easyicon.net 的图片资源。\n\n\n
 
 		<b>Build 6 更新日志：\n
-			修复启用指定时间重复类型任务时时间没有刷新的问题；\n
+			修复触发行为启用“按指定时间重复”类型任务的时候时间没有刷新的问题；\n
 			修复其他已发现的问题；\n
-			新增：部分新的触发器\n
+			新增：部分新的触发器(广播接收器)；\n
+			targetSdkVersion: 27\n
 		</b>\n\n
 
 
 		mxremail@qq.com \n\n
 
-		本应用无后门及广告，如果您喜欢本应用，欢迎您捐赠来支持作者。
+		如果您喜欢本应用，欢迎您捐赠来支持作者。
     </string>
 </resources>
