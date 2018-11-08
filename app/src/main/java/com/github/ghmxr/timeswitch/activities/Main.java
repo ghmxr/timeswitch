@@ -472,6 +472,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
             unregisterReceiver(batteryReceiver);
             isBatteryReceiverRegistered=false;
         }
+        //adapter=null;
     }
 
     @Override

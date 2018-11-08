@@ -130,15 +130,17 @@ public class MainListAdapter extends BaseAdapter {
             Calendar calendar=Calendar.getInstance();
             calendar.setTimeInMillis(list.get(i).time);
             holder.trigger_value.setText( ValueUtils.format(calendar.get(Calendar.HOUR_OF_DAY))+":"+ ValueUtils.format(calendar.get(Calendar.MINUTE)));
+            //holder.trigger_value.setText(getWeekLoopDisplayValue(context,list.get(i).week_repeat,calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE)));
         }else if(this.list.get(i).trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE){
             holder.img.setImageResource(R.drawable.icon_battery_high);
             holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
+            holder.trigger_value.setText(context.getResources().getString(R.string.more_than)+this.list.get(i).battery_percentage+"%");
         }else if(this.list.get(i).trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE){
             holder.img.setImageResource(R.drawable.icon_battery_low);
             holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
             //holder.trigger_value.setText(context.getResources().getString(R.string.more_than)+this.list.get(i).battery_percentage+"%");
             holder.trigger_value.setText(context.getResources().getString(R.string.less_than)+this.list.get(i).battery_percentage+"%");
-        }else if(this.list.get(i).trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE||this.list.get(i).trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE){
+        }else if(this.list.get(i).trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE){
             holder.img.setImageResource(R.drawable.icon_temperature);
             holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
             holder.trigger_value.setText(context.getResources().getString(R.string.higher_than)+this.list.get(i).battery_temperature+"°Ê");
@@ -655,5 +657,27 @@ public class MainListAdapter extends BaseAdapter {
     public interface SwitchChangedListener{
         void onCheckedChanged(int position,boolean b);
     }
+
+    /*private String getWeekLoopDisplayValue(Context context,boolean [] week_repeat,int hourOfDay,int minute){
+        if(week_repeat==null||week_repeat.length!=7) return "";
+        String tv_value="";
+        if(week_repeat[1]) tv_value+=context.getResources().getString(R.string.monday)+" ";//if(this.weekloop[1]) tv_value+="÷‹“ª ";
+        if(week_repeat[2]) tv_value+=context.getResources().getString(R.string.tuesday)+" ";
+        if(week_repeat[3]) tv_value+=context.getResources().getString(R.string.wednesday)+" ";
+        if(week_repeat[4]) tv_value+=context.getResources().getString(R.string.thursday)+" ";
+        if(week_repeat[5]) tv_value+=context.getResources().getString(R.string.friday)+" ";
+        if(week_repeat[6]) tv_value+=context.getResources().getString(R.string.saturday)+" ";
+        if(week_repeat[0]) tv_value+=context.getResources().getString(R.string.sunday);
+        boolean everyday=true;
+        for(int i=0;i<7;i++){
+            if(!week_repeat[i]) {
+                everyday=false;
+                break;
+            }
+        }
+        String time=ValueUtils.format(hourOfDay)+":"+ValueUtils.format(minute);
+        if(everyday) return time+"\n"+context.getResources().getString(R.string.everyday);
+        return  time+"\n"+tv_value;
+    }  */
 
 }

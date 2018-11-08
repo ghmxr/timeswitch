@@ -9,7 +9,6 @@
         android:layout_marginTop="10dp"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
-        android:maxLength="24"
         android:hint="@string/dialog_name_hint"
         android:singleLine="true"
         android:imeOptions="actionDone"/>

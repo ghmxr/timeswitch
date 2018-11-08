@@ -32,8 +32,8 @@
 	<string name="dialog_triggers_widget_wifi_off">WiFi关闭时</string>
 	<string name="dialog_triggers_widget_bluetooth_on">蓝牙打开时</string>
 	<string name="dialog_triggers_widget_bluetooth_off">蓝牙关闭时</string>
-	<string name="dialog_triggers_widget_net_on">数据流量打开时</string>
-	<string name="dialog_triggers_widget_net_off">数据流量关闭时</string>
+	<string name="dialog_triggers_widget_net_on">数据流量连接时</string>
+	<string name="dialog_triggers_widget_net_off">数据流量断开时</string>
 	<string name="dialog_triggers_widget_ring_mode_off">静音模式时</string>
 	<string name="dialog_triggers_widget_ring_mode_vibrate">振动模式时</string>
 	<string name="dialog_triggers_widget_ring_mode_normal">正常响铃模式时</string>

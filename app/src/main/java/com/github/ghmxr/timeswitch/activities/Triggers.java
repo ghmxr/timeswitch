@@ -318,6 +318,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                         calendar.set(Calendar.YEAR,year);
                         calendar.set(Calendar.MONTH,month);
                         calendar.set(Calendar.DAY_OF_MONTH,dayOfMonth);
+                        activateTriggerType(PublicConsts.TRIGGER_TYPE_SINGLE);
                     }
                 }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
             }
