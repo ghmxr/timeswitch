@@ -41,7 +41,7 @@ public class NetworkReceiver extends BroadcastReceiver implements Runnable {
             IntentFilter filter=new IntentFilter();
             filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
             filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-            //filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+            filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
             context.registerReceiver(this,filter);
             isregistered=true;
         }
@@ -133,6 +133,7 @@ public class NetworkReceiver extends BroadcastReceiver implements Runnable {
             Log.d("wifi is connected ",""+info.isConnected());
             Log.d("WifiReceiver","Wifi connected "+wifiInfo.getSSID()+" type "+info.getTypeName());  */
 
+
             if(type== PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED){
 
                 if(info.getDetailedState().equals(NetworkInfo.DetailedState.CONNECTED)
@@ -206,6 +207,33 @@ public class NetworkReceiver extends BroadcastReceiver implements Runnable {
                     return;
                 }
 
+            }
+        }
+
+        if(intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)){
+            ConnectivityManager manager=(ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (manager==null) return;
+            NetworkInfo info=manager.getActiveNetworkInfo();
+            if(type==PublicConsts.TRIGGER_TYPE_NET_ON){
+                if(info!=null&&info.getType()==ConnectivityManager.TYPE_MOBILE&&info.isConnected()){
+                    activate();
+                    return;
+                }
+                if(info!=null&&info.getType()==ConnectivityManager.TYPE_MOBILE&&!info.isConnected()){
+                    mLock=false;
+                    return;
+                }
+            }
+
+            if(type==PublicConsts.TRIGGER_TYPE_NET_OFF){
+                if(info!=null&&info.getType()==ConnectivityManager.TYPE_MOBILE&&!info.isConnected()){
+                    activate();
+                    return;
+                }
+                if(info!=null&&info.getType()==ConnectivityManager.TYPE_MOBILE&&info.isConnected()){
+                    mLock=false;
+                    return;
+                }
             }
         }
 
