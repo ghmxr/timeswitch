@@ -3,7 +3,6 @@ package com.github.ghmxr.timeswitch.adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -501,8 +500,8 @@ public class MainListAdapter extends BaseAdapter {
             if(actionNum>ICON_COUNT_LIMIT) holder.tv_more.setVisibility(View.VISIBLE);
             else  holder.tv_more.setVisibility(View.GONE);
 
-            Log.d("ADAPTER_ICON_COUNT",""+showCount);
-            Log.d("ADAPTER_ACTION_NUM",""+actionNum);
+            //Log.d("ADAPTER_ICON_COUNT",""+showCount);
+           // Log.d("ADAPTER_ACTION_NUM",""+actionNum);
         }catch (NumberFormatException ne){
             ne.printStackTrace();
             new AlertDialog.Builder(context)
@@ -534,7 +533,7 @@ public class MainListAdapter extends BaseAdapter {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     //list.get(i).isenabled=b;
-                    Log.i("OnCheckedChanged","listener activated!!!");
+                    //Log.i("OnCheckedChanged","listener activated!!!");
                     if(mlistener!=null) mlistener.onCheckedChanged(i,b);
                     refreshAllCertainTimeTaskItems();
                 }

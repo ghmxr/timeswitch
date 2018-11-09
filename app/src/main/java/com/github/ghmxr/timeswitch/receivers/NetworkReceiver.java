@@ -213,24 +213,25 @@ public class NetworkReceiver extends BroadcastReceiver implements Runnable {
         if(intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)){
             ConnectivityManager manager=(ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
             if (manager==null) return;
-            NetworkInfo info=manager.getActiveNetworkInfo();
+            NetworkInfo info=manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if(info==null) return;
             if(type==PublicConsts.TRIGGER_TYPE_NET_ON){
-                if(info!=null&&info.getType()==ConnectivityManager.TYPE_MOBILE&&info.isConnected()){
+                if(info.isConnected()){
                     activate();
                     return;
                 }
-                if(info!=null&&info.getType()==ConnectivityManager.TYPE_MOBILE&&!info.isConnected()){
+                if(!info.isConnected()){
                     mLock=false;
                     return;
                 }
             }
 
             if(type==PublicConsts.TRIGGER_TYPE_NET_OFF){
-                if(info!=null&&info.getType()==ConnectivityManager.TYPE_MOBILE&&!info.isConnected()){
+                if(!info.isConnected()){
                     activate();
                     return;
                 }
-                if(info!=null&&info.getType()==ConnectivityManager.TYPE_MOBILE&&info.isConnected()){
+                if(info.isConnected()){
                     mLock=false;
                     return;
                 }
