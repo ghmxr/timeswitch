@@ -275,7 +275,11 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
                             adapter.notifyDataSetChanged();
                             return;
                         }
-                        ProcessTaskItem.setTaskEnabled(Main.this,list.get(position).id,b);
+                        try{
+                            ProcessTaskItem.setTaskEnabled(TimeSwitchService.service_queue.getLast(),list.get(position).id,b);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                     }
                 });
                 listview.setOnItemClickListener(this);
