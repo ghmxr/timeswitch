@@ -2,15 +2,18 @@ package com.github.ghmxr.timeswitch.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -46,6 +49,7 @@ import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 
 import java.util.Arrays;
+import java.util.Scanner;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
@@ -885,6 +889,33 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                 @Override
                 public void onClick(View v) {
                     // TODO Auto-generated method stub
+                    if(Build.VERSION.SDK_INT>=24){
+                        NotificationManager manager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                        if(manager==null) {
+                            Log.e("Actions","Can not get NotificationManager instance");
+                            return;
+                        }
+                        if(!manager.isNotificationPolicyAccessGranted()){
+                            new AlertDialog.Builder(Actions.this)
+                                    .setTitle(getResources().getString(R.string.permission_request_notification_policy_title))
+                                    .setMessage(getResources().getString(R.string.permission_request_notification_policy_message))
+                                    .setPositiveButton(getResources().getString(R.string.dialog_button_positive), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if(Build.VERSION.SDK_INT>=24) startActivity(new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS));
+                                            Toast.makeText(Actions.this,getResources().getString(R.string.permission_request_notification_policy_toast),Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .setNegativeButton(getResources().getString(R.string.dialog_button_negative), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
+                                    })
+                                    .show();
+                            return;
+                        }
+                    }
                     actions[PublicConsts.ACTION_RING_MODE_LOCALE]=String.valueOf(PublicConsts.ACTION_RING_OFF);//TaskGui.this.actions[PublicConsts.ACTION_RING_MODE_LOCALE]=PublicConsts.ACTION_RING_OFF;
                     bdialog.cancel();
                     refreshActionStatus();

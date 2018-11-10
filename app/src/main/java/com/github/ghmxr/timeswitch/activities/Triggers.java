@@ -77,7 +77,6 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
 
         timePicker=findViewById(R.id.trigger_timepicker);
         timePicker.setIs24HourView(true);
-        timePicker.setOnTimeChangedListener(this);
 
         calendar= Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis()+10*60*1000);

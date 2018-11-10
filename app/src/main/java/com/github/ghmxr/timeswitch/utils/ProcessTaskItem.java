@@ -575,7 +575,12 @@ public class ProcessTaskItem {
                     }
                     case PublicConsts.ACTION_RING_OFF:{
                         //boolean action_ring_result=fa
-                        mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);Log.i(TAG,"Try to set audio silent...");
+                        try{
+                            mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);Log.i(TAG,"Try to set audio silent...");
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            LogUtil.putExceptionLog(context,e);
+                        }
                         if(mAudioManager.getRingerMode()!=AudioManager.RINGER_MODE_SILENT)  action_ring_mode_result=false;
                         log_taskitem.append(context.getResources().getString(R.string.action_ring_mode_off));
                         log_taskitem.append(":");

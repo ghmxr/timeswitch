@@ -57,7 +57,7 @@ public class TimeSwitchService extends Service {
      */
     public static final int MESSAGE_DISPLAY_CUSTOM_TOAST=0x00003;
 
-    public static Thread thread_getlist;
+    public Thread thread_getlist;
     public RefreshListItems runnable_refreshitems;
 
     private BatteryReceiver batteryReceiver;
@@ -103,10 +103,8 @@ public class TimeSwitchService extends Service {
     }
 
    public void refreshTaskItems(){
-        if(thread_getlist!=null){
-            thread_getlist.interrupt();
+        if(runnable_refreshitems!=null){
             runnable_refreshitems.setInterrupted();
-            thread_getlist=null;
             runnable_refreshitems=null;
         }
         this.runnable_refreshitems=new RefreshListItems(this);

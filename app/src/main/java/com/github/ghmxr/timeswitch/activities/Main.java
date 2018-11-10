@@ -48,7 +48,7 @@ import java.util.List;
 public class Main extends BaseActivity implements AdapterView.OnItemClickListener,AdapterView.OnItemLongClickListener{
 	ListView listview;
     FloatingActionButton fab;
-    boolean isFabVisible=true;
+    //boolean isFabVisible=true;
 	public MainListAdapter adapter;
 	SwipeRefreshLayout swrlayout;
 	public List<TaskItem> list=new ArrayList<>();
@@ -284,7 +284,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
                 });
                 listview.setOnItemClickListener(this);
                 listview.setOnItemLongClickListener(this);
-                setListViewScrollListener();
+                //setListViewScrollListener();
                 refreshAttVisibility();
             }
             break;
@@ -315,10 +315,10 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
         if(fab==null) return;
         fab.setAnimation(isVisible?AnimationUtils.loadAnimation(Main.this,R.anim.anim_fab_enter):AnimationUtils.loadAnimation(Main.this,R.anim.anim_fab_exit));
         fab.setVisibility(isVisible?View.VISIBLE:View.GONE);
-        isFabVisible=isVisible;
+        //isFabVisible=isVisible;
     }
 
-    private void setListViewScrollListener(){
+    /*private void setListViewScrollListener(){
         if(listview==null) return;
         listview.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
@@ -341,7 +341,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
                 if(!isFabVisible) setFabVisibility(true);
             }
         });
-    }
+    }  */
 
     private void refreshAttVisibility(){
         RelativeLayout area=findViewById(R.id.main_no_task_att);
@@ -385,7 +385,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
         this.menu.getItem(2).setVisible(false);
         this.menu.getItem(3).setVisible(true);
         this.menu.getItem(4).setVisible(true);
-        setListViewScrollListener();
+        //setListViewScrollListener();
         setFabVisibility(true);
     }
 
