@@ -332,7 +332,7 @@
     <string name="popup_profile_delete">删除</string>
 	<string name="popup_profile_export">导出</string>
     <string name="title_activity_about">关于</string>
-	<string name="activity_about_content_title">Widget Trigger (Build 6)</string>
+	<string name="activity_about_content_title">Widget Trigger (Build 7)</string>
     <string name="large_text">
         这是一个通过定时来自动触发并执行一些任务的Application。\n\n
 
@@ -354,7 +354,7 @@
 
 		本应用使用到了来自 http://www.easyicon.net 的图片资源。\n\n\n
 
-		<b>Build 6 更新日志：\n
+		<b>Build 7 更新日志：\n
 			修复触发行为启用“按指定时间重复”类型任务的时候时间没有刷新的问题；\n
 			修复其他已发现的问题；\n
 			新增：部分新的触发器(广播接收器)；\n

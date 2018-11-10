@@ -1236,6 +1236,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 								e.printStackTrace();
 								LogUtil.putExceptionLog(this,e);
 							}
+							clearExceptionsOfTimeType();
 						}
 						break;
 						case PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME:{
@@ -1257,6 +1258,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 								e.printStackTrace();
 								LogUtil.putExceptionLog(this,e);
 							}
+							clearExceptionsOfTimeType();
 						}
 						break;
 						case PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE: case PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE:{
@@ -1266,6 +1268,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 								e.printStackTrace();
 								LogUtil.putExceptionLog(this,e);
 							}
+							clearExceptionsOfBatteryPercentage();
 						}
 						break;
 						case PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE: case PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE:{
@@ -1275,6 +1278,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 								e.printStackTrace();
 								LogUtil.putExceptionLog(this,e);
 							}
+							clearExceptionsOfBatteryTemperature();
 						}
 						break;
 						case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST:{
