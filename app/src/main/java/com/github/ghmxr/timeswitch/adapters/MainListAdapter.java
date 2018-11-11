@@ -1,8 +1,6 @@
 package com.github.ghmxr.timeswitch.adapters;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.github.ghmxr.timeswitch.R;
+import com.github.ghmxr.timeswitch.activities.Log;
 import com.github.ghmxr.timeswitch.activities.Triggers;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
@@ -33,7 +32,7 @@ public class MainListAdapter extends BaseAdapter {
 
     Context context;
     LayoutInflater inflater;
-    public List<TaskItem> list;
+    private List<TaskItem> list;
     SwitchChangedListener mlistener;
     boolean isMultiSelectMode=false;
     boolean [] isSelected;
@@ -42,21 +41,32 @@ public class MainListAdapter extends BaseAdapter {
     //private List<TextView> repeat_textviews=new ArrayList<>();
     private static final int ICON_COUNT_LIMIT=7;
     //private static final int BLANK_ITEM_NUM=3;
+    private int taskCount=0;
 
 
     public MainListAdapter (Context context,List<TaskItem> list){
         this.context=context;
         inflater=LayoutInflater.from(context);
         this.list= list;
-        isSelected=new boolean[list.size()];
-        //calendar=Calendar.getInstance();
-        views=new View[list.size()];
+        taskCount=list.size();
+        isSelected=new boolean[taskCount];
+        views=new View[taskCount];
     }
+
+    /*private List<TaskItem> copyList(List<TaskItem> list){
+        List<TaskItem> cList=new ArrayList<>();
+        if(list==null||list.size()<=0) return cList;
+        for(int i=0;i<list.size();i++){
+            TaskItem item=new TaskItem(list.get(i));
+            cList.add(item);
+        }
+        return cList;
+    }*/
 
 
     @Override
     public int getCount() {
-        return this.list.size()+3;
+        return taskCount+3;
     }
 
     @Override
@@ -76,7 +86,19 @@ public class MainListAdapter extends BaseAdapter {
             blank_view.findViewById(R.id.item_task_root).setVisibility(View.INVISIBLE);
             return blank_view;
         }
+
+        TaskItem item=null;
+        try{
+            item=list.get(i);
+        }catch (Exception e){
+            e.printStackTrace();
+            LogUtil.putExceptionLog(context,e);
+        }
+
+        if(item==null) return null;
+
         ViewHolder holder;
+
         if(views[i]==null){
             views[i]=inflater.inflate(R.layout.item_task,viewGroup,false);
             holder=new ViewHolder();
@@ -120,8 +142,6 @@ public class MainListAdapter extends BaseAdapter {
         }
 
         holder.root.setVisibility(View.VISIBLE);
-        TaskItem item;
-        item=list.get(i);
 
         if(item.trigger_type ==PublicConsts.TRIGGER_TYPE_SINGLE){
             holder.img.setImageResource(R.drawable.icon_repeat_single);
@@ -528,7 +548,7 @@ public class MainListAdapter extends BaseAdapter {
             holder.aSwitch.setVisibility(View.VISIBLE);
             holder.checkbox.setVisibility(View.GONE);
             holder.aSwitch.setOnCheckedChangeListener(null);
-            holder.aSwitch.setChecked(list.get(i).isenabled);
+            holder.aSwitch.setChecked(item.isenabled);
             holder.aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -558,18 +578,27 @@ public class MainListAdapter extends BaseAdapter {
 
     public void onDataSetChanged(List<TaskItem> list){
         this.list=list;
-        this.isSelected=new boolean[this.list.size()];
-        this.views=new View[this.list.size()];
+        taskCount=list.size();
+        this.isSelected=new boolean[taskCount];
+        this.views=new View[taskCount];
         this.notifyDataSetChanged();
     }
 
     public void refreshAllCertainTimeTaskItems(){
+        if(views==null) return;
         for(int i=0;i<views.length;i++){
-            if(i>=list.size()) break;
+            //if(i>=list.size()) break;
             if(views[i]==null) continue;
-            TaskItem item;
-            if(i>=list.size()) continue;
-            item=list.get(i);
+            TextView tv=views[i].findViewById(R.id.item_task_time);
+            TaskItem item=null;
+            //if(i>=list.size()) continue;
+            try{
+                item=list.get(i);
+            }catch (Exception e){
+                e.printStackTrace();
+                LogUtil.putExceptionLog(context,e);
+            }
+            if(item==null) continue;
             if(item.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){
                 long remaining=list.get(i).getNextTriggeringTime()-System.currentTimeMillis();
                 if(remaining<=0) remaining=0;
@@ -587,7 +616,6 @@ public class MainListAdapter extends BaseAdapter {
                 }else{
                     display=ValueUtils.format(second)+"s";
                 }
-                TextView tv=views[i].findViewById(R.id.item_task_time);
                 if(item.isenabled) {
                     tv.setText(display);
                 }
@@ -598,6 +626,7 @@ public class MainListAdapter extends BaseAdapter {
     }
 
     public void onMultiSelectModeItemClicked(int position){
+        if(position>=isSelected.length||position<0) return;
         isSelected[position]=!isSelected[position];
         this.notifyDataSetChanged();
     }

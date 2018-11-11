@@ -565,8 +565,14 @@ public class ProcessTaskItem {
                 switch (action_ring_mode){
                     default:break;
                     case PublicConsts.ACTION_RING_VIBRATE:{
-                        mAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);Log.i(TAG,"Try to set audio vibrate...");
-                        if(mAudioManager.getRingerMode()!=AudioManager.RINGER_MODE_VIBRATE) action_ring_mode_result=false;
+                        try{
+                            mAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);Log.i(TAG,"Try to set audio vibrate...");
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            LogUtil.putExceptionLog(context,e);
+                            action_ring_mode_result=false;
+                        }
+                       // if(mAudioManager.getRingerMode()!=AudioManager.RINGER_MODE_VIBRATE) action_ring_mode_result=false;
                         log_taskitem.append(context.getResources().getString(R.string.action_ring_mode_vibrate));
                         log_taskitem.append(":");
                         log_taskitem.append(action_ring_mode_result?context.getResources().getString(R.string.log_result_success):context.getResources().getString(R.string.log_result_fail));
@@ -580,8 +586,9 @@ public class ProcessTaskItem {
                         }catch (Exception e){
                             e.printStackTrace();
                             LogUtil.putExceptionLog(context,e);
+                            action_ring_mode_result=false;
                         }
-                        if(mAudioManager.getRingerMode()!=AudioManager.RINGER_MODE_SILENT)  action_ring_mode_result=false;
+                       // if(mAudioManager.getRingerMode()!=AudioManager.RINGER_MODE_SILENT)  action_ring_mode_result=false;
                         log_taskitem.append(context.getResources().getString(R.string.action_ring_mode_off));
                         log_taskitem.append(":");
                         log_taskitem.append(action_ring_mode_result?context.getResources().getString(R.string.log_result_success):context.getResources().getString(R.string.log_result_fail));
@@ -589,8 +596,14 @@ public class ProcessTaskItem {
                         break;
                     }
                     case PublicConsts.ACTION_RING_NORMAL:{
-                        mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);Log.i(TAG,"Try to set audio normal...");
-                        if(mAudioManager.getRingerMode()!=AudioManager.RINGER_MODE_NORMAL) action_ring_mode_result=false;
+                        try{
+                            mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);Log.i(TAG,"Try to set audio normal...");
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            LogUtil.putExceptionLog(context,e);
+                            action_ring_mode_result=false;
+                        }
+                        //if(mAudioManager.getRingerMode()!=AudioManager.RINGER_MODE_NORMAL) action_ring_mode_result=false;
                         log_taskitem.append(context.getResources().getString(R.string.action_ring_mode_normal));
                         log_taskitem.append(":");
                         log_taskitem.append(action_ring_mode_result?context.getResources().getString(R.string.log_result_success):context.getResources().getString(R.string.log_result_fail));

@@ -4,7 +4,6 @@ import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.adapters.MainListAdapter;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.SQLConsts;
-import com.github.ghmxr.timeswitch.data.TaskItem;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.utils.MySQLiteOpenHelper;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
@@ -24,12 +23,10 @@ import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.AnimationUtils;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -38,9 +35,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
@@ -51,7 +46,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
     //boolean isFabVisible=true;
 	public MainListAdapter adapter;
 	SwipeRefreshLayout swrlayout;
-	public List<TaskItem> list=new ArrayList<>();
+	//public List<TaskItem> list=new ArrayList<>();
 	//private List<TaskItem> list_private;
 	Thread  thread_delete;
 	boolean isMultiSelectMode=false;
@@ -202,6 +197,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
     public void startService2Refresh(){
         this.swrlayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
         this.swrlayout.setRefreshing(true);
+        listview.setOnItemLongClickListener(null);
         this.startService(new Intent(this, TimeSwitchService.class));
     }
 
@@ -244,26 +240,26 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
         switch (msg.what){
             case MESSAGE_REQUEST_UPDATE_LIST:{
                 if(adapter!=null) {
-                    adapter.onDataSetChanged(list);
+                    adapter.onDataSetChanged(TimeSwitchService.list);
                     refreshAttVisibility();
                 }
             }
             break;
             case MESSAGE_GETLIST_COMPLETE:{
-                this.list=TimeSwitchService.list;
+                //this.list=TimeSwitchService.list;
                 if(adapter==null){
-                    adapter=new MainListAdapter(this,list);
+                    adapter=new MainListAdapter(this,TimeSwitchService.list);
                 }
                 else{
-                    adapter.onDataSetChanged(list);
+                    adapter.onDataSetChanged(TimeSwitchService.list);
                 }
                 this.listview.setAdapter(adapter);
                 this.swrlayout.setRefreshing(false);
                 adapter.setOnSwitchChangedListener(new MainListAdapter.SwitchChangedListener() {
                     @Override
                     public void onCheckedChanged(final int position,boolean b) {
-                        if(list==null||position>=list.size()||position<0) return;
-                        if(b&&list.get(position).trigger_type == PublicConsts.TRIGGER_TYPE_SINGLE&&(list.get(position).time<System.currentTimeMillis())){
+                        if(TimeSwitchService.list==null||position>=TimeSwitchService.list.size()||position<0) return;
+                        if(b&&TimeSwitchService.list.get(position).trigger_type == PublicConsts.TRIGGER_TYPE_SINGLE&&(TimeSwitchService.list.get(position).time<System.currentTimeMillis())){
                             Snackbar.make(fab,getResources().getString(R.string.activity_main_toast_task_invalid),Snackbar.LENGTH_SHORT)
                                     .setAction(getResources().getString(R.string.activity_main_toast_task_invalid_action), new View.OnClickListener() {
                                         @Override
@@ -271,15 +267,16 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
                                             editTask(position);
                                         }
                                     }).show();
-                            list.get(position).isenabled=false;
+                            TimeSwitchService.list.get(position).isenabled=false;
                             adapter.notifyDataSetChanged();
                             return;
                         }
                         try{
-                            ProcessTaskItem.setTaskEnabled(TimeSwitchService.service_queue.getLast(),list.get(position).id,b);
+                            ProcessTaskItem.setTaskEnabled(TimeSwitchService.service_queue.getLast(),TimeSwitchService.list.get(position).id,b);
                         }catch (Exception e){
                             e.printStackTrace();
                         }
+
                     }
                 });
                 listview.setOnItemClickListener(this);
@@ -528,8 +525,8 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
                     boolean isSelected[]=Main.this.adapter.getIsSelected();
                     for(int i=0;i<isSelected.length;i++){
                         if(isSelected[i]){
-                           int key=list.get(i).id;
-                           list.get(i).cancelTrigger();
+                           int key=TimeSwitchService.list.get(i).id;
+                           TimeSwitchService.list.get(i).cancelTrigger();
                            //list.remove(i);
                            database.delete(SQLConsts.getCurrentTableName(Main.this),SQLConsts.SQL_TASK_COLUMN_ID +"="+key,null);
                         }

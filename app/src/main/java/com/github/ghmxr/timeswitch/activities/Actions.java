@@ -1,5 +1,7 @@
 package com.github.ghmxr.timeswitch.activities;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
@@ -12,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
@@ -49,7 +52,6 @@ import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 
 import java.util.Arrays;
-import java.util.Scanner;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
@@ -127,12 +129,73 @@ public class Actions extends BaseActivity implements View.OnClickListener{
     @Override
     public void processMessage(Message msg) {}
 
+    @TargetApi(23)
+    private void showRequestWriteSettingsPermissionSnackbar(){
+        Snackbar snackbar=Snackbar.make(findViewById(R.id.layout_actions_root),getResources().getString(R.string.permission_request_write_settings_message),Snackbar.LENGTH_SHORT);
+        snackbar.setAction(getResources().getString(R.string.permission_grant_action_att), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(android.provider.Settings.ACTION_MANAGE_WRITE_SETTINGS));
+                Toast.makeText(Actions.this,getResources().getString(R.string.permission_request_write_settings_toast),Toast.LENGTH_SHORT).show();
+            }
+        });
+        snackbar.show();
+    }
+
+    @TargetApi(23)
+    private void showRequestAccessNotificationPolicyPermissionSnackbar(){
+        Snackbar snackbar=Snackbar.make(findViewById(R.id.layout_actions_root),getResources().getString(R.string.permission_request_notification_policy_message),Snackbar.LENGTH_SHORT);
+        snackbar.setAction(getResources().getString(R.string.permission_grant_action_att), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS));
+                Toast.makeText(Actions.this,getResources().getString(R.string.permission_request_notification_policy_toast),Toast.LENGTH_SHORT).show();
+            }
+        });
+        snackbar.show();
+    }
+
+
     @Override
     public void onClick(View view) {
         //isItemClicked=true;
         switch (view.getId()){
            default:break;
-            case R.id.actions_wifi: case R.id.actions_bluetooth: case R.id.actions_ring_mode: {
+            case R.id.actions_wifi:{
+                /*if(PermissionChecker.checkSelfPermission(this,Manifest.permission.CHANGE_WIFI_STATE)!=PermissionChecker.PERMISSION_GRANTED){
+                    Snackbar snackbar=Snackbar.make(findViewById(R.id.layout_actions_root),"",Snackbar.LENGTH_SHORT);
+                    snackbar.setAction(getResources().getString(R.string.permission_grant_action_att), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent appdetail = new Intent();
+                            appdetail.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            appdetail.setData(Uri.fromParts("package", getApplication().getPackageName(), null));
+                            startActivity(appdetail);
+                        }
+                    });
+                    snackbar.show();
+                    return;
+                }*/
+                showNormalBottomDialog(view.getId());
+            }
+            break;
+            case R.id.actions_bluetooth:{
+                showNormalBottomDialog(view.getId());
+            }
+            break;
+            case R.id.actions_ring_mode: {
+                if(Build.VERSION.SDK_INT>=24){
+                    NotificationManager manager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                    if(manager==null) {
+                        Log.e("Actions","Can not get NotificationManager instance");
+                        Toast.makeText(this,"Can not get NotificationManager instance",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if(!manager.isNotificationPolicyAccessGranted()){
+                        showRequestAccessNotificationPolicyPermissionSnackbar();
+                        return;
+                    }
+                }
                 showNormalBottomDialog(view.getId());
             }
             break;
@@ -147,6 +210,11 @@ public class Actions extends BaseActivity implements View.OnClickListener{
             }
             break;
             case R.id.actions_brightness:{
+                //Manifest.permission.WRITE_SETTINGS
+                if(Build.VERSION.SDK_INT>=23&&!android.provider.Settings.System.canWrite(this)){
+                    showRequestWriteSettingsPermissionSnackbar();
+                    return;
+                }
                 BottomDialogForBrightness dialog=new BottomDialogForBrightness(this);
                 try{
                     dialog.setVariables(Integer.parseInt(actions[PublicConsts.ACTION_BRIGHTNESS_LOCALE]));
@@ -165,6 +233,17 @@ public class Actions extends BaseActivity implements View.OnClickListener{
             }
             break;
             case R.id.actions_ring_volume:{
+                if(Build.VERSION.SDK_INT>=24){
+                    NotificationManager manager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                    if(manager==null){
+                        Toast.makeText(this,"Can not get NotificationManager instance",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if(!manager.isNotificationPolicyAccessGranted()){
+                        showRequestAccessNotificationPolicyPermissionSnackbar();
+                        return;
+                    }
+                }
                 AudioManager audioManager=(AudioManager) getSystemService(Context.AUDIO_SERVICE);
                 String volumeValues;
                 String[] volumeArray;
@@ -273,6 +352,10 @@ public class Actions extends BaseActivity implements View.OnClickListener{
             }
             break;
             case R.id.actions_ring_selection:{
+                if(Build.VERSION.SDK_INT>=23&&!android.provider.Settings.System.canWrite(this)){
+                    showRequestWriteSettingsPermissionSnackbar();
+                    return;
+                }
                 Intent intent = new Intent();
                 intent.setClass(this,ActionOfChangingRingtones.class);
                 intent.putExtra(ActionOfChangingRingtones.EXTRA_RING_VALUES,actions[PublicConsts.ACTION_RING_SELECTION_LOCALE]);
@@ -577,6 +660,20 @@ public class Actions extends BaseActivity implements View.OnClickListener{
             }
             break;
             case R.id.actions_sms:{
+                if(PermissionChecker.checkSelfPermission(this,Manifest.permission.SEND_SMS)!=PermissionChecker.PERMISSION_GRANTED){
+                    Snackbar snackbar=Snackbar.make(findViewById(R.id.layout_actions_root),getResources().getString(R.string.permission_request_sms_send_message),Snackbar.LENGTH_SHORT);
+                    snackbar.setAction(getResources().getString(R.string.permission_grant_action_att), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent appdetail = new Intent();
+                            appdetail.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            appdetail.setData(Uri.fromParts("package", getApplication().getPackageName(), null));
+                            startActivity(appdetail);
+                        }
+                    });
+                    snackbar.show();
+                    return;
+                }
                 Intent i=new Intent(this,SmsActivity.class);
                 i.putExtra(SmsActivity.EXTRA_SMS_VALUES,actions[PublicConsts.ACTION_SMS_LOCALE]);
                 i.putExtra(SmsActivity.EXTRA_SMS_ADDRESS,sms_address);
@@ -889,33 +986,6 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                 @Override
                 public void onClick(View v) {
                     // TODO Auto-generated method stub
-                    if(Build.VERSION.SDK_INT>=24){
-                        NotificationManager manager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-                        if(manager==null) {
-                            Log.e("Actions","Can not get NotificationManager instance");
-                            return;
-                        }
-                        if(!manager.isNotificationPolicyAccessGranted()){
-                            new AlertDialog.Builder(Actions.this)
-                                    .setTitle(getResources().getString(R.string.permission_request_notification_policy_title))
-                                    .setMessage(getResources().getString(R.string.permission_request_notification_policy_message))
-                                    .setPositiveButton(getResources().getString(R.string.dialog_button_positive), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            if(Build.VERSION.SDK_INT>=24) startActivity(new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS));
-                                            Toast.makeText(Actions.this,getResources().getString(R.string.permission_request_notification_policy_toast),Toast.LENGTH_SHORT).show();
-                                        }
-                                    })
-                                    .setNegativeButton(getResources().getString(R.string.dialog_button_negative), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-
-                                        }
-                                    })
-                                    .show();
-                            return;
-                        }
-                    }
                     actions[PublicConsts.ACTION_RING_MODE_LOCALE]=String.valueOf(PublicConsts.ACTION_RING_OFF);//TaskGui.this.actions[PublicConsts.ACTION_RING_MODE_LOCALE]=PublicConsts.ACTION_RING_OFF;
                     bdialog.cancel();
                     refreshActionStatus();
