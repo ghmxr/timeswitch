@@ -29,7 +29,6 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -681,12 +680,20 @@ public class ProcessTaskItem {
 
             if(screen_brightness!=-1){
                 if(screen_brightness==PublicConsts.ACTION_BRIGHTNESS_AUTO){
-                    Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
+                    try{
+                        Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                     log_taskitem.append(context.getResources().getString(R.string.action_brightness_auto));
                     log_taskitem.append(" ");
                 }else if(screen_brightness>=0&&screen_brightness<=PublicConsts.BRIGHTNESS_MAX) {
-                    Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
-                    Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, screen_brightness);
+                    try{
+                        Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+                        Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, screen_brightness);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                     log_taskitem.append(context.getResources().getString(R.string.action_brightness_manual));
                     log_taskitem.append((int)(((double)screen_brightness/PublicConsts.BRIGHTNESS_MAX)*100));
                     log_taskitem.append(" ");

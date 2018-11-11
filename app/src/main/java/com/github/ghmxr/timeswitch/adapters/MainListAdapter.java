@@ -1,6 +1,7 @@
 package com.github.ghmxr.timeswitch.adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.github.ghmxr.timeswitch.R;
-import com.github.ghmxr.timeswitch.activities.Log;
 import com.github.ghmxr.timeswitch.activities.Triggers;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
@@ -44,7 +44,7 @@ public class MainListAdapter extends BaseAdapter {
     private int taskCount=0;
 
 
-    public MainListAdapter (Context context,List<TaskItem> list){
+    public MainListAdapter (Context context, @NonNull List<TaskItem> list){
         this.context=context;
         inflater=LayoutInflater.from(context);
         this.list= list;
@@ -576,7 +576,7 @@ public class MainListAdapter extends BaseAdapter {
         return icon;
     }
 
-    public void onDataSetChanged(List<TaskItem> list){
+    public void onDataSetChanged(@NonNull List<TaskItem> list){
         this.list=list;
         taskCount=list.size();
         this.isSelected=new boolean[taskCount];

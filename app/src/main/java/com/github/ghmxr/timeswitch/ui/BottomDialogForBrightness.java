@@ -164,13 +164,21 @@ public class BottomDialogForBrightness implements View.OnClickListener{
     }
 
     private void setWindowBrightness(int brightness) {
-        Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
-        Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, brightness);
+        try{
+            Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+            Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, brightness);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void recoverDefaultBrightness(){
-        Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, screen_brightness_original);
-        Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, screen_mode_original);
+        try{
+            Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, screen_brightness_original);
+            Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, screen_mode_original);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private int getSystemBrightness() {

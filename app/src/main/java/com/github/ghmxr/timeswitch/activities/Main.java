@@ -197,6 +197,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
     public void startService2Refresh(){
         this.swrlayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
         this.swrlayout.setRefreshing(true);
+        listview.setAdapter(null);
         listview.setOnItemLongClickListener(null);
         this.startService(new Intent(this, TimeSwitchService.class));
     }
