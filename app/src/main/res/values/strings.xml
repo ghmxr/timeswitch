@@ -305,7 +305,7 @@
 	<string name="vibrate">振动</string>
 	<string name="ring_vibrate">振动模式</string>
 	<string name="silent">静音</string>
-	<string name="ring_silent">静音模式</string>
+	<string name="ring_silent">静音模式(勿扰模式)</string>
 	<string name="unselected">不选择此操作</string>
 	<string name="selected">已选择</string>
 	<string name="ring_normal">正常响铃</string>
@@ -341,7 +341,7 @@
     <string name="popup_profile_delete">删除</string>
 	<string name="popup_profile_export">导出</string>
     <string name="title_activity_about">关于</string>
-	<string name="activity_about_content_title">Widget Trigger (Build 7)</string>
+	<string name="activity_about_content_title">Widget Trigger (Build 8)</string>
     <string name="large_text">
         这是一个通过定时来自动触发并执行一些任务的Application。\n\n
 
@@ -363,11 +363,10 @@
 
 		本应用使用到了来自 http://www.easyicon.net 的图片资源。\n\n\n
 
-		<b>Build 7 更新日志：\n
-			修复触发行为启用“按指定时间重复”类型任务的时候时间没有刷新的问题；\n
-			修复其他已发现的问题；\n
-			新增：部分新的触发器(广播接收器)；\n
-			targetSdkVersion: 27\n
+		<b>Build 8 更新日志：\n
+			修复在Android7.0及以上版本静音模式导致的崩溃问题(勿扰模式权限)；\n
+			主界面任务项switch被添加按钮遮挡的问题(listview增加了空白项)；\n
+			修复其他已知的问题；\n
 		</b>\n\n
 
 

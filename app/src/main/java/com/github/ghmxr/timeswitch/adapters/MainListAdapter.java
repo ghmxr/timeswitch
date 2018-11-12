@@ -92,7 +92,7 @@ public class MainListAdapter extends BaseAdapter {
             item=list.get(i);
         }catch (Exception e){
             e.printStackTrace();
-            LogUtil.putExceptionLog(context,e);
+            //LogUtil.putExceptionLog(context,e);
         }
 
         if(item==null) return null;
@@ -596,7 +596,7 @@ public class MainListAdapter extends BaseAdapter {
                 item=list.get(i);
             }catch (Exception e){
                 e.printStackTrace();
-                LogUtil.putExceptionLog(context,e);
+                //LogUtil.putExceptionLog(context,e);
             }
             if(item==null) continue;
             if(item.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){

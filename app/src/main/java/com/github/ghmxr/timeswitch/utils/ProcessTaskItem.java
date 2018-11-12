@@ -841,7 +841,7 @@ public class ProcessTaskItem {
                     }
                     break;
                 }
-                Log.e(TAG,"BEGIN TO OPERATE GPS!!!!!!");
+                Log.d(TAG,"BEGIN TO OPERATE GPS!!!!!!");
                 switch (action_gps){
                     default:break;
                     case PublicConsts.ACTION_OPEN:{
@@ -859,14 +859,17 @@ public class ProcessTaskItem {
                         //log_taskitem.append(":");
                         //log_taskitem.append(result?context.getResources().getString(R.string.log_result_success):context.getResources().getString(R.string.log_result_fail));
                         log_taskitem.append(" ");
-                       // Log.i(TAG,"Root command of enable gps 's result is "+result);
+                        //Log.i(TAG,"Root command of enable gps 's result is "+result);
                     }
                     break;
                     case PublicConsts.ACTION_CLOSE:{
+                        String command=RootUtils.COMMAND_DISABLE_GPS;
+                        if(Build.VERSION.SDK_INT>=23) command=RootUtils.COMMAND_DISABLE_GPS_API23;
+                        final String runCommand=command;
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                RootUtils.executeCommand(RootUtils.COMMAND_DISABLE_GPS);
+                                RootUtils.executeCommand(runCommand);
                             }
                         }).start();
                         log_taskitem.append(context.getResources().getString(R.string.action_gps_off));
