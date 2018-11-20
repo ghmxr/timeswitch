@@ -23,6 +23,8 @@
     <uses-permission android:name="android.permission.SEND_SMS"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="19"/>
+    <uses-permission android:name="android.permission.GET_TASKS" android:maxSdkVersion="20"/>
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"/>
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
 
@@ -122,6 +124,8 @@
         <service android:name=".services.TimeSwitchService">
 
         </service>
+
+        <service android:name=".services.AppLaunchingDetectionService"/>
 
         <receiver android:name=".receivers.AlarmReceiver">
 

@@ -94,6 +94,7 @@ public class TimeSwitchService extends Service {
         }
 
         refreshTaskItems();
+        startService(new Intent(this,AppLaunchingDetectionService.class));
         return super.onStartCommand(intent, flags, startId);
     }
 
