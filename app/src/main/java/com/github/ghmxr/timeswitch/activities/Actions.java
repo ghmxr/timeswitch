@@ -1156,7 +1156,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                 case PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE:imgRes=R.drawable.icon_battery_low;break;
                 case PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE: case PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE:
                     imgRes=R.drawable.icon_temperature;break;
-                case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST:imgRes=R.drawable.icon_broadcast;break;
+                case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST:imgRes=R.drawable.icon_broadcast;break;
                 case PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON:imgRes=R.drawable.icon_wifi_on;break;
                 case PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF:imgRes=R.drawable.icon_wifi_off;break;
                 case PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON:imgRes=R.drawable.icon_bluetooth_on;break;

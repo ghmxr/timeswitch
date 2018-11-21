@@ -452,6 +452,126 @@
                 android:background="#dddddd" />
 
             <RelativeLayout
+                android:id="@+id/trigger_app_opened"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true">
+
+                <ImageView
+                    android:id="@+id/trigger_app_opened_icon"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/ic_launcher" />
+
+                <LinearLayout
+                    android:id="@+id/trigger_app_opened_textviewarea"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@+id/trigger_app_opened_icon"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/trigger_app_opened_att"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/color_text_normal"
+                        android:text="@string/activity_trigger_app_opened"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/trigger_app_opened_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="未选择"
+                        android:textColor="@color/color_activity_taskgui_value"
+                        android:textSize="12sp"
+                        android:layout_marginRight="50dp"/>
+
+                </LinearLayout>
+
+                <RadioButton
+                    android:id="@+id/trigger_app_opened_ra"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dp"
+                    android:clickable="false" />
+
+            </RelativeLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#dddddd" />
+
+            <RelativeLayout
+                android:id="@+id/trigger_app_closed"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true">
+
+                <ImageView
+                    android:id="@+id/trigger_app_closed_icon"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/ic_launcher" />
+
+                <LinearLayout
+                    android:id="@+id/trigger_app_closed_textviewarea"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@+id/trigger_app_closed_icon"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/trigger_app_closed_att"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/color_text_normal"
+                        android:text="@string/activity_trigger_app_closed"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/trigger_app_closed_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="未选择"
+                        android:textColor="@color/color_activity_taskgui_value"
+                        android:textSize="12sp"
+                        android:layout_marginRight="50dp"/>
+
+                </LinearLayout>
+
+                <RadioButton
+                    android:id="@+id/trigger_app_closed_ra"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dp"
+                    android:clickable="false" />
+
+            </RelativeLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#dddddd" />
+
+            <RelativeLayout
                 android:id="@+id/trigger_screen_on"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"

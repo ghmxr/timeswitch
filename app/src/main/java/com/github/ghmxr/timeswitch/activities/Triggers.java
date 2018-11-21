@@ -10,6 +10,9 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -30,6 +33,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -49,6 +53,8 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
     public static final String EXTRA_TRIGGER_VALUES="trigger_values";
 
     private static final int MESSAGE_GET_SSID_COMPLETE=0x00001;
+    private static final int MESSAGE_GET_APPLIST_COMPLETE_OPEN =0x00002;
+    private static final int MESSAGE_GET_APPLIST_COMPLETE_CLOSE=0x00003;
 
     private int trigger_type=0;
    // private long time=0;
@@ -56,6 +62,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
     private long interval=60*60*1000;
     private int battery_percentage=50,battery_temperature=35;
     private String wifi_ssidinfo ="";
+    private String [] package_names=new String[0];
     private String broadcast_intent_action="android.intent.ANSWER";
 
     CustomTimePicker timePicker;
@@ -64,7 +71,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
     private String checkString="";
     private long first_clicked=0;
 
-    private AlertDialog dialog_wait;
+    private AlertDialog dialog_appinfo;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -95,6 +102,8 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         findViewById(R.id.trigger_screen_off).setOnClickListener(this);
         findViewById(R.id.trigger_power_connected).setOnClickListener(this);
         findViewById(R.id.trigger_power_disconnected).setOnClickListener(this);
+        findViewById(R.id.trigger_app_opened).setOnClickListener(this);
+        findViewById(R.id.trigger_app_closed).setOnClickListener(this);
         //initialize the values
         try{
             trigger_type=getIntent().getIntExtra(EXTRA_TRIGGER_TYPE,0);
@@ -141,7 +150,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 }
                 break;
 
-                case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST:{
+                case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST:{
                     broadcast_intent_action=String.valueOf(trigger_values[0]);
                 }
                 break;
@@ -149,6 +158,10 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 case PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED: case PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:{
                     wifi_ssidinfo=String.valueOf(trigger_values[0]);
                     //Log.d("wifi ssids" ,wifi_ssidinfo);
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_APP_LAUNCHED: case PublicConsts.TRIGGER_TYPE_APP_CLOSED:{
+                    package_names=trigger_values;
                 }
                 break;
 
@@ -181,6 +194,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 ", battery_percentage=" + battery_percentage +
                 ", battery_temperature=" + battery_temperature +
                 ", wifi_ssidinfo='" + wifi_ssidinfo + '\'' +
+                ", package_names='" + Arrays.toString(package_names) + '\'' +
                 ", broadcast_intent_action='" + broadcast_intent_action + '\'' +
                 ", calendar=" + calendar.getTimeInMillis() +
                 ", wifi_ssidinfo=" + wifi_ssidinfo +
@@ -217,7 +231,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 timePicker.setVisibility(View.GONE);
             }
             break;
-            case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST:{
+            case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST:{
                 ((TextView)findViewById(R.id.trigger_received_broadcast_value)).setText(getBroadcastDisplayValue(broadcast_intent_action));
                 timePicker.setVisibility(View.GONE);
             }
@@ -265,7 +279,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
     }
 
     @Override
-    public void processMessage(Message msg) {
+    public void processMessage(final Message msg) {
         switch (msg.what){
             default:break;
             /*case MESSAGE_GET_SSID_COMPLETE:{
@@ -301,6 +315,33 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                         .show();
             }
             break; */
+            case MESSAGE_GET_APPLIST_COMPLETE_OPEN: case MESSAGE_GET_APPLIST_COMPLETE_CLOSE:{
+                if(dialog_appinfo==null) break;
+                dialog_appinfo.findViewById(R.id.dialog_app_wait).setVisibility(View.GONE);
+                ListView listview=dialog_appinfo.findViewById(R.id.dialog_app_list);
+                final AppListAdapter adapter=new AppListAdapter((List<AppItemInfo>)msg.obj);
+                listview.setAdapter(adapter);
+                listview.setVisibility(View.VISIBLE);
+                listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        adapter.onItemClicked(position);
+                    }
+                });
+                dialog_appinfo.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String[] package_names=adapter.getSelectedPackageNames();
+                        if(package_names.length==0) {
+                            Snackbar.make(v,getResources().getString(R.string.dialog_app_select_z_att),Snackbar.LENGTH_SHORT).show();
+                            return;
+                        }
+                        activateTriggerType(msg.what==MESSAGE_GET_APPLIST_COMPLETE_OPEN?PublicConsts.TRIGGER_TYPE_APP_LAUNCHED:PublicConsts.TRIGGER_TYPE_APP_CLOSED);
+                        dialog_appinfo.cancel();
+                    }
+                });
+            }
+            break;
         }
     }
 
@@ -486,7 +527,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
             }
             break;
             case R.id.trigger_received_broadcast:{
-                activateTriggerType(PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST);
+                activateTriggerType(PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST);
                 View dialogView=LayoutInflater.from(this).inflate(R.layout.layout_dialog_with_listview,null);
                 final BroadcastSelectionAdapter adapter=new BroadcastSelectionAdapter(broadcast_intent_action);
                 ListView listView=dialogView.findViewById(R.id.layout_dialog_listview);
@@ -513,7 +554,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                     @Override
                     public void onClick(View view) {
                         broadcast_intent_action=adapter.getSelectedAction();
-                        activateTriggerType(PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST);
+                        activateTriggerType(PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST);
                         ((TextView)findViewById(R.id.trigger_received_broadcast_value)).setText(getBroadcastDisplayValue(broadcast_intent_action));
                         dialog.cancel();
                     }
@@ -608,6 +649,35 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                             }
                         })
                         .show();
+            }
+            break;
+            case R.id.trigger_app_opened: case R.id.trigger_app_closed:{
+                int trigger_type=(v_id==R.id.trigger_app_opened?PublicConsts.TRIGGER_TYPE_APP_LAUNCHED:PublicConsts.TRIGGER_TYPE_APP_CLOSED);
+                  this.dialog_appinfo=new AlertDialog.Builder(this)
+                          .setTitle(trigger_type==PublicConsts.TRIGGER_TYPE_APP_LAUNCHED?getResources().getString(R.string.dialog_app_open_select_title)
+                          :getResources().getString(R.string.dialog_app_close_select_title))
+                          .setView(LayoutInflater.from(this).inflate(R.layout.layout_dialog_app_select,null))
+                          .setPositiveButton(getResources().getString(R.string.dialog_button_positive),null)
+                          .show();
+                  new Thread(new Runnable() {
+                      @Override
+                      public void run() {
+                          List<AppItemInfo> list=new ArrayList<>();
+                          PackageManager manager=getPackageManager();
+                          List<PackageInfo> list_get=manager.getInstalledPackages(PackageManager.COMPONENT_ENABLED_STATE_DEFAULT);
+                          for(PackageInfo info:list_get){
+                              AppItemInfo itemInfo=new AppItemInfo();
+                              itemInfo.icon=manager.getApplicationIcon(info.applicationInfo);
+                              itemInfo.appname=manager.getApplicationLabel(info.applicationInfo).toString();
+                              itemInfo.package_name=info.applicationInfo.packageName;
+                              list.add(itemInfo);
+                          }
+                          Message msg=new Message();
+                          msg.obj=list;
+                          msg.what= MESSAGE_GET_APPLIST_COMPLETE_OPEN;
+                          sendMessage(msg);
+                      }
+                  }).start();
             }
             break;
             case R.id.trigger_widget_changed:{
@@ -796,7 +866,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                         trigger_values[0]=String.valueOf(battery_temperature);
                     }
                     break;
-                    case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST:{
+                    case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST:{
                         trigger_values=new String[1];
                         trigger_values[0]=String.valueOf(broadcast_intent_action);
                     }
@@ -898,7 +968,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
 
     public static String getBroadcastDisplayValue(String intent_action){
        // TextView tv_broadcast=findViewById(R.id.layout_taskgui_area_condition_received_broadcast_value);
-       // if(trigger_type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST){
+       // if(trigger_type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST){
         //    tv_broadcast.setText(taskitem.selectedAction);
        // }
         return  intent_action;
@@ -964,6 +1034,8 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         TextView tv_screen_off=findViewById(R.id.trigger_screen_off_value);
         TextView tv_power_connected=findViewById(R.id.trigger_power_connected_value);
         TextView tv_power_disconnected=findViewById(R.id.trigger_power_disconnected_value);
+        TextView tv_app_opened=findViewById(R.id.trigger_app_opened_value);
+        TextView tv_app_closed=findViewById(R.id.trigger_app_closed_value);
 
         String unchoose=this.getResources().getString(R.string.activity_taskgui_att_unchoose);
 
@@ -972,7 +1044,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         ((RadioButton)findViewById(R.id.trigger_weekloop_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_LOOP_WEEK);
         ((RadioButton)findViewById(R.id.trigger_battery_percentage_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE||type==PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE);
         ((RadioButton)findViewById(R.id.trigger_battery_temperature_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE||type==PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE);
-        ((RadioButton)findViewById(R.id.trigger_received_broadcast_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST);
+        ((RadioButton)findViewById(R.id.trigger_received_broadcast_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST);
         ((RadioButton)findViewById(R.id.trigger_wifi_connected_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED);
         ((RadioButton)findViewById(R.id.trigger_wifi_disconnected_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED);
         ((RadioButton)findViewById(R.id.trigger_widget_changed_ra)).setChecked(
@@ -987,6 +1059,8 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         ((RadioButton)findViewById(R.id.trigger_screen_off_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_SCREEN_OFF);
         ((RadioButton)findViewById(R.id.trigger_power_connected_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_POWER_CONNECTED);
         ((RadioButton)findViewById(R.id.trigger_power_disconnected_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED);
+        ((RadioButton)findViewById(R.id.trigger_app_opened_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_APP_LAUNCHED);
+        ((RadioButton)findViewById(R.id.trigger_app_closed_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_APP_CLOSED);
 
         tv_condition_single_value.setText(unchoose);
         tv_condition_percertaintime_value.setText(unchoose);
@@ -1003,6 +1077,8 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         tv_screen_off.setText(unchoose);
         tv_power_connected.setText(unchoose);
         tv_power_disconnected.setText(unchoose);
+        tv_app_opened.setText(unchoose);
+        tv_app_closed.setText(unchoose);
     }
 
     private void checkAndExit(){
@@ -1147,6 +1223,83 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
             return ids;
         }
 
+    }
+
+    private class AppListAdapter extends BaseAdapter{
+        List<AppItemInfo> list;
+        boolean[] isSelected;
+        AppListAdapter(List<AppItemInfo> list){
+            this.list=list;
+            isSelected=new boolean[list.size()];
+        }
+
+        @Override
+        public int getCount() {
+            return list.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder;
+            if(convertView==null){
+                convertView=LayoutInflater.from(Triggers.this).inflate(R.layout.item_app_info,parent,false);
+                holder=new ViewHolder();
+                holder.icon=convertView.findViewById(R.id.item_app_icon);
+                holder.tv_name=convertView.findViewById(R.id.item_app_name);
+                holder.cb=convertView.findViewById(R.id.item_app_cb);
+                convertView.setTag(holder);
+            }else{
+                holder=(ViewHolder) convertView.getTag();
+            }
+            holder.icon.setImageDrawable(list.get(position).icon);
+            holder.tv_name.setText(list.get(position).appname);
+            holder.cb.setChecked(isSelected[position]);
+            return convertView;
+        }
+
+        public void onItemClicked(int position){
+            if(position<0||position>=isSelected.length) return;
+            isSelected[position]=!isSelected[position];
+            notifyDataSetChanged();
+        }
+
+        public String[] getSelectedPackageNames(){
+            int selectedNum=0;
+            for(int i=0;i<isSelected.length;i++){
+                if(isSelected[i]) selectedNum++;
+            }
+            String[] names=new String[selectedNum];
+            int j=0;
+            for(int i=0;i<isSelected.length;i++){
+                if(isSelected[i]) {
+                    names[j]=list.get(i).package_name;
+                    j++;
+                }
+            }
+            return names;
+        }
+
+        private class ViewHolder{
+            ImageView icon;
+            TextView tv_name;
+            CheckBox cb;
+        }
+    }
+
+    private class AppItemInfo{
+        public Drawable icon;
+        public String appname="";
+        public String package_name="";
     }
 
 }

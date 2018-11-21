@@ -179,7 +179,7 @@ public class MainListAdapter extends BaseAdapter {
             holder.img.setImageResource(R.drawable.icon_temperature);
             holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
             holder.trigger_value.setText(context.getResources().getString(R.string.lower_than)+item.battery_temperature+"¡æ");
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST){
+        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST){
             holder.img.setImageResource(R.drawable.icon_broadcast);
             holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,10);
             String action=item.selectedAction;

@@ -19,7 +19,9 @@ import com.github.ghmxr.timeswitch.receivers.RingModeReceiver;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.timers.CustomTimerTask;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
@@ -85,6 +87,7 @@ public class TaskItem implements Comparable<TaskItem>{
 	public int battery_temperature=35;
 
 	public String selectedAction="android.intent.action.ANSWER";
+	public String[] package_names=new String[0];
 
 	/**
 	 * ДЅЗЂР§Эт
@@ -172,6 +175,8 @@ public class TaskItem implements Comparable<TaskItem>{
 		this.interval_milliseconds=item.interval_milliseconds;
 		this.battery_percentage=item.battery_percentage;
 		this.battery_temperature=item.battery_temperature;
+		this.package_names=new String[item.package_names.length];
+		System.arraycopy(item.package_names,0,this.package_names,0,item.package_names.length);
 		//this.exceptions=item.exceptions;
 		this.exceptions=new String[item.exceptions.length];
 		//for(int i=0;i<exceptions.length;i++) this.exceptions[i]=item.exceptions[i];
@@ -207,6 +212,7 @@ public class TaskItem implements Comparable<TaskItem>{
 				", battery_percentage=" + battery_percentage +
 				", battery_temperature=" + battery_temperature +
 				", wifiIds=" + wifiIds +
+				", package_names="+ Arrays.toString(package_names)+
 				", exceptions=" + Arrays.toString(exceptions) +
 				", actions=" + Arrays.toString(actions) +
 				", uri_ring_notification='" + uri_ring_notification + '\'' +
@@ -247,7 +253,7 @@ public class TaskItem implements Comparable<TaskItem>{
 			((BatteryReceiver)triggerObject).registerReceiver();
 		}
 
-		if(trigger_type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST){
+		if(trigger_type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST){
 			triggerObject=new CustomBroadcastReceiver(context,selectedAction,this);
 			((CustomBroadcastReceiver)triggerObject).registerReceiver();
 		}

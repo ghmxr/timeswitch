@@ -28,7 +28,9 @@ public class PublicConsts {
 	public static final int TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE            =	6;
 	public static final int TRIGGER_TYPE_WIFI_CONNECTED								=	7;
 	public static final int TRIGGER_TYPE_WIFI_DISCONNECTED							=	8;
-	public static final int TRIGGER_TYPE_RECEIVED_BROADTCAST						=	9;
+	public static final int TRIGGER_TYPE_RECEIVED_BROADCAST 						=	9;
+	public static final int TRIGGER_TYPE_APP_LAUNCHED								=	10;
+	public static final int TRIGGER_TYPE_APP_CLOSED									=	11;
 
 	public static final int TRIGGER_TYPE_WIDGET_WIFI_ON					=		101;
 	public static final int TRIGGER_TYPE_WIDGET_WIFI_OFF				=		102;
@@ -153,9 +155,9 @@ public class PublicConsts {
 	public static final int RING_SELECTION_NOTIFICATION_TYPE_LOCALE=0;
 	public static final int RING_SELECTION_CALL_TYPE_LOCALE =1;
 
-	public static final int RING_TYPE_SYSTEM_LOCALE =0;
-	public static final int RING_TYPE_MEDIA_LOCALE =1;
-	public static final int RING_TYPE_PATH_LOCALE=2;
+	public static final int RING_TYPE_FROM_SYSTEM =0;
+	public static final int RING_TYPE_FROM_MEDIA =1;
+	public static final int RING_TYPE_FROM_PATH =2;
 
 	public static final int VIBRATE_FREQUENCY_LOCALE =0;
 	public static final int VIBRATE_DURATION_LOCALE =1;

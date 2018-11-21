@@ -655,7 +655,7 @@ public class ProcessTaskItem {
                int ring_phone_selection=Integer.parseInt(ring_selection_values[PublicConsts.RING_SELECTION_CALL_TYPE_LOCALE]);
                //String ring_value_notification=ring_selection_values[PublicConsts.RING_SELECTION_NOTIFICATION_VALUE_LOCALE];
                //String ring_value_phone=ring_selection_values[PublicConsts.RING_SELECTION_PHONE_VALUE_LOCALE];
-               if(ring_notification_selection==PublicConsts.RING_TYPE_SYSTEM_LOCALE ||ring_notification_selection==PublicConsts.RING_TYPE_MEDIA_LOCALE)
+               if(ring_notification_selection==PublicConsts.RING_TYPE_FROM_SYSTEM ||ring_notification_selection==PublicConsts.RING_TYPE_FROM_MEDIA)
                {
                    //RingtoneManager.setActualDefaultRingtoneUri(context,RingtoneManager.TYPE_NOTIFICATION ,Uri.parse(ring_value_notification));
                    RingtoneManager.setActualDefaultRingtoneUri(context,RingtoneManager.TYPE_NOTIFICATION ,Uri.parse(item.uri_ring_notification));
@@ -663,7 +663,7 @@ public class ProcessTaskItem {
                    log_taskitem.append(context.getResources().getString(R.string.log_result_success));
                    log_taskitem.append(" ");
                }
-               if(ring_phone_selection==PublicConsts.RING_TYPE_SYSTEM_LOCALE ||ring_phone_selection==PublicConsts.RING_TYPE_MEDIA_LOCALE)
+               if(ring_phone_selection==PublicConsts.RING_TYPE_FROM_SYSTEM ||ring_phone_selection==PublicConsts.RING_TYPE_FROM_MEDIA)
                {
                    //RingtoneManager.setActualDefaultRingtoneUri(context,RingtoneManager.TYPE_RINGTONE,Uri.parse(ring_value_phone));
                    RingtoneManager.setActualDefaultRingtoneUri(context,RingtoneManager.TYPE_RINGTONE,Uri.parse(item.uri_ring_call));

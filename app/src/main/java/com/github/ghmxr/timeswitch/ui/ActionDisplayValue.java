@@ -126,12 +126,12 @@ public class ActionDisplayValue {
             int ring_notification_selection= Integer.parseInt(ring_selection_values[PublicConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE]);
             int ring_phone_selection=Integer.parseInt(ring_selection_values[PublicConsts.RING_SELECTION_CALL_TYPE_LOCALE]);
             StringBuilder displayBuilder=new StringBuilder("");
-            if(ring_notification_selection==PublicConsts.RING_TYPE_SYSTEM_LOCALE ||ring_notification_selection==PublicConsts.RING_TYPE_MEDIA_LOCALE){
+            if(ring_notification_selection==PublicConsts.RING_TYPE_FROM_SYSTEM ||ring_notification_selection==PublicConsts.RING_TYPE_FROM_MEDIA){
                 String ringOfNotification=context.getResources().getString(R.string.activity_taskgui_actions_ring_selection_notification);
                 displayBuilder.append(ringOfNotification);
                 displayBuilder.append(" ");
             }
-            if(ring_phone_selection==PublicConsts.RING_TYPE_SYSTEM_LOCALE ||ring_phone_selection==PublicConsts.RING_TYPE_MEDIA_LOCALE){
+            if(ring_phone_selection==PublicConsts.RING_TYPE_FROM_SYSTEM ||ring_phone_selection==PublicConsts.RING_TYPE_FROM_MEDIA){
                 String ringOfPhone=context.getResources().getString(R.string.activity_taskgui_actions_ring_selection_phone);
                 displayBuilder.append(ringOfPhone);
             }

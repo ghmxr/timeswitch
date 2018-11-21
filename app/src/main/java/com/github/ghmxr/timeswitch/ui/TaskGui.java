@@ -304,7 +304,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				value.setText(Triggers.getBatteryPercentageDisplayValue(this,taskitem.trigger_type,taskitem.battery_percentage));
 			}
 			break;
-            case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST:{
+            case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST:{
                 icon.setImageResource(R.drawable.icon_broadcast);
                 att.setText(getResources().getString(R.string.activity_taskgui_condition_received_broadcast_att));
                 value.setText(Triggers.getBroadcastDisplayValue(taskitem.selectedAction));
@@ -480,7 +480,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				refreshBatteryTemperatureTextView();
 			}
 			break;
-			case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST:{
+			case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST:{
 				timepicker.setVisibility(View.GONE);
 				refreshBroadcastTextView();
 			}
@@ -562,7 +562,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 						trigger_values[0]=String.valueOf(taskitem.battery_percentage);
 					}
 					break;
-					case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST:{
+					case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST:{
 						trigger_values=new String[1];
 						trigger_values[0]=String.valueOf(taskitem.selectedAction);
 					}
@@ -570,6 +570,11 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 					case PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED: case PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:{
 						trigger_values=new String[1];
 						trigger_values[0]=taskitem.wifiIds;
+					}
+					break;
+					case PublicConsts.TRIGGER_TYPE_APP_LAUNCHED: case PublicConsts.TRIGGER_TYPE_APP_CLOSED:{
+						trigger_values=new String[taskitem.package_names.length];
+						System.arraycopy(taskitem.package_names,0,trigger_values,0,taskitem.package_names.length);
 					}
 					break;
 				}
@@ -747,7 +752,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			}
 			break; */
 			/*case R.id.layout_taskgui_area_condition_received_broadcast:{
-				activateTriggerType(PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST);
+				activateTriggerType(PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST);
 				View dialogView=LayoutInflater.from(this).inflate(R.layout.layout_dialog_with_listview,null);
 				final BroadcastSelectionAdapter adapter=new BroadcastSelectionAdapter(taskitem.selectedAction);
 				ListView listView=dialogView.findViewById(R.id.layout_dialog_listview);
@@ -774,7 +779,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 					@Override
 					public void onClick(View view) {
 						taskitem.selectedAction=adapter.getSelectedAction();
-						activateTriggerType(PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST);
+						activateTriggerType(PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST);
 						refreshBroadcastTextView();
 						dialog.cancel();
 					}
@@ -1109,7 +1114,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			triggerValues=new String[1];
 			triggerValues[0]=String.valueOf(this.taskitem.battery_temperature);
 		}
-		if(taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST){
+		if(taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST){
 			triggerValues=new String[1];
 			triggerValues[0]=String.valueOf(taskitem.selectedAction);
 		}
@@ -1206,7 +1211,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 
 	private void refreshBroadcastTextView(){
 		TextView tv_broadcast=findViewById(R.id.layout_taskgui_area_condition_received_broadcast_value);
-		if(taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST){
+		if(taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST){
 			tv_broadcast.setText(taskitem.selectedAction);
 		}
 	}
@@ -1281,7 +1286,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 							clearExceptionsOfBatteryTemperature();
 						}
 						break;
-						case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST:{
+						case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST:{
 							try{
 								taskitem.selectedAction=String.valueOf(data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[0]);
 							}catch (Exception e){
@@ -1354,7 +1359,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		((RadioButton)findViewById(R.id.layout_taskgui_area_condition_weekloop_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_LOOP_WEEK);
 		((RadioButton)findViewById(R.id.layout_taskgui_area_condition_battery_percentage_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE||type==PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE);
 		((RadioButton)findViewById(R.id.layout_taskgui_area_condition_battery_temperature_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE||type==PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE);
-		((RadioButton)findViewById(R.id.layout_taskgui_area_condition_received_broadcast_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST);
+		((RadioButton)findViewById(R.id.layout_taskgui_area_condition_received_broadcast_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST);
 
         tv_condition_single_value.setText(unchoose);
         tv_condition_percertaintime_value.setText(unchoose);

@@ -19,6 +19,7 @@ import com.github.ghmxr.timeswitch.activities.Profile;
 import com.github.ghmxr.timeswitch.activities.Settings;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
+import com.github.ghmxr.timeswitch.receivers.AppLaunchDetectionReceiver;
 import com.github.ghmxr.timeswitch.receivers.BatteryReceiver;
 import com.github.ghmxr.timeswitch.receivers.NetworkReceiver;
 import com.github.ghmxr.timeswitch.runnables.RefreshListItems;
@@ -94,7 +95,8 @@ public class TimeSwitchService extends Service {
         }
 
         refreshTaskItems();
-        startService(new Intent(this,AppLaunchingDetectionService.class));
+        //startService(new Intent(this,AppLaunchingDetectionService.class));
+        //new AppLaunchDetectionReceiver(this,null).registerReceiver();
         return super.onStartCommand(intent, flags, startId);
     }
 

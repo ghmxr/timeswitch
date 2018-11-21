@@ -88,7 +88,7 @@ public class RefreshListItems implements Runnable {
                     if(item.trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE||item.trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE){
                         item.battery_temperature=Integer.parseInt(trigger_values[0]);
                     }
-                    if(item.trigger_type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADTCAST){
+                    if(item.trigger_type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST){
                         item.selectedAction=String.valueOf(trigger_values[0]);
                     }
 
