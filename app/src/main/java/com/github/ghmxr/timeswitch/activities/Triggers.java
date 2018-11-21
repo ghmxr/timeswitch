@@ -246,6 +246,16 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 timePicker.setVisibility(View.GONE);
             }
             break;
+            case PublicConsts.TRIGGER_TYPE_APP_LAUNCHED: {
+                ((TextView)findViewById(R.id.trigger_app_opened_value)).setText(getAppNameDisplayValue(this,package_names));
+                timePicker.setVisibility(View.GONE);
+            }
+            break;
+            case PublicConsts.TRIGGER_TYPE_APP_CLOSED:{
+                ((TextView)findViewById(R.id.trigger_app_closed_value)).setText(getAppNameDisplayValue(this,package_names));
+                timePicker.setVisibility(View.GONE);
+            }
+            break;
             case PublicConsts.TRIGGER_TYPE_SCREEN_ON:{
                 ((TextView)findViewById(R.id.trigger_screen_on_value)).setText(getResources().getString(R.string.selected));
                 timePicker.setVisibility(View.GONE);
@@ -279,7 +289,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
     }
 
     @Override
-    public void processMessage(final Message msg) {
+    public void processMessage(Message msg) {
         switch (msg.what){
             default:break;
             /*case MESSAGE_GET_SSID_COMPLETE:{
@@ -317,9 +327,10 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
             break; */
             case MESSAGE_GET_APPLIST_COMPLETE_OPEN: case MESSAGE_GET_APPLIST_COMPLETE_CLOSE:{
                 if(dialog_appinfo==null) break;
+                final int msg_what=msg.what;
                 dialog_appinfo.findViewById(R.id.dialog_app_wait).setVisibility(View.GONE);
                 ListView listview=dialog_appinfo.findViewById(R.id.dialog_app_list);
-                final AppListAdapter adapter=new AppListAdapter((List<AppItemInfo>)msg.obj);
+                final AppListAdapter adapter=new AppListAdapter((List<AppItemInfo>)msg.obj,package_names);
                 listview.setAdapter(adapter);
                 listview.setVisibility(View.VISIBLE);
                 listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -336,8 +347,16 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                             Snackbar.make(v,getResources().getString(R.string.dialog_app_select_z_att),Snackbar.LENGTH_SHORT).show();
                             return;
                         }
-                        activateTriggerType(msg.what==MESSAGE_GET_APPLIST_COMPLETE_OPEN?PublicConsts.TRIGGER_TYPE_APP_LAUNCHED:PublicConsts.TRIGGER_TYPE_APP_CLOSED);
+                        Triggers.this.package_names=package_names;
+                        int type=msg_what==MESSAGE_GET_APPLIST_COMPLETE_OPEN?PublicConsts.TRIGGER_TYPE_APP_LAUNCHED:PublicConsts.TRIGGER_TYPE_APP_CLOSED;
+                        activateTriggerType(type);
                         dialog_appinfo.cancel();
+                    }
+                });
+                dialog_appinfo.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        adapter.deselectAll();
                     }
                 });
             }
@@ -599,10 +618,10 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 }
 
                 if(NetworkReceiver.wifiList==null){
-                    Snackbar snackbar=Snackbar.make(findViewById(R.id.trigger_root),"打开WiFi开关来查看SSID选项",Snackbar.LENGTH_SHORT);
+                    Snackbar snackbar=Snackbar.make(findViewById(R.id.trigger_root),getResources().getString(R.string.activity_trigger_wifi_open_att),Snackbar.LENGTH_SHORT);
                     if(v_id==R.id.trigger_wifi_connected)((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText(getWifiConnectionDisplayValue(Triggers.this,wifi_ssidinfo));
                     else if(v_id==R.id.trigger_wifi_disconnected)((TextView)findViewById(R.id.trigger_wifi_disconnected_value)).setText(getWifiConnectionDisplayValue(Triggers.this,wifi_ssidinfo));
-                    snackbar.setAction("打开WiFi", new View.OnClickListener() {
+                    snackbar.setAction(getResources().getString(R.string.snackbar_action_open_wifi), new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             wifiManager.setWifiEnabled(true);
@@ -652,12 +671,13 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
             }
             break;
             case R.id.trigger_app_opened: case R.id.trigger_app_closed:{
-                int trigger_type=(v_id==R.id.trigger_app_opened?PublicConsts.TRIGGER_TYPE_APP_LAUNCHED:PublicConsts.TRIGGER_TYPE_APP_CLOSED);
+                final int trigger_type=(v_id==R.id.trigger_app_opened?PublicConsts.TRIGGER_TYPE_APP_LAUNCHED:PublicConsts.TRIGGER_TYPE_APP_CLOSED);
                   this.dialog_appinfo=new AlertDialog.Builder(this)
                           .setTitle(trigger_type==PublicConsts.TRIGGER_TYPE_APP_LAUNCHED?getResources().getString(R.string.dialog_app_open_select_title)
                           :getResources().getString(R.string.dialog_app_close_select_title))
                           .setView(LayoutInflater.from(this).inflate(R.layout.layout_dialog_app_select,null))
                           .setPositiveButton(getResources().getString(R.string.dialog_button_positive),null)
+                          .setNegativeButton(getResources().getString(R.string.action_deselectall),null)
                           .show();
                   new Thread(new Runnable() {
                       @Override
@@ -674,7 +694,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                           }
                           Message msg=new Message();
                           msg.obj=list;
-                          msg.what= MESSAGE_GET_APPLIST_COMPLETE_OPEN;
+                          msg.what= trigger_type==PublicConsts.TRIGGER_TYPE_APP_LAUNCHED?MESSAGE_GET_APPLIST_COMPLETE_OPEN:MESSAGE_GET_APPLIST_COMPLETE_CLOSE;
                           sendMessage(msg);
                       }
                   }).start();
@@ -876,6 +896,11 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                         trigger_values[0]= wifi_ssidinfo;
                     }
                     break;
+                    case PublicConsts.TRIGGER_TYPE_APP_LAUNCHED: case PublicConsts.TRIGGER_TYPE_APP_CLOSED:{
+                        trigger_values=package_names;
+                        if(trigger_values.length==0) trigger_values=new String[1];
+                    }
+                    break;
                 }
                 //if(trigger_values==null) return false;
                 Intent i=new Intent();
@@ -1018,6 +1043,22 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
             case PublicConsts.TRIGGER_TYPE_NET_OFF: return context.getResources().getString(R.string.dialog_triggers_widget_net_off);
         }
         return "";
+    }
+
+    public static String getAppNameDisplayValue(Context context,String[] packageNames){
+        if(packageNames==null||packageNames.length==0) return "";
+        StringBuilder builder=new StringBuilder("");
+        PackageManager manager=context.getPackageManager();
+        for(int i=0;i<packageNames.length;i++){
+            String packageName=packageNames[i];
+            try{
+                builder.append(manager.getApplicationLabel(manager.getApplicationInfo(packageNames[i],PackageManager.GET_META_DATA)));
+                if(packageName.length()>1&&i<packageNames.length-1) builder.append(",");
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return builder.toString();
     }
 
     private void refreshTriggerDisplayValues(int type){
@@ -1228,9 +1269,17 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
     private class AppListAdapter extends BaseAdapter{
         List<AppItemInfo> list;
         boolean[] isSelected;
-        AppListAdapter(List<AppItemInfo> list){
+        AppListAdapter(List<AppItemInfo> list,String[] selectedPackageNames){
             this.list=list;
             isSelected=new boolean[list.size()];
+            if(selectedPackageNames==null||selectedPackageNames.length==0) return;
+            for(String name:selectedPackageNames){
+                for(int i=0;i<list.size();i++){
+                    if(name.equals(list.get(i).package_name)){
+                        isSelected[i]=true;
+                    }
+                }
+            }
         }
 
         @Override
@@ -1270,6 +1319,13 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         public void onItemClicked(int position){
             if(position<0||position>=isSelected.length) return;
             isSelected[position]=!isSelected[position];
+            notifyDataSetChanged();
+        }
+
+        public void deselectAll(){
+            for(int i=0;i<isSelected.length;i++){
+                isSelected[i]=false;
+            }
             notifyDataSetChanged();
         }
 

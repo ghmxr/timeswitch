@@ -197,6 +197,18 @@ public class MainListAdapter extends BaseAdapter {
             String ssidinfo= Triggers.getWifiConnectionDisplayValue(context,item.wifiIds);
             if(ssidinfo.length()>16) ssidinfo=ssidinfo.substring(0,16)+"...";
             holder.trigger_value.setText(ssidinfo);
+        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_APP_LAUNCHED){
+            holder.img.setImageResource(R.drawable.ic_launcher);
+            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
+            String names=Triggers.getAppNameDisplayValue(context,item.package_names);
+            if(names.length()>16) names=names.substring(0,16);
+            holder.trigger_value.setText(names);
+        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_APP_CLOSED){
+            holder.img.setImageResource(R.drawable.ic_launcher);
+            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
+            String names=Triggers.getAppNameDisplayValue(context,item.package_names);
+            if(names.length()>16) names=names.substring(0,16);
+            holder.trigger_value.setText(names);
         }
 
 

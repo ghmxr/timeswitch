@@ -11,11 +11,13 @@ import android.os.Build;
 import com.github.ghmxr.timeswitch.receivers.APReceiver;
 import com.github.ghmxr.timeswitch.receivers.AirplaneModeReceiver;
 import com.github.ghmxr.timeswitch.receivers.AlarmReceiver;
+import com.github.ghmxr.timeswitch.receivers.AppLaunchDetectionReceiver;
 import com.github.ghmxr.timeswitch.receivers.BatteryReceiver;
 import com.github.ghmxr.timeswitch.receivers.BluetoothReceiver;
 import com.github.ghmxr.timeswitch.receivers.CustomBroadcastReceiver;
 import com.github.ghmxr.timeswitch.receivers.NetworkReceiver;
 import com.github.ghmxr.timeswitch.receivers.RingModeReceiver;
+import com.github.ghmxr.timeswitch.services.AppLaunchingDetectionService;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.timers.CustomTimerTask;
 
@@ -285,6 +287,12 @@ public class TaskItem implements Comparable<TaskItem>{
 			((NetworkReceiver)triggerObject).registerReceiver();
 		}
 
+		if(trigger_type==PublicConsts.TRIGGER_TYPE_APP_LAUNCHED||trigger_type==PublicConsts.TRIGGER_TYPE_APP_CLOSED){
+			triggerObject=new AppLaunchDetectionReceiver(context,this);
+			if(AppLaunchingDetectionService.queue==null||AppLaunchingDetectionService.queue.size()<=0) context.startService(new Intent(context,AppLaunchingDetectionService.class));
+			((AppLaunchDetectionReceiver)triggerObject).registerReceiver();
+		}
+
 		//if(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF){
 		//	triggerObject=new NetworkReceiver(context,this);
 		//	((NetworkReceiver)triggerObject).registerReceiver();
@@ -335,6 +343,8 @@ public class TaskItem implements Comparable<TaskItem>{
 			((APReceiver)triggerObject).unRegisterReceiver();
 		}else if(triggerObject instanceof AirplaneModeReceiver){
 			((AirplaneModeReceiver)triggerObject).unRegisterReceiver();
+		}else if(triggerObject instanceof AppLaunchDetectionReceiver){
+			((AppLaunchDetectionReceiver)triggerObject).unregisterReceiver();
 		}
 
 	}

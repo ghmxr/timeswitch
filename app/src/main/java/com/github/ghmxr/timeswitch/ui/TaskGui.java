@@ -424,6 +424,18 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				value.setText("");
 			}
 			break;
+			case PublicConsts.TRIGGER_TYPE_APP_LAUNCHED:{
+				icon.setImageResource(R.drawable.ic_launcher);
+				att.setText(getResources().getString(R.string.activity_trigger_app_opened));
+				value.setText(Triggers.getAppNameDisplayValue(this,taskitem.package_names));
+			}
+			break;
+			case PublicConsts.TRIGGER_TYPE_APP_CLOSED:{
+				icon.setImageResource(R.drawable.ic_launcher);
+				att.setText(getResources().getString(R.string.activity_trigger_app_closed));
+				value.setText(Triggers.getAppNameDisplayValue(this,taskitem.package_names));
+			}
+			break;
 		}
 	}
 
@@ -1122,6 +1134,10 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			triggerValues=new String[1];
 			triggerValues[0]=String.valueOf(taskitem.wifiIds);
 		}
+		if(taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_APP_LAUNCHED||taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_APP_CLOSED){
+		    triggerValues=taskitem.package_names;
+		    if(triggerValues==null||triggerValues.length==0) triggerValues=new String[1];
+        }
 
 		values.put(SQLConsts.SQL_TASK_COLUMN_ENABLED,taskitem.isenabled?1:0);
 		values.put(SQLConsts.SQL_TASK_COLUMN_TYPE,taskitem.trigger_type);
@@ -1298,6 +1314,10 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 						case PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED: case PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:{
 							//Log.d("wifi ssids ",data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[0]);
 							taskitem.wifiIds=data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[0];
+						}
+						break;
+						case PublicConsts.TRIGGER_TYPE_APP_LAUNCHED: case PublicConsts.TRIGGER_TYPE_APP_CLOSED:{
+							taskitem.package_names=data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES);
 						}
 						break;
 					}
