@@ -16,9 +16,27 @@
             android:textSize="16sp"
             android:text="@string/dialog_wait_att"/>
     </LinearLayout>
-    <ListView
-        android:id="@+id/dialog_app_list"
-        android:layout_width="match_parent"
+    <RelativeLayout
+        android:id="@+id/dialog_app_list_area"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"/>
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/dialog_app_att"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/color_activity_taskgui_att"
+            android:textSize="14sp"/>
+        <ListView
+            android:id="@+id/dialog_app_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/dialog_app_att"/>
+    </RelativeLayout>
+
 </RelativeLayout>

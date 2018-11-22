@@ -6,18 +6,19 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.app.AlertDialog;
+import android.app.AppOpsManager;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -33,13 +34,14 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.R;
+import com.github.ghmxr.timeswitch.adapters.AppListAdapter;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.receivers.NetworkReceiver;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForBattery;
@@ -330,9 +332,9 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 final int msg_what=msg.what;
                 dialog_appinfo.findViewById(R.id.dialog_app_wait).setVisibility(View.GONE);
                 ListView listview=dialog_appinfo.findViewById(R.id.dialog_app_list);
-                final AppListAdapter adapter=new AppListAdapter((List<AppItemInfo>)msg.obj,package_names);
+                final AppListAdapter adapter=new AppListAdapter(this,(List<AppListAdapter.AppItemInfo>)msg.obj,package_names);
                 listview.setAdapter(adapter);
-                listview.setVisibility(View.VISIBLE);
+                dialog_appinfo.findViewById(R.id.dialog_app_list_area).setVisibility(View.VISIBLE);
                 listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -671,6 +673,25 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
             }
             break;
             case R.id.trigger_app_opened: case R.id.trigger_app_closed:{
+                if(Build.VERSION.SDK_INT>=23){
+                    AppOpsManager manager=(AppOpsManager)getSystemService(Context.APP_OPS_SERVICE);
+                    if(manager==null) {
+                        Toast.makeText(this,"Can not get AppOpsManager instance",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    boolean isGranted=manager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS,android.os.Process.myUid(),getPackageName())==AppOpsManager.MODE_ALLOWED;
+                    if(!isGranted){
+                        Snackbar snackbar=Snackbar.make(findViewById(R.id.trigger_root),getResources().getString(R.string.activity_trigger_app_usage_att),Snackbar.LENGTH_SHORT);
+                        snackbar.setAction(getResources().getString(R.string.permission_grant_action_att), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
+                            }
+                        });
+                        snackbar.show();
+                        return;
+                    }
+                }
                 final int trigger_type=(v_id==R.id.trigger_app_opened?PublicConsts.TRIGGER_TYPE_APP_LAUNCHED:PublicConsts.TRIGGER_TYPE_APP_CLOSED);
                   this.dialog_appinfo=new AlertDialog.Builder(this)
                           .setTitle(trigger_type==PublicConsts.TRIGGER_TYPE_APP_LAUNCHED?getResources().getString(R.string.dialog_app_open_select_title)
@@ -682,11 +703,11 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                   new Thread(new Runnable() {
                       @Override
                       public void run() {
-                          List<AppItemInfo> list=new ArrayList<>();
+                          List<AppListAdapter.AppItemInfo> list=new ArrayList<>();
                           PackageManager manager=getPackageManager();
                           List<PackageInfo> list_get=manager.getInstalledPackages(PackageManager.COMPONENT_ENABLED_STATE_DEFAULT);
                           for(PackageInfo info:list_get){
-                              AppItemInfo itemInfo=new AppItemInfo();
+                              AppListAdapter.AppItemInfo itemInfo=new AppListAdapter.AppItemInfo();
                               itemInfo.icon=manager.getApplicationIcon(info.applicationInfo);
                               itemInfo.appname=manager.getApplicationLabel(info.applicationInfo).toString();
                               itemInfo.package_name=info.applicationInfo.packageName;
@@ -1266,7 +1287,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
 
     }
 
-    private class AppListAdapter extends BaseAdapter{
+    /*private class AppListAdapter extends BaseAdapter{
         List<AppItemInfo> list;
         boolean[] isSelected;
         AppListAdapter(List<AppItemInfo> list,String[] selectedPackageNames){
@@ -1356,6 +1377,6 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         public Drawable icon;
         public String appname="";
         public String package_name="";
-    }
+    }  */
 
 }

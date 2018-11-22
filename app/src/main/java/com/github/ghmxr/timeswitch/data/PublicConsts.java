@@ -45,6 +45,8 @@ public class PublicConsts {
 	public static final int TRIGGER_TYPE_WIDGET_AP_DISABLED				=		111;
 	public static final int TRIGGER_TYPE_NET_ON							=		112;
 	public static final int TRIGGER_TYPE_NET_OFF						=		113;
+	public static final int TRIGGER_TYPE_HEADSET_PLUG_IN				=		114;
+	public static final int TRIGGER_TYPE_HEADSET_PLUG_OUT				=		115;
 
 	public static final int TRIGGER_TYPE_SCREEN_ON						=		201;
 	public static final int TRIGGER_TYPE_SCREEN_OFF						=		202;
@@ -109,6 +111,7 @@ public class PublicConsts {
 	public static final int EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE					=	27;
 	public static final int EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE				=	28;
 	public static final int EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE				=	29;
+	public static final int EXCEPTION_HEADSET_STATUS								=	30;
 
 
 	public static final int ACTION_LENGTH =20;
@@ -146,6 +149,8 @@ public class PublicConsts {
 	public static final int ACTION_DEVICECONTROL_LOCALE									=		14;
 	public static final int ACTION_ENABLE_TASKS_LOCALE									=		15;
 	public static final int ACTION_DISABLE_TASKS_LOCALE									=		16;
+	public static final int ACTION_LAUNCH_APP_PACKAGES									=		17;
+	public static final int ACTION_STOP_APP_PACKAGES									=		18;
 
 	public static final int VOLUME_RING_LOCALE=0;
 	public static final int VOLUME_MEDIA_LOCALE=1;

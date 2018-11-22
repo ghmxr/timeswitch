@@ -1,6 +1,8 @@
 package com.github.ghmxr.timeswitch.utils;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.KeyguardManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -11,6 +13,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -977,6 +980,34 @@ public class ProcessTaskItem {
        // editor.apply();
         LogUtil.putLog(context,log_taskitem.toString());
         com.github.ghmxr.timeswitch.activities.Log.sendEmptyMessage(com.github.ghmxr.timeswitch.activities.Log.MESSAGE_REQUEST_REFRESH);
+    }
+
+    private void launchAppsByPackageName(Context context,String []packageNames){
+        PackageManager manager=context.getPackageManager();
+        if(manager==null) return;
+        if(packageNames==null||packageNames.length==0) return;
+        for(String s:packageNames){
+            if(s==null) continue;
+            try{
+                Intent i=manager.getLaunchIntentForPackage(s);
+                context.startActivity(i);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void forceStopAppsByPackageName(Context context,String[] packageNames){
+        //android.permission.FORCE_STOP_PACKAGES
+        try{
+            ActivityManager manager=(ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+            Method method=ActivityManager.class.getMethod("forceStopPackage",String.class);
+            for(String s:packageNames){
+                method.invoke(manager,s);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private boolean isCellarNetworkEnabled(){
