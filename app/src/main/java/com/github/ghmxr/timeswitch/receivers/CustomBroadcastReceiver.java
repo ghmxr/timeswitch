@@ -16,7 +16,7 @@ public class CustomBroadcastReceiver extends BroadcastReceiver {
     String action;
     private Context context;
     private TaskItem item;
-    private boolean isRegistered=false;
+   // private boolean isRegistered=false;
     public CustomBroadcastReceiver(Context context, String action, TaskItem item) {
         super();
         this.context=context;
@@ -40,18 +40,26 @@ public class CustomBroadcastReceiver extends BroadcastReceiver {
     }
 
     public void registerReceiver(){
-        if(!isRegistered){
-            if(item.isenabled) {
-                context.registerReceiver(this,new IntentFilter(action));
-                this.isRegistered=true;
-            }
-        }
+       // if(!isRegistered){
+           // if(item.isenabled) {
+                try{
+                    context.registerReceiver(this,new IntentFilter(action));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+               // this.isRegistered=true;
+           // }
+       // }
     }
 
     public void unRegisterReceiver(){
-        if(isRegistered){
+       // if(isRegistered){
+        try{
             context.unregisterReceiver(this);
-            this.isRegistered=false;
+        }catch (Exception e){
+            e.printStackTrace();
         }
+        //    this.isRegistered=false;
+       // }
     }
 }

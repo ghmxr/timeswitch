@@ -34,7 +34,7 @@ public class BatteryReceiver extends BroadcastReceiver implements Runnable{
     private Context context;
     private TaskItem item;
     private boolean mLock=true;
-    private boolean isRegistered=false;
+    //private boolean isRegistered=false;
 
     public BatteryReceiver(Context context,TaskItem item){
         this.context=context;
@@ -97,11 +97,15 @@ public class BatteryReceiver extends BroadcastReceiver implements Runnable{
     }
 
     public void registerReceiver(){
-        if(!isRegistered){
-            this.context.registerReceiver(this,new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-            this.isRegistered=true;
-            Log.i("BatteryReceiver","Battery Receiver registered!!!");
+       // if(!isRegistered){
+        try{
+            context.registerReceiver(this,new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        }catch (Exception e){
+            e.printStackTrace();
         }
+           // this.isRegistered=true;
+           // Log.i("BatteryReceiver","Battery Receiver registered!!!");
+       // }
     }
 
     @Override
@@ -122,9 +126,13 @@ public class BatteryReceiver extends BroadcastReceiver implements Runnable{
     }
 
     public void unregisterReceiver(){
-        if(isRegistered){
-            this.context.unregisterReceiver(this);
-            this.isRegistered=false;
+       // if(isRegistered){
+        try{
+            context.unregisterReceiver(this);
+        }catch (Exception e){
+            e.printStackTrace();
         }
+           // this.isRegistered=false;
+       // }
     }
 }

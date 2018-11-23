@@ -106,6 +106,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         findViewById(R.id.trigger_power_disconnected).setOnClickListener(this);
         findViewById(R.id.trigger_app_opened).setOnClickListener(this);
         findViewById(R.id.trigger_app_closed).setOnClickListener(this);
+        findViewById(R.id.trigger_headset).setOnClickListener(this);
         //initialize the values
         try{
             trigger_type=getIntent().getIntExtra(EXTRA_TRIGGER_TYPE,0);
@@ -255,6 +256,16 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
             break;
             case PublicConsts.TRIGGER_TYPE_APP_CLOSED:{
                 ((TextView)findViewById(R.id.trigger_app_closed_value)).setText(getAppNameDisplayValue(this,package_names));
+                timePicker.setVisibility(View.GONE);
+            }
+            break;
+            case PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_IN:{
+                ((TextView)findViewById(R.id.trigger_headset_value)).setText(getResources().getString(R.string.activity_trigger_headset_plug_in));
+                timePicker.setVisibility(View.GONE);
+            }
+            break;
+            case PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT:{
+                ((TextView)findViewById(R.id.trigger_headset_value)).setText(getResources().getString(R.string.activity_trigger_headset_plug_out));
                 timePicker.setVisibility(View.GONE);
             }
             break;
@@ -721,6 +732,36 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                   }).start();
             }
             break;
+            case R.id.trigger_headset:{
+                final AlertDialog dialog=new AlertDialog.Builder(this)
+                        .setIcon(R.drawable.icon_headset)
+                        .setTitle(getResources().getString(R.string.activity_trigger_headset))
+                        .setView(LayoutInflater.from(this).inflate(R.layout.layout_dialog_with_two_single_choices,null))
+                        .show();
+                RadioButton ra_plug_in=dialog.findViewById(R.id.dialog_choice_first);
+                RadioButton ra_plug_out=dialog.findViewById(R.id.dialog_choice_second);
+                ra_plug_in.setText(getResources().getString(R.string.activity_trigger_headset_plug_in));
+                ra_plug_out.setText(getResources().getString(R.string.activity_trigger_headset_plug_out));
+                ra_plug_in.setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_IN);
+                ra_plug_out.setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT);
+                ra_plug_in.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        trigger_type=PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_IN;
+                        dialog.cancel();
+                        activateTriggerType(PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_IN);
+                    }
+                });
+                ra_plug_out.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        trigger_type=PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT;
+                        dialog.cancel();
+                        activateTriggerType(PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT);
+                    }
+                });
+            }
+            break;
             case R.id.trigger_widget_changed:{
                 if(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON
                         ||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE
@@ -1098,6 +1139,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         TextView tv_power_disconnected=findViewById(R.id.trigger_power_disconnected_value);
         TextView tv_app_opened=findViewById(R.id.trigger_app_opened_value);
         TextView tv_app_closed=findViewById(R.id.trigger_app_closed_value);
+        TextView tv_headset=findViewById(R.id.trigger_headset_value);
 
         String unchoose=this.getResources().getString(R.string.activity_taskgui_att_unchoose);
 
@@ -1123,6 +1165,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         ((RadioButton)findViewById(R.id.trigger_power_disconnected_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED);
         ((RadioButton)findViewById(R.id.trigger_app_opened_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_APP_LAUNCHED);
         ((RadioButton)findViewById(R.id.trigger_app_closed_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_APP_CLOSED);
+        ((RadioButton)findViewById(R.id.trigger_headset_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_IN||trigger_type==PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT);
 
         tv_condition_single_value.setText(unchoose);
         tv_condition_percertaintime_value.setText(unchoose);
@@ -1141,6 +1184,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         tv_power_disconnected.setText(unchoose);
         tv_app_opened.setText(unchoose);
         tv_app_closed.setText(unchoose);
+        tv_headset.setText(unchoose);
     }
 
     private void checkAndExit(){

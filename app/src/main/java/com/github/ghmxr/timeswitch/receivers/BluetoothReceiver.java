@@ -13,7 +13,7 @@ import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 public class BluetoothReceiver extends BroadcastReceiver implements Runnable {
     private Context context;
     private  TaskItem item;
-    private boolean isRegistered=false;
+   // private boolean isRegistered=false;
 
     public BluetoothReceiver(Context context, TaskItem item) {
         this.context=context;
@@ -36,17 +36,25 @@ public class BluetoothReceiver extends BroadcastReceiver implements Runnable {
     }
 
     public void registerReceiver(){
-        if(!isRegistered){
+        //if(!isRegistered){
+        try{
             context.registerReceiver(this,new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
-            isRegistered=true;
+        }catch (Exception e){
+            e.printStackTrace();
         }
+        //    isRegistered=true;
+       // }
     }
 
     public void unRegisterReceiver(){
-        if(isRegistered){
+       // if(isRegistered){
+        try{
             context.unregisterReceiver(this);
-            isRegistered=false;
+        }catch (Exception e) {
+            e.printStackTrace();
         }
+        //    isRegistered=false;
+       // }
     }
 
     private void activate(){

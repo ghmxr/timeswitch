@@ -12,7 +12,7 @@ import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 public class AirplaneModeReceiver extends BroadcastReceiver implements Runnable {
     private Context context;
     private TaskItem item;
-    private boolean isRegistered=false;
+    //private boolean isRegistered=false;
     public AirplaneModeReceiver(Context context,TaskItem item) {
         this.context=context;
         this.item=item;
@@ -32,17 +32,25 @@ public class AirplaneModeReceiver extends BroadcastReceiver implements Runnable 
     }
 
     public void registerReceiver(){
-        if(!isRegistered){
+       // if(!isRegistered){
+        try{
             context.registerReceiver(this,new IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED));
-            isRegistered=true;
+        }catch (Exception e){
+            e.printStackTrace();
         }
+            //isRegistered=true;
+       // }
     }
 
     public void unRegisterReceiver(){
-        if(isRegistered){
+        //if(isRegistered){
+        try{
             context.unregisterReceiver(this);
-            isRegistered=false;
+        }catch (Exception e){
+            e.printStackTrace();
         }
+            //isRegistered=false;
+        //}
     }
 
     private void activate(){

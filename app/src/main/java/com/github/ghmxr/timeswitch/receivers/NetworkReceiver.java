@@ -24,7 +24,7 @@ import java.util.List;
 public class NetworkReceiver extends BroadcastReceiver implements Runnable {
     TaskItem item;
     Context context;
-    boolean isregistered=false;
+    //boolean isregistered=false;
     boolean mLock=true;
 
     public static WifiInfo connectedWifiInfo;
@@ -37,21 +37,29 @@ public class NetworkReceiver extends BroadcastReceiver implements Runnable {
     }
 
     public void registerReceiver(){
-        if(!isregistered) {
+        //if(!isregistered) {
+        try{
             IntentFilter filter=new IntentFilter();
             filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
             filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
             filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
             context.registerReceiver(this,filter);
-            isregistered=true;
+        }catch (Exception e){
+            e.printStackTrace();
         }
+           // isregistered=true;
+       // }
     }
 
     public void unregisterReceiver(){
-        if(isregistered) {
+       // if(isregistered) {
+        try{
             context.unregisterReceiver(this);
-            isregistered=false;
+        }catch (Exception e){
+            e.printStackTrace();
         }
+        //    isregistered=false;
+       // }
     }
 
     @Override

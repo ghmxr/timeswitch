@@ -436,6 +436,18 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				value.setText(Triggers.getAppNameDisplayValue(this,taskitem.package_names));
 			}
 			break;
+			case PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_IN:{
+				icon.setImageResource(R.drawable.icon_headset);
+				att.setText(getResources().getString(R.string.activity_trigger_headset));
+				value.setText(getResources().getString(R.string.activity_trigger_headset_plug_in));
+			}
+			break;
+			case PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT:{
+				icon.setImageResource(R.drawable.icon_headset);
+				att.setText(getResources().getString(R.string.activity_trigger_headset));
+				value.setText(getResources().getString(R.string.activity_trigger_headset_plug_out));
+			}
+			break;
 		}
 	}
 

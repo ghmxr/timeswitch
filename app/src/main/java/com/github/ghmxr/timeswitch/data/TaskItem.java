@@ -15,6 +15,7 @@ import com.github.ghmxr.timeswitch.receivers.AppLaunchDetectionReceiver;
 import com.github.ghmxr.timeswitch.receivers.BatteryReceiver;
 import com.github.ghmxr.timeswitch.receivers.BluetoothReceiver;
 import com.github.ghmxr.timeswitch.receivers.CustomBroadcastReceiver;
+import com.github.ghmxr.timeswitch.receivers.HeadsetPlugReceiver;
 import com.github.ghmxr.timeswitch.receivers.NetworkReceiver;
 import com.github.ghmxr.timeswitch.receivers.RingModeReceiver;
 import com.github.ghmxr.timeswitch.services.AppLaunchingDetectionService;
@@ -319,6 +320,13 @@ public class TaskItem implements Comparable<TaskItem>{
 			((APReceiver)triggerObject).registerReceiver();
 		}
 
+		if(trigger_type==PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_IN||trigger_type==PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT){
+			triggerObject=new HeadsetPlugReceiver(context,this);
+			((HeadsetPlugReceiver)triggerObject).registerReceiver();
+		}
+
+
+
 	}
 
 	public void cancelTrigger(){
@@ -345,6 +353,8 @@ public class TaskItem implements Comparable<TaskItem>{
 			((AirplaneModeReceiver)triggerObject).unRegisterReceiver();
 		}else if(triggerObject instanceof AppLaunchDetectionReceiver){
 			((AppLaunchDetectionReceiver)triggerObject).unregisterReceiver();
+		}else if(triggerObject instanceof HeadsetPlugReceiver){
+			((HeadsetPlugReceiver)triggerObject).unregisterReceiver();
 		}
 
 	}

@@ -13,6 +13,10 @@
 	<string name="activity_profile">切换列表</string>
 	<string name="activity_main_att">当前任务为空</string>
 	<string name="activity_action_switch_task_null">列表中没有任务</string>
+	<string name="activity_action_app_open_title">运行应用</string>
+	<string name="activity_action_app_open_msg">运行指定的应用</string>
+	<string name="activity_action_app_close_title">关闭应用</string>
+	<string name="activity_action_app_close_msg">*注意:此操作为强制结束应用的进程</string>
 	<string name="activity_trigger_wifi_dialog_att">指定SSID</string>
 	<string name="activity_trigger_wifi_no_ssid_assigned">任何WiFi网络</string>
 	<string name="activity_trigger_wifi_assigned_ssid">指定的WiFi网络</string>
@@ -130,6 +134,9 @@
 	<string name="activity_taskgui_condition_battery_temperature_att">电池温度</string>
 	<string name="activity_trigger_wifi_connected_att">WiFi连接上时</string>
 	<string name="activity_trigger_wifi_disconnected_att">WiFi断开连接时</string>
+	<string name="activity_trigger_headset">头戴设备</string>
+	<string name="activity_trigger_headset_plug_in">接入时</string>
+	<string name="activity_trigger_headset_plug_out">拔出时</string>
 	<string name="activity_trigger_app_opened">打开指定应用时</string>
 	<string name="activity_trigger_app_closed">退出指定应用时</string>
     <string name="dialog_app_open_select_title">打开指定应用时</string>
@@ -192,6 +199,8 @@
 	<string name="activity_taskgui_actions_device_control">设备控制</string>
 	<string name="activity_taskgui_actions_enable">启用指定任务</string>
 	<string name="activity_taskgui_actions_disable">关闭指定任务</string>
+	<string name="activity_taskgui_actions_app_open">运行应用</string>
+	<string name="activity_taskgui_actions_app_close">关闭应用</string>
 	<string name="activity_taskgui_actions_ring_selection_notification">更改通知</string>
 	<string name="activity_taskgui_actions_ring_selection_phone">更改来电</string>
 	<string name="activity_taskgui_actions_notification_vibrate">通知+振动</string>

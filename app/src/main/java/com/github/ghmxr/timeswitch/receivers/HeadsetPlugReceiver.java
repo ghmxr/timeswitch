@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.media.AudioManager;
 import android.util.Log;
 
 import com.github.ghmxr.timeswitch.data.PublicConsts;
@@ -14,6 +13,7 @@ import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 public class HeadsetPlugReceiver extends BroadcastReceiver implements Runnable {
     Context context;
     TaskItem item;
+    private boolean mLock=true;
 
     public HeadsetPlugReceiver(Context context, TaskItem item) {
         this.context=context;
@@ -25,13 +25,27 @@ public class HeadsetPlugReceiver extends BroadcastReceiver implements Runnable {
         if(intent==null||intent.getAction()==null) return;
         if(intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)){
             if(item==null) return;
-            if(item.trigger_type== PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_IN&&intent.getIntExtra("state",-1)==1){
-                Log.d("HEADSET","is PLUG IN");
-                activate();
+            if(item.trigger_type== PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_IN){
+                if(intent.getIntExtra("state",-1)==1){
+                    Log.d("HEADSET","is PLUG IN");
+                    activate();
+                    return;
+                }
+                if(intent.getIntExtra("state",-1)==0){
+                    mLock=false;
+                    return;
+                }
             }
-            if(item.trigger_type==PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT&&intent.getIntExtra("state",-1)==0){
-                Log.d("HEADSET","is PLUG OUT");
-                activate();
+            if(item.trigger_type==PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT){
+                if(intent.getIntExtra("state",-1)==0){
+                    Log.d("HEADSET","is PLUG OUT");
+                    activate();
+                    return;
+                }
+                if(intent.getIntExtra("state",-1)==1){
+                    mLock=false;
+                    //return;
+                }
             }
         }
     }
@@ -45,8 +59,20 @@ public class HeadsetPlugReceiver extends BroadcastReceiver implements Runnable {
         }
     }
 
+    public void unregisterReceiver(){
+        try{
+            context.unregisterReceiver(this);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     private void activate(){
-        new Thread(this).start();
+        if(!mLock){
+            mLock=true;
+            new Thread(this).start();
+        }
+
     }
 
     @Override

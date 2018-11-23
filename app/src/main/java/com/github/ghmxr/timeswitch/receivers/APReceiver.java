@@ -13,7 +13,7 @@ import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 public class APReceiver extends BroadcastReceiver implements Runnable {
     private Context context;
     private TaskItem item;
-    private boolean isRegistered=false;
+    //private boolean isRegistered=false;
     private boolean mLock=true;
 
     public static final String ACTION_AP_STATE_CHANGED="android.net.wifi.WIFI_AP_STATE_CHANGED";
@@ -28,19 +28,27 @@ public class APReceiver extends BroadcastReceiver implements Runnable {
     }
 
     public void registerReceiver(){
-        if(!isRegistered) {
+        //if(!isRegistered) {
+        try{
             IntentFilter filter=new IntentFilter();
             filter.addAction(ACTION_AP_STATE_CHANGED);//"android.net.wifi.WIFI_AP_STATE_CHANGED"
             context.registerReceiver(this,filter);
-            isRegistered=true;
+        }catch (Exception e){
+            e.printStackTrace();
         }
+            //isRegistered=true;
+       // }
     }
 
     public void unRegisterReceiver(){
-        if(isRegistered){
+        //if(isRegistered){
+        try{
             context.unregisterReceiver(this);
-            isRegistered=false;
+        }catch (Exception e){
+            e.printStackTrace();
         }
+           // isRegistered=false;
+        //}
     }
 
     @Override

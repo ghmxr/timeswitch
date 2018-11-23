@@ -8,6 +8,8 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
@@ -41,6 +43,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.R;
+import com.github.ghmxr.timeswitch.adapters.AppListAdapter;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
@@ -51,7 +54,9 @@ import com.github.ghmxr.timeswitch.ui.BottomDialogForVibrate;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
@@ -82,6 +87,10 @@ public class Actions extends BaseActivity implements View.OnClickListener{
     private int taskid=-1;
     private static final int TASK_ENABLE=0;
     private static final int TASK_DISABLE=1;
+    private static final int MESSAGE_GET_LIST_OPEN_COMPLETE=101;
+    private static final int MESSAGE_GET_LIST_CLOSE_COMPLETE=102;
+
+    private AlertDialog dialog_app_oc;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +116,8 @@ public class Actions extends BaseActivity implements View.OnClickListener{
         findViewById(R.id.actions_devicecontrol).setOnClickListener(this);
         findViewById(R.id.actions_enable).setOnClickListener(this);
         findViewById(R.id.actions_disable).setOnClickListener(this);
+        findViewById(R.id.actions_app_open).setOnClickListener(this);
+        findViewById(R.id.actions_app_close).setOnClickListener(this);
         try{
             Intent data=getIntent();
             actions=data.getStringArrayExtra(EXTRA_ACTIONS);
@@ -127,7 +138,31 @@ public class Actions extends BaseActivity implements View.OnClickListener{
     }
 
     @Override
-    public void processMessage(Message msg) {}
+    public void processMessage(Message msg) {
+        switch(msg.what){
+            default:break;
+            case MESSAGE_GET_LIST_OPEN_COMPLETE: case MESSAGE_GET_LIST_CLOSE_COMPLETE:{
+                if(dialog_app_oc==null) return;
+                dialog_app_oc.findViewById(R.id.dialog_app_wait).setVisibility(View.GONE);
+                dialog_app_oc.findViewById(R.id.dialog_app_list_area).setVisibility(View.VISIBLE);
+                final AppListAdapter adapter=new AppListAdapter(this,(List<AppListAdapter.AppItemInfo>)msg.obj,new String[1]);
+                ((ListView)dialog_app_oc.findViewById(R.id.dialog_app_list)).setAdapter(adapter);
+                dialog_app_oc.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog_app_oc.cancel();
+                    }
+                });
+                ((ListView)dialog_app_oc.findViewById(R.id.dialog_app_list)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        adapter.onItemClicked(position);
+                    }
+                });
+            }
+            break;
+        }
+    }
 
     @TargetApi(23)
     private void showRequestWriteSettingsPermissionSnackbar(){
@@ -695,6 +730,34 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                     return;
                 }
                 showTaskSelectionDialog(TASK_DISABLE);
+            }
+            break;
+            case R.id.actions_app_open: case R.id.actions_app_close:{
+                final int id=view.getId();
+                dialog_app_oc=new AlertDialog.Builder(this)
+                        .setTitle(id==R.id.actions_app_open?getResources().getString(R.string.activity_action_app_open_title):getResources().getString(R.string.activity_action_app_close_title))
+                        .setView(LayoutInflater.from(this).inflate(R.layout.layout_dialog_app_select,null))
+                        .setPositiveButton(getResources().getString(R.string.dialog_button_positive),null)
+                        .show();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<AppListAdapter.AppItemInfo> list=new ArrayList<>();
+                        PackageManager manager=getPackageManager();
+                        List<PackageInfo> list_get=manager.getInstalledPackages(PackageManager.COMPONENT_ENABLED_STATE_DEFAULT);
+                        for(PackageInfo info:list_get){
+                            AppListAdapter.AppItemInfo itemInfo=new AppListAdapter.AppItemInfo();
+                            itemInfo.icon=manager.getApplicationIcon(info.applicationInfo);
+                            itemInfo.appname=manager.getApplicationLabel(info.applicationInfo).toString();
+                            itemInfo.package_name=info.applicationInfo.packageName;
+                            list.add(itemInfo);
+                        }
+                        Message msg=new Message();
+                        msg.obj=list;
+                        msg.what=id==R.id.actions_app_open?MESSAGE_GET_LIST_OPEN_COMPLETE:MESSAGE_GET_LIST_CLOSE_COMPLETE;
+                        sendMessage(msg);
+                    }
+                }).start();
             }
             break;
         }

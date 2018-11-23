@@ -15,7 +15,7 @@ public class RingModeReceiver extends BroadcastReceiver implements Runnable {
 
     private Context context;
     private TaskItem item;
-    private boolean isRegistered=false;
+    //private boolean isRegistered=false;
     private boolean mLock=true;
 
     public RingModeReceiver(Context context,TaskItem item) {
@@ -59,17 +59,25 @@ public class RingModeReceiver extends BroadcastReceiver implements Runnable {
     }
 
     public void registerReceiver(){
-        if(!isRegistered){
+        //if(!isRegistered){
+        try{
             context.registerReceiver(this,new IntentFilter(AudioManager.RINGER_MODE_CHANGED_ACTION));
-            isRegistered=true;
+        }catch (Exception e){
+            e.printStackTrace();
         }
+          //  isRegistered=true;
+        //}
     }
 
     public void unRegisterReceiver(){
-        if(isRegistered){
+       // if(isRegistered){
+        try{
             context.unregisterReceiver(this);
-            isRegistered=false;
+        }catch (Exception e){
+            e.printStackTrace();
         }
+        //    isRegistered=false;
+       // }
     }
 
     private void activate(){
