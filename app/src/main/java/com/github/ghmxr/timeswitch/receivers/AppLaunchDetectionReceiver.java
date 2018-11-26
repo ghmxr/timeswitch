@@ -36,7 +36,7 @@ public class AppLaunchDetectionReceiver extends BroadcastReceiver implements Run
             String package_name=intent.getStringExtra(AppLaunchingDetectionService.EXTRA_PACKAGE_NAME);
             boolean if_launched=intent.getBooleanExtra(AppLaunchingDetectionService.EXTRA_IF_RUNNING,false);
             if(package_name==null) return;
-            Log.d("AppReceiver",package_name+" is "+(if_launched?"LAUNCHED":"CLOSED"));
+            //Log.d("AppReceiver",package_name+" is "+(if_launched?"LAUNCHED":"CLOSED"));
             String [] packageNames=item.package_names;
             if(packageNames==null||packageNames.length==0) return;
             if(item.trigger_type== PublicConsts.TRIGGER_TYPE_APP_LAUNCHED){

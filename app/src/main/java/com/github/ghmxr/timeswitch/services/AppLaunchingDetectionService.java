@@ -29,12 +29,19 @@ public class AppLaunchingDetectionService extends Service implements Runnable {
      */
     public static String EXTRA_IF_RUNNING="if_is_running";
 
+    private Thread thread;
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        flag=true;
         if(!queue.contains(this)) queue.add(this);
-        new Thread(this).start();
+        startRefresh();
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    private void startRefresh(){
+        flag=true;
+        thread=new Thread(this);
+        thread.start();
     }
 
     @Override
@@ -45,6 +52,7 @@ public class AppLaunchingDetectionService extends Service implements Runnable {
     @Override
     public void onDestroy() {
         flag=false;
+        thread=null;
         if(queue.contains(this)) queue.remove(this);
         super.onDestroy();
     }
@@ -56,8 +64,8 @@ public class AppLaunchingDetectionService extends Service implements Runnable {
                 UsageStatsManager manager=(UsageStatsManager)getSystemService(Context.USAGE_STATS_SERVICE);
                 if(manager==null) return;
                 long queryTime=System.currentTimeMillis();
-                String lastLaunchedPackageName="";
-                String lastClosedPackageName="";
+                String lastPackageName="";
+                //String lastClosedPackageName="";
                 while(flag){
                     try{
                         long startTime=queryTime-1000;
@@ -68,19 +76,19 @@ public class AppLaunchingDetectionService extends Service implements Runnable {
                             UsageEvents.Event event=new UsageEvents.Event();
                             events.getNextEvent(event);
                             if(event.getEventType()==UsageEvents.Event.MOVE_TO_FOREGROUND){
-                                if(!event.getPackageName().equals(lastLaunchedPackageName)){
-                                    if(lastClosedPackageName.equals(event.getPackageName())) lastClosedPackageName="";
+                                if(!event.getPackageName().equals(lastPackageName)){
+                                    if(!lastPackageName.equals(""))sendAppLaunchedBroadcast(lastPackageName,false);
+                                    lastPackageName=event.getPackageName();
                                     sendAppLaunchedBroadcast(event.getPackageName(),true);
-                                    lastLaunchedPackageName=event.getPackageName();
                                 }
                             }
-                            if(event.getEventType()==UsageEvents.Event.MOVE_TO_BACKGROUND){
-                                if(!event.getPackageName().equals(lastClosedPackageName)){
-                                    if(lastLaunchedPackageName.equals(event.getPackageName())) lastLaunchedPackageName="";
+                            /*if(event.getEventType()==UsageEvents.Event.MOVE_TO_BACKGROUND){
+                                if(!event.getPackageName().equals(lastPackageName)){
+                                    //lastPackageName="";
                                     sendAppLaunchedBroadcast(event.getPackageName(),false);
-                                    lastClosedPackageName=event.getPackageName();
+                                    lastPackageName=event.getPackageName();
                                 }
-                            }
+                            }*/
 
                         }
                         Thread.sleep(1000);
@@ -148,6 +156,7 @@ public class AppLaunchingDetectionService extends Service implements Runnable {
 
     public void stopDececting(){
         flag=false;
+        thread=null;
     }
 
     private void sendAppLaunchedBroadcast(String packageName,boolean isLaunched){
@@ -156,6 +165,6 @@ public class AppLaunchingDetectionService extends Service implements Runnable {
         i.putExtra(EXTRA_PACKAGE_NAME,packageName);
         i.putExtra(EXTRA_IF_RUNNING,isLaunched);
         sendBroadcast(i);
-        //Log.d("AppStatus",packageName+" is "+(isLaunched?"LAUNCHED":"CLOSED"));
+        Log.d("AppStatus",packageName+" is "+(isLaunched?"LAUNCHED":"CLOSED"));
     }
 }

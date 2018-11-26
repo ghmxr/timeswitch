@@ -280,6 +280,10 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                     }
                 }
                 AudioManager audioManager=(AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                if(audioManager==null){
+                    Toast.makeText(this,"Can not get AudioManager instance",Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 String volumeValues;
                 String[] volumeArray;
                 int volume_ring=-1;
