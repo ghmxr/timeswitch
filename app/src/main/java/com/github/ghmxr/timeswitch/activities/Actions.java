@@ -139,18 +139,43 @@ public class Actions extends BaseActivity implements View.OnClickListener{
 
     @Override
     public void processMessage(Message msg) {
-        switch(msg.what){
+        final int msg_what=msg.what;
+        switch(msg_what){
             default:break;
             case MESSAGE_GET_LIST_OPEN_COMPLETE: case MESSAGE_GET_LIST_CLOSE_COMPLETE:{
                 if(dialog_app_oc==null) return;
                 dialog_app_oc.findViewById(R.id.dialog_app_wait).setVisibility(View.GONE);
                 dialog_app_oc.findViewById(R.id.dialog_app_list_area).setVisibility(View.VISIBLE);
-                final AppListAdapter adapter=new AppListAdapter(this,(List<AppListAdapter.AppItemInfo>)msg.obj,new String[1]);
+                String [] selectedPackages=new String[1];
+                try{
+                    selectedPackages=actions[msg_what==MESSAGE_GET_LIST_OPEN_COMPLETE?PublicConsts.ACTION_LAUNCH_APP_PACKAGES:PublicConsts.ACTION_STOP_APP_PACKAGES].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+                    if(Integer.parseInt(selectedPackages[0])==-1) selectedPackages=new String[1];
+                }catch (Exception e){
+                    e.printStackTrace();
+                    //LogUtil.putExceptionLog(this,e);
+                }
+                final AppListAdapter adapter=new AppListAdapter(this,(List<AppListAdapter.AppItemInfo>)msg.obj,selectedPackages);
                 ((ListView)dialog_app_oc.findViewById(R.id.dialog_app_list)).setAdapter(adapter);
                 dialog_app_oc.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        String [] package_names=adapter.getSelectedPackageNames();
+                        StringBuilder return_value=new StringBuilder("");
+                        if(package_names.length>0){
+                            for(int i=0;i<package_names.length;i++){
+                                return_value.append(package_names[i]);
+                                if(i<(package_names.length-1)) return_value.append(PublicConsts.SEPARATOR_SECOND_LEVEL);
+                            }
+                        }else return_value=new StringBuilder(String.valueOf(-1));
+                        actions[msg_what==MESSAGE_GET_LIST_OPEN_COMPLETE?PublicConsts.ACTION_LAUNCH_APP_PACKAGES:PublicConsts.ACTION_STOP_APP_PACKAGES]=return_value.toString();
                         dialog_app_oc.cancel();
+                        refreshActionStatus();
+                    }
+                });
+                dialog_app_oc.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        adapter.deselectAll();
                     }
                 });
                 ((ListView)dialog_app_oc.findViewById(R.id.dialog_app_list)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -742,6 +767,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                         .setTitle(id==R.id.actions_app_open?getResources().getString(R.string.activity_action_app_open_title):getResources().getString(R.string.activity_action_app_close_title))
                         .setView(LayoutInflater.from(this).inflate(R.layout.layout_dialog_app_select,null))
                         .setPositiveButton(getResources().getString(R.string.dialog_button_positive),null)
+                        .setNegativeButton(getResources().getString(R.string.action_deselectall),null)
                         .show();
                 new Thread(new Runnable() {
                     @Override
@@ -972,6 +998,8 @@ public class Actions extends BaseActivity implements View.OnClickListener{
         ((TextView)findViewById(R.id.actions_toast_status)).setText(ActionDisplayValue.getToastDisplayValue(actions[PublicConsts.ACTION_TOAST_LOCALE],toast));
         ((TextView)findViewById(R.id.actions_enable_status)).setText(ActionDisplayValue.getTaskSwitchDisplayValue(actions[PublicConsts.ACTION_ENABLE_TASKS_LOCALE]));
         ((TextView)findViewById(R.id.actions_disable_status)).setText(ActionDisplayValue.getTaskSwitchDisplayValue(actions[PublicConsts.ACTION_DISABLE_TASKS_LOCALE]));
+        ((TextView)findViewById(R.id.actions_app_open_status)).setText(ActionDisplayValue.getAppNameDisplayValue(this,actions[PublicConsts.ACTION_LAUNCH_APP_PACKAGES]));
+        ((TextView)findViewById(R.id.actions_app_close_status)).setText(ActionDisplayValue.getAppNameDisplayValue(this,actions[PublicConsts.ACTION_STOP_APP_PACKAGES]));
     }
 
     public void showNormalBottomDialog(int id) {

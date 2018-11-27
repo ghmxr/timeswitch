@@ -1,9 +1,11 @@
 package com.github.ghmxr.timeswitch.ui;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
@@ -274,6 +276,35 @@ public class ActionDisplayValue {
         return "";
     }
 
+
+    public static String getAppNameDisplayValue(Context context,String value){
+        if(value==null) return "";
+        String[] packageNames;
+        try{
+            packageNames=value.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
+        }catch (Exception e){
+            e.printStackTrace();
+            return "";
+        }
+        StringBuilder builder=new StringBuilder("");
+        try{
+            try{
+                if(Integer.parseInt(packageNames[0])==-1) return "";
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            PackageManager manager=context.getPackageManager();
+            for(int i=0;i<packageNames.length;i++){
+                builder.append(manager.getApplicationLabel(manager.getApplicationInfo(packageNames[i],PackageManager.GET_META_DATA)));
+                if(packageNames.length>1&&i<packageNames.length-1) builder.append(",");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        String return_value=builder.toString();
+        if(return_value.length()>15) return_value=return_value.substring(0,15)+"...";
+        return return_value;
+    }
     public static boolean isGeneralItemVisible(String value){
         try{
             return Integer.parseInt(value)>=0;

@@ -2348,6 +2348,112 @@
 
                 </RelativeLayout>
 
+                <RelativeLayout
+                    android:id="@+id/taskgui_operations_area_app_launch"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/taskgui_operations_area_app_launch_icon"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="25dp"
+                        android:src="@drawable/ic_launcher" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_toRightOf="@+id/taskgui_operations_area_app_launch_icon"
+                        android:text="@string/activity_taskgui_actions_app_open"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/taskgui_operations_area_app_launch_arrow"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="15dp"
+                        android:src="@drawable/drawable_arrow_right" />
+
+                    <TextView
+                        android:id="@+id/taskgui_operations_area_app_launch_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="8dp"
+                        android:layout_toLeftOf="@+id/taskgui_operations_area_app_launch_arrow"
+                        android:textSize="12sp" />
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginLeft="25dp"
+                        android:background="#dddddd" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/taskgui_operations_area_app_close"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/taskgui_operations_area_app_close_icon"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="25dp"
+                        android:src="@drawable/ic_launcher" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_toRightOf="@+id/taskgui_operations_area_app_close_icon"
+                        android:text="@string/activity_taskgui_actions_app_close"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/taskgui_operations_area_app_close_arrow"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="15dp"
+                        android:src="@drawable/drawable_arrow_right" />
+
+                    <TextView
+                        android:id="@+id/taskgui_operations_area_app_close_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="8dp"
+                        android:layout_toLeftOf="@+id/taskgui_operations_area_app_close_arrow"
+                        android:textSize="12sp" />
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginLeft="25dp"
+                        android:background="#dddddd" />
+
+                </RelativeLayout>
+
             </LinearLayout>
 
             <LinearLayout

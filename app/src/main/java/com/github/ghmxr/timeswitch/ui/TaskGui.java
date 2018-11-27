@@ -143,6 +143,8 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		findViewById(R.id.taskgui_operations_area_sms).setOnClickListener(this);
 		findViewById(R.id.taskgui_operations_area_enable).setOnClickListener(this);
 		findViewById(R.id.taskgui_operations_area_disable).setOnClickListener(this);
+		findViewById(R.id.taskgui_operations_area_app_launch).setOnClickListener(this);
+		findViewById(R.id.taskgui_operations_area_app_close).setOnClickListener(this);
 
 		findViewById(R.id.layout_taskgui_area_additional_notify).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_area_additional_autodelete).setOnClickListener(this);
@@ -217,6 +219,8 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		((TextView)findViewById(R.id.taskgui_operations_area_sms_status)).setText(ActionDisplayValue.getSMSDisplayValue(this,taskitem.actions[PublicConsts.ACTION_SMS_LOCALE]));
 		((TextView)findViewById(R.id.taskgui_operations_area_enable_status)).setText(ActionDisplayValue.getTaskSwitchDisplayValue(taskitem.actions[PublicConsts.ACTION_ENABLE_TASKS_LOCALE]));
 		((TextView)findViewById(R.id.taskgui_operations_area_disable_status)).setText(ActionDisplayValue.getTaskSwitchDisplayValue(taskitem.actions[PublicConsts.ACTION_DISABLE_TASKS_LOCALE]));
+		((TextView)findViewById(R.id.taskgui_operations_area_app_launch_status)).setText(ActionDisplayValue.getAppNameDisplayValue(this,taskitem.actions[PublicConsts.ACTION_LAUNCH_APP_PACKAGES]));
+		((TextView)findViewById(R.id.taskgui_operations_area_app_close_status)).setText(ActionDisplayValue.getAppNameDisplayValue(this,taskitem.actions[PublicConsts.ACTION_STOP_APP_PACKAGES]));
 		try{
 			findViewById(R.id.taskgui_operations_area_wifi).setVisibility(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_WIFI_LOCALE])>=0?View.VISIBLE:View.GONE);
 			findViewById(R.id.taskgui_operations_area_bluetooth).setVisibility(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_BLUETOOTH_LOCALE])>=0?View.VISIBLE:View.GONE);
@@ -247,6 +251,8 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			findViewById(R.id.taskgui_operations_area_devicecontrol).setVisibility(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_DEVICECONTROL_LOCALE])>=0?View.VISIBLE:View.GONE);
 			findViewById(R.id.taskgui_operations_area_enable).setVisibility(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_ENABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[0])>=0?View.VISIBLE:View.GONE);
 			findViewById(R.id.taskgui_operations_area_disable).setVisibility(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[0])>=0?View.VISIBLE:View.GONE);
+			findViewById(R.id.taskgui_operations_area_app_launch).setVisibility(taskitem.actions[PublicConsts.ACTION_LAUNCH_APP_PACKAGES].equals(String.valueOf(-1))?View.GONE:View.VISIBLE);
+			findViewById(R.id.taskgui_operations_area_app_close).setVisibility(taskitem.actions[PublicConsts.ACTION_STOP_APP_PACKAGES].equals(String.valueOf(-1))?View.GONE:View.VISIBLE);
 		}catch (Exception e){
 			e.printStackTrace();
 			LogUtil.putExceptionLog(this,e);
@@ -936,7 +942,8 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			case R.id.taskgui_operations_area_vibrate: case R.id.taskgui_operations_area_wallpaper: case R.id.taskgui_operations_area_sms:
 			case R.id.taskgui_operations_area_notification: case R.id.taskgui_operations_area_net: case R.id.taskgui_operations_area_gps:
 			case R.id.taskgui_operations_area_airplane_mode: case R.id.taskgui_operations_area_devicecontrol: case R.id.taskgui_operations_area_toast:
-			case R.id.taskgui_operations_area_enable: case R.id.taskgui_operations_area_disable:{
+			case R.id.taskgui_operations_area_enable: case R.id.taskgui_operations_area_disable: case R.id.taskgui_operations_area_app_launch:
+			case R.id.taskgui_operations_area_app_close:{
 				Intent i=new Intent(this,Actions.class);
 				i.putExtra(Actions.EXTRA_TASK_ID,taskitem.id);
 				i.putExtra(Actions.EXTRA_ACTIONS,taskitem.actions);
@@ -1091,6 +1098,10 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				}
 				else if(i==PublicConsts.ACTION_DISABLE_TASKS_LOCALE){
 					if(Integer.parseInt(taskitem.actions[PublicConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[0])>=0) isNull=false;
+				}else if(i==PublicConsts.ACTION_LAUNCH_APP_PACKAGES){
+					if(!taskitem.actions[PublicConsts.ACTION_LAUNCH_APP_PACKAGES].equals(String.valueOf(-1))) isNull=false;
+				}else if(i==PublicConsts.ACTION_STOP_APP_PACKAGES){
+					if(!taskitem.actions[PublicConsts.ACTION_STOP_APP_PACKAGES].equals(String.valueOf(-1))) isNull=false;
 				}
 				else if(Integer.parseInt(taskitem.actions[i])!= PublicConsts.ACTION_UNSELECTED) isNull=false;
 			}catch (NumberFormatException ne){
