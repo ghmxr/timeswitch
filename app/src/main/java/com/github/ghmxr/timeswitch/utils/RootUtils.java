@@ -10,18 +10,19 @@ import java.io.InputStreamReader;
 public class RootUtils {
 
     public static final String COMMAND_GRANT_SECURE_PERMISSION="pm grant "+ PublicConsts.PACKAGE_NAME+" android.permission.WRITE_SECURE_SETTINGS \n";
-    public static final String COMMAND_ENABLE_CELLUAR_NETWORK="svc data enable \n";
-    public static final String COMMAND_DISABLE_CELLUAR_NETWORK="svc data disable \n";
+    public static final String COMMAND_FORCE_STOP_PACKAGE="am force-stop ";
+    public static final String COMMAND_ENABLE_CELLUAR_NETWORK="svc data enable";
+    public static final String COMMAND_DISABLE_CELLUAR_NETWORK="svc data disable";
     public static final String COMMAND_ENABLE_GPS="settings put secure location_providers_allowed gps";
-    public static final String COMMAND_ENABLE_GPS_API23="settings put secure location_providers_allowed +gps \n";
-    public static final String COMMAND_DISABLE_GPS="settings put secure location_providers_allowed off \n";
-    public static final String COMMAND_DISABLE_GPS_API23="settings put secure location_providers_allowed -gps \n";
+    public static final String COMMAND_ENABLE_GPS_API23="settings put secure location_providers_allowed +gps";
+    public static final String COMMAND_DISABLE_GPS="settings put secure location_providers_allowed off";
+    public static final String COMMAND_DISABLE_GPS_API23="settings put secure location_providers_allowed -gps";
     public static final String COMMAND_ENABLE_AIRPLANE_MODE="settings put global airplane_mode_on 1\n" +
             "am broadcast -a android.intent.action.AIRPLANE_MODE --ez state true \n";
     public static final String COMMAND_DISABLE_AIRPLANE_MODE="settings put global airplane_mode_on 0\n" +
             "am broadcast -a android.intent.action.AIRPLANE_MODE --ez state false \n";
-    public static final String COMMAND_REBOOT="reboot \n";
-    public static final String COMMAND_SHUTDOWN="reboot -p \n";
+    public static final String COMMAND_REBOOT="reboot";
+    public static final String COMMAND_SHUTDOWN="reboot -p";
 
     //public static final int ROOT_COMMAND_RESULT_REFUSE=1;
     public static final int ROOT_COMMAND_RESULT_SUCCESS=0;
@@ -34,7 +35,7 @@ public class RootUtils {
 
             DataOutputStream outputStream = new DataOutputStream(su.getOutputStream());
 
-            outputStream.writeBytes(command);
+            outputStream.writeBytes(command+" \n");
             outputStream.flush();
 
             outputStream.writeBytes("exit\n");

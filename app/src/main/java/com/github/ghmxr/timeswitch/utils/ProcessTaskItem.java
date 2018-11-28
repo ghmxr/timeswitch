@@ -522,7 +522,8 @@ public class ProcessTaskItem {
             activateActionOfVibrate(item.actions[PublicConsts.ACTION_VIBRATE_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL));
             activateActionOfToast(item.actions[PublicConsts.ACTION_TOAST_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL));
             activateActionOfSMS(item.actions[PublicConsts.ACTION_SMS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL));
-            forceStopAppsByPackageName(context,item.actions[PublicConsts.ACTION_STOP_APP_PACKAGES]);
+            launchAppsByPackageName(context,item.actions[PublicConsts.ACTION_LAUNCH_APP_PACKAGES]);
+            stopAppsByPackageName(context,item.actions[PublicConsts.ACTION_STOP_APP_PACKAGES]);
             switchTasks(0);//has checked if has this action inside this method
             switchTasks(1);
 
@@ -1028,7 +1029,7 @@ public class ProcessTaskItem {
             String packageNames[]=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
             PackageManager manager=context.getPackageManager();
             if(manager==null) return;
-            if(packageNames==null||packageNames.length==0) return;
+            if(packageNames.length==0) return;
             for(String s:packageNames){
                 if(s==null) continue;
                 try{
@@ -1044,15 +1045,35 @@ public class ProcessTaskItem {
 
     }
 
-    private void forceStopAppsByPackageName(Context context,String values){
+    private void stopAppsByPackageName(Context context,String values){
+        try{
+            ActivityManager manager=(ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+            if(manager==null) return;
+            String [] packageNames=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
+            for(String s:packageNames){
+                manager.killBackgroundProcesses(s);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * ROOT Required
+     * @param values package names split by ":"
+     */
+    private void forceStopAppsByPackageName(String values){
         //android.permission.FORCE_STOP_PACKAGES
         try{
             String [] packageNames=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
-            ActivityManager manager=(ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+            for(String s:packageNames){
+                RootUtils.executeCommand(RootUtils.COMMAND_FORCE_STOP_PACKAGE+" "+s);
+            }
+            /*ActivityManager manager=(ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
             Method method=ActivityManager.class.getMethod("forceStopPackage",String.class);
             for(String s:packageNames){
                 method.invoke(manager,s);
-            }
+            }*/
         }catch (Exception e){
             e.printStackTrace();
         }
