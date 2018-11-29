@@ -528,7 +528,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="15dp"
-                        android:src="@drawable/icon_screen_locked" />
+                        android:src="@drawable/icon_screen_off" />
 
                     <TextView
                         android:id="@+id/layout_taskgui_area_exception_lockscreen_textview"
@@ -572,7 +572,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="15dp"
-                        android:src="@drawable/icon_screen_unlocked" />
+                        android:src="@drawable/icon_screen_on" />
 
                     <TextView
                         android:id="@+id/layout_taskgui_area_exception_unlockscreen_textview"
@@ -2204,7 +2204,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="25dp"
-                        android:src="@drawable/icon_screen_unlocked" />
+                        android:src="@drawable/icon_screen_on" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -2363,7 +2363,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="25dp"
-                        android:src="@drawable/ic_launcher" />
+                        android:src="@drawable/icon_app_launch" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -2416,7 +2416,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="25dp"
-                        android:src="@drawable/ic_launcher" />
+                        android:src="@drawable/icon_app_stop" />
 
                     <TextView
                         android:layout_width="wrap_content"

@@ -38,7 +38,7 @@
                     android:layout_height="30dp"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/icon_screen_locked"/>
+                    android:src="@drawable/icon_screen_off"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
                     android:layout_height="30dp"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/icon_screen_unlocked"/>
+                    android:src="@drawable/icon_screen_on"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

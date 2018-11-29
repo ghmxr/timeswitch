@@ -213,12 +213,12 @@ public class MainListAdapter extends BaseAdapter {
 
 
         else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_SCREEN_ON){
-            holder.img.setImageResource(R.drawable.icon_screen_unlocked);
+            holder.img.setImageResource(R.drawable.icon_screen_on);
             holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
             holder.trigger_value.setText(context.getResources().getString(R.string.activity_triggers_screen_on));
         }
         else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_SCREEN_OFF){
-            holder.img.setImageResource(R.drawable.icon_screen_locked);
+            holder.img.setImageResource(R.drawable.icon_screen_off);
             holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
             holder.trigger_value.setText(context.getResources().getString(R.string.activity_triggers_screen_off));
         }

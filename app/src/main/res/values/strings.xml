@@ -166,8 +166,8 @@
 	<string name="activity_taskgui_exception_ring_vibrate">铃声为振动模式</string>
 	<string name="activity_taskgui_exception_ring_off">铃声为静音模式</string>
 	<string name="activity_taskgui_exception_ring_normal">铃声为正常模式</string>
-	<string name="activity_taskgui_exception_screen_locked">屏幕关闭时</string>
-	<string name="activity_taskgui_exception_screen_unlocked">屏幕打开时</string>
+	<string name="activity_taskgui_exception_screen_locked">屏幕锁定状态时</string>
+	<string name="activity_taskgui_exception_screen_unlocked">屏幕解锁状态时</string>
 	<string name="activity_taskgui_exception_net_enabled">移动数据为打开状态</string>
 	<string name="activity_taskgui_exception_net_disabled">移动数据为关闭状态</string>
 	<string name="activity_taskgui_exception_gps_on">GPS为打开状态</string>

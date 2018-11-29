@@ -515,16 +515,16 @@ public class ProcessTaskItem {
             activateActionOfWifi(action_wifi);
             activateActionOfBluetooth(action_bluetooth);
             activateActionOfRingMode(action_ring_mode);
-            activateActionOfVolume(item.actions[PublicConsts.ACTION_RING_VOLUME_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL));
-            activateActionOfSettingRingtone();
+            activateActionOfVolume(item.actions[PublicConsts.ACTION_RING_VOLUME_LOCALE]);
+            activateActionOfSettingRingtone(item.actions[PublicConsts.ACTION_RING_SELECTION_LOCALE]);
             activateActionOfBrightness(screen_brightness);
-            activateActionOfWallpaper();
-            activateActionOfVibrate(item.actions[PublicConsts.ACTION_VIBRATE_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL));
-            activateActionOfToast(item.actions[PublicConsts.ACTION_TOAST_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL));
-            activateActionOfSMS(item.actions[PublicConsts.ACTION_SMS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL));
+            activateActionOfWallpaper(item.actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE]);
+            activateActionOfVibrate(item.actions[PublicConsts.ACTION_VIBRATE_LOCALE]);
+            activateActionOfToast(item.actions[PublicConsts.ACTION_TOAST_LOCALE]);
+            activateActionOfSMS(item.actions[PublicConsts.ACTION_SMS_LOCALE]);
             launchAppsByPackageName(context,item.actions[PublicConsts.ACTION_LAUNCH_APP_PACKAGES]);
             stopAppsByPackageName(context,item.actions[PublicConsts.ACTION_STOP_APP_PACKAGES]);
-            switchTasks(0);//has checked if has this action inside this method
+            switchTasks(0);
             switchTasks(1);
 
             SharedPreferences settings=context.getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE);
@@ -535,7 +535,7 @@ public class ProcessTaskItem {
                 activateActionOfAirplaneMode(action_airplanemode);
                 activateActionOfDeviceControl(action_device_control);
             }
-            activateActionOfNotification();
+            activateActionOfNotification(item.actions[PublicConsts.ACTION_NOTIFICATION_LOCALE]);
         }
         LogUtil.putLog(context,log_taskitem.toString());
         com.github.ghmxr.timeswitch.activities.Log.sendEmptyMessage(com.github.ghmxr.timeswitch.activities.Log.MESSAGE_REQUEST_REFRESH);
@@ -660,8 +660,9 @@ public class ProcessTaskItem {
         }
     }
 
-    private void activateActionOfVolume(String[] volumes){
+    private void activateActionOfVolume(String values){
         try{
+            String [] volumes=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             AudioManager mAudioManager=(AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
             int volume_ring=Integer.parseInt(volumes[PublicConsts.VOLUME_RING_LOCALE]);
             int volume_media=Integer.parseInt(volumes[PublicConsts.VOLUME_MEDIA_LOCALE]);
@@ -700,10 +701,10 @@ public class ProcessTaskItem {
         }
     }
 
-    private void activateActionOfSettingRingtone(){
+    private void activateActionOfSettingRingtone(String values){
         try{
             // RingtoneManager ringtoneManager=new RingtoneManager(context);
-            String ring_selection_values[]=item.actions[PublicConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+            String ring_selection_values[]=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             int ring_notification_selection= Integer.parseInt(ring_selection_values[PublicConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE]);
             int ring_phone_selection=Integer.parseInt(ring_selection_values[PublicConsts.RING_SELECTION_CALL_TYPE_LOCALE]);
             //String ring_value_notification=ring_selection_values[PublicConsts.RING_SELECTION_NOTIFICATION_VALUE_LOCALE];
@@ -756,10 +757,10 @@ public class ProcessTaskItem {
         }
     }
 
-    private void activateActionOfWallpaper(){
+    private void activateActionOfWallpaper(String values){
         try{
-            // String wallpaper_values[]=item.actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-            if(Integer.parseInt(item.actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE])>=0){
+            int value=Integer.parseInt(values);
+            if(value>=0){
                 log_taskitem.append(context.getResources().getString(R.string.action_set_wallpaper));
                 WallpaperManager wallpaperManager=WallpaperManager.getInstance(context);
                 //Bitmap bitmap= MediaStore.Images.Media.getBitmap(context.getContentResolver(), Uri.parse(wallpaper_values[1]));
@@ -780,8 +781,9 @@ public class ProcessTaskItem {
         }
     }
 
-    private void activateActionOfVibrate(String[] vibrate_values){
+    private void activateActionOfVibrate(String values){
         try{
+            String vibrate_values[]=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
             long frequency=Long.parseLong(vibrate_values[PublicConsts.VIBRATE_FREQUENCY_LOCALE]);
             long duration=Long.parseLong(vibrate_values[PublicConsts.VIBRATE_DURATION_LOCALE]);
             long interval=Long.parseLong(vibrate_values[PublicConsts.VIBRATE_INTERVAL_LOCALE]);
@@ -804,8 +806,9 @@ public class ProcessTaskItem {
         }
     }
 
-    private void activateActionOfToast(String[] toast_values){
+    private void activateActionOfToast(String values){
         try{
+            String [] toast_values=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             int type=Integer.parseInt(toast_values[PublicConsts.TOAST_TYPE_LOCALE]);
             if(type>=0){
                   /* Toast toast=Toast.makeText(context,item.toast,Toast.LENGTH_SHORT);
@@ -827,8 +830,9 @@ public class ProcessTaskItem {
         }
     }
 
-    private void activateActionOfSMS(String sms_values[]){
+    private void activateActionOfSMS(String values){
         try{
+            String sms_values[]=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
             if(Integer.parseInt(sms_values[PublicConsts.SMS_ENABLED_LOCALE])>=0){
                 SmsManager manager;
                 int subscriptionId=Integer.parseInt(sms_values[PublicConsts.SMS_SUBINFO_LOCALE]);
@@ -985,9 +989,9 @@ public class ProcessTaskItem {
         }
     }
 
-    private void activateActionOfNotification(){
+    private void activateActionOfNotification(String values){
         try{
-            String notification_values[]=item.actions[PublicConsts.ACTION_NOTIFICATION_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+            String notification_values[]=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             int type=Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_LOCALE]);
             if(type==PublicConsts.NOTIFICATION_TYPE_VIBRATE||type==PublicConsts.NOTIFICATION_TYPE_NO_VIBRATE){
                 NotificationManager manager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);

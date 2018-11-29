@@ -329,13 +329,13 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			}
 			break;
 			case PublicConsts.TRIGGER_TYPE_SCREEN_ON:{
-				icon.setImageResource(R.drawable.icon_screen_unlocked);
+				icon.setImageResource(R.drawable.icon_screen_on);
 				att.setText(getResources().getString(R.string.activity_triggers_screen_on));
 				value.setText("");
 			}
 			break;
 			case PublicConsts.TRIGGER_TYPE_SCREEN_OFF:{
-				icon.setImageResource(R.drawable.icon_screen_locked);
+				icon.setImageResource(R.drawable.icon_screen_off);
 				att.setText(getResources().getString(R.string.activity_triggers_screen_off));
 				value.setText("");
 			}
@@ -431,13 +431,13 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			}
 			break;
 			case PublicConsts.TRIGGER_TYPE_APP_LAUNCHED:{
-				icon.setImageResource(R.drawable.ic_launcher);
+				icon.setImageResource(R.drawable.icon_app_launch);
 				att.setText(getResources().getString(R.string.activity_trigger_app_opened));
 				value.setText(Triggers.getAppNameDisplayValue(this,taskitem.package_names));
 			}
 			break;
 			case PublicConsts.TRIGGER_TYPE_APP_CLOSED:{
-				icon.setImageResource(R.drawable.ic_launcher);
+				icon.setImageResource(R.drawable.icon_app_stop);
 				att.setText(getResources().getString(R.string.activity_trigger_app_closed));
 				value.setText(Triggers.getAppNameDisplayValue(this,taskitem.package_names));
 			}

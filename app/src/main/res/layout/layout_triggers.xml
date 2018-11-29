@@ -525,7 +525,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
-                    android:src="@drawable/ic_launcher" />
+                    android:src="@drawable/icon_app_launch" />
 
                 <LinearLayout
                     android:id="@+id/trigger_app_opened_textviewarea"
@@ -585,7 +585,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
-                    android:src="@drawable/ic_launcher" />
+                    android:src="@drawable/icon_app_stop" />
 
                 <LinearLayout
                     android:id="@+id/trigger_app_closed_textviewarea"
@@ -645,7 +645,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
-                    android:src="@drawable/icon_screen_unlocked" />
+                    android:src="@drawable/icon_screen_on" />
 
                 <LinearLayout
                     android:id="@+id/trigger_screen_on_textviewarea"
@@ -705,7 +705,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
-                    android:src="@drawable/icon_screen_locked" />
+                    android:src="@drawable/icon_screen_off" />
 
                 <LinearLayout
                     android:id="@+id/trigger_screen_off_textviewarea"

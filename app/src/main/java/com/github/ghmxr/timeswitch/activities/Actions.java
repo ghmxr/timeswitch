@@ -1267,8 +1267,8 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                 case PublicConsts.TRIGGER_TYPE_NET_OFF:imgRes=R.drawable.icon_cellular_off;break;
                 case PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED:imgRes=R.drawable.icon_wifi_connected;break;
                 case PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:imgRes=R.drawable.icon_wifi_disconnected;break;
-                case PublicConsts.TRIGGER_TYPE_SCREEN_ON:imgRes=R.drawable.icon_screen_unlocked;break;
-                case PublicConsts.TRIGGER_TYPE_SCREEN_OFF:imgRes=R.drawable.icon_screen_locked;break;
+                case PublicConsts.TRIGGER_TYPE_SCREEN_ON:imgRes=R.drawable.icon_screen_on;break;
+                case PublicConsts.TRIGGER_TYPE_SCREEN_OFF:imgRes=R.drawable.icon_screen_off;break;
                 case PublicConsts.TRIGGER_TYPE_POWER_CONNECTED:imgRes=R.drawable.icon_power_connected;break;
                 case PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED:imgRes=R.drawable.icon_power_disconnected;break;
             }
