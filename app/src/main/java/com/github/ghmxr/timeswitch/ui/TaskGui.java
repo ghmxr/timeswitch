@@ -77,12 +77,12 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		findViewById(R.id.layout_taskgui_area_name).setOnClickListener(this);
 
 		findViewById(R.id.layout_taskgui_trigger).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_condition_single).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_condition_percertaintime).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_condition_weekloop).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_condition_battery_percentage).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_condition_battery_temperature).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_condition_received_broadcast).setOnClickListener(this);
+		//findViewById(R.id.layout_taskgui_area_condition_single).setOnClickListener(this);
+		//findViewById(R.id.layout_taskgui_area_condition_percertaintime).setOnClickListener(this);
+		//findViewById(R.id.layout_taskgui_area_condition_weekloop).setOnClickListener(this);
+		//findViewById(R.id.layout_taskgui_area_condition_battery_percentage).setOnClickListener(this);
+		//findViewById(R.id.layout_taskgui_area_condition_battery_temperature).setOnClickListener(this);
+		//findViewById(R.id.layout_taskgui_area_condition_received_broadcast).setOnClickListener(this);
 		
 		findViewById(R.id.layout_taskgui_area_exception_lockscreen).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_area_exception_unlockscreen).setOnClickListener(this);
@@ -1187,73 +1187,6 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			return db.update(SQLConsts.getCurrentTableName(this),values,SQLConsts.SQL_TASK_COLUMN_ID +"="+id,null);
 		}
 	}
-	
-	public void refreshSingleTimeTextView(){
-		TextView tv_condition_single_value=findViewById(R.id.layout_taskgui_area_condition_single_value);
-		int month=this.calendar.get(Calendar.MONTH)+1;
-		tv_condition_single_value.setText(getResources().getString(R.string.activity_taskgui_condition_single_value)+ ValueUtils.format(this.calendar.get(Calendar.YEAR))+"/"+ ValueUtils.format(month)+"/"+ ValueUtils.format(this.calendar.get(Calendar.DAY_OF_MONTH))+"("+ValueUtils.getDayOfWeek(calendar.getTimeInMillis())+")/"+ ValueUtils.format(this.calendar.get(Calendar.HOUR_OF_DAY))+":"+ ValueUtils.format(calendar.get(Calendar.MINUTE)));
-	}
-	
-	public void refreshRepeatTextView(){
-		TextView tv_condition_percertaintime_value=findViewById(R.id.layout_taskgui_area_condition_percertaintime_value);
-		tv_condition_percertaintime_value.setText(getResources().getString(R.string.adapter_per)+ ValueUtils.getFormatTime(this,taskitem.interval_milliseconds)+getResources().getString(R.string.adapter_trigger));
-	}
-	
-	public void refreshWeekLoopTextView(){
-		String tv_value="";
-		TextView tv_condition_weekloop_value=findViewById(R.id.layout_taskgui_area_condition_weekloop_value);
-		if(taskitem.week_repeat[1]) tv_value+=getResources().getString(R.string.monday)+" ";//if(this.weekloop[1]) tv_value+="周一 ";
-		if(taskitem.week_repeat[2]) tv_value+=getResources().getString(R.string.tuesday)+" ";
-		if(taskitem.week_repeat[3]) tv_value+=getResources().getString(R.string.wednesday)+" ";
-		if(taskitem.week_repeat[4]) tv_value+=getResources().getString(R.string.thursday)+" ";
-		if(taskitem.week_repeat[5]) tv_value+=getResources().getString(R.string.friday)+" ";
-		if(taskitem.week_repeat[6]) tv_value+=getResources().getString(R.string.saturday)+" ";
-		if(taskitem.week_repeat[0]) tv_value+=getResources().getString(R.string.sunday);
-		
-		boolean everyday=true;
-		for(int i=0;i<7;i++){
-			if(!taskitem.week_repeat[i]) {  //if(!this.weekloop[i]) {
-				everyday=false;
-				break;
-			}
-		}
-		if(everyday) tv_value=getResources().getString(R.string.everyday);
-		tv_condition_weekloop_value.setText(tv_value);
-		
-	}
-
-	public void refreshBatteryPercentageTextView(){
-		TextView tv_battery=findViewById(R.id.layout_taskgui_area_condition_battery_percentage_value);
-		StringBuilder value=new StringBuilder("");
-		if(taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE){
-			value.append(getResources().getString(R.string.more_than)+" ");
-			value.append(taskitem.battery_percentage+"%");
-		}else if(taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE){
-			value.append(getResources().getString(R.string.less_than)+" ");
-			value.append(taskitem.battery_percentage+"%");
-		}
-		tv_battery.setText(value.toString());
-	}
-
-	public void refreshBatteryTemperatureTextView(){
-		TextView tv_battery=findViewById(R.id.layout_taskgui_area_condition_battery_temperature_value);
-		StringBuilder value=new StringBuilder("");
-		if(taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE){
-			value.append(getResources().getString(R.string.lower_than)+" ");
-			value.append(taskitem.battery_temperature+"℃");
-		}else if(taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE){
-			value.append(getResources().getString(R.string.higher_than)+" ");
-			value.append(taskitem.battery_temperature+"℃");
-		}
-		tv_battery.setText(value.toString());
-	}
-
-	private void refreshBroadcastTextView(){
-		TextView tv_broadcast=findViewById(R.id.layout_taskgui_area_condition_received_broadcast_value);
-		if(taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST){
-			tv_broadcast.setText(taskitem.selectedAction);
-		}
-	}
 
 	/**
 	 * 将dp值转换为px
@@ -1386,31 +1319,6 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		super.finish();
 		//if(linkedlist.contains(this)) linkedlist.remove(this);
 	}
-
-	private void refreshTriggerView(int type){
-        TextView tv_condition_single_value=findViewById(R.id.layout_taskgui_area_condition_single_value);
-        TextView tv_condition_percertaintime_value=findViewById(R.id.layout_taskgui_area_condition_percertaintime_value);
-        TextView tv_condition_weekloop_value=findViewById(R.id.layout_taskgui_area_condition_weekloop_value);
-        TextView tv_condition_battery_percentage_value=findViewById(R.id.layout_taskgui_area_condition_battery_percentage_value);
-        TextView tv_condition_battery_temperature_value=findViewById(R.id.layout_taskgui_area_condition_battery_temperature_value);
-		TextView tv_condition_broadcast=findViewById(R.id.layout_taskgui_area_condition_received_broadcast_value);
-
-        String unchoose=this.getResources().getString(R.string.activity_taskgui_att_unchoose);
-
-		((RadioButton)findViewById(R.id.layout_taskgui_area_condition_single_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_SINGLE);
-		((RadioButton)findViewById(R.id.layout_taskgui_area_condition_percertaintime_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME);
-		((RadioButton)findViewById(R.id.layout_taskgui_area_condition_weekloop_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_LOOP_WEEK);
-		((RadioButton)findViewById(R.id.layout_taskgui_area_condition_battery_percentage_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE||type==PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE);
-		((RadioButton)findViewById(R.id.layout_taskgui_area_condition_battery_temperature_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE||type==PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE);
-		((RadioButton)findViewById(R.id.layout_taskgui_area_condition_received_broadcast_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST);
-
-        tv_condition_single_value.setText(unchoose);
-        tv_condition_percertaintime_value.setText(unchoose);
-        tv_condition_weekloop_value.setText(unchoose);
-        tv_condition_battery_percentage_value.setText(unchoose);
-        tv_condition_battery_temperature_value.setText(unchoose);
-        tv_condition_broadcast.setText(unchoose);
-    }
 
 	private void clearExceptionsOfTimeType(){
         taskitem.exceptions[PublicConsts.EXCEPTION_START_TIME]=String.valueOf(-1);

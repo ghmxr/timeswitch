@@ -29,7 +29,12 @@
             <ListView
                 android:id="@+id/main_listview"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:divider="#00000000"
+                android:dividerHeight="15dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp">
             </ListView>
 
         </android.support.v4.widget.SwipeRefreshLayout>

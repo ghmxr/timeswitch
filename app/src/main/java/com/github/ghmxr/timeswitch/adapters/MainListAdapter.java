@@ -2,6 +2,7 @@ package com.github.ghmxr.timeswitch.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -105,7 +106,7 @@ public class MainListAdapter extends BaseAdapter {
             holder.root=views[i].findViewById(R.id.item_task_root);
             holder.img=views[i].findViewById(R.id.item_task_img);
             holder.trigger_value =views[i].findViewById(R.id.item_task_time);
-            holder.task_name =views[i].findViewById(R.id.item_task_repeat);
+            holder.task_name =views[i].findViewById(R.id.item_task_name);
             holder.icon_wifi_on=views[i].findViewById(R.id.item_task_actions_wifi_on);
             holder.icon_wifi_off=views[i].findViewById(R.id.item_task_actions_wifi_off);
             holder.icon_bluetooth_on=views[i].findViewById(R.id.item_task_actions_bluetooth_on);
@@ -694,7 +695,7 @@ public class MainListAdapter extends BaseAdapter {
         TextView tv_more;
         public android.support.v7.widget.SwitchCompat aSwitch;
         public CheckBox checkbox;
-        public RelativeLayout root;
+        public View root;
     }
 
     public interface SwitchChangedListener{

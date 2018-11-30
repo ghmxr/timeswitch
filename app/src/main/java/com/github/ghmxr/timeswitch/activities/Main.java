@@ -110,7 +110,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
 
 
         findViewById(R.id.main_indicator).setVisibility(settings.getBoolean(PublicConsts.PREFERENCES_MAINPAGE_INDICATOR,PublicConsts.PREFERENCES_MAINPAGE_INDICATOR_DEFAULT)?View.VISIBLE:View.GONE);
-        listview.setDivider(null);
+        //listview.setDivider(null);
 		setSupportActionBar(toolbar);
 
         fab = findViewById(R.id.fab);
