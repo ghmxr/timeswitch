@@ -107,7 +107,8 @@
                     <RelativeLayout
                         android:id="@+id/layout_taskgui_trigger"
                         android:layout_width="match_parent"
-                        android:layout_height="60dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
                         android:background="?android:attr/selectableItemBackground"
                         android:clickable="true">
 
@@ -126,6 +127,8 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:layout_marginLeft="15dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
                             android:layout_toRightOf="@+id/layout_taskgui_trigger_icon"
                             android:orientation="vertical">
 

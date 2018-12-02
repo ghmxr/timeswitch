@@ -1,9 +1,9 @@
 package com.github.ghmxr.timeswitch.adapters;
 
 import android.content.Context;
+import android.os.Message;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
-import android.util.TypedValue;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,20 +11,20 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.github.ghmxr.timeswitch.R;
+import com.github.ghmxr.timeswitch.activities.Main;
 import com.github.ghmxr.timeswitch.activities.Triggers;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
 import com.github.ghmxr.timeswitch.utils.DisplayDensity;
-import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import java.util.Calendar;
 import java.util.List;
+
+import static com.github.ghmxr.timeswitch.activities.Triggers.getWeekLoopDisplayValue;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
@@ -37,12 +37,9 @@ public class MainListAdapter extends BaseAdapter {
     SwitchChangedListener mlistener;
     boolean isMultiSelectMode=false;
     boolean [] isSelected;
-    //Calendar calendar;
     private View[] views;
-    //private List<TextView> repeat_textviews=new ArrayList<>();
-    private static final int ICON_COUNT_LIMIT=7;
-    //private static final int BLANK_ITEM_NUM=3;
-    private int taskCount=0;
+    //private static final int ICON_COUNT_LIMIT=7;
+    private int taskCount;
 
 
     public MainListAdapter (Context context, @NonNull List<TaskItem> list){
@@ -54,20 +51,9 @@ public class MainListAdapter extends BaseAdapter {
         views=new View[taskCount];
     }
 
-    /*private List<TaskItem> copyList(List<TaskItem> list){
-        List<TaskItem> cList=new ArrayList<>();
-        if(list==null||list.size()<=0) return cList;
-        for(int i=0;i<list.size();i++){
-            TaskItem item=new TaskItem(list.get(i));
-            cList.add(item);
-        }
-        return cList;
-    }*/
-
-
     @Override
     public int getCount() {
-        return taskCount+3;
+        return taskCount+2;
     }
 
     @Override
@@ -84,7 +70,7 @@ public class MainListAdapter extends BaseAdapter {
     public View getView(final int i, View view, ViewGroup viewGroup) {
         if(i>=list.size()){
             View blank_view=inflater.inflate(R.layout.item_task,viewGroup,false);
-            blank_view.findViewById(R.id.item_task_root).setVisibility(View.INVISIBLE);
+            blank_view.setVisibility(View.INVISIBLE);
             return blank_view;
         }
 
@@ -93,19 +79,18 @@ public class MainListAdapter extends BaseAdapter {
             item=list.get(i);
         }catch (Exception e){
             e.printStackTrace();
-            //LogUtil.putExceptionLog(context,e);
         }
 
         if(item==null) return null;
 
-        ViewHolder holder;
+        //ViewHolder holder;
 
         if(views[i]==null){
             views[i]=inflater.inflate(R.layout.item_task,viewGroup,false);
-            holder=new ViewHolder();
+            /*holder=new ViewHolder();
             holder.root=views[i].findViewById(R.id.item_task_root);
-            holder.img=views[i].findViewById(R.id.item_task_img);
-            holder.trigger_value =views[i].findViewById(R.id.item_task_time);
+            holder.img=views[i].findViewById(R.id.item_task_trigger_icon);
+            holder.trigger_value =views[i].findViewById(R.id.item_task_trigger_value);
             holder.task_name =views[i].findViewById(R.id.item_task_name);
             holder.icon_wifi_on=views[i].findViewById(R.id.item_task_actions_wifi_on);
             holder.icon_wifi_off=views[i].findViewById(R.id.item_task_actions_wifi_off);
@@ -136,165 +121,206 @@ public class MainListAdapter extends BaseAdapter {
             holder.tv_more =views[i].findViewById(R.id.item_task_actions_more);
             holder.aSwitch=views[i].findViewById(R.id.item_task_switch);
             holder.checkbox=views[i].findViewById(R.id.item_task_checkbox);
-            views[i].setTag(holder);
-        }
-        else{
-            holder=(ViewHolder) views[i].getTag();
+            views[i].setTag(holder);*/
         }
 
-        holder.root.setVisibility(View.VISIBLE);
+        views[i].setVisibility(View.VISIBLE);
 
-        if(item.trigger_type ==PublicConsts.TRIGGER_TYPE_SINGLE){
-            holder.img.setImageResource(R.drawable.icon_repeat_single);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,10);
-            Calendar calendar=Calendar.getInstance();
-            calendar.setTimeInMillis(item.time);
-            int month=calendar.get(Calendar.MONTH)+1;
-            holder.trigger_value.setText( calendar.get(Calendar.YEAR)+"/"+ValueUtils.format(month)+"/"+ValueUtils.format(calendar.get(Calendar.DAY_OF_MONTH))+"/"+ValueUtils.getDayOfWeek(list.get(i).time)+"/"+
-                    "\n"+ValueUtils.format(calendar.get(Calendar.HOUR_OF_DAY))+":"+ ValueUtils.format(calendar.get(Calendar.MINUTE)));
-        }else if(item.trigger_type ==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){
-            holder.img.setImageResource(R.drawable.icon_repeat_percertaintime);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,14);
-            refreshAllCertainTimeTaskItems();
-        }else if(item.trigger_type ==PublicConsts.TRIGGER_TYPE_LOOP_WEEK){
-            holder.img.setImageResource(R.drawable.icon_repeat_weekloop);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
-            Calendar calendar=Calendar.getInstance();
-            calendar.setTimeInMillis(item.time);
-            holder.trigger_value.setText( ValueUtils.format(calendar.get(Calendar.HOUR_OF_DAY))+":"+ ValueUtils.format(calendar.get(Calendar.MINUTE)));
-            //holder.trigger_value.setText(getWeekLoopDisplayValue(context,list.get(i).week_repeat,calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE)));
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE){
-            holder.img.setImageResource(R.drawable.icon_battery_high);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
-            holder.trigger_value.setText(context.getResources().getString(R.string.more_than)+item.battery_percentage+"%");
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE){
-            holder.img.setImageResource(R.drawable.icon_battery_low);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
-            //holder.trigger_value.setText(context.getResources().getString(R.string.more_than)+this.list.get(i).battery_percentage+"%");
-            holder.trigger_value.setText(context.getResources().getString(R.string.less_than)+item.battery_percentage+"%");
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE){
-            holder.img.setImageResource(R.drawable.icon_temperature);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
-            holder.trigger_value.setText(context.getResources().getString(R.string.higher_than)+item.battery_temperature+"¡æ");
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE) {
-            holder.img.setImageResource(R.drawable.icon_temperature);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
-            holder.trigger_value.setText(context.getResources().getString(R.string.lower_than)+item.battery_temperature+"¡æ");
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST){
-            holder.img.setImageResource(R.drawable.icon_broadcast);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,10);
-            String action=item.selectedAction;
-            if(action.length()>16) action=action.substring(0,16)+"...";
-            holder.trigger_value.setText(action);
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED){
-            holder.img.setImageResource(R.drawable.icon_wifi_connected);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,10);
-            String ssidinfo= Triggers.getWifiConnectionDisplayValue(context,item.wifiIds);
-            if(ssidinfo.length()>16) ssidinfo=ssidinfo.substring(0,16)+"...";
-            holder.trigger_value.setText(ssidinfo);
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED){
-            holder.img.setImageResource(R.drawable.icon_wifi_disconnected);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,10);
-            String ssidinfo= Triggers.getWifiConnectionDisplayValue(context,item.wifiIds);
-            if(ssidinfo.length()>16) ssidinfo=ssidinfo.substring(0,16)+"...";
-            holder.trigger_value.setText(ssidinfo);
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_APP_LAUNCHED){
-            holder.img.setImageResource(R.drawable.ic_launcher);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
-            String names=Triggers.getAppNameDisplayValue(context,item.package_names);
-            if(names.length()>16) names=names.substring(0,16);
-            holder.trigger_value.setText(names);
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_APP_CLOSED){
-            holder.img.setImageResource(R.drawable.ic_launcher);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
-            String names=Triggers.getAppNameDisplayValue(context,item.package_names);
-            if(names.length()>16) names=names.substring(0,16);
-            holder.trigger_value.setText(names);
+        try{
+            ((TextView)views[i].findViewById(R.id.item_task_name)).setText(item.name);
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
+        try{
+            switch(item.trigger_type){
+                default:break;
+                case PublicConsts.TRIGGER_TYPE_SINGLE:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_repeat_single);
+                    Calendar calendar=Calendar.getInstance();
+                    calendar.setTimeInMillis(item.time);
+                    int month=calendar.get(Calendar.MONTH)+1;
+                    getTriggerTextView(i).setText( calendar.get(Calendar.YEAR)
+                            +"/"+ValueUtils.format(month)+"/"+ValueUtils.format(calendar.get(Calendar.DAY_OF_MONTH))+"/"+ValueUtils.getDayOfWeek(list.get(i).time)+"/"
+                            +ValueUtils.format(calendar.get(Calendar.HOUR_OF_DAY))+":"+ ValueUtils.format(calendar.get(Calendar.MINUTE)));
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_repeat_percertaintime);
+                    refreshAllCertainTimeTaskItems();
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_LOOP_WEEK:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_repeat_weekloop);
+                    Calendar calendar=Calendar.getInstance();
+                    calendar.setTimeInMillis(item.time);
+                    getTriggerTextView(i).setText(getWeekLoopDisplayValue(context,list.get(i).week_repeat,calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE)));
+                    //holder.trigger_value.setText();
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_battery_high);
+                    getTriggerTextView(i).setText(context.getResources().getString(R.string.more_than)+item.battery_percentage+"%");
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_battery_low);
+                    getTriggerTextView(i).setText(context.getResources().getString(R.string.less_than)+item.battery_percentage+"%");
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_temperature);
+                    getTriggerTextView(i).setText(context.getResources().getString(R.string.higher_than)+item.battery_temperature+"¡æ");
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_temperature);
+                    getTriggerTextView(i).setText(context.getResources().getString(R.string.lower_than)+item.battery_temperature+"¡æ");
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_broadcast);
+                    getTriggerTextView(i).setText(item.selectedAction);
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_wifi_connected);
+                    //holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,10);
+                    String ssidinfo= Triggers.getWifiConnectionDisplayValue(context,item.wifiIds);
+                    //if(ssidinfo.length()>16) ssidinfo=ssidinfo.substring(0,16)+"...";
+                    getTriggerTextView(i).setText(ssidinfo);
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_wifi_disconnected);
+                    //holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,10);
+                    String ssidinfo= Triggers.getWifiConnectionDisplayValue(context,item.wifiIds);
+                    //if(ssidinfo.length()>16) ssidinfo=ssidinfo.substring(0,16)+"...";
+                    getTriggerTextView(i).setText(ssidinfo);
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_APP_LAUNCHED:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_app_launch);
+                    String names=Triggers.getAppNameDisplayValue(context,item.package_names);
+                    //if(names.length()>16) names=names.substring(0,16);
+                   getTriggerTextView(i).setText(names);
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_APP_CLOSED:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_app_stop);
+                    String names=Triggers.getAppNameDisplayValue(context,item.package_names);
+                    //if(names.length()>16) names=names.substring(0,16);
+                    getTriggerTextView(i).setText(names);
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_SCREEN_ON:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_screen_on);
+                    getTriggerTextView(i).setText(context.getResources().getString(R.string.activity_triggers_screen_on));
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_SCREEN_OFF:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_screen_off);
+                    getTriggerTextView(i).setText(context.getResources().getString(R.string.activity_triggers_screen_off));
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_POWER_CONNECTED:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_power_connected);
+                    getTriggerTextView(i).setText(context.getResources().getString(R.string.activity_triggers_power_connected));
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_power_disconnected);
+                    getTriggerTextView(i).setText(context.getResources().getString(R.string.activity_triggers_power_disconnected));
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_wifi_on);
+                    getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_wifi_off);
+                    getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_bluetooth_on);
+                    getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_bluetooth_off);
+                    getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_ring_off);
+                    getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_ring_vibrate);
+                    getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_ring_normal);
+                    getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_airplanemode_on);
+                    getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_airplanemode_off);
+                    getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_ap_on);
+                    getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_ap_off);
+                    getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_NET_ON:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_cellular_on);
+                    getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_NET_OFF:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_cellular_off);
+                    getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_IN:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_headset);
+                    getTriggerTextView(i).setText(context.getResources().getString(R.string.activity_trigger_headset_plug_in));
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT:{
+                    getTriggerImageView(i).setImageResource(R.drawable.icon_headset);
+                    getTriggerTextView(i).setText(context.getResources().getString(R.string.activity_trigger_headset_plug_out));
+                }
+                break;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
-        else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_SCREEN_ON){
-            holder.img.setImageResource(R.drawable.icon_screen_on);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
-            holder.trigger_value.setText(context.getResources().getString(R.string.activity_triggers_screen_on));
+        try{
+            ((TextView)views[i].findViewById(R.id.item_task_exception)).setText(getExceptionValue(item));
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_SCREEN_OFF){
-            holder.img.setImageResource(R.drawable.icon_screen_off);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
-            holder.trigger_value.setText(context.getResources().getString(R.string.activity_triggers_screen_off));
-        }
-        else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_POWER_CONNECTED){
-            holder.img.setImageResource(R.drawable.icon_power_connected);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
-            holder.trigger_value.setText(context.getResources().getString(R.string.activity_triggers_power_connected));
-        }
-        else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED){
-            holder.img.setImageResource(R.drawable.icon_power_disconnected);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
-            holder.trigger_value.setText(context.getResources().getString(R.string.activity_triggers_power_disconnected));
-        }
-
-
-        else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON){
-            holder.img.setImageResource(R.drawable.icon_wifi_on);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
-            holder.trigger_value.setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF){
-            holder.img.setImageResource(R.drawable.icon_wifi_off);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
-            holder.trigger_value.setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON){
-            holder.img.setImageResource(R.drawable.icon_bluetooth_on);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
-            holder.trigger_value.setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF){
-            holder.img.setImageResource(R.drawable.icon_bluetooth_off);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
-            holder.trigger_value.setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF){
-            holder.img.setImageResource(R.drawable.icon_ring_off);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
-            holder.trigger_value.setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE){
-            holder.img.setImageResource(R.drawable.icon_ring_vibrate);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
-            holder.trigger_value.setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL){
-            holder.img.setImageResource(R.drawable.icon_ring_normal);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
-            holder.trigger_value.setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON){
-            holder.img.setImageResource(R.drawable.icon_airplanemode_on);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
-            holder.trigger_value.setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF){
-            holder.img.setImageResource(R.drawable.icon_airplanemode_off);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
-            holder.trigger_value.setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED){
-            holder.img.setImageResource(R.drawable.icon_ap_on);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
-            holder.trigger_value.setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED){
-            holder.img.setImageResource(R.drawable.icon_ap_off);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
-            holder.trigger_value.setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_NET_ON){
-            holder.img.setImageResource(R.drawable.icon_cellular_on);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
-            holder.trigger_value.setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_NET_OFF){
-            holder.img.setImageResource(R.drawable.icon_cellular_off);
-            holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
-            holder.trigger_value.setText(Triggers.getWidgetDisplayValue(context,item.trigger_type));
-        }
-
-        String name=item.name;
-        if(name.length()>20) name=name.substring(0,20)+"...";
-        holder.task_name.setText(name);
 
         String [] actions =item.actions;
-        try{
+        /*try{
             int showCount=0,actionNum=0;
             if(Integer.parseInt(actions[PublicConsts.ACTION_WIFI_LOCALE])==PublicConsts.ACTION_OPEN){
                 //holder.actions.addView(this.newActionIcon(R.drawable.icon_wifi_on));
@@ -550,43 +576,69 @@ public class MainListAdapter extends BaseAdapter {
         }catch (Exception e){
             e.printStackTrace();
             LogUtil.putExceptionLog(context,e);
-        }
+        }  */
 
+        views[i].findViewById(R.id.item_task_title).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(views[i].findViewById(R.id.item_task_info).getVisibility()!=View.VISIBLE){
+                    views[i].findViewById(R.id.item_task_info).setVisibility(View.VISIBLE);
+                    (views[i].findViewById(R.id.item_task_title_arrow)).setRotation(90);
+                }else {
+                    views[i].findViewById(R.id.item_task_info).setVisibility(View.GONE);
+                    (views[i].findViewById(R.id.item_task_title_arrow)).setRotation(0);
+                }
+            }
+        });
 
+        CheckBox cb=views[i].findViewById(R.id.item_task_checkbox);
+        SwitchCompat switchCompat=views[i].findViewById(R.id.item_task_switch);
         if(isMultiSelectMode) {
-            holder.aSwitch.setVisibility(View.GONE);
-            holder.checkbox.setVisibility(View.VISIBLE);
-            holder.checkbox.setChecked(isSelected[i]);
+            switchCompat.setVisibility(View.GONE);
+            cb.setVisibility(View.VISIBLE);
+            cb.setOnCheckedChangeListener(null);
+            cb.setChecked(isSelected[i]);
+            cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    isSelected[i]=isChecked;
+                    //notifyDataSetChanged();
+                }
+            });
+            views[i].findViewById(R.id.item_task_title).setOnLongClickListener(null);
         }else{
-            holder.aSwitch.setVisibility(View.VISIBLE);
-            holder.checkbox.setVisibility(View.GONE);
-            holder.aSwitch.setOnCheckedChangeListener(null);
-            holder.aSwitch.setChecked(item.isenabled);
-            holder.aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            switchCompat.setVisibility(View.VISIBLE);
+            cb.setVisibility(View.GONE);
+            switchCompat.setOnCheckedChangeListener(null);
+            switchCompat.setChecked(item.isenabled);
+            switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    //list.get(i).isenabled=b;
-                    //Log.i("OnCheckedChanged","listener activated!!!");
                     if(mlistener!=null) mlistener.onCheckedChanged(i,b);
                     refreshAllCertainTimeTaskItems();
                 }
             });
+            views[i].findViewById(R.id.item_task_title).setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Message msg=new Message();
+                    msg.what= Main.MESSAGE_OPEN_MULTI_SELECT_MODE;
+                    msg.obj=i;
+                    Main.sendMessage(msg);
+                    return true;
+                }
+            });
         }
 
-        //view=views[i];
         return views[i];
     }
 
+    private ImageView getTriggerImageView(int position){
+        return ((ImageView)views[position].findViewById(R.id.item_task_trigger_icon));
+    }
 
-    /**
-     * @deprecated
-     */
-    public ImageView newActionIcon(int resID){
-        ImageView icon=new ImageView(this.context);
-        LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(dp2px(20),dp2px(20));
-        icon.setImageResource(resID);
-        icon.setLayoutParams(params);
-        return icon;
+    private TextView getTriggerTextView(int position){
+        return  ((TextView)views[position].findViewById(R.id.item_task_trigger_value));
     }
 
     public void onDataSetChanged(@NonNull List<TaskItem> list){
@@ -602,7 +654,7 @@ public class MainListAdapter extends BaseAdapter {
         for(int i=0;i<views.length;i++){
             //if(i>=list.size()) break;
             if(views[i]==null) continue;
-            TextView tv=views[i].findViewById(R.id.item_task_time);
+            TextView tv=views[i].findViewById(R.id.item_task_trigger_value);
             TaskItem item=null;
             //if(i>=list.size()) continue;
             try{
@@ -652,11 +704,6 @@ public class MainListAdapter extends BaseAdapter {
         this.mlistener=listener;
     }
 
-    /*public void switchOffItem(int position){
-        this.list.get(position).isenabled=false;
-        this.notifyDataSetChanged();
-    }*/
-
     public void openMultiSelecteMode(int longclickposition){
         this.isMultiSelectMode=true;
         isSelected=new boolean[list.size()];
@@ -683,11 +730,68 @@ public class MainListAdapter extends BaseAdapter {
         this.notifyDataSetChanged();
     }
 
+    private String getExceptionValue(TaskItem item){
+        try{
+            StringBuilder builder=new StringBuilder("");
+            String [] exceptions=item.exceptions;
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_LOCKEDSCREEN])==1){
+                builder.append(context.getResources().getString(R.string.activity_taskgui_exception_screen_locked));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_UNLOCKEDSCREEN])==1){
+                builder.append(context.getResources().getString(R.string.activity_taskgui_exception_screen_unlocked));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_WIFI_ENABLED])==1){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.activity_taskgui_exception_wifi_enabled));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_WIFI_DISABLED])==1){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.activity_taskgui_exception_wifi_disabled));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BLUETOOTH_ENABLED])==1){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.activity_taskgui_exception_bluetooth_enabled));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BLUETOOTH_DISABLED])==1){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.activity_taskgui_exception_bluetooth_disabled));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_RING_VIBRATE])==1){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.activity_taskgui_exception_ring_vibrate));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_RING_OFF])==1){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.activity_taskgui_exception_ring_off));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_RING_NORMAL])==1){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.activity_taskgui_exception_ring_normal));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_NET_ENABLED])==1){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.activity_taskgui_exception_net_enabled));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_NET_DISABLED])==1){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.activity_taskgui_exception_net_disabled));
+            }
+            //if(Integer.parseInt())
+
+            String returnValue=builder.toString();
+            if(returnValue.equals("")) return context.getResources().getString(R.string.word_nothing);
+            return returnValue;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     private int dp2px(int dp){
         return  DisplayDensity.dip2px(this.context,dp);
     }
 
-    public static final class  ViewHolder {
+    /*public static final class  ViewHolder {
         public TextView trigger_value, task_name;
         public ImageView img,icon_wifi_on,icon_wifi_off,icon_bluetooth_on,icon_bluetooth_off,icon_net_on,icon_net_off,
                 icon_ring_normal,icon_ring_vibrate,icon_ring_off, icon_device_reboot,icon_device_shutdown,icon_brightness_auto,icon_brightness_manual,icon_gps_on,icon_gps_off,
@@ -696,7 +800,7 @@ public class MainListAdapter extends BaseAdapter {
         public android.support.v7.widget.SwitchCompat aSwitch;
         public CheckBox checkbox;
         public View root;
-    }
+    }*/
 
     public interface SwitchChangedListener{
         void onCheckedChanged(int position,boolean b);

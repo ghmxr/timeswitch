@@ -5,6 +5,7 @@ import com.github.ghmxr.timeswitch.adapters.MainListAdapter;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.SQLConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
+import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.MySQLiteOpenHelper;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
@@ -59,6 +60,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
 	public static final int MESSAGE_SHOW_INDICATOR      =   0x00003;
 	public static final int MESSAGE_HIDE_INDICATOR      =   0x00004;
 	public static final int MESSAGE_REQUEST_UPDATE_LIST =0x00005;
+	public static final int MESSAGE_OPEN_MULTI_SELECT_MODE=0x00006;
 
 	private static final int MESSAGE_DELETE_SELECTED_ITEMS_COMPLETE  =0x00010;
 
@@ -304,6 +306,16 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
             break;
             case MESSAGE_SHOW_INDICATOR:{
                 findViewById(R.id.main_indicator).setVisibility(View.VISIBLE);
+            }
+            break;
+            case MESSAGE_OPEN_MULTI_SELECT_MODE:{
+                int position=0;
+                try{
+                    position=(Integer)msg.obj;
+                }catch (Exception e){
+                    LogUtil.putExceptionLog(this,e);
+                }
+                openMultiSelectMode(position);
             }
             break;
         }

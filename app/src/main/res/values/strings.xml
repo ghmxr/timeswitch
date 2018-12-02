@@ -335,6 +335,7 @@
 	<string name="center">居中</string>
 	<string name="bottom">底部</string>
 	<string name="word_import">导入</string>
+	<string name="word_nothing">无</string>
 	<string name="toast_location_default">默认位置</string>
 	<string name="toast_location_custom">自定义位置</string>
 	<string name="word_center"><u>居中</u></string>
