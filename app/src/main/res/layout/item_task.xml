@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/item_task_root"
-    app:cardElevation="5dp"
+    app:cardElevation="2dp"
     app:cardCornerRadius="5dp">
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,7 +14,7 @@
             android:id="@+id/item_task_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/shape_corner_item_title"
+            android:background="#16a085"
             android:foreground="?attr/selectableItemBackground"
             android:clickable="true"
             android:focusable="false">
@@ -26,7 +26,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
-                android:src="@drawable/drawable_arrow_right"/>
+                android:src="@drawable/arrow_right_item_folding"/>
 
             <TextView
                 android:id="@+id/item_task_name"
@@ -39,7 +39,8 @@
                 android:layout_marginBottom="5dp"
                 android:layout_centerVertical="true"
                 android:textSize="14sp"
-                android:textColor="@color/color_text_normal"
+                android:textColor="#ffffff"
+                android:textStyle="bold"
                 android:text="TaskName"/>
             <android.support.v7.widget.SwitchCompat
                 android:id="@+id/item_task_switch"

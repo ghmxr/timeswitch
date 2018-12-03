@@ -73,8 +73,14 @@ public class PublicConsts {
 	public static final int EXCEPTION_UNLOCKEDSCREEN								=		1;
 	public static final int EXCEPTION_WIFI_ENABLED									=		2;
 	public static final int EXCEPTION_WIFI_DISABLED									=		3;
+	/**
+	 * ssids for used ,or -1 for unused.
+	 */
 	public static final int EXCEPTION_WIFI_CONNECTED								=		4;
 	public static final int EXCEPTION_WIFI_DISCONNECTED								=		5;
+	/**
+	 * 0--false ,1--true
+	 */
 	public static final int EXCEPTION_BLUETOOTH_ENABLED								=		6;
 	public static final int EXCEPTION_BLUETOOTH_DISABLED							=		7;
 	public static final int EXCEPTION_RING_VIBRATE									=		8;

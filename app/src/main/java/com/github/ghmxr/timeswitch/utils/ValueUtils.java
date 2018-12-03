@@ -377,4 +377,15 @@ public class ValueUtils {
         if(ssid==null||ssid.length()<2) return "";
         return ssid.substring(1,ssid.length()-1);
     }
+
+    /**
+     * hh:mm~hh:mm
+     * @param beginMin 0~1439
+     * @param endMin 0~1439
+     * @return hh:mm~hh:mm
+     */
+    public static String timePeriodFormatValue(int beginMin,int endMin){
+        if(beginMin<0||endMin<0||beginMin>=1440||endMin>=1440) return "";
+        return format(beginMin/60)+":"+format(beginMin%60)+"~"+format(endMin/60)+":"+format(endMin%60);
+    }
 }

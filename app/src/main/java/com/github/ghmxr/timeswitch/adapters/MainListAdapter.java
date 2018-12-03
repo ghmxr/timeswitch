@@ -1,6 +1,9 @@
 package com.github.ghmxr.timeswitch.adapters;
 
 import android.content.Context;
+import android.media.AudioManager;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.SwitchCompat;
@@ -315,6 +318,12 @@ public class MainListAdapter extends BaseAdapter {
 
         try{
             ((TextView)views[i].findViewById(R.id.item_task_exception)).setText(getExceptionValue(item));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        try{
+            ((TextView)views[i].findViewById(R.id.item_task_action)).setText(getActionValue(item));
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -748,6 +757,7 @@ public class MainListAdapter extends BaseAdapter {
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.activity_taskgui_exception_wifi_disabled));
             }
+
             if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BLUETOOTH_ENABLED])==1){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.activity_taskgui_exception_bluetooth_enabled));
@@ -776,7 +786,184 @@ public class MainListAdapter extends BaseAdapter {
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.activity_taskgui_exception_net_disabled));
             }
-            //if(Integer.parseInt())
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_GPS_ENABLED])==1){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.activity_taskgui_exception_gps_on));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_GPS_DISABLED])==1){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.activity_taskgui_exception_gps_off));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_AIRPLANE_MODE_ENABLED])==1){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.activity_taskgui_exception_airplanemode_on));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_AIRPLANE_MODE_DISABLED])==1){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.activity_taskgui_exception_airplanemode_off));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_MONDAY])==1){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.monday));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_TUESDAY])==1){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.tuesday));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_WEDNESDAY])==1){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.wednesday));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_THURSDAY])==1){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.thursday));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_FRIDAY])==1){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.friday));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_SATURDAY])==1){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.saturday));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_SUNDAY])==1){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.sunday));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_START_TIME])>=0&&Integer.parseInt(exceptions[PublicConsts.EXCEPTION_END_TIME])>=0){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.log_exceptions_period));
+                builder.append(ValueUtils.timePeriodFormatValue(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_START_TIME]),Integer.parseInt(exceptions[PublicConsts.EXCEPTION_END_TIME])));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])>=0){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.log_exceptions_battery_percentage_less_than));
+                builder.append(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]));
+                builder.append("%");
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])>=0){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.log_exceptions_battery_percentage_more_than));
+                builder.append(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]));
+                builder.append("%");
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])>=0){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.log_exceptions_battery_temperature_higher_than));
+                builder.append(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]));
+                builder.append(context.getResources().getString(R.string.degree_celsius));
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])>=0){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.log_exceptions_battery_temperature_lower_than));
+                builder.append(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]));
+                builder.append(context.getResources().getString(R.string.degree_celsius));
+            }
+
+            String returnValue=builder.toString();
+            if(returnValue.equals("")) return context.getResources().getString(R.string.word_nothing);
+            return returnValue;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    private String getActionValue(TaskItem item){
+        try{
+            String[]actions=item.actions;
+            StringBuilder builder=new StringBuilder("");
+
+            int action_wifi=Integer.parseInt(actions[PublicConsts.ACTION_WIFI_LOCALE]);
+            if(action_wifi>=0){
+                if(action_wifi==0) builder.append(context.getResources().getString(R.string.action_wifi_open));
+                if(action_wifi==1) builder.append(context.getResources().getString(R.string.action_wifi_close));
+            }
+
+            int action_bluetooth=Integer.parseInt(actions[PublicConsts.ACTION_BLUETOOTH_LOCALE]);
+            if(action_bluetooth>=0){
+                if(builder.toString().length()>0)builder.append(",");
+                if(action_bluetooth==0) builder.append(context.getResources().getString(R.string.action_bluetooth_close));
+                if(action_bluetooth==1) builder.append(context.getResources().getString(R.string.action_bluetooth_open));
+            }
+
+            int action_ring=Integer.parseInt(actions[PublicConsts.ACTION_RING_MODE_LOCALE]);
+            if(action_ring>=0){
+                if(builder.toString().length()>0) builder.append(",");
+                if(action_ring==PublicConsts.ACTION_RING_NORMAL) builder.append(context.getResources().getString(R.string.action_ring_mode_normal));
+                if(action_ring==PublicConsts.ACTION_RING_VIBRATE)builder.append(context.getResources().getString(R.string.action_ring_mode_vibrate));
+                if(action_ring==PublicConsts.ACTION_RING_OFF) builder.append(context.getResources().getString(R.string.action_ring_mode_off));
+            }
+
+            String [] action_volumes=actions[PublicConsts.ACTION_RING_VOLUME_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
+            AudioManager audioManager=(AudioManager) context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+            int volume_call=Integer.parseInt(action_volumes[PublicConsts.VOLUME_RING_LOCALE]);
+            int volume_notification=Integer.parseInt(action_volumes[PublicConsts.VOLUME_NOTIFICATION_LOCALE]);
+            int volume_media=Integer.parseInt(action_volumes[PublicConsts.VOLUME_MEDIA_LOCALE]);
+            int volume_alarm=Integer.parseInt(action_volumes[PublicConsts.VOLUME_ALARM_LOCALE]);
+            if(volume_call>=0) {
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.activity_taskgui_actions_ring_volume_ring));
+                builder.append((int)(((double)volume_call/audioManager.getStreamMaxVolume(AudioManager.STREAM_RING))*100));
+                builder.append(context.getResources().getString(R.string.percentage));
+            }
+            if(volume_media>=0){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.activity_taskgui_actions_ring_volume_media));
+                builder.append((int)(((double)volume_media/audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC))*100));
+                builder.append(context.getResources().getString(R.string.percentage));
+            }
+            if(volume_notification>=0){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.activity_taskgui_actions_ring_volume_notification));
+                builder.append((int)(((double)volume_notification/audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION))*100));
+                builder.append(context.getResources().getString(R.string.percentage));
+            }
+            if(volume_alarm>=0){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.activity_taskgui_actions_ring_volume_alarm));
+                builder.append((int)(((double)volume_alarm/audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM))*100));
+                builder.append(context.getResources().getString(R.string.percentage));
+            }
+
+            String[] action_ring_selections=actions[PublicConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
+            int action_ring_selection_call=Integer.parseInt(action_ring_selections[PublicConsts.RING_SELECTION_CALL_TYPE_LOCALE]);
+            int action_ring_selection_notification=Integer.parseInt(action_ring_selections[PublicConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE]);
+            //RingtoneManager ringtoneManager=RingtoneManager.
+            if(action_ring_selection_notification>=0){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.action_set_ringtone_notification));
+                builder.append(RingtoneManager.getRingtone(context, Uri.parse(item.uri_ring_notification)).getTitle(context));
+            }
+            if(action_ring_selection_call>=0){
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.action_set_ringtone_phone));
+                builder.append(RingtoneManager.getRingtone(context, Uri.parse(item.uri_ring_call)).getTitle(context));
+            }
+
+            String [] action_vibrate_values=actions[PublicConsts.ACTION_VIBRATE_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
+            int vibrate_frequency=Integer.parseInt(action_vibrate_values[PublicConsts.VIBRATE_FREQUENCY_LOCALE]);
+            if(vibrate_frequency>0){
+                int vibrate_duration=Integer.parseInt(action_vibrate_values[PublicConsts.VIBRATE_DURATION_LOCALE]);
+                int vibrate_interval=Integer.parseInt(action_vibrate_values[PublicConsts.VIBRATE_INTERVAL_LOCALE]);
+                if(builder.toString().length()>0) builder.append(",");
+                builder.append(context.getResources().getString(R.string.adapter_action_vibrate));
+                builder.append(vibrate_frequency);
+                builder.append(context.getResources().getString(R.string.dialog_actions_vibrate_frequency_measure));
+                builder.append(",");
+                builder.append(vibrate_duration);
+                builder.append(context.getResources().getString(R.string.dialog_actions_vibrate_duration_measure));
+                builder.append(",");
+                builder.append(vibrate_interval);
+                builder.append(context.getResources().getString(R.string.dialog_actions_vibrate_interval_measure));
+            }
+
+            String  action_set_wallpaper_values=actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE];
+            int action_wallpaper=Integer.parseInt(action_set_wallpaper_values);
+            if(action_wallpaper>=0){
+                if(builder.toString().length()>0) builder.append(",");
+               // builder.append()
+            }
 
             String returnValue=builder.toString();
             if(returnValue.equals("")) return context.getResources().getString(R.string.word_nothing);

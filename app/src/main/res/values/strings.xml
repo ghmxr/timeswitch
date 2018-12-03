@@ -294,6 +294,10 @@
 	<string name="permission_request_sms_send_title">发送短信权限</string>
 	<string name="permission_request_sms_send_message">此操作需要授权发送短信权限。</string>
 	<string name="permission_grant_action_att">立即授权</string>
+	<string name="adapter_action_vibrate">振动器:</string>
+	<string name="adapter_action_vibrate_frequency">振动次数:</string>
+	<string name="adapter_action_vibrate_duration">持续时间:</string>
+	<string name="adapter_action_vibrate_interval">间隔时间:</string>
 	<string name="adapter_per">每</string>
 	<string name="adapter_trigger">触发</string>
 	<string name="adapter_single">仅一次</string>
@@ -336,6 +340,8 @@
 	<string name="bottom">底部</string>
 	<string name="word_import">导入</string>
 	<string name="word_nothing">无</string>
+	<string name="degree_celsius">℃</string>
+	<string name="percentage">%</string>
 	<string name="toast_location_default">默认位置</string>
 	<string name="toast_location_custom">自定义位置</string>
 	<string name="word_center"><u>居中</u></string>
