@@ -208,12 +208,15 @@ public class PublicConsts {
 	public static final int ACTION_BRIGHTNESS_UNSELECTED	=-1;
 	public static final int ACTION_BRIGHTNESS_AUTO			=256;
 
+	public static final int ADDITION_LENGTH =5;
 	/**
 	 * @deprecated
 	 */
 	public static final int ADDITION_NOTIFY=0;
 	public static final int ADDITION_AUTO_DELETE=1;
 	public static final int ADDITION_AUTO_CLOSE=2;
+	public static final int ADDITION_TITLE_COLOR_LOCALE=3;
+	public static final int ADDITION_EXCEPTION_CONNECTOR_LOCALE=4;
 
 	public static final int BRIGHTNESS_MAX=255;
 

@@ -3,18 +3,25 @@ package com.github.ghmxr.timeswitch.ui;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
+import android.media.RingtoneManager;
+import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.telephony.SubscriptionInfo;
+import android.telephony.SubscriptionManager;
 import android.util.Log;
 
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
+import com.github.ghmxr.timeswitch.data.TaskItem;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import java.io.File;
+import java.util.EmptyStackException;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
@@ -312,6 +319,415 @@ public class ActionDisplayValue {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static class ActionDisplayValueOfAdapter{
+
+        public static String getWifiDisplayValue(Context context,String value){
+            try{
+                int action_wifi=Integer.parseInt(value);
+                if(action_wifi>=0){
+                    if(action_wifi==0) return context.getResources().getString(R.string.action_wifi_open);
+                    if(action_wifi==1) return context.getResources().getString(R.string.action_wifi_close);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "";
+        }
+
+        public static String getBluetoothDisplayValue(Context context,String value){
+            try{
+                int action_bluetooth=Integer.parseInt(value);
+                if(action_bluetooth==0) return context.getResources().getString(R.string.action_bluetooth_close);
+                if(action_bluetooth==1) return context.getResources().getString(R.string.action_bluetooth_open);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "";
+        }
+
+        public static String getRingModeDisplayValue(Context context,String value){
+            try {
+                int action_ring=Integer.parseInt(value);
+                if(action_ring==PublicConsts.ACTION_RING_NORMAL) return context.getResources().getString(R.string.action_ring_mode_normal);
+                if(action_ring==PublicConsts.ACTION_RING_VIBRATE) return (context.getResources().getString(R.string.action_ring_mode_vibrate));
+                if(action_ring==PublicConsts.ACTION_RING_OFF) return (context.getResources().getString(R.string.action_ring_mode_off));
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "";
+        }
+
+        public static String getRingVolumeDisplayValue(Context context,String values){
+            try{
+                String [] action_volumes=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
+                StringBuilder builder=new StringBuilder("");
+                AudioManager audioManager=(AudioManager) context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+                int volume_call=Integer.parseInt(action_volumes[PublicConsts.VOLUME_RING_LOCALE]);
+                int volume_notification=Integer.parseInt(action_volumes[PublicConsts.VOLUME_NOTIFICATION_LOCALE]);
+                int volume_media=Integer.parseInt(action_volumes[PublicConsts.VOLUME_MEDIA_LOCALE]);
+                int volume_alarm=Integer.parseInt(action_volumes[PublicConsts.VOLUME_ALARM_LOCALE]);
+                if(volume_call>=0) {
+                    builder.append(context.getResources().getString(R.string.activity_taskgui_actions_ring_volume_ring));
+                    builder.append((int)(((double)volume_call/audioManager.getStreamMaxVolume(AudioManager.STREAM_RING))*100));
+                    builder.append(context.getResources().getString(R.string.percentage));
+                }
+                if(volume_media>=0){
+                    if(builder.toString().length()>0) builder.append(",");
+                    builder.append(context.getResources().getString(R.string.activity_taskgui_actions_ring_volume_media));
+                    builder.append((int)(((double)volume_media/audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC))*100));
+                    builder.append(context.getResources().getString(R.string.percentage));
+                }
+                if(volume_notification>=0){
+                    if(builder.toString().length()>0) builder.append(",");
+                    builder.append(context.getResources().getString(R.string.activity_taskgui_actions_ring_volume_notification));
+                    builder.append((int)(((double)volume_notification/audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION))*100));
+                    builder.append(context.getResources().getString(R.string.percentage));
+                }
+                if(volume_alarm>=0){
+                    if(builder.toString().length()>0) builder.append(",");
+                    builder.append(context.getResources().getString(R.string.activity_taskgui_actions_ring_volume_alarm));
+                    builder.append((int)(((double)volume_alarm/audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM))*100));
+                    builder.append(context.getResources().getString(R.string.percentage));
+                }
+                return builder.toString();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "";
+        }
+
+        public static String getRingSelectionDisplayValue(Context context,String values,String uri_notification,String uri_call){
+            try{
+                String[] action_ring_selections=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
+                StringBuilder builder=new StringBuilder("");
+                int action_ring_selection_call=Integer.parseInt(action_ring_selections[PublicConsts.RING_SELECTION_CALL_TYPE_LOCALE]);
+                int action_ring_selection_notification=Integer.parseInt(action_ring_selections[PublicConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE]);
+                if(action_ring_selection_notification>=0){
+                    builder.append(context.getResources().getString(R.string.action_set_ringtone_notification));
+                    builder.append(RingtoneManager.getRingtone(context, Uri.parse(uri_notification)).getTitle(context));
+                }
+                if(action_ring_selection_call>=0){
+                    if(builder.toString().length()>0) builder.append(",");
+                    builder.append(context.getResources().getString(R.string.action_set_ringtone_phone));
+                    builder.append(RingtoneManager.getRingtone(context, Uri.parse(uri_call)).getTitle(context));
+                }
+                return builder.toString();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "";
+        }
+
+        public static String getRingSelectionDisplayValue(Context context, TaskItem item){
+            return getRingSelectionDisplayValue(context,item.actions[PublicConsts.ACTION_RING_SELECTION_LOCALE],item.uri_ring_notification,item.uri_ring_call);
+        }
+
+        public static String getVibrateDisplayValue(Context context,String values){
+            try{
+                String [] action_vibrate_values=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
+                StringBuilder builder=new StringBuilder("");
+                int vibrate_frequency=Integer.parseInt(action_vibrate_values[PublicConsts.VIBRATE_FREQUENCY_LOCALE]);
+                if(vibrate_frequency>0){
+                    int vibrate_duration=Integer.parseInt(action_vibrate_values[PublicConsts.VIBRATE_DURATION_LOCALE]);
+                    int vibrate_interval=Integer.parseInt(action_vibrate_values[PublicConsts.VIBRATE_INTERVAL_LOCALE]);
+                    builder.append(context.getResources().getString(R.string.adapter_action_vibrate));
+                    builder.append(vibrate_frequency);
+                    builder.append(context.getResources().getString(R.string.dialog_actions_vibrate_frequency_measure));
+                    builder.append(",");
+                    builder.append(vibrate_duration);
+                    builder.append(context.getResources().getString(R.string.dialog_actions_vibrate_duration_measure));
+                    builder.append(",");
+                    builder.append(vibrate_interval);
+                    builder.append(context.getResources().getString(R.string.dialog_actions_vibrate_interval_measure));
+                    return builder.toString();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "";
+        }
+
+        public static String getBrightnessDisplayValue(Context context,String value){
+            try{
+                int action_brightness=Integer.parseInt(value);
+                if(action_brightness>=0){
+                    StringBuilder builder=new StringBuilder("");
+                    builder.append(context.getResources().getString(R.string.adapter_action_brightness));
+                    if(action_brightness==PublicConsts.ACTION_BRIGHTNESS_AUTO) builder.append(R.string.adapter_action_brightness_auto);
+                    else {
+                        builder.append((int)(((double)action_brightness/PublicConsts.BRIGHTNESS_MAX)*100));
+                        builder.append(context.getResources().getString(R.string.percentage));
+                    }
+                    return builder.toString();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "";
+        }
+
+        public static String getWallpapperDisplayValue(Context context,String value,String uri_wallpaper){
+            try{
+                StringBuilder builder=new StringBuilder("");
+                int action_wallpaper=Integer.parseInt(value);
+                if(action_wallpaper>=0){
+                    builder.append(context.getResources().getString(R.string.action_set_wallpaper));
+                    builder.append(ValueUtils.getRealPathFromUri(context,Uri.parse(uri_wallpaper)));
+                }
+                return builder.toString();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "";
+        }
+
+        public static String getWallpaperDisplayValue(Context context,TaskItem item){
+            return getWallpapperDisplayValue(context,item.actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE],item.uri_wallpaper_desktop);
+        }
+
+        public static String getSMSDisplayValue(Context context,String values,String addresses,String message){
+            try{
+                String action_sms_values[]=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
+                StringBuilder builder=new StringBuilder("");
+                if(Integer.parseInt(action_sms_values[PublicConsts.SMS_ENABLED_LOCALE])>=0){
+                    builder.append(context.getResources().getString(R.string.adapter_action_sms));
+                    if(Build.VERSION.SDK_INT>=22){
+                        SubscriptionInfo subinfo= null;
+                        try{
+                            subinfo=SubscriptionManager.from(context).getActiveSubscriptionInfo(Integer.parseInt(action_sms_values[PublicConsts.SMS_SUBINFO_LOCALE]));
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        builder.append("(");
+                        try{
+                            builder.append(subinfo.getDisplayName());
+                            builder.append(":");
+                            builder.append(subinfo.getNumber());
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            builder.append("");
+                        }
+                        builder.append(")");
+                    }
+                    builder.append(context.getResources().getString(R.string.adapter_action_sms_receivers));
+                    builder.append(addresses);
+                    builder.append(",");
+                    builder.append(context.getResources().getString(R.string.adapter_action_sms_message));
+                    builder.append(message);
+                    return builder.toString();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "";
+        }
+
+        public static String getSMSDisplayValue(Context context,TaskItem item){
+            return getSMSDisplayValue(context,item.actions[PublicConsts.ACTION_SMS_LOCALE],item.sms_address,item.sms_message);
+        }
+
+        public static String getToastDisplayValue(Context context,String values,String toast){
+            try{
+                String []toast_values=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
+                int toast_type=Integer.parseInt(toast_values[0]);
+                if(toast_type>=0){
+                    StringBuilder builder=new StringBuilder("");
+                    builder.append(context.getResources().getString(R.string.adapter_action_toast));
+                    if(toast_type==PublicConsts.TOAST_TYPE_CUSTOM){
+                        int toast_x_offset=Integer.parseInt(toast_values[PublicConsts.TOAST_LOCATION_X_OFFSET_LOCALE]);
+                        int toast_y_offset=Integer.parseInt(toast_values[PublicConsts.TOAST_LOCATION_Y_OFFSET_LOCALE]);
+                        builder.append(context.getResources().getString(R.string.toast_location_custom));
+                        builder.append(":");
+                        builder.append(toast_x_offset);
+                        builder.append(",");
+                        builder.append(toast_y_offset);
+                        builder.append(",");
+                    }
+                    builder.append(context.getResources().getString(R.string.adapter_action_toast_message));
+                    builder.append(toast);
+                    return builder.toString();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "";
+        }
+
+        public static String getToastDisplayValue(Context context,TaskItem item){
+            return getToastDisplayValue(context,item.actions[PublicConsts.ACTION_TOAST_LOCALE],item.toast);
+        }
+
+        public static String getGpsDisplayValue(Context context,String value){
+            try{
+                int action_gps=Integer.parseInt(value);
+                if(action_gps==0) return context.getResources().getString(R.string.action_gps_off);
+                if(action_gps==1) return context.getResources().getString(R.string.action_gps_on);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "";
+        }
+
+        public static String getNetDisplayValue(Context context,String value){
+            try{
+              int action_net=Integer.parseInt(value);
+              if(action_net==0) return context.getResources().getString(R.string.action_net_off);
+              if(action_net==1) return context.getResources().getString(R.string.action_net_on);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "";
+        }
+
+        public static String getAirplaneModeDisplayValue(Context context,String value){
+            try{
+                int action_airplanemode=Integer.parseInt(value);
+                if(action_airplanemode==0) return context.getResources().getString(R.string.action_airplane_mode_off);
+                if(action_airplanemode==1) return context.getResources().getString(R.string.action_airplane_mode_on);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "";
+        }
+
+        public static String getDeviceControlDisplayValue(Context context,String value){
+            try {
+                int action_device=Integer.parseInt(value);
+                if(action_device==PublicConsts.ACTION_DEVICECONTROL_SHUTDOWN) return context.getResources().getString(R.string.action_device_shutdown);
+                if(action_device==PublicConsts.ACTION_DEVICECONTROL_REBOOT) return context.getResources().getString(R.string.action_device_reboot);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "";
+        }
+
+        public static String getNotificationDisplayValue(Context context,String values,String title,String message){
+            try{
+                String notification_values[]=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
+                if(Integer.parseInt(notification_values[0])>=0){
+                    StringBuilder builder=new StringBuilder("");
+                    builder.append(context.getResources().getString(R.string.adapter_action_notification));
+                    if(Integer.parseInt(notification_values[1])==0) builder.append(context.getResources().getString(R.string.word_default));
+                    if(Integer.parseInt(notification_values[1])==1) {
+                        builder.append(context.getResources().getString(R.string.adapter_action_notification_title));
+                        builder.append(title);
+                        builder.append(",");
+                        builder.append(context.getResources().getString(R.string.adapter_action_notification_message));
+                        builder.append(message);
+                    }
+                    return builder.toString();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "";
+        }
+
+        public static String getNotificationDisplayValue(Context context,TaskItem item){
+            return getNotificationDisplayValue(context,item.actions[PublicConsts.ACTION_NOTIFICATION_LOCALE],item.notification_title,item.notification_message);
+        }
+
+        public static String getTaskNamesDisplayValue(String values){
+            try{
+                String [] ids=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
+                if(Integer.parseInt(ids[0])<0) return "";
+                StringBuilder builder=new StringBuilder("");
+                for(int i=0;i<ids.length;i++){
+                    int position=ProcessTaskItem.getPosition(Integer.parseInt(ids[i]));
+                    if(position>=0) builder.append(TimeSwitchService.list.get(position).name);
+                    if(i<ids.length-1) builder.append(",");
+                }
+                return builder.toString();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "";
+        }
+
+        public static String getEnableTasksDisplayValue(Context context,String values){
+            try{
+                String tasknames=getTaskNamesDisplayValue(values);
+                if(tasknames.length()>0){
+                    String displayValue="";
+                    displayValue+=context.getResources().getString(R.string.adapter_action_task_enable);
+                    displayValue+=tasknames;
+                    return displayValue;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "";
+        }
+
+        public static String getDisableTasksDisplayValue(Context context,String values){
+            try{
+                String tasknames=getTaskNamesDisplayValue(values);
+                if(tasknames.length()>0){
+                    String displayValue="";
+                    displayValue+=context.getResources().getString(R.string.adapter_action_task_disable);
+                    displayValue+=tasknames;
+                    return displayValue;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "";
+        }
+
+        public static String getAppPackagesDisplayValue(Context context,String values){
+            try{
+                StringBuilder builder=new StringBuilder("");
+                String [] package_names=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
+                try{
+                    if(Integer.parseInt(package_names[0])<0) return "";
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                //builder.append(context.getResources().getString(R.string.adapter_action_app_open));
+                PackageManager manager=context.getApplicationContext().getPackageManager();
+                for(int i=0;i<package_names.length;i++){
+                    builder.append(manager.getApplicationLabel(manager.getApplicationInfo(package_names[i],PackageManager.GET_META_DATA)));
+                    if(i<package_names.length-1) builder.append(",");
+                }
+                return builder.toString();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "";
+        }
+
+        public static String getAppLaunchDisplayValue(Context context,String values){
+            try{
+                String apps=getAppPackagesDisplayValue(context,values);
+                if(apps.length()>0){
+                    String displayValue="";
+                    displayValue+=(context.getResources().getString(R.string.adapter_action_app_open));
+                    displayValue+=(apps);
+                    return displayValue;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "";
+        }
+
+        public static String getAppCloseDisplayValue(Context context,String values){
+            try{
+                String apps=getAppPackagesDisplayValue(context,values);
+                if(apps.length()>0){
+                    String displayValue="";
+                    displayValue+=context.getResources().getString(R.string.adapter_action_app_close);
+                    displayValue+=apps;
+                    return displayValue;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "";
+        }
+
     }
 
 }

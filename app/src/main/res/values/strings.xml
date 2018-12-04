@@ -157,6 +157,7 @@
 	<string name="activity_taskgui_additional_notify_cb">触发时推送通知</string>
 	<string name="activity_taskgui_additional_autodelete_cb">触发后删除</string>
 	<string name="activity_taskgui_additional_autoclose_cb">触发后关闭</string>
+	<string name="activity_taskgui_additional_titlecolor_att">标题颜色</string>
 	<string name="activity_taskgui_att_unchoose">未选择</string>
 	<string name="activity_taskgui_att_exception">触发例外</string>
 	<string name="activity_taskgui_exception_wifi_enabled">WiFi为打开状态</string>
@@ -298,6 +299,20 @@
 	<string name="adapter_action_vibrate_frequency">振动次数:</string>
 	<string name="adapter_action_vibrate_duration">持续时间:</string>
 	<string name="adapter_action_vibrate_interval">间隔时间:</string>
+	<string name="adapter_action_sms">发送短信:</string>
+	<string name="adapter_action_sms_receivers">收件人:</string>
+	<string name="adapter_action_sms_message">短信内容:</string>
+	<string name="adapter_action_toast">显示Toast:</string>
+	<string name="adapter_action_toast_message">Toast内容:</string>
+	<string name="adapter_action_app_open">运行应用:</string>
+	<string name="adapter_action_app_close">关闭应用:</string>
+	<string name="adapter_action_task_enable">启用任务:</string>
+	<string name="adapter_action_task_disable">关闭任务:</string>
+	<string name="adapter_action_notification">推送通知:</string>
+	<string name="adapter_action_notification_title">标题:</string>
+	<string name="adapter_action_notification_message">内容:</string>
+	<string name="adapter_action_brightness">屏幕亮度:</string>
+	<string name="adapter_action_brightness_auto">自动</string>
 	<string name="adapter_per">每</string>
 	<string name="adapter_trigger">触发</string>
 	<string name="adapter_single">仅一次</string>
@@ -340,6 +355,7 @@
 	<string name="bottom">底部</string>
 	<string name="word_import">导入</string>
 	<string name="word_nothing">无</string>
+	<string name="word_default">默认</string>
 	<string name="degree_celsius">℃</string>
 	<string name="percentage">%</string>
 	<string name="toast_location_default">默认位置</string>

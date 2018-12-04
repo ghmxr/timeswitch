@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -173,6 +174,11 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autoclose_cb)).setChecked(taskitem.autoclose);
 		((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autodelete_cb)).setChecked(taskitem.autodelete);
 		//activateTriggerType(taskitem.trigger_type);
+		try{
+			(findViewById(R.id.layout_taskgui_additional_titlecolor_img)).setBackgroundColor(Color.parseColor(taskitem.addition_title_color));
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 
 		if(taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_SINGLE) setAutoCloseAreaEnabled(false);
 		else {
@@ -1175,12 +1181,14 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		values.put(SQLConsts.SQL_TASK_COLUMN_TOAST,taskitem.toast);
 		values.put(SQLConsts.SQL_TASK_COLUMN_SMS_SEND_PHONE_NUMBERS,taskitem.sms_address);
 		values.put(SQLConsts.SQL_TASK_COLUMN_SMS_SEND_MESSAGE,taskitem.sms_message);
-		int[] additions=new int[3];
-		additions[PublicConsts.ADDITION_NOTIFY]=this.taskitem.notify?1:0;
-		additions[PublicConsts.ADDITION_AUTO_DELETE]=this.taskitem.autodelete?1:0;
-		additions[PublicConsts.ADDITION_AUTO_CLOSE]=this.taskitem.autoclose?1:0;
-
-		values.put(SQLConsts.SQL_TASK_COLUMN_ADDITIONS,ValueUtils.intArray2String(additions));
+		String [] additions=new String[PublicConsts.ADDITION_LENGTH];
+		for(int i=0;i<additions.length;i++) additions[i]=String.valueOf(-1);
+		additions[PublicConsts.ADDITION_NOTIFY]=this.taskitem.notify?String.valueOf(1):String.valueOf(0);
+		additions[PublicConsts.ADDITION_AUTO_DELETE]=this.taskitem.autodelete?String.valueOf(1):String.valueOf(0);
+		additions[PublicConsts.ADDITION_AUTO_CLOSE]=this.taskitem.autoclose?String.valueOf(1):String.valueOf(0);
+		additions[PublicConsts.ADDITION_TITLE_COLOR_LOCALE]=taskitem.addition_title_color;
+		additions[PublicConsts.ADDITION_EXCEPTION_CONNECTOR_LOCALE]=taskitem.addition_exception_connector;
+		values.put(SQLConsts.SQL_TASK_COLUMN_ADDITIONS,ValueUtils.stringArray2String(additions));
 		if(id==null) return db.insert(SQLConsts.getCurrentTableName(this),null,values);
 		else{
 			Log.e("UPDATE","id is "+id);

@@ -14,4 +14,6 @@
     <color name="color_current_charge">#ff3333</color>
     <color name="color_current_discharge">#33ff66</color>
     <color name="color_transparent_popup_window">#bb000000</color>
+    <color name="color_task_enabled_font">#228B22</color>
+    <color name="color_task_disabled_font">#DC143C</color>
 </resources>

@@ -115,7 +115,7 @@ public class TaskItem implements Comparable<TaskItem>{
 	 * @deprecated
 	 * 任务是否在通知栏推送通知。
 	 */
-	public boolean notify=true;
+	public boolean notify=false;
 
 	/**
 	 * 任务执行完成后是否自动删除
@@ -126,6 +126,10 @@ public class TaskItem implements Comparable<TaskItem>{
 	 * 任务执行后是否自动关闭
 	 */
 	public boolean autoclose=false;
+
+	public String addition_exception_connector=String.valueOf(-1);
+
+	public String addition_title_color="#16a085";
 
 	/**
 	 *任务的触发器
@@ -201,6 +205,8 @@ public class TaskItem implements Comparable<TaskItem>{
 		this.notify=item.notify;
 		this.autodelete=item.autodelete;
 		this.autoclose=item.autoclose;
+		this.addition_title_color=new String(item.addition_title_color);
+		this.addition_exception_connector=new String(item.addition_exception_connector);
 	}
 
 	@Override

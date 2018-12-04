@@ -1271,11 +1271,18 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                 case PublicConsts.TRIGGER_TYPE_SCREEN_OFF:imgRes=R.drawable.icon_screen_off;break;
                 case PublicConsts.TRIGGER_TYPE_POWER_CONNECTED:imgRes=R.drawable.icon_power_connected;break;
                 case PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED:imgRes=R.drawable.icon_power_disconnected;break;
+                case PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_IN: case PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT:{
+                    imgRes=R.drawable.icon_headset;
+                }
+                break;
+                case PublicConsts.TRIGGER_TYPE_APP_LAUNCHED:imgRes=R.drawable.icon_app_launch;break;
+                case PublicConsts.TRIGGER_TYPE_APP_CLOSED:imgRes=R.drawable.icon_app_stop;break;
             }
             ((ImageView)view.findViewById(R.id.item_dialog_task_img)).setImageResource(imgRes);
             ((TextView)view.findViewById(R.id.item_dialog_task_name)).setText(item.name);
             ((TextView)view.findViewById(R.id.item_dialog_task_name_description)).setText(String.valueOf(item.isenabled?getResources().getString(R.string.opened):
                     getResources().getString(R.string.closed)));
+            ((TextView)view.findViewById(R.id.item_dialog_task_name_description)).setTextColor(item.isenabled?getResources().getColor(R.color.color_task_enabled_font):getResources().getColor(R.color.color_task_disabled_font));
             ((CheckBox)view.findViewById(R.id.item_dialog_task_cb)).setChecked(isSelected[i]);
             return view;
         }

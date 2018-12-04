@@ -121,10 +121,19 @@ public class RefreshListItems implements Runnable {
                     item.sms_address=cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_SMS_SEND_PHONE_NUMBERS));
                     item.sms_message=cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_SMS_SEND_MESSAGE));
                     //additions
-                    int read_additions[] =ValueUtils.string2intArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ADDITIONS)));
-                    item.notify=(read_additions[PublicConsts.ADDITION_NOTIFY]==1);
-                    item.autodelete=(read_additions[PublicConsts.ADDITION_AUTO_DELETE]==1);
-                    item.autoclose=(read_additions[PublicConsts.ADDITION_AUTO_CLOSE]==1);
+                    String initial_additions[]=new String[PublicConsts.ADDITION_LENGTH];
+                    for(int i=0;i<initial_additions.length;i++) initial_additions[i]=String.valueOf(-1);
+
+                    String read_additions[] =ValueUtils.string2StringArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ADDITIONS)));
+                    System.arraycopy(read_additions,0,initial_additions,0,read_additions.length);
+
+                    item.notify=(Integer.parseInt(initial_additions[PublicConsts.ADDITION_NOTIFY])==1);
+                    item.autodelete=(Integer.parseInt(initial_additions[PublicConsts.ADDITION_AUTO_DELETE])==1);
+                    item.autoclose=(Integer.parseInt(initial_additions[PublicConsts.ADDITION_AUTO_CLOSE])==1);
+                    if(!initial_additions[PublicConsts.ADDITION_TITLE_COLOR_LOCALE].equals(String.valueOf(-1))){
+                        item.addition_title_color=initial_additions[PublicConsts.ADDITION_TITLE_COLOR_LOCALE];
+                    }
+
                 }catch(Exception e){
                     e.printStackTrace();
                 }
