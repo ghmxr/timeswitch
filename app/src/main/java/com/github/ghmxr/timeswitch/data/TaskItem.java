@@ -22,9 +22,7 @@ import com.github.ghmxr.timeswitch.services.AppLaunchingDetectionService;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.timers.CustomTimerTask;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
@@ -129,7 +127,7 @@ public class TaskItem implements Comparable<TaskItem>{
 
 	public String addition_exception_connector=String.valueOf(-1);
 
-	public String addition_title_color="#16a085";
+	public String addition_title_color="#3F51B5";
 
 	/**
 	 *任务的触发器

@@ -1,7 +1,5 @@
 package com.github.ghmxr.timeswitch.activities;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -12,7 +10,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.R;
-import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.SQLConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
@@ -38,7 +35,11 @@ public class EditTask extends TaskGui {
     @Override
     public void onCreate(Bundle mybundle) {
         super.onCreate(mybundle);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        try{
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override

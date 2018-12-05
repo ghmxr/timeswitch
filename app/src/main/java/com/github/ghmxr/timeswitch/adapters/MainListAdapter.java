@@ -2,16 +2,9 @@ package com.github.ghmxr.timeswitch.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.media.AudioManager;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.SwitchCompat;
-import android.telephony.SubscriptionInfo;
-import android.telephony.SubscriptionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -138,10 +131,8 @@ public class MainListAdapter extends BaseAdapter {
         try{
             TextView tv_name=views[i].findViewById(R.id.item_task_name);
             tv_name.setText(item.name);
-            int color=Color.parseColor(item.addition_title_color);
-            ((views[i].findViewById(R.id.item_task_title))).setBackgroundColor(color);
-            //if(color>125*125*125) tv_name.setTextColor(context.getResources().getColor(R.color.color_black));
-
+            int color_value=Color.parseColor(item.addition_title_color);
+            ((views[i].findViewById(R.id.item_task_title))).setBackgroundColor(color_value);
         }catch (Exception e){
             e.printStackTrace();
         }

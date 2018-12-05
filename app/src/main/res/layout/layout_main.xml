@@ -34,7 +34,8 @@
                 android:dividerHeight="15dp"
                 android:paddingTop="10dp"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp">
+                android:paddingRight="10dp"
+                android:scrollbars="none">
             </ListView>
 
         </android.support.v4.widget.SwipeRefreshLayout>

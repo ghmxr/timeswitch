@@ -6,7 +6,6 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -17,8 +16,6 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -192,9 +189,14 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		refreshTriggerDisplayValue();
 		refreshExceptionViews();
 		refreshActionStatus();
+		setTaskThemeColor(taskitem.addition_title_color);
 	}
 
 	public abstract void initialVariables();
+
+	private void setTaskThemeColor(String color){
+		try{ setToolBarAndStatusBarColor(findViewById(R.id.taskgui_toolbar),color); } catch (Exception e){ e.printStackTrace(); }
+	}
 
 	@Override
 	public void processMessage(Message msg){}
@@ -1048,6 +1050,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 						taskitem.addition_title_color=color;
 						try{
 							findViewById(R.id.layout_taskgui_additional_titlecolor_img).setBackgroundColor(Color.parseColor(taskitem.addition_title_color));
+							setTaskThemeColor(taskitem.addition_title_color);
 						}catch (Exception e){
 							e.printStackTrace();
 						}
