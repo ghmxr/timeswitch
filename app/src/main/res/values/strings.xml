@@ -158,6 +158,8 @@
 	<string name="activity_taskgui_additional_autodelete_cb">触发后删除</string>
 	<string name="activity_taskgui_additional_autoclose_cb">触发后关闭</string>
 	<string name="activity_taskgui_additional_titlecolor_att">标题颜色</string>
+	<string name="activity_taskgui_additional_titlecolor_hint">输入#RGB颜色</string>
+	<string name="activity_taskgui_additional_titlecolor_preset">预设颜色</string>
 	<string name="activity_taskgui_att_unchoose">未选择</string>
 	<string name="activity_taskgui_att_exception">触发例外</string>
 	<string name="activity_taskgui_exception_wifi_enabled">WiFi为打开状态</string>

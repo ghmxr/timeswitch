@@ -6,6 +6,7 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -16,6 +17,8 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -150,6 +153,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		findViewById(R.id.layout_taskgui_area_additional_notify).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_area_additional_autodelete).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_area_additional_autoclose).setOnClickListener(this);
+		findViewById(R.id.layout_taskgui_additional_titlecolor).setOnClickListener(this);
 
 		findViewById(R.id.layout_taskgui_area_exception_additem).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_area_action_additem).setOnClickListener(this);
@@ -982,6 +986,73 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 					cb_autoclose.toggle();
 					taskitem.autoclose=cb_autoclose.isChecked();
 				}
+			}
+			break;
+			case R.id.layout_taskgui_additional_titlecolor:{
+				/*final AlertDialog dialog=new AlertDialog.Builder(this)
+						.setTitle(getResources().getString(R.string.activity_taskgui_additional_titlecolor_att))
+						.setView(LayoutInflater.from(this).inflate(R.layout.layout_dialog_color,null))
+						.setPositiveButton(getResources().getString(R.string.dialog_button_positive),null)
+						.setNegativeButton(getResources().getString(R.string.dialog_button_negative), new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+
+							}
+						})
+						.show();
+				((EditText)dialog.findViewById(R.id.dialog_color_edit)).setText(taskitem.addition_title_color);
+				try{
+					((ImageView)dialog.findViewById(R.id.dialog_color_preview)).setBackgroundColor(Color.parseColor(taskitem.addition_title_color));
+				}catch (Exception e){
+					e.printStackTrace();
+				}
+				((EditText)dialog.findViewById(R.id.dialog_color_edit)).addTextChangedListener(new TextWatcher() {
+					@Override
+					public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+					}
+
+					@Override
+					public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+					}
+
+					@Override
+					public void afterTextChanged(Editable s) {
+						try{
+							((ImageView)dialog.findViewById(R.id.dialog_color_preview)).setBackgroundColor(Color.parseColor(((EditText)dialog.findViewById(R.id.dialog_color_edit)).getText().toString()));
+						}catch (Exception e){
+							e.printStackTrace();
+						}
+					}
+				});
+				dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						try{
+							String color_set=((EditText)dialog.findViewById(R.id.dialog_color_edit)).getEditableText().toString();
+							Color.parseColor(color_set);
+							taskitem.addition_title_color=color_set;
+						}catch (Exception e){
+							e.printStackTrace();
+							Snackbar.make(v,"Invalid color value",Snackbar.LENGTH_SHORT).show();
+							return;
+						}
+					}
+				});*/
+				DialogForColor dialog=new DialogForColor(this,taskitem.addition_title_color);
+				dialog.show();
+				dialog.setOnDialogConfirmListener(new DialogForColor.OnDialogForColorConfirmedListener() {
+					@Override
+					public void onConfirmed(String color) {
+						taskitem.addition_title_color=color;
+						try{
+							findViewById(R.id.layout_taskgui_additional_titlecolor_img).setBackgroundColor(Color.parseColor(taskitem.addition_title_color));
+						}catch (Exception e){
+							e.printStackTrace();
+						}
+					}
+				});
 			}
 			break;
 		}

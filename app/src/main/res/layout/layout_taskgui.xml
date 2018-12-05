@@ -2301,6 +2301,7 @@
                             android:background="#dddddd"/>
 
                         <RelativeLayout
+                            android:id="@+id/layout_taskgui_additional_titlecolor"
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:clickable="true"

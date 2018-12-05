@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.SwitchCompat;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -135,8 +136,12 @@ public class MainListAdapter extends BaseAdapter {
         views[i].setVisibility(View.VISIBLE);
 
         try{
-            ((TextView)views[i].findViewById(R.id.item_task_name)).setText(item.name);
-            ((views[i].findViewById(R.id.item_task_title))).setBackgroundColor(Color.parseColor(item.addition_title_color));
+            TextView tv_name=views[i].findViewById(R.id.item_task_name);
+            tv_name.setText(item.name);
+            int color=Color.parseColor(item.addition_title_color);
+            ((views[i].findViewById(R.id.item_task_title))).setBackgroundColor(color);
+            //if(color>125*125*125) tv_name.setTextColor(context.getResources().getColor(R.color.color_black));
+
         }catch (Exception e){
             e.printStackTrace();
         }
