@@ -99,6 +99,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
         setSupportActionBar(toolbar);
         try{getSupportActionBar().setDisplayHomeAsUpEnabled(true);}
         catch (Exception e){e.printStackTrace();}
+        setToolBarAndStatusBarColor(toolbar,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
         findViewById(R.id.actions_wifi).setOnClickListener(this);
         findViewById(R.id.actions_bluetooth).setOnClickListener(this);
         findViewById(R.id.actions_ring_mode).setOnClickListener(this);
@@ -425,6 +426,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                 intent.putExtra(ActionOfChangingRingtones.EXTRA_RING_VALUES,actions[PublicConsts.ACTION_RING_SELECTION_LOCALE]);
                 intent.putExtra(ActionOfChangingRingtones.EXTRA_RING_URI_NOTIFICATION,uri_ring_notification);
                 intent.putExtra(ActionOfChangingRingtones.EXTRA_RING_URI_CALL,uri_ring_call);
+                intent.putExtra(EXTRA_TITLE_COLOR,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
                 startActivityForResult(intent,REQUEST_CODE_RING_CHANGED);
             }
             break;

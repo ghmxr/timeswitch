@@ -64,6 +64,7 @@ public class Log extends BaseActivity {
         Toolbar toolbar=findViewById(R.id.log_toolbar);
         setSupportActionBar(toolbar);
         try{getSupportActionBar().setDisplayHomeAsUpEnabled(true);}catch (Exception e){e.printStackTrace();}
+        setToolBarAndStatusBarColor(toolbar,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
         swr=findViewById(R.id.log_swipe);
         swr.setColorSchemeResources(R.color.colorPrimary);
         swr.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

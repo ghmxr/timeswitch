@@ -54,6 +54,7 @@ public class SmsActivity extends BaseActivity {
         Toolbar toolbar=findViewById(R.id.sms_toolbar);
         setSupportActionBar(toolbar);
         try{getSupportActionBar().setDisplayHomeAsUpEnabled(true);}catch (Exception e){e.printStackTrace();}
+        setToolBarAndStatusBarColor(toolbar,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
         edit_addresses=findViewById(R.id.layout_sms_edit_address);
         edit_message=findViewById(R.id.layout_sms_edit_message);
         spinner=findViewById(R.id.layout_sms_spinner);

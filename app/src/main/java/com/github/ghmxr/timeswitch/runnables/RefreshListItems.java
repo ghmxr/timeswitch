@@ -130,6 +130,7 @@ public class RefreshListItems implements Runnable {
                     item.notify=(Integer.parseInt(initial_additions[PublicConsts.ADDITION_NOTIFY])==1);
                     item.autodelete=(Integer.parseInt(initial_additions[PublicConsts.ADDITION_AUTO_DELETE])==1);
                     item.autoclose=(Integer.parseInt(initial_additions[PublicConsts.ADDITION_AUTO_CLOSE])==1);
+                    item.addition_isFolded=(Integer.parseInt(initial_additions[PublicConsts.ADDITION_TITLE_FOLDED_VALUE_LOCALE])>=0);
                     if(!initial_additions[PublicConsts.ADDITION_TITLE_COLOR_LOCALE].equals(String.valueOf(-1))){
                         item.addition_title_color=initial_additions[PublicConsts.ADDITION_TITLE_COLOR_LOCALE];
                     }

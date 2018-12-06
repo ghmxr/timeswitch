@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.design.widget.Snackbar;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
+import com.github.ghmxr.timeswitch.ui.DialogForColor;
 import com.github.ghmxr.timeswitch.utils.RootUtils;
 
 /**
@@ -36,6 +38,8 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
 
     private AlertDialog waitDialog;
 
+    boolean flag_restart_main=false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +48,7 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
         setSupportActionBar(toolbar);
 
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        setToolBarAndStatusBarColor(toolbar,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
         settings=getSharedPreferences(PublicConsts.PREFERENCES_NAME, Activity.MODE_PRIVATE);
         //editor=settings.edit();
 
@@ -54,6 +58,7 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
         findViewById(R.id.settings_log).setOnClickListener(this);
         findViewById(R.id.settings_superuser).setOnClickListener(this);
         findViewById(R.id.settings_about).setOnClickListener(this);
+        findViewById(R.id.settings_color).setOnClickListener(this);
 
         CheckBox cb_autostart=findViewById(R.id.settings_autostart_cb);
         CheckBox cb_indicator=findViewById(R.id.settings_indicator_cb);
@@ -62,7 +67,10 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
         cb_autostart.setChecked(settings.getBoolean(PublicConsts.PREFERENCES_AUTO_START,PublicConsts.PREFERENCES_AUTO_START_DEFAULT));
         cb_indicator.setChecked(settings.getBoolean(PublicConsts.PREFERENCES_MAINPAGE_INDICATOR,PublicConsts.PREFERENCES_MAINPAGE_INDICATOR_DEFAULT));
         cb_superuser.setChecked(settings.getBoolean(PublicConsts.PREFERENCES_IS_SUPERUSER_MODE,PublicConsts.PREFERENCES_IS_SUPERUSER_MODE_DEFAULT));
-
+        ((TextView)findViewById(R.id.settings_color_value)).setText(settings.getString(PublicConsts.PREFERENCES_THEME_COLOR,PublicConsts.PREFERENCES_THEME_COLOR_DEFAULT));
+        try{
+            ((TextView)findViewById(R.id.settings_color_value)).setTextColor(Color.parseColor(settings.getString(PublicConsts.PREFERENCES_THEME_COLOR,PublicConsts.PREFERENCES_THEME_COLOR_DEFAULT)));
+        }catch (Exception e){e.printStackTrace();}
         cb_autostart.setOnCheckedChangeListener(this);
         cb_indicator.setOnCheckedChangeListener(this);
         cb_superuser.setOnCheckedChangeListener(this);
@@ -154,6 +162,27 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
             case R.id.settings_about:{
                 startActivity(new Intent(this,About.class));
             }
+            break;
+            case R.id.settings_color:{
+                DialogForColor dialog=new DialogForColor(this,settings.getString(PublicConsts.PREFERENCES_THEME_COLOR,PublicConsts.PREFERENCES_THEME_COLOR_DEFAULT));
+                dialog.show();
+                dialog.setOnDialogConfirmListener(new DialogForColor.OnDialogForColorConfirmedListener() {
+                    @Override
+                    public void onConfirmed(String color) {
+                        try{
+                            editor.putString(PublicConsts.PREFERENCES_THEME_COLOR,color);
+                            editor.apply();
+                            ((TextView)findViewById(R.id.settings_color_value)).setText(color);
+                            ((TextView)findViewById(R.id.settings_color_value)).setTextColor(Color.parseColor(color));
+                            setToolBarAndStatusBarColor(findViewById(R.id.settings_toolbar),color);
+                            flag_restart_main=true;
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+            break;
         }
     }
 
@@ -232,6 +261,17 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
             finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void finish(){
+        super.finish();
+        if(flag_restart_main){
+            for(BaseActivity b:queue){
+                if(b instanceof Main) b.finish();
+            }
+        }
+        startActivity(new Intent(this,Main.class));
     }
 
 }

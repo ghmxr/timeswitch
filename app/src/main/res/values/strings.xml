@@ -229,6 +229,7 @@
 	<string name="activity_settings_autostart_att_att">系统引导完成后自动启动本应用服务</string>
 	<string name="activity_settings_log_att">运行日志</string>
 	<string name="activity_settings_log_att_att">查看应用运行日志</string>
+	<string name="activity_settings_color_att">主题颜色</string>
 	<string name="activity_settings_advanced_att">进阶选项</string>
 	<string name="activity_settings_others">其他信息</string>
 	<string name="activity_settings_about_att">关于</string>

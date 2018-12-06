@@ -208,7 +208,7 @@ public class PublicConsts {
 	public static final int ACTION_BRIGHTNESS_UNSELECTED	=-1;
 	public static final int ACTION_BRIGHTNESS_AUTO			=256;
 
-	public static final int ADDITION_LENGTH =5;
+	public static final int ADDITION_LENGTH =10;
 	/**
 	 * @deprecated
 	 */
@@ -217,6 +217,7 @@ public class PublicConsts {
 	public static final int ADDITION_AUTO_CLOSE=2;
 	public static final int ADDITION_TITLE_COLOR_LOCALE=3;
 	public static final int ADDITION_EXCEPTION_CONNECTOR_LOCALE=4;
+	public static final int ADDITION_TITLE_FOLDED_VALUE_LOCALE=5;
 
 	public static final int BRIGHTNESS_MAX=255;
 
@@ -234,6 +235,9 @@ public class PublicConsts {
 
 	public static final String PREFERENCES_MAINPAGE_INDICATOR	=	"main_indicator";
 	public static final boolean PREFERENCES_MAINPAGE_INDICATOR_DEFAULT	=	false;
+
+	public static final String PREFERENCES_THEME_COLOR="theme_color";
+	public static final String PREFERENCES_THEME_COLOR_DEFAULT="#3F51B5";
 
 	public static final int API_ANDROID_ALARM_MANAGER=0;
 	public static final int API_JAVA_TIMER=1;

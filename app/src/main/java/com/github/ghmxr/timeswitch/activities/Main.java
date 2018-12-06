@@ -114,6 +114,8 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
         findViewById(R.id.main_indicator).setVisibility(settings.getBoolean(PublicConsts.PREFERENCES_MAINPAGE_INDICATOR,PublicConsts.PREFERENCES_MAINPAGE_INDICATOR_DEFAULT)?View.VISIBLE:View.GONE);
         //listview.setDivider(null);
 		setSupportActionBar(toolbar);
+		String color=getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE).getString(PublicConsts.PREFERENCES_THEME_COLOR,PublicConsts.PREFERENCES_THEME_COLOR_DEFAULT);
+		setToolBarAndStatusBarColor(toolbar,color);
 
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -224,7 +226,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
     }
 
     private void editTask(int position){
-        //int taskkey = list.get(i).id;
+        if(position<0||position>=TimeSwitchService.list.size()) return;
         Intent intent = new Intent();
         //intent.putExtra(EditTask.TAG_EDITTASK_KEY, taskkey);
         intent.putExtra(EditTask.TAG_SELECTED_ITEM_POSITION,position);
@@ -276,6 +278,17 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
                         }
                         try{
                             ProcessTaskItem.setTaskEnabled(TimeSwitchService.service_queue.getLast(),TimeSwitchService.list.get(position).id,b);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
+                adapter.setOnFoldingStatusChangedListener(new MainListAdapter.FoldingStatusChangedListener() {
+                    @Override
+                    public void onFoldingStatusChanged(int position, boolean isFolded) {
+                        try{
+                            ProcessTaskItem.setTaskFolded(Main.this,TimeSwitchService.list.get(position).id,isFolded);
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -550,11 +563,16 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
             this.thread_delete.start();
         }
         if(item.getItemId()==R.id.action_settings){
-            startActivityForResult(new Intent(this,Settings.class),REQUEST_CODE_ACTIVITY_SETTINGS);
+            Intent i=new Intent();
+            i.setClass(this,Settings.class);
+            i.putExtra(EXTRA_TITLE_COLOR,getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE).getString(PublicConsts.PREFERENCES_THEME_COLOR,PublicConsts.PREFERENCES_THEME_COLOR_DEFAULT));
+            startActivityForResult(i,REQUEST_CODE_ACTIVITY_SETTINGS);
         }
         if(item.getItemId()==R.id.action_profile){
-            //startActivity(new Intent(this,Profile.class));
-            startActivityForResult(new Intent(this,Profile.class),REQUEST_CODE_ACTIVITY_PROFILE);
+            Intent i=new Intent();
+            i.setClass(this,Profile.class);
+            i.putExtra(EXTRA_TITLE_COLOR,getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE).getString(PublicConsts.PREFERENCES_THEME_COLOR,PublicConsts.PREFERENCES_THEME_COLOR_DEFAULT));
+            startActivityForResult(i,REQUEST_CODE_ACTIVITY_PROFILE);
 
         }
         return super.onOptionsItemSelected(item);

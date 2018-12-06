@@ -52,7 +52,11 @@ public class DialogForColor extends AlertDialog implements DialogInterface.OnCli
         super.show();
         try{
             ((EditText)findViewById(R.id.dialog_color_edit)).setText(this.color);
-            (findViewById(R.id.dialog_color_preview)).setBackgroundColor(Color.parseColor(this.color));
+            try{
+                (findViewById(R.id.dialog_color_preview)).setBackgroundColor(Color.parseColor(this.color));
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             ((EditText)findViewById(R.id.dialog_color_edit)).addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {

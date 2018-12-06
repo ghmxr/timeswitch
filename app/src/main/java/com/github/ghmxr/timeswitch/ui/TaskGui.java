@@ -573,6 +573,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				Intent i=new Intent();
 				i.setClass(this,Triggers.class);
 				i.putExtra(Triggers.EXTRA_TRIGGER_TYPE,taskitem.trigger_type);
+				i.putExtra(EXTRA_TITLE_COLOR,taskitem.addition_title_color);
 				String trigger_values[]=new String[1];
 				switch (taskitem.trigger_type){
 					default:break;
@@ -625,210 +626,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				startActivityForResult(i,REQUEST_CODE_TRIGGERS);
 			}
 			break;
-			/*case R.id.layout_taskgui_area_condition_single:{
-				activateTriggerType(PublicConsts.TRIGGER_TYPE_SINGLE);
-				new DatePickerDialog(this,this,calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH)).show();
-			}
-			break;  */
-			/*case R.id.layout_taskgui_area_condition_percertaintime:{
-				activateTriggerType(PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME);
-				BottomDialogForInterval dialog=new BottomDialogForInterval(this);
-				dialog.setVariables((int)(taskitem.interval_milliseconds/(1000*60*60*24)),
-						(int)((taskitem.interval_milliseconds%(1000*60*60*24))/(1000*60*60)),
-						(int)((taskitem.interval_milliseconds%(1000*60*60))/(1000*60)));
-				dialog.setTitle(getResources().getString(R.string.dialog_setinterval_title));
-				dialog.show();
-				dialog.setOnDialogConfirmedListener(new BottomDialogForInterval.OnDialogConfirmedListener() {
-					@Override
-					public void onDialogConfirmed(long millis) {
-						taskitem.interval_milliseconds=millis;
-						TaskGui.this.refreshRepeatTextView();
-						TaskGui.this.activateTriggerType(PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME);
-					}
-				});
-			}
-			break; */
-			/*case R.id.layout_taskgui_area_condition_weekloop:{
-				activateTriggerType(PublicConsts.TRIGGER_TYPE_LOOP_WEEK);
-				LayoutInflater inflater=LayoutInflater.from(this);
-				View dialogview=inflater.inflate(R.layout.layout_dialog_weekloop, null);	
-				final AlertDialog dialog_weekloop  = new AlertDialog.Builder(this)
-						.setIcon(R.drawable.icon_repeat_weekloop)
-						.setTitle(this.getResources().getString(R.string.dialog_weekloop_title))
-						.setView(dialogview)
-						.setPositiveButton(this.getResources().getString(R.string.dialog_button_positive), null)
-						.setCancelable(true)
-						.create();
-				
-				dialog_weekloop.show();
-				final CheckBox cb_mon=dialogview.findViewById(R.id.layout_dialog_weekloop_cb_mon);
-				final CheckBox cb_tue=dialogview.findViewById(R.id.layout_dialog_weekloop_cb_tue);
-				final CheckBox cb_wed=dialogview.findViewById(R.id.layout_dialog_weekloop_cb_wed);
-				final CheckBox cb_thu=dialogview.findViewById(R.id.layout_dialog_weekloop_cb_thu);
-				final CheckBox cb_fri=dialogview.findViewById(R.id.layout_dialog_weekloop_cb_fri);
-				final CheckBox cb_sat=dialogview.findViewById(R.id.layout_dialog_weekloop_cb_sat);
-				final CheckBox cb_sun=dialogview.findViewById(R.id.layout_dialog_weekloop_cb_sun);
-				
-				cb_sun.setChecked(taskitem.week_repeat[PublicConsts.WEEK_SUNDAY]);
-				cb_mon.setChecked(taskitem.week_repeat[PublicConsts.WEEK_MONDAY]);
-				cb_tue.setChecked(taskitem.week_repeat[PublicConsts.WEEK_TUESDAY]);
-				cb_wed.setChecked(taskitem.week_repeat[PublicConsts.WEEK_WEDNESDAY]);
-				cb_thu.setChecked(taskitem.week_repeat[PublicConsts.WEEK_THURSDAY]);
-				cb_fri.setChecked(taskitem.week_repeat[PublicConsts.WEEK_FRIDAY]);
-				cb_sat.setChecked(taskitem.week_repeat[PublicConsts.WEEK_SATURDAY]);
-				
-				dialog_weekloop.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-					
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						taskitem.week_repeat[PublicConsts.WEEK_MONDAY]=cb_mon.isChecked();
-						taskitem.week_repeat[PublicConsts.WEEK_TUESDAY]=cb_tue.isChecked();
-						taskitem.week_repeat[PublicConsts.WEEK_WEDNESDAY]=cb_wed.isChecked();
-						taskitem.week_repeat[PublicConsts.WEEK_THURSDAY]=cb_thu.isChecked();
-						taskitem.week_repeat[PublicConsts.WEEK_FRIDAY]=cb_fri.isChecked();
-						taskitem.week_repeat[PublicConsts.WEEK_SATURDAY]=cb_sat.isChecked();
-						taskitem.week_repeat[PublicConsts.WEEK_SUNDAY]=cb_sun.isChecked();
-						boolean allunchecked=true;						
-						for (int i=0;i<7;i++){
-							if(taskitem.week_repeat[i]){
-								allunchecked=false;
-								break;
-							}
-						}
-						refreshWeekLoopTextView();
-						if(allunchecked){
-							TaskGui.this.activateTriggerType(PublicConsts.TRIGGER_TYPE_SINGLE);
-							dialog_weekloop.cancel();
-							return;
-						}
-						dialog_weekloop.cancel();
-						TaskGui.this.activateTriggerType(PublicConsts.TRIGGER_TYPE_LOOP_WEEK);
-					}
-				});
-				
-				dialog_weekloop.setOnCancelListener(new DialogInterface.OnCancelListener() {
-					
-					@Override
-					public void onCancel(DialogInterface dialog) {
-						// TODO Auto-generated method stub
-						boolean allunchecked=true;
-						for(int i=0;i<7;i++){
-							if(taskitem.week_repeat[i]){//if(TaskGui.this.weekloop[i]){
-								allunchecked=false;
-								break;
-							}
-						}
-						if(allunchecked) TaskGui.this.activateTriggerType(PublicConsts.TRIGGER_TYPE_SINGLE);
-					}
-				});
-			}
-			break; */
-			/*case R.id.layout_taskgui_area_condition_battery_percentage:{
-				if(taskitem.trigger_type!=PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE&&taskitem.trigger_type!=PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE){
-					activateTriggerType(PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE);
-				}else{
-					activateTriggerType(taskitem.trigger_type);
-				}
 
-				final BottomDialogForBattery dialog=new BottomDialogForBattery(this);
-				dialog.textview_title.setText(getResources().getString(R.string.activity_taskgui_condition_battery_percentage_att));
-				dialog.checkbox_enable.setVisibility(View.GONE);
-				dialog.textview_second_description.setText("%");
-				String[] percentage=new String[99];
-				for(int i=0;i<percentage.length;i++) {
-					int a=i+1;
-					percentage[i]=String.valueOf(a);
-				}
-				String[] compares={this.getResources().getString(R.string.dialog_battery_compare_more_than),this.getResources().getString(R.string.dialog_battery_compare_less_than)};
-				dialog.wheelview_first.setItems(Arrays.asList(compares));
-				dialog.wheelview_second.setItems(Arrays.asList(percentage));
-				dialog.wheelview_first.setSeletion(taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE?0:(taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE?1:0));
-				dialog.wheelview_second.setSeletion(taskitem.battery_percentage-1);
-				dialog.textview_confirm.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View view) {
-						int position=dialog.wheelview_first.getSeletedIndex();
-						int trigger_type=(position==0?PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE:(position==1?PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE:PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE));
-						taskitem.battery_percentage=Integer.parseInt(dialog.wheelview_second.getSeletedItem());
-						dialog.cancel();
-						activateTriggerType(trigger_type);
-						refreshBatteryPercentageTextView();
-					}
-				});
-				dialog.show();
-			}
-			break; */
-			/*case R.id.layout_taskgui_area_condition_battery_temperature:{
-				if(taskitem.trigger_type!=PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE &&taskitem.trigger_type!=PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE){
-					activateTriggerType(PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE);
-				}else{
-					activateTriggerType(taskitem.trigger_type);
-				}
-
-				final BottomDialogForBattery dialog=new BottomDialogForBattery(this);
-				dialog.textview_title.setText(getResources().getString(R.string.activity_taskgui_condition_battery_temperature_att));
-				dialog.checkbox_enable.setVisibility(View.GONE);
-				dialog.textview_second_description.setText("¡æ");
-				String[] temperature=new String[66];
-				for(int i=0;i<temperature.length;i++) {
-					temperature[i]=String.valueOf(i);
-				}
-				String[] compares={this.getResources().getString(R.string.dialog_battery_compare_higher_than),this.getResources().getString(R.string.dialog_battery_compare_lower_than)};
-				dialog.wheelview_first.setItems(Arrays.asList(compares));
-				dialog.wheelview_second.setItems(Arrays.asList(temperature));
-				dialog.wheelview_first.setSeletion(taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE?0:(taskitem.trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE?1:0));
-				dialog.wheelview_second.setSeletion(taskitem.battery_temperature);
-				dialog.textview_confirm.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View view) {
-						int position=dialog.wheelview_first.getSeletedIndex();
-						int trigger_type=(position==0?PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE:(position==1?PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE:PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE));
-						taskitem.battery_temperature=Integer.parseInt(dialog.wheelview_second.getSeletedItem());
-						dialog.cancel();
-						activateTriggerType(trigger_type);
-						refreshBatteryTemperatureTextView();
-					}
-				});
-				dialog.show();
-			}
-			break; */
-			/*case R.id.layout_taskgui_area_condition_received_broadcast:{
-				activateTriggerType(PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST);
-				View dialogView=LayoutInflater.from(this).inflate(R.layout.layout_dialog_with_listview,null);
-				final BroadcastSelectionAdapter adapter=new BroadcastSelectionAdapter(taskitem.selectedAction);
-				ListView listView=dialogView.findViewById(R.id.layout_dialog_listview);
-				listView.setDivider(null);
-				(listView).setAdapter(adapter);
-				final AlertDialog dialog=new AlertDialog.Builder(this)
-						.setTitle("IntentFilter")
-						.setView(dialogView)
-						.setPositiveButton(getResources().getString(R.string.dialog_button_positive),null)
-						.setNegativeButton(getResources().getString(R.string.dialog_button_negative), new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialogInterface, int i) {
-
-							}
-						})
-						.show();
-				listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-						adapter.onItemClicked(i);
-					}
-				});
-				dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View view) {
-						taskitem.selectedAction=adapter.getSelectedAction();
-						activateTriggerType(PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST);
-						refreshBroadcastTextView();
-						dialog.cancel();
-					}
-				});
-
-			}
-			break; */
 			case R.id.layout_taskgui_area_exception_bluetooth_disabled: case R.id.layout_taskgui_area_exception_bluetooth_enabled:
 			case R.id.layout_taskgui_area_exception_lockscreen: case R.id.layout_taskgui_area_exception_unlockscreen:
 			case R.id.layout_taskgui_area_exception_wifi_disabled: case R.id.layout_taskgui_area_exception_wifi_enabled:
@@ -841,6 +639,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				Intent i=new Intent(this,Exceptions.class);
 				i.putExtra(Exceptions.INTENT_EXTRA_EXCEPTIONS,taskitem.exceptions);
 				i.putExtra(Exceptions.INTENT_EXTRA_TRIGGER_TYPE,taskitem.trigger_type);
+				i.putExtra(EXTRA_TITLE_COLOR,taskitem.addition_title_color);
 				this.startActivityForResult(i,REQUEST_CODE_EXCEPTIONS);
 
 			}
@@ -967,14 +766,11 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				i.putExtra(Actions.EXTRA_ACTION_TOAST,taskitem.toast);
 				i.putExtra(Actions.EXTRA_ACTION_SMS_ADDRESS,taskitem.sms_address);
 				i.putExtra(Actions.EXTRA_ACTION_SMS_MESSAGE,taskitem.sms_message);
+				i.putExtra(EXTRA_TITLE_COLOR,taskitem.addition_title_color);
 				startActivityForResult(i,REQUEST_CODE_ACTIONS);
 			}
 			break;
-			/*case R.id.layout_taskgui_area_additional_notify:{
-				((CheckBox)findViewById(R.id.layout_taskgui_area_additional_notify_cb)).toggle();
-				taskitem.notify=((CheckBox)findViewById(R.id.layout_taskgui_area_additional_notify_cb)).isChecked();
-			}
-			break;*/
+
 			case R.id.layout_taskgui_area_additional_autodelete:{
 				CheckBox cb_autodelete=findViewById(R.id.layout_taskgui_area_additional_autodelete_cb);
 				cb_autodelete.toggle();
@@ -991,57 +787,6 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			}
 			break;
 			case R.id.layout_taskgui_additional_titlecolor:{
-				/*final AlertDialog dialog=new AlertDialog.Builder(this)
-						.setTitle(getResources().getString(R.string.activity_taskgui_additional_titlecolor_att))
-						.setView(LayoutInflater.from(this).inflate(R.layout.layout_dialog_color,null))
-						.setPositiveButton(getResources().getString(R.string.dialog_button_positive),null)
-						.setNegativeButton(getResources().getString(R.string.dialog_button_negative), new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-
-							}
-						})
-						.show();
-				((EditText)dialog.findViewById(R.id.dialog_color_edit)).setText(taskitem.addition_title_color);
-				try{
-					((ImageView)dialog.findViewById(R.id.dialog_color_preview)).setBackgroundColor(Color.parseColor(taskitem.addition_title_color));
-				}catch (Exception e){
-					e.printStackTrace();
-				}
-				((EditText)dialog.findViewById(R.id.dialog_color_edit)).addTextChangedListener(new TextWatcher() {
-					@Override
-					public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-					}
-
-					@Override
-					public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-					}
-
-					@Override
-					public void afterTextChanged(Editable s) {
-						try{
-							((ImageView)dialog.findViewById(R.id.dialog_color_preview)).setBackgroundColor(Color.parseColor(((EditText)dialog.findViewById(R.id.dialog_color_edit)).getText().toString()));
-						}catch (Exception e){
-							e.printStackTrace();
-						}
-					}
-				});
-				dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						try{
-							String color_set=((EditText)dialog.findViewById(R.id.dialog_color_edit)).getEditableText().toString();
-							Color.parseColor(color_set);
-							taskitem.addition_title_color=color_set;
-						}catch (Exception e){
-							e.printStackTrace();
-							Snackbar.make(v,"Invalid color value",Snackbar.LENGTH_SHORT).show();
-							return;
-						}
-					}
-				});*/
 				DialogForColor dialog=new DialogForColor(this,taskitem.addition_title_color);
 				dialog.show();
 				dialog.setOnDialogConfirmListener(new DialogForColor.OnDialogForColorConfirmedListener() {
@@ -1262,10 +1007,11 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		additions[PublicConsts.ADDITION_AUTO_CLOSE]=this.taskitem.autoclose?String.valueOf(1):String.valueOf(0);
 		additions[PublicConsts.ADDITION_TITLE_COLOR_LOCALE]=taskitem.addition_title_color;
 		additions[PublicConsts.ADDITION_EXCEPTION_CONNECTOR_LOCALE]=taskitem.addition_exception_connector;
+		additions[PublicConsts.ADDITION_TITLE_FOLDED_VALUE_LOCALE]=taskitem.addition_isFolded?String.valueOf(0):String.valueOf(-1);
 		values.put(SQLConsts.SQL_TASK_COLUMN_ADDITIONS,ValueUtils.stringArray2String(additions));
 		if(id==null) return db.insert(SQLConsts.getCurrentTableName(this),null,values);
 		else{
-			Log.e("UPDATE","id is "+id);
+			Log.d("UPDATE","id is "+id);
 			return db.update(SQLConsts.getCurrentTableName(this),values,SQLConsts.SQL_TASK_COLUMN_ID +"="+id,null);
 		}
 	}

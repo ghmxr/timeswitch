@@ -83,7 +83,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         setSupportActionBar(toolbar);
 
         try{getSupportActionBar().setDisplayHomeAsUpEnabled(true);}catch (Exception e){e.printStackTrace();}
-
+        setToolBarAndStatusBarColor(toolbar,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
         timePicker=findViewById(R.id.trigger_timepicker);
         timePicker.setIs24HourView(true);
 

@@ -46,7 +46,8 @@ public class ActionOfChangingRingtones extends BaseActivity implements View.OnCl
         setContentView(R.layout.layout_ring_selection);
         Toolbar toolbar=findViewById(R.id.ring_selection_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setToolBarAndStatusBarColor(toolbar,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
+        try{getSupportActionBar().setDisplayHomeAsUpEnabled(true);}catch (Exception e){e.printStackTrace();}
         try{
             String ring_values[]=getIntent().getStringExtra(EXTRA_RING_VALUES).split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             selection_notification=Integer.parseInt(ring_values[PublicConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE]);

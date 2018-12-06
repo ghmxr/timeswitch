@@ -76,10 +76,6 @@ public class ProcessTaskItem {
         //log_taskitem.append(context.getResources().getString(R.string.log_taskname));
         log_taskitem.append(item.name);
         log_taskitem.append(":");
-        WifiManager mWifiManager=(WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        KeyguardManager mKeyguardManager=(KeyguardManager)context.getSystemService(Context.KEYGUARD_SERVICE);
-        BluetoothAdapter mBluetoothAdapter=BluetoothAdapter.getDefaultAdapter();
-        AudioManager mAudioManager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 
         SQLiteDatabase database= MySQLiteOpenHelper.getInstance(this.context).getWritableDatabase();
 
@@ -137,6 +133,11 @@ public class ProcessTaskItem {
                 break;
             }
         }
+
+        WifiManager mWifiManager=(WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        KeyguardManager mKeyguardManager=(KeyguardManager)context.getSystemService(Context.KEYGUARD_SERVICE);
+        BluetoothAdapter mBluetoothAdapter=BluetoothAdapter.getDefaultAdapter();
+        AudioManager mAudioManager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 
         StringBuilder log_exception=new StringBuilder("");
         if(mKeyguardManager==null){
@@ -539,6 +540,16 @@ public class ProcessTaskItem {
         }
         LogUtil.putLog(context,log_taskitem.toString());
         com.github.ghmxr.timeswitch.activities.Log.sendEmptyMessage(com.github.ghmxr.timeswitch.activities.Log.MESSAGE_REQUEST_REFRESH);
+    }
+
+    /**
+     * process exceptions and judge if can trigger this task
+     * @param type -1 for xor,0 for and
+     * @return true for can trigger this task ,or false
+     */
+    private boolean processExceptions(int type,StringBuilder log_exceptions){
+
+        return false;
     }
 
     private void activateActionOfWifi(int action_wifi){
@@ -1211,6 +1222,29 @@ public class ProcessTaskItem {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    public static void setTaskFolded(final Context context, int id , boolean isFolded){
+        try{
+            SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
+            final String table_name=SQLConsts.getCurrentTableName(context);
+            Cursor cursor=database.rawQuery("select * from "+table_name+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
+            if(cursor.moveToFirst()){
+                String additions_read[]=ValueUtils.string2StringArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ADDITIONS)));
+                String additions[]=new String[PublicConsts.ADDITION_LENGTH];
+                additions[PublicConsts.ADDITION_TITLE_COLOR_LOCALE]=new TaskItem().addition_title_color;
+                System.arraycopy(additions_read,0,additions,0,additions_read.length);
+                additions[PublicConsts.ADDITION_TITLE_FOLDED_VALUE_LOCALE]=isFolded?String.valueOf(0):String.valueOf(-1);
+                ContentValues content=new ContentValues();
+                content.put(SQLConsts.SQL_TASK_COLUMN_ADDITIONS,ValueUtils.stringArray2String(additions));
+                database.update(table_name,content,SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
+            }
+            cursor.close();
+            TimeSwitchService.list.get(getPosition(id)).addition_isFolded=isFolded;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
 }

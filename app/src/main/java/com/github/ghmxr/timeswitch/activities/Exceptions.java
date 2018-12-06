@@ -57,7 +57,12 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
         Toolbar toolbar=findViewById(R.id.exceptions_toolbar);
         setSupportActionBar(toolbar);
 
-        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        try{
+            this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        setToolBarAndStatusBarColor(toolbar,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
 
         area_screen_locked=findViewById(R.id.exceptions_screen_locked);
         area_screen_unlocked=findViewById(R.id.exceptions_screen_unlocked);

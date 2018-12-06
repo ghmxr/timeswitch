@@ -128,6 +128,7 @@ public class Profile extends BaseActivity {
         Toolbar toolbar=findViewById(R.id.profile_toolbar);
         setSupportActionBar(toolbar);
         try{getSupportActionBar().setDisplayHomeAsUpEnabled(true);}catch (Exception e){e.printStackTrace();}
+        setToolBarAndStatusBarColor(toolbar,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
         listview=findViewById(R.id.layout_profile_list);
         listview.setDivider(null);
         refreshTables();

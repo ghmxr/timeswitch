@@ -129,6 +129,8 @@ public class TaskItem implements Comparable<TaskItem>{
 
 	public String addition_title_color="#3F51B5";
 
+	public boolean addition_isFolded=false;
+
 	/**
 	 *任务的触发器
 	 */
@@ -205,6 +207,7 @@ public class TaskItem implements Comparable<TaskItem>{
 		this.autoclose=item.autoclose;
 		this.addition_title_color=new String(item.addition_title_color);
 		this.addition_exception_connector=new String(item.addition_exception_connector);
+		this.addition_isFolded=item.addition_isFolded;
 	}
 
 	@Override

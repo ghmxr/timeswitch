@@ -23,6 +23,7 @@ public class About extends BaseActivity {
         Toolbar toolbar = findViewById(R.id.toolbar_about);
         setSupportActionBar(toolbar);
         try{getSupportActionBar().setDisplayHomeAsUpEnabled(true);}catch (Exception e){e.printStackTrace();}
+        setToolBarAndStatusBarColor(toolbar,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
         FloatingActionButton fab = findViewById(R.id.fab_about);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

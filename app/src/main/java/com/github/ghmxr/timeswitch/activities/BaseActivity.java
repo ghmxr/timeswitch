@@ -21,6 +21,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 	public static LinkedList<BaseActivity> queue=new LinkedList<>();
 	public static MyHandler myHandler;
+	public static final String EXTRA_TITLE_COLOR="color_title";
+	//public String color_title="#3F51B5";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 	public void setToolBarAndStatusBarColor(View toobar,String color){
 		try{
+			if(color==null) return;
 			toobar.setBackgroundColor(Color.parseColor(color));
 			if(Build.VERSION.SDK_INT>=21){
 				Window window=getWindow();
