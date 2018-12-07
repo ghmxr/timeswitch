@@ -1,8 +1,10 @@
 package com.github.ghmxr.timeswitch.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Message;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -24,6 +26,14 @@ public class About extends BaseActivity {
         setSupportActionBar(toolbar);
         try{getSupportActionBar().setDisplayHomeAsUpEnabled(true);}catch (Exception e){e.printStackTrace();}
         setToolBarAndStatusBarColor(toolbar,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
+        try{
+            CollapsingToolbarLayout collapsingToolbarLayout=findViewById(R.id.toolbar_layout);
+            //collapsingToolbarLayout.setBackgroundColor(Color.parseColor(getIntent().getStringExtra(EXTRA_TITLE_COLOR)));
+            collapsingToolbarLayout.setContentScrimColor(Color.parseColor(getIntent().getStringExtra(EXTRA_TITLE_COLOR)));
+            findViewById(R.id.app_bar).setBackgroundColor(Color.parseColor(getIntent().getStringExtra(EXTRA_TITLE_COLOR)));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         FloatingActionButton fab = findViewById(R.id.fab_about);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

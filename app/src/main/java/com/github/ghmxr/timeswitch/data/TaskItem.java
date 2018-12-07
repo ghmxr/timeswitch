@@ -215,6 +215,7 @@ public class TaskItem implements Comparable<TaskItem>{
 		return "TaskItem{" +
 				"id=" + id +
 				", name='" + name + '\'' +
+				", enabled=" + isenabled +
 				", trigger_value=" + time +
 				", trigger_type=" + trigger_type +
 				", week_repeat=" + Arrays.toString(week_repeat) +
@@ -236,6 +237,9 @@ public class TaskItem implements Comparable<TaskItem>{
 				", notify=" + notify +
 				", autodelete=" + autodelete +
 				", autoclose=" + autoclose +
+				", addition_exception_connector=" + addition_exception_connector +
+				", addition_title_color=" + addition_title_color +
+				", addition_isFolded=" + addition_isFolded +
 				'}';
 	}
 

@@ -151,7 +151,9 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
             }
             break;
             case R.id.settings_log:{
-                startActivity(new Intent(this, com.github.ghmxr.timeswitch.activities.Log.class));
+                Intent i=new Intent(this, com.github.ghmxr.timeswitch.activities.Log.class);
+                i.putExtra(EXTRA_TITLE_COLOR,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
+                startActivity(i);
             }
             break;
             case R.id.settings_superuser:{
@@ -160,11 +162,14 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
             }
             break;
             case R.id.settings_about:{
-                startActivity(new Intent(this,About.class));
+                Intent i=new Intent(this,About.class);
+                i.putExtra(EXTRA_TITLE_COLOR,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
+                startActivity(i);
             }
             break;
             case R.id.settings_color:{
                 DialogForColor dialog=new DialogForColor(this,settings.getString(PublicConsts.PREFERENCES_THEME_COLOR,PublicConsts.PREFERENCES_THEME_COLOR_DEFAULT));
+                dialog.setTitle(getResources().getString(R.string.activity_settings_color_att));
                 dialog.show();
                 dialog.setOnDialogConfirmListener(new DialogForColor.OnDialogForColorConfirmedListener() {
                     @Override
@@ -175,6 +180,7 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
                             ((TextView)findViewById(R.id.settings_color_value)).setText(color);
                             ((TextView)findViewById(R.id.settings_color_value)).setTextColor(Color.parseColor(color));
                             setToolBarAndStatusBarColor(findViewById(R.id.settings_toolbar),color);
+                            getIntent().putExtra(EXTRA_TITLE_COLOR,color);
                             flag_restart_main=true;
                         }catch (Exception e){
                             e.printStackTrace();
@@ -270,8 +276,8 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
             for(BaseActivity b:queue){
                 if(b instanceof Main) b.finish();
             }
+            startActivity(new Intent(this,Main.class));
         }
-        startActivity(new Intent(this,Main.class));
     }
 
 }

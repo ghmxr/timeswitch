@@ -11,6 +11,7 @@
     <color name="color_text_disabled">#aaaaaa</color>
     <color name="color_text_normal">#222222</color>
     <color name="color_black">#000000</color>
+    <color name="color_white">#ffffff</color>
     <color name="color_text_black_background">#eeeeee</color>
     <color name="color_current_charge">#ff3333</color>
     <color name="color_current_discharge">#33ff66</color>

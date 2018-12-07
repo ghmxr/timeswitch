@@ -1,5 +1,6 @@
 package com.github.ghmxr.timeswitch.activities;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 
@@ -9,10 +10,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
+
+import com.github.ghmxr.timeswitch.R;
+import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
@@ -31,15 +37,33 @@ public abstract class BaseActivity extends AppCompatActivity {
 		if(!queue.contains(this)) queue.add(this);
 	}
 
-	public void setToolBarAndStatusBarColor(View toobar,String color){
+	public void setToolBarAndStatusBarColor(View toolbar,String color){
 		try{
 			if(color==null) return;
-			toobar.setBackgroundColor(Color.parseColor(color));
+			int color_value=Color.parseColor(color);
+			toolbar.setBackgroundColor(color_value);
 			if(Build.VERSION.SDK_INT>=21){
 				Window window=getWindow();
 				window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-				window.setStatusBarColor(Color.parseColor(color));
+				window.setStatusBarColor(color_value);
 			}
+			if(ValueUtils.isHighLightRGB(color_value)){
+				setSupportActionbarContentsColor(toolbar,getResources().getColor(R.color.color_black));
+			}else{
+				setSupportActionbarContentsColor(toolbar,getResources().getColor(R.color.color_white));
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	private void setSupportActionbarContentsColor(View toolbar,int color){
+		try{
+			Field titleTextView=toolbar.getClass().getDeclaredField("mTitleTextView");
+			//Field titleArrow=toolbar.getClass().getDeclaredField("");
+			titleTextView.setAccessible(true);
+			((TextView)titleTextView.get(toolbar)).setTextColor(color);
+			//titleTextView.set(toolbar,color);
 		}catch (Exception e){
 			e.printStackTrace();
 		}

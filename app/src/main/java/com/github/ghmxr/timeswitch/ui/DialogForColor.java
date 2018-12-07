@@ -4,14 +4,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.preference.DialogPreference;
 import android.support.design.widget.Snackbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 
 import com.github.ghmxr.timeswitch.R;
 
@@ -19,9 +17,11 @@ public class DialogForColor extends AlertDialog implements DialogInterface.OnCli
 
     private String color;
     private OnDialogForColorConfirmedListener listener;
+    Context context;
 
     public DialogForColor(Context context,String colorRgb){
         super(context);
+        this.context=context;
         setTitle("Color");
         setView(LayoutInflater.from(context).inflate(R.layout.layout_dialog_color,null));
         setButton(AlertDialog.BUTTON_POSITIVE, context.getResources().getString(R.string.dialog_button_positive), new DialogInterface.OnClickListener(){
@@ -44,7 +44,7 @@ public class DialogForColor extends AlertDialog implements DialogInterface.OnCli
         findViewById(R.id.dialog_color_bdc3c7).setOnClickListener(this);
         findViewById(R.id.dialog_color_e67e22).setOnClickListener(this);
         findViewById(R.id.dialog_color_f1c40f).setOnClickListener(this);
-        findViewById(R.id.dialog_color_ecf0f1).setOnClickListener(this);
+        findViewById(R.id.dialog_color_3f51b5).setOnClickListener(this);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class DialogForColor extends AlertDialog implements DialogInterface.OnCli
                         cancel();
                     }catch (Exception e){
                         e.printStackTrace();
-                        Snackbar.make(findViewById(R.id.dialog_color_root),"Invalid color",Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(findViewById(R.id.dialog_color_root),context.getResources().getString(R.string.snack_dialog_color_invalid),Snackbar.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -154,8 +154,8 @@ public class DialogForColor extends AlertDialog implements DialogInterface.OnCli
                     editText.setText("#f1c40f");
                 }
                 break;
-                case R.id.dialog_color_ecf0f1:{
-                    editText.setText("#ecf0f1");
+                case R.id.dialog_color_3f51b5:{
+                    editText.setText("#3f51b5");
                 }
                 break;
             }

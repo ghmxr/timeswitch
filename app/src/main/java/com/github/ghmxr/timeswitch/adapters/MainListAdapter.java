@@ -96,6 +96,10 @@ public class MainListAdapter extends BaseAdapter {
                 ((views[i].findViewById(R.id.item_task_title))).setBackgroundColor(color_value);
                 views[i].findViewById(R.id.item_task_info).setVisibility(item.addition_isFolded?View.GONE:View.VISIBLE);
                 views[i].findViewById(R.id.item_task_title_arrow).setRotation(item.addition_isFolded?0:90);
+                if(ValueUtils.isHighLightRGB(color_value)){
+                    ((TextView)views[i].findViewById(R.id.item_task_name)).setTextColor(context.getResources().getColor(R.color.color_black));
+                    ((ImageView)views[i].findViewById(R.id.item_task_title_arrow)).setImageResource(R.drawable.arrow_right_item_folding_black);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

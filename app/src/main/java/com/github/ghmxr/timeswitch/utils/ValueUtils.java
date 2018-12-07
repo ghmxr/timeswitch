@@ -2,6 +2,7 @@ package com.github.ghmxr.timeswitch.utils;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.View;
@@ -388,4 +389,27 @@ public class ValueUtils {
         if(beginMin<0||endMin<0||beginMin>=1440||endMin>=1440) return "";
         return format(beginMin/60)+":"+format(beginMin%60)+"~"+format(endMin/60)+":"+format(endMin%60);
     }
+
+    public static double getBrightnessOfRGBColor(int color){
+        int red = (color & 0xff0000) >> 16;
+        int green = (color & 0x00ff00) >> 8;
+        int blue = (color & 0x0000ff);
+        return red*0.30+green*0.59+blue*0.11;
+    }
+
+    public static double getBrightnessOfRGBColor(String color){
+        try{
+            int color_value= Color.parseColor(color);
+            return getBrightnessOfRGBColor(color_value);
+        }catch (Exception e){
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public static boolean isHighLightRGB(int color){
+        if(getBrightnessOfRGBColor(color)>195) return true;
+        return false;
+    }
+
 }

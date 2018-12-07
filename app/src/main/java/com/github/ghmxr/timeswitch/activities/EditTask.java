@@ -82,7 +82,6 @@ public class EditTask extends TaskGui {
         }
 
         if(item.getItemId()==R.id.action_edit_save){
-            taskitem.isenabled=true;
             if(saveTaskItem2DB(taskitem.id)==1){
                 setResult(ACTIVITY_EDIT_RESULT_SUCCESS);
                 finish();

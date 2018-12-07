@@ -151,6 +151,8 @@
 	<string name="activity_taskgui_root_toast_attention">请打开“超级用户模式”</string>
 	<string name="dialog_setinterval_att">激活本任务后，按照指定的时间间隔不断触发此任务</string>
 	<string name="activity_taskgui_att_name">任务名称</string>
+	<string name="activity_taskgui_att_enable">任务开关</string>
+	<string name="activity_taskgui_att_enable_att">启用</string>
 	<string name="activity_taskgui_att_condition">触发条件</string>
 	<string name="activity_taskgui_att_action">触发操作</string>
 	<string name="activity_taskgui_att_additional">附加选项</string>
@@ -316,6 +318,7 @@
 	<string name="adapter_action_notification_message">内容:</string>
 	<string name="adapter_action_brightness">屏幕亮度:</string>
 	<string name="adapter_action_brightness_auto">自动</string>
+	<string name="snack_dialog_color_invalid">无效的颜色值</string>
 	<string name="adapter_per">每</string>
 	<string name="adapter_trigger">触发</string>
 	<string name="adapter_single">仅一次</string>

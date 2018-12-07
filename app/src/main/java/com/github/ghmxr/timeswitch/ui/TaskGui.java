@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -76,6 +78,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		taskitem.time=calendar.getTimeInMillis();
 
 		findViewById(R.id.layout_taskgui_area_name).setOnClickListener(this);
+		findViewById(R.id.layout_taskgui_area_enable).setOnClickListener(this);
 
 		findViewById(R.id.layout_taskgui_trigger).setOnClickListener(this);
 		//findViewById(R.id.layout_taskgui_area_condition_single).setOnClickListener(this);
@@ -155,6 +158,8 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		findViewById(R.id.layout_taskgui_area_exception_additem).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_area_action_additem).setOnClickListener(this);
 
+		taskitem.addition_title_color=(getSharedPreferences(PublicConsts.PREFERENCES_NAME, Activity.MODE_PRIVATE).getString(PublicConsts.PREFERENCES_THEME_COLOR,PublicConsts.PREFERENCES_THEME_COLOR_DEFAULT));
+
 		initialVariables();
 
 		//do set the views of the variables.
@@ -186,6 +191,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			setAutoCloseAreaEnabled(!((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autodelete_cb)).isChecked());
 		}
 
+		((SwitchCompat)findViewById(R.id.layout_taskgui_enable_sw)).setChecked(taskitem.isenabled);
 		refreshTriggerDisplayValue();
 		refreshExceptionViews();
 		refreshActionStatus();
@@ -569,6 +575,12 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				});
 			}
 			break;
+			case R.id.layout_taskgui_area_enable:{
+				SwitchCompat sw=((SwitchCompat)findViewById(R.id.layout_taskgui_enable_sw));
+				sw.toggle();
+				taskitem.isenabled=sw.isChecked();
+			}
+			break;
 			case R.id.layout_taskgui_trigger:{
 				Intent i=new Intent();
 				i.setClass(this,Triggers.class);
@@ -788,6 +800,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			break;
 			case R.id.layout_taskgui_additional_titlecolor:{
 				DialogForColor dialog=new DialogForColor(this,taskitem.addition_title_color);
+				dialog.setTitle(getResources().getString(R.string.activity_taskgui_additional_titlecolor_att));
 				dialog.show();
 				dialog.setOnDialogConfirmListener(new DialogForColor.OnDialogForColorConfirmedListener() {
 					@Override
