@@ -66,6 +66,8 @@ public class PublicConsts {
 
 
 	public static final int EXCEPTION_LENTH=35;
+	public static final int EXCEPTION_CONNECTOR_OR								=	-1;
+	public static final int EXCEPTION_CONNECTOR_AND								=	0;
 	/**
 	 * 0--false ,1--true
 	 */

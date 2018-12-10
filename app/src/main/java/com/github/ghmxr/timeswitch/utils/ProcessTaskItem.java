@@ -1,6 +1,5 @@
 package com.github.ghmxr.timeswitch.utils;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.KeyguardManager;
@@ -59,7 +58,7 @@ public class ProcessTaskItem {
 
     private TaskItem item;
     private Context context;
-    private boolean canTrigger;
+    //private boolean canTrigger;
     static final String TAG="ProcessTaskItem";
     private StringBuilder log_taskitem=new StringBuilder("");
 
@@ -67,7 +66,7 @@ public class ProcessTaskItem {
     public ProcessTaskItem(@NonNull Context context, @Nullable TaskItem item){
         this.item=item;
         this.context=context;
-        this.canTrigger=true;
+        //this.canTrigger=true;
     }
 
     public void activateTaskItem(){
@@ -134,329 +133,32 @@ public class ProcessTaskItem {
             }
         }
 
-        WifiManager mWifiManager=(WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        KeyguardManager mKeyguardManager=(KeyguardManager)context.getSystemService(Context.KEYGUARD_SERVICE);
-        BluetoothAdapter mBluetoothAdapter=BluetoothAdapter.getDefaultAdapter();
-        AudioManager mAudioManager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-
         StringBuilder log_exception=new StringBuilder("");
-        if(mKeyguardManager==null){
-            Log.e(TAG,"KeyGuardManager is null!!");
-        }else{
-            try{
-                if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_LOCKEDSCREEN])==1){
-                    if(mKeyguardManager.inKeyguardRestrictedInputMode()) {
-                        canTrigger=false;
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_screen_locked));
-                        log_exception.append(" ");
-                    }
-                }
-                if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_UNLOCKEDSCREEN])==1){
-                    if(!mKeyguardManager.inKeyguardRestrictedInputMode()) {
-                        canTrigger=false;
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_screen_unlocked));
-                        log_exception.append(" ");
-                    }
-                }
-            }catch (NumberFormatException ne){
-                ne.printStackTrace();
-                log_taskitem.append(ne);
-                log_taskitem.append("\n");
+        boolean canTrigger= true;
+        int exception_connector=-1;
+        try {
+            exception_connector=Integer.parseInt(item.addition_exception_connector);
+            if(exception_connector>=0){
+                canTrigger=processExceptions(PublicConsts.EXCEPTION_CONNECTOR_AND,log_exception);
+            }else{
+                canTrigger=processExceptions(PublicConsts.EXCEPTION_CONNECTOR_OR,log_exception);
             }
-
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
-        if(mWifiManager==null){
-            //no wifi hardware support??
-            Log.e(TAG,"WiFi Manger is null!!");
-        }
-        else {
-            try{
-                if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_WIFI_ENABLED])==1){
-                    if(mWifiManager.getWifiState()== WifiManager.WIFI_STATE_ENABLED) {
-                        canTrigger=false;
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_wifi_enabled));
-                        log_exception.append(" ");
-                    }
-                }
-                if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_WIFI_DISABLED])==1){
-                    if(mWifiManager.getWifiState()==WifiManager.WIFI_STATE_DISABLED) {
-                        canTrigger=false;
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_wifi_disabled));
-                        log_exception.append(" ");
-                    }
-                }
-            }catch (NumberFormatException ne){
-                ne.printStackTrace();
-                log_taskitem.append(ne.toString());
-                log_taskitem.append("\n");
-            }
 
-        }
-
-        if(mBluetoothAdapter==null){
-            // no bluetooth support??
-            Log.e(TAG,"Can not get BluetoothAdapter(is this device supported bluetooth?)");
-        }
-        else{
-            try{
-                if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BLUETOOTH_ENABLED])==1){
-                    if(mBluetoothAdapter.getState()== BluetoothAdapter.STATE_ON) {
-                        canTrigger=false;
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_bluetooth_enabled));
-                        log_exception.append(" ");
-                    }
-                }
-                if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BLUETOOTH_DISABLED])==1){
-                    if(mBluetoothAdapter.getState()==BluetoothAdapter.STATE_OFF) {
-                        canTrigger=false;
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_bluetooth_disabled));
-                        log_exception.append(" ");
-                    }
-                }
-            }catch (NumberFormatException ne){
-                ne.printStackTrace();
-                log_taskitem.append(ne.toString());
-                log_taskitem.append("\n");
-            }
-
-        }
-
-        if(mAudioManager==null){
-            Log.e(TAG,"AudioManager is null!!");
-        }else{
-            try{
-                if(Integer.parseInt(item.exceptions[PublicConsts.ACTION_RING_VIBRATE])==1){
-                    if(mAudioManager.getRingerMode()== AudioManager.RINGER_MODE_VIBRATE) {
-                        canTrigger=false;
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_ring_vibrate));
-                        log_exception.append(" ");
-                    }
-                }
-
-                if(Integer.parseInt(item.exceptions[PublicConsts.ACTION_RING_OFF])==1){
-                    if(mAudioManager.getRingerMode()==AudioManager.RINGER_MODE_SILENT) {
-                        canTrigger=false;
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_ring_off));
-                        log_exception.append(" ");
-                    }
-                }
-
-                if(Integer.parseInt(item.exceptions[PublicConsts.ACTION_RING_NORMAL])==1){
-                    if(mAudioManager.getRingerMode()==AudioManager.RINGER_MODE_NORMAL) {
-                        canTrigger=false;
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_ring_normal));
-                        log_exception.append(" ");
-                    }
-                }
-            }catch (NumberFormatException ne){
-                ne.printStackTrace();
-                log_taskitem.append(ne.toString());
-                log_taskitem.append("\n");
-            }
-        }
-
-        try{
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_NET_ENABLED])==1){
-                if(isCellarNetworkEnabled()) {
-                    canTrigger=false;
-                    log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_net_enabled));
-                    log_exception.append(" ");
-                }
-            }
-
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_NET_DISABLED])==1){
-                if(!isCellarNetworkEnabled()) {
-                    canTrigger=false;
-                    log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_net_disabled));
-                    log_exception.append(" ");
-                }
-            }
-
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_GPS_ENABLED])==1){
-                if(isLocationServiceEnabled()) {
-                    canTrigger=false;
-                    log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_gps_on));
-                    log_exception.append(" ");
-                }
-            }
-
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_GPS_DISABLED])==1){
-                if(!isLocationServiceEnabled()) {
-                    canTrigger=false;
-                    log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_gps_off));
-                    log_exception.append(" ");
-                }
-            }
-
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_AIRPLANE_MODE_ENABLED])==1){
-                if(isAirplaneModeOn()) {
-                    canTrigger=false;
-                    log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_airplanemode_on));
-                    log_exception.append(" ");
-                }
-            }
-
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_AIRPLANE_MODE_DISABLED])==1){
-                if(!isAirplaneModeOn()) {
-                    canTrigger=false;
-                    log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_airplanemode_off));
-                    log_exception.append(" ");
-                }
-            }
-
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])!=-1){
-                // Log.e(TAG,"isInstant is "+BatteryReceiver.isInstant+" currentTemp is "+BatteryReceiver.Battery_temperature+" item set is "+item.battery_temperature);
-                if(BatteryReceiver.isInstant){
-                    int currentTemp=BatteryReceiver.Battery_temperature;
-                    if(currentTemp>Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])*10) {
-                        canTrigger=false;
-                        log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_temperature_higher_than));
-                        log_exception.append(item.exceptions[PublicConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]);
-                        log_exception.append("¡æ,current:");
-                        log_exception.append((double)currentTemp/10);
-                        log_exception.append("¡æ");
-                        log_exception.append(" ");
-                    }
-                }
-            }
-
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])!=-1){
-                if(BatteryReceiver.isInstant){
-                    int currentTemp=BatteryReceiver.Battery_temperature;
-                    if(currentTemp<Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])*10) {
-                        canTrigger=false;
-                        log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_temperature_lower_than));
-                        log_exception.append(item.exceptions[PublicConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]);
-                        log_exception.append("¡æ,current:");
-                        log_exception.append((double)currentTemp/10);
-                        log_exception.append("¡æ");
-                        log_exception.append(" ");
-                    }
-                }
-            }
-
-            if (Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])!=-1) {
-                int currentLevel=BatteryReceiver.Battery_percentage;
-                if(BatteryReceiver.isInstant&&(currentLevel>Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]))) {
-                    canTrigger=false;
-                    log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_percentage_more_than));
-                    log_exception.append(item.exceptions[PublicConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]);
-                    log_exception.append("%,current:");
-                    log_exception.append(currentLevel);
-                    log_exception.append("%");
-                    log_exception.append(" ");
-                }
-            }
-
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])!=-1){
-                int currentLevel=BatteryReceiver.Battery_percentage;
-                if(BatteryReceiver.isInstant&&(currentLevel<Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]))) {
-                    canTrigger=false;
-                    log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_percentage_less_than));
-                    log_exception.append(item.exceptions[PublicConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]);
-                    log_exception.append("%,current:");
-                    log_exception.append(currentLevel);
-                    log_exception.append("%");
-                    log_exception.append(" ");
-                }
-            }
-
-            Calendar calendar=Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            int dayofweek=calendar.get(Calendar.DAY_OF_WEEK);
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_MONDAY])==1&&dayofweek==Calendar.MONDAY){
-                canTrigger=false;
-                log_exception.append(context.getResources().getString(R.string.monday));
-                log_exception.append(" ");
-            }
-
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_TUESDAY])==1&&dayofweek==Calendar.TUESDAY){
-                canTrigger=false;
-                log_exception.append(context.getResources().getString(R.string.tuesday));
-                log_exception.append(" ");
-            }
-
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_WEDNESDAY])==1&&dayofweek==Calendar.WEDNESDAY){
-                canTrigger=false;
-                log_exception.append(context.getResources().getString(R.string.wednesday));
-                log_exception.append(" ");
-            }
-
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_THURSDAY])==1&&dayofweek==Calendar.THURSDAY){
-                canTrigger=false;
-                log_exception.append(context.getResources().getString(R.string.thursday));
-                log_exception.append(" ");
-            }
-
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_FRIDAY])==1&&dayofweek==Calendar.FRIDAY){
-                canTrigger=false;
-                log_exception.append(context.getResources().getString(R.string.friday));
-                log_exception.append(" ");
-            }
-
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_SATURDAY])==1&&dayofweek==Calendar.SATURDAY){
-                canTrigger=false;
-                log_exception.append(context.getResources().getString(R.string.saturday));
-                log_exception.append(" ");
-            }
-
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_SUNDAY])==1&&dayofweek==Calendar.SUNDAY){
-                canTrigger=false;
-                log_exception.append(context.getResources().getString(R.string.sunday));
-                log_exception.append(" ");
-            }
-
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_START_TIME])!=-1&&Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_END_TIME])!=-1){
-                int minuteOfDay=calendar.get(Calendar.HOUR_OF_DAY)*60+calendar.get(Calendar.MINUTE);
-                //Log.i("Minute of day now",""+minuteOfDay);
-                //Log.i("startTime",""+item.exceptions[PublicConsts.EXCEPTION_START_TIME]);
-                //Log.i("endTime",""+item.exceptions[PublicConsts.EXCEPTION_END_TIME]);
-                int startTime=Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_START_TIME]);
-                int endTime=Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_END_TIME]);
-                if(endTime-startTime>0){
-                    if((minuteOfDay>=startTime)&&minuteOfDay<=endTime) {
-                        canTrigger=false;
-                        log_exception.append(context.getResources().getString(R.string.log_exceptions_period));
-                        log_exception.append(ValueUtils.format(startTime/60));
-                        log_exception.append(":");
-                        log_exception.append(ValueUtils.format(startTime%60));
-                        log_exception.append("~");
-                        log_exception.append(ValueUtils.format(endTime/60));
-                        log_exception.append(":");
-                        log_exception.append(ValueUtils.format(endTime%60));
-                        log_exception.append(" ");
-                    }
-                }else{
-                    if(minuteOfDay>=startTime||minuteOfDay<=endTime) {
-                        canTrigger=false;
-                        log_exception.append(context.getResources().getString(R.string.log_exceptions_period));
-                        log_exception.append(ValueUtils.format(startTime/60));
-                        log_exception.append(":");
-                        log_exception.append(ValueUtils.format(startTime%60));
-                        log_exception.append("~");
-                        log_exception.append(ValueUtils.format(endTime/60));
-                        log_exception.append(":");
-                        log_exception.append(ValueUtils.format(endTime%60));
-                        log_exception.append(" ");
-                    }
-                }
-            }
-        }catch (NumberFormatException ne){
-            ne.printStackTrace();
-            log_taskitem.append(ne.toString());
-            log_taskitem.append("\n");
-        }
-
-        if(!log_exception.toString().equals("")&&log_exception.length()>0){
+        if(log_exception.toString().trim().equals("")||log_exception.toString().trim().length()==0){
+            log_taskitem.append(context.getResources().getString(R.string.log_exceptions_activate));
+        }else if(exception_connector<0){
             log_taskitem.append(context.getResources().getString(R.string.log_exceptions));
             log_taskitem.append(log_exception.toString());
             log_taskitem.append(" ");
+        } else {
+            log_taskitem.append(context.getResources().getString(R.string.log_exceptions_unsatisfied));
+            log_taskitem.append(log_exception.toString());
+            log_taskitem.append(" ");
         }
-        else{
-            log_taskitem.append(" ÒÑ´¥·¢ ");
-        }
-        Log.i(TAG,"canTrigger is "+this.canTrigger);
 
         if(item.autoclose&&canTrigger){
             item.cancelTrigger();
@@ -544,12 +246,641 @@ public class ProcessTaskItem {
 
     /**
      * process exceptions and judge if can trigger this task
-     * @param type -1 for xor,0 for and
+     * @param processType process type,-1 for "or" and  0 for "and"
+     * @param log_exception the log builder need to append
      * @return true for can trigger this task ,or false
      */
-    private boolean processExceptions(int type,StringBuilder log_exceptions){
+    private boolean processExceptions(int processType, StringBuilder log_exception){
+        final int TYPE_OR=-1;
+        final int TYPE_AND=0;
+        try{
+            KeyguardManager mKeyguardManager=(KeyguardManager)context.getSystemService(Context.KEYGUARD_SERVICE);
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_LOCKEDSCREEN])==1){
+                if(mKeyguardManager.inKeyguardRestrictedInputMode()) {
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_screen_locked));
+                        log_exception.append(" ");
+                        return false;
+                    }
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_screen_locked));
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        log_exception.append(" ");
+                        return true;
+                    }
+                }
+            }
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_UNLOCKEDSCREEN])==1){
+                if(!mKeyguardManager.inKeyguardRestrictedInputMode()) {
+                    if(processType==TYPE_OR) {
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_screen_unlocked));
+                        log_exception.append(" ");
+                        return false;
+                    }
+                }
+                else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_screen_unlocked));
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        log_exception.append(" ");
+                        return true;
+                    }
+                }
 
-        return false;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            log_exception.append(e);
+            log_exception.append("\n");
+        }
+
+        try{
+            WifiManager mWifiManager=(WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_WIFI_ENABLED])==1){
+                if(mWifiManager.getWifiState()== WifiManager.WIFI_STATE_ENABLED) {
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_wifi_enabled));
+                        log_exception.append(" ");
+                        return false;
+                    }
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_wifi_enabled));
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        log_exception.append(" ");
+                        return true;
+                    }
+                }
+            }
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_WIFI_DISABLED])==1){
+                if(mWifiManager.getWifiState()==WifiManager.WIFI_STATE_DISABLED) {
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_wifi_disabled));
+                        log_exception.append(" ");
+                        return false;
+                    }
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_wifi_disabled));
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        log_exception.append(" ");
+                        return true;
+                    }
+                }
+            }
+        }catch (NumberFormatException ne){
+            ne.printStackTrace();
+            log_exception.append(ne.toString());
+            log_exception.append("\n");
+        }
+
+        try{
+            BluetoothAdapter mBluetoothAdapter=BluetoothAdapter.getDefaultAdapter();
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BLUETOOTH_ENABLED])==1){
+                if(mBluetoothAdapter.getState()== BluetoothAdapter.STATE_ON) {
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_bluetooth_enabled));
+                        log_exception.append(" ");
+                        return false;
+                    }
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_bluetooth_enabled));
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        log_exception.append(" ");
+                        return true;
+                    }
+                }
+            }
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BLUETOOTH_DISABLED])==1){
+                if(mBluetoothAdapter.getState()==BluetoothAdapter.STATE_OFF) {
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_bluetooth_disabled));
+                        log_exception.append(" ");
+                        return false;
+                    }
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_bluetooth_disabled));
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        log_exception.append(" ");
+                        return true;
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            log_exception.append(e.toString());
+            log_exception.append("\n");
+        }
+
+        try{
+            AudioManager mAudioManager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+            if(Integer.parseInt(item.exceptions[PublicConsts.ACTION_RING_VIBRATE])==1){
+                if(mAudioManager.getRingerMode()== AudioManager.RINGER_MODE_VIBRATE) {
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_ring_vibrate));
+                        log_exception.append(" ");
+                        return false;
+                    }
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_ring_vibrate));
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        log_exception.append(" ");
+                        return true;
+                    }
+                }
+            }
+
+            if(Integer.parseInt(item.exceptions[PublicConsts.ACTION_RING_OFF])==1){
+                if(mAudioManager.getRingerMode()==AudioManager.RINGER_MODE_SILENT) {
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_ring_off));
+                        log_exception.append(" ");
+                        return false;
+                    }
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_ring_off));
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        log_exception.append(" ");
+                        return true;
+                    }
+                }
+            }
+
+            if(Integer.parseInt(item.exceptions[PublicConsts.ACTION_RING_NORMAL])==1){
+                if(mAudioManager.getRingerMode()==AudioManager.RINGER_MODE_NORMAL) {
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_ring_normal));
+                        log_exception.append(" ");
+                        return false;
+                    }
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_ring_normal));
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        log_exception.append(" ");
+                        return true;
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            log_taskitem.append(e.toString());
+            log_taskitem.append("\n");
+        }
+
+        try{
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_NET_ENABLED])==1){
+                if(isCellarNetworkEnabled()) {
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_net_enabled));
+                        log_exception.append(" ");
+                        return false;
+                    }
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_net_enabled));
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        log_exception.append(" ");
+                        return true;
+                    }
+                }
+            }
+
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_NET_DISABLED])==1){
+                if(!isCellarNetworkEnabled()) {
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_net_disabled));
+                        log_exception.append(" ");
+                        return false;
+                    }
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_net_disabled));
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        log_exception.append(" ");
+                        return true;
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        try{
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_GPS_ENABLED])==1){
+                if(isLocationServiceEnabled()) {
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_gps_on));
+                        log_exception.append(" ");
+                        return false;
+                    }
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_gps_on));
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        log_exception.append(" ");
+                        return true;
+                    }
+                }
+            }
+
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_GPS_DISABLED])==1){
+                if(!isLocationServiceEnabled()) {
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_gps_off));
+                        log_exception.append(" ");
+                        return false;
+                    }
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_gps_off));
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        log_exception.append(" ");
+                        return true;
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        try{
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_AIRPLANE_MODE_ENABLED])==1){
+                if(isAirplaneModeOn()) {
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_airplanemode_on));
+                        log_exception.append(" ");
+                        return false;
+                    }
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_airplanemode_on));
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        log_exception.append(" ");
+                        return true;
+                    }
+                }
+            }
+
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_AIRPLANE_MODE_DISABLED])==1){
+                if(!isAirplaneModeOn()) {
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_airplanemode_off));
+                        log_exception.append(" ");
+                        return false;
+                    }
+
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_airplanemode_off));
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        log_exception.append(" ");
+                        return true;
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        try{
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])!=-1){
+                // Log.e(TAG,"isInstant is "+BatteryReceiver.isInstant+" currentTemp is "+BatteryReceiver.Battery_temperature+" item set is "+item.battery_temperature);
+                if(BatteryReceiver.isInstant){
+                    int currentTemp=BatteryReceiver.Battery_temperature;
+                    if(currentTemp>Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])*10) {
+                        if(processType==TYPE_OR){
+                            log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_temperature_higher_than));
+                            log_exception.append(item.exceptions[PublicConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]);
+                            log_exception.append("¡æ,current:");
+                            log_exception.append((double)currentTemp/10);
+                            log_exception.append("¡æ");
+                            log_exception.append(" ");
+                            return false;
+                        }
+                    }else{
+                        if(processType==TYPE_AND){
+                            log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_temperature_higher_than));
+                            log_exception.append(item.exceptions[PublicConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]);
+                            log_exception.append("¡æ,current:");
+                            log_exception.append((double)currentTemp/10);
+                            log_exception.append("¡æ");
+                            log_exception.append(" ");
+                            log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])!=-1){
+                if(BatteryReceiver.isInstant){
+                    int currentTemp=BatteryReceiver.Battery_temperature;
+                    if(currentTemp<Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])*10) {
+                        if(processType==TYPE_OR){
+                            log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_temperature_lower_than));
+                            log_exception.append(item.exceptions[PublicConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]);
+                            log_exception.append("¡æ,current:");
+                            log_exception.append((double)currentTemp/10);
+                            log_exception.append("¡æ");
+                            log_exception.append(" ");
+                            return false;
+                        }
+                    }else{
+                        if(processType==TYPE_AND){
+                            log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_temperature_lower_than));
+                            log_exception.append(item.exceptions[PublicConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]);
+                            log_exception.append("¡æ,current:");
+                            log_exception.append((double)currentTemp/10);
+                            log_exception.append("¡æ");
+                            log_exception.append(" ");
+                            log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                            return true;
+                        }
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        try{
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])!=-1) {
+                int currentLevel=BatteryReceiver.Battery_percentage;
+                if(BatteryReceiver.isInstant&&(currentLevel>Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]))) {
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_percentage_more_than));
+                        log_exception.append(item.exceptions[PublicConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]);
+                        log_exception.append("%,current:");
+                        log_exception.append(currentLevel);
+                        log_exception.append("%");
+                        log_exception.append(" ");
+                        return false;
+                    }
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_percentage_more_than));
+                        log_exception.append(item.exceptions[PublicConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]);
+                        log_exception.append("%,current:");
+                        log_exception.append(currentLevel);
+                        log_exception.append("%");
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        return true;
+                    }
+                }
+            }
+
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])!=-1){
+                int currentLevel=BatteryReceiver.Battery_percentage;
+                if(BatteryReceiver.isInstant&&(currentLevel<Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]))) {
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_percentage_less_than));
+                        log_exception.append(item.exceptions[PublicConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]);
+                        log_exception.append("%,current:");
+                        log_exception.append(currentLevel);
+                        log_exception.append("%");
+                        log_exception.append(" ");
+                        return false;
+                    }
+
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_percentage_less_than));
+                        log_exception.append(item.exceptions[PublicConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]);
+                        log_exception.append("%,current:");
+                        log_exception.append(currentLevel);
+                        log_exception.append("%");
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        return true;
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        try{
+            Calendar calendar=Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            int dayofweek=calendar.get(Calendar.DAY_OF_WEEK);
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_MONDAY])==1){
+                if(dayofweek==Calendar.MONDAY){
+                  if(processType==TYPE_OR){
+                      log_exception.append(context.getResources().getString(R.string.monday));
+                      log_exception.append(" ");
+                      return false;
+                  }
+                }else {
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.monday));
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        return true;
+                    }
+                }
+            }
+
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_TUESDAY])==1){
+                if(dayofweek==Calendar.TUESDAY){
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.tuesday));
+                        log_exception.append(" ");
+                        return false;
+                    }
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.tuesday));
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        return true;
+                    }
+                }
+            }
+
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_WEDNESDAY])==1){
+                if(dayofweek==Calendar.WEDNESDAY){
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.wednesday));
+                        log_exception.append(" ");
+                        return false;
+                    }
+
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.wednesday));
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        return true;
+                    }
+                }
+
+            }
+
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_THURSDAY])==1){
+                if(dayofweek==Calendar.THURSDAY){
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.thursday));
+                        log_exception.append(" ");
+                        return false;
+                    }
+                }else {
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.thursday));
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        return true;
+                    }
+                }
+
+            }
+
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_FRIDAY])==1){
+                if(dayofweek==Calendar.FRIDAY){
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.friday));
+                        log_exception.append(" ");
+                        return false;
+                    }
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.friday));
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        return true;
+                    }
+                }
+
+            }
+
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_SATURDAY])==1){
+                if(dayofweek==Calendar.SATURDAY){
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.saturday));
+                        log_exception.append(" ");
+                        return false;
+                    }
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.saturday));
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        return true;
+                    }
+                }
+
+            }
+
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_SUNDAY])==1){
+                if(dayofweek==Calendar.SUNDAY){
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.sunday));
+                        log_exception.append(" ");
+                        return false;
+                    }
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.sunday));
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        return true;
+                    }
+                }
+            }
+
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_START_TIME])!=-1&&Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_END_TIME])!=-1){
+                int minuteOfDay=calendar.get(Calendar.HOUR_OF_DAY)*60+calendar.get(Calendar.MINUTE);
+                //Log.i("Minute of day now",""+minuteOfDay);
+                //Log.i("startTime",""+item.exceptions[PublicConsts.EXCEPTION_START_TIME]);
+                //Log.i("endTime",""+item.exceptions[PublicConsts.EXCEPTION_END_TIME]);
+                int startTime=Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_START_TIME]);
+                int endTime=Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_END_TIME]);
+                if(endTime-startTime>0){
+                    if((minuteOfDay>=startTime)&&minuteOfDay<=endTime) {
+                        if(processType==TYPE_OR){
+                            log_exception.append(context.getResources().getString(R.string.log_exceptions_period));
+                            log_exception.append(ValueUtils.format(startTime/60));
+                            log_exception.append(":");
+                            log_exception.append(ValueUtils.format(startTime%60));
+                            log_exception.append("~");
+                            log_exception.append(ValueUtils.format(endTime/60));
+                            log_exception.append(":");
+                            log_exception.append(ValueUtils.format(endTime%60));
+                            log_exception.append(" ");
+                            return false;
+                        }
+                    }else{
+                        if(processType==TYPE_AND){
+                            log_exception.append(context.getResources().getString(R.string.log_exceptions_period));
+                            log_exception.append(ValueUtils.format(startTime/60));
+                            log_exception.append(":");
+                            log_exception.append(ValueUtils.format(startTime%60));
+                            log_exception.append("~");
+                            log_exception.append(ValueUtils.format(endTime/60));
+                            log_exception.append(":");
+                            log_exception.append(ValueUtils.format(endTime%60));
+                            log_exception.append(" ");
+                            log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                            return true;
+                        }
+                    }
+                }else{
+                    if(minuteOfDay>=startTime||minuteOfDay<=endTime) {
+                        if(processType==TYPE_OR){
+                            log_exception.append(context.getResources().getString(R.string.log_exceptions_period));
+                            log_exception.append(ValueUtils.format(startTime/60));
+                            log_exception.append(":");
+                            log_exception.append(ValueUtils.format(startTime%60));
+                            log_exception.append("~");
+                            log_exception.append(ValueUtils.format(endTime/60));
+                            log_exception.append(":");
+                            log_exception.append(ValueUtils.format(endTime%60));
+                            log_exception.append(" ");
+                            return false;
+                        }
+                    }else{
+                        if(processType==TYPE_AND){
+                            log_exception.append(context.getResources().getString(R.string.log_exceptions_period));
+                            log_exception.append(ValueUtils.format(startTime/60));
+                            log_exception.append(":");
+                            log_exception.append(ValueUtils.format(startTime%60));
+                            log_exception.append("~");
+                            log_exception.append(ValueUtils.format(endTime/60));
+                            log_exception.append(":");
+                            log_exception.append(ValueUtils.format(endTime%60));
+                            log_exception.append(" ");
+                            log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                            return true;
+                        }
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return true;
     }
 
     private void activateActionOfWifi(int action_wifi){

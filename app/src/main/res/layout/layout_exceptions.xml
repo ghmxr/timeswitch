@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/layout_exceptions_root"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -26,6 +27,46 @@
             android:layout_marginLeft="15dp"
             android:layout_marginRight="10dp"
             android:orientation="vertical">
+            <RelativeLayout
+                android:id="@+id/exceptions_connector"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:background="?attr/selectableItemBackground">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="vertical"
+                    android:layout_centerVertical="true">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:textColor="@color/color_text_normal"
+                        android:text="@string/activity_taskgui_exception_connector"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:textSize="13sp"
+                        android:text="@string/activity_taskgui_exception_connector_or"/>
+
+                </LinearLayout>
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/drawable_arrow_right"/>
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="@color/color_dividing_line"
+                    android:layout_alignParentBottom="true"/>
+            </RelativeLayout>
             <RelativeLayout
                 android:id="@+id/exceptions_screen_locked"
                 android:layout_width="match_parent"

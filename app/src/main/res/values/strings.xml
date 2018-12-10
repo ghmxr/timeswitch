@@ -164,6 +164,9 @@
 	<string name="activity_taskgui_additional_titlecolor_preset">预设颜色</string>
 	<string name="activity_taskgui_att_unchoose">未选择</string>
 	<string name="activity_taskgui_att_exception">触发例外</string>
+	<string name="activity_taskgui_exception_connector">触发例外判断模式</string>
+	<string name="activity_taskgui_exception_connector_or">“或”连接(满足任一即不触发)</string>
+	<string name="activity_taskgui_exception_connector_and">“与”连接(满足所有才不触发)</string>
 	<string name="activity_taskgui_exception_wifi_enabled">WiFi为打开状态</string>
 	<string name="activity_taskgui_exception_wifi_disabled">WiFi为关闭状态</string>
 	<string name="activity_taskgui_exception_bluetooth_enabled">蓝牙为打开状态</string>
@@ -278,7 +281,9 @@
 	<string name="dialog_weekloop_title">选择重复</string>
 	<string name="activity_log_trigger_time">触发时间</string>
 	<string name="activity_log_trigger_value">触发操作</string>
+	<string name="log_exceptions_activate">已触发 </string>
 	<string name="log_exceptions">未触发(触发例外)：</string>
+	<string name="log_exceptions_unsatisfied">已触发(未达到的触发例外):</string>
 	<string name="log_exceptions_battery_temperature_higher_than">电池温度高于:</string>
 	<string name="log_exceptions_battery_temperature_lower_than">电池温度低于:</string>
 	<string name="log_exceptions_battery_percentage_more_than">电池电量大于:</string>
@@ -362,6 +367,7 @@
 	<string name="word_import">导入</string>
 	<string name="word_nothing">无</string>
 	<string name="word_default">默认</string>
+	<string name="word_unsatisfied">未满足</string>
 	<string name="degree_celsius">℃</string>
 	<string name="percentage">%</string>
 	<string name="toast_location_default">默认位置</string>
