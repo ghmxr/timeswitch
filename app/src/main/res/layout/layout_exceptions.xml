@@ -47,6 +47,7 @@
                         android:textColor="@color/color_text_normal"
                         android:text="@string/activity_taskgui_exception_connector"/>
                     <TextView
+                        android:id="@+id/exceptions_connector_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
@@ -480,7 +481,7 @@
                     android:textSize="14sp"
                     android:text="@string/activity_taskgui_exception_gps_on" />
                 <CheckBox
-                    android:id="@+id/exceptions_net_gps_on_cb"
+                    android:id="@+id/exceptions_gps_on_cb"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -516,7 +517,7 @@
                     android:textSize="14sp"
                     android:text="@string/activity_taskgui_exception_gps_off" />
                 <CheckBox
-                    android:id="@+id/exceptions_net_gps_off_cb"
+                    android:id="@+id/exceptions_gps_off_cb"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"

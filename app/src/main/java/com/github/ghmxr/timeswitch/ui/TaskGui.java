@@ -651,6 +651,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				Intent i=new Intent(this,Exceptions.class);
 				i.putExtra(Exceptions.INTENT_EXTRA_EXCEPTIONS,taskitem.exceptions);
 				i.putExtra(Exceptions.INTENT_EXTRA_TRIGGER_TYPE,taskitem.trigger_type);
+				try{i.putExtra(Exceptions.EXTRA_EXCEPTION_CONNECTOR,Integer.parseInt(taskitem.addition_exception_connector));}catch (Exception e){e.printStackTrace();}
 				i.putExtra(EXTRA_TITLE_COLOR,taskitem.addition_title_color);
 				this.startActivityForResult(i,REQUEST_CODE_EXCEPTIONS);
 
@@ -1128,10 +1129,12 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			}
 			break;
 			case REQUEST_CODE_EXCEPTIONS:{
-				if(resultCode==Exceptions.EXCEPTIONS_RESULT_SUCCESS) {
+				if(resultCode==RESULT_OK) {
 					String[] result =null;
-					if(data!=null) result=data.getStringArrayExtra(Exceptions.INTENT_EXTRA_EXCEPTIONS);
+					if(data==null) return;
+					result=data.getStringArrayExtra(Exceptions.INTENT_EXTRA_EXCEPTIONS);
 					if (result != null) taskitem.exceptions = result;
+					taskitem.addition_exception_connector=String.valueOf(data.getIntExtra(Exceptions.EXTRA_EXCEPTION_CONNECTOR,-1));
 					refreshExceptionViews();
 				}
 			}

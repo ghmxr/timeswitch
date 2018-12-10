@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -32,29 +33,23 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
 
     public static final String INTENT_EXTRA_EXCEPTIONS="exceptions";
     public static final String INTENT_EXTRA_TRIGGER_TYPE="trigger_type";
-
-    public static final int EXCEPTIONS_RESULT_CANCEL=0;
-    public static final int EXCEPTIONS_RESULT_SUCCESS=1;
-
-    RelativeLayout area_screen_locked,area_screen_unlocked,area_wifi_enabled,area_wifi_disabled,area_bluetooth_enabled,area_bluetooth_disabled,area_ring_vibrate,
-    area_ring_off,area_ring_normal,area_net_enabled,area_net_disabled,area_gps_enabled,area_gps_disabled,area_airplane_mode_on,area_airplane_mode_off,
-    area_battery_percentage,area_battery_temperature,area_day_of_week,area_period;
-
-    CheckBox cb_screen_locked,cb_screen_unlocked,cb_wifi_enabled,cb_wifi_disabled,cb_bluetooth_enabled,cb_bluetooth_disabled,cb_ring_vibrate,cb_ring_off,
-    cb_ring_normal,cb_net_enabled,cb_net_disabled,cb_gps_enabled,cb_gps_disabled,cb_airplane_mode_on,cb_airplane_mode_off;
+    public static final String EXTRA_EXCEPTION_CONNECTOR="exception_connector";
 
     private String exceptions[]=new String[PublicConsts.EXCEPTION_LENTH];
-    private String exceptions_check[]=new String[PublicConsts.EXCEPTION_LENTH];
-    //private int trigger_type;
+    //private String exceptions_check[]=new String[PublicConsts.EXCEPTION_LENTH];
+    private String check_string="";
+    private int exception_connector=-1;
     private long first_exit_time=0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.exceptions=this.getIntent().getStringArrayExtra(INTENT_EXTRA_EXCEPTIONS);
-        System.arraycopy(exceptions,0,exceptions_check,0,exceptions.length);
-        int trigger_type=this.getIntent().getIntExtra(INTENT_EXTRA_TRIGGER_TYPE,-1);
 
+        this.exceptions=this.getIntent().getStringArrayExtra(INTENT_EXTRA_EXCEPTIONS);
+        //System.arraycopy(exceptions,0,exceptions_check,0,exceptions.length);
+        int trigger_type=this.getIntent().getIntExtra(INTENT_EXTRA_TRIGGER_TYPE,-1);
+        exception_connector=getIntent().getIntExtra(EXTRA_EXCEPTION_CONNECTOR,-1);
+        check_string=toCheckString();
         setContentView(R.layout.layout_exceptions);
 
         Toolbar toolbar=findViewById(R.id.exceptions_toolbar);
@@ -67,95 +62,59 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
         }
         setToolBarAndStatusBarColor(toolbar,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
 
-        area_screen_locked=findViewById(R.id.exceptions_screen_locked);
-        area_screen_unlocked=findViewById(R.id.exceptions_screen_unlocked);
-        area_wifi_enabled=findViewById(R.id.exceptions_wifi_enabled);
-        area_wifi_disabled=findViewById(R.id.exceptions_wifi_disabled);
-        area_bluetooth_enabled=findViewById(R.id.exceptions_bluetooth_enabled);
-        area_bluetooth_disabled=findViewById(R.id.exceptions_bluetooth_disabled);
-        area_ring_vibrate=findViewById(R.id.exceptions_ring_vibrate);
-        area_ring_off=findViewById(R.id.exceptions_ring_off);
-        area_ring_normal=findViewById(R.id.exceptions_ring_normal);
-        area_net_enabled=findViewById(R.id.exceptions_net_enabled);
-        area_net_disabled=findViewById(R.id.exceptions_net_disabled);
-        area_gps_enabled=findViewById(R.id.exceptions_gps_on);
-        area_gps_disabled=findViewById(R.id.exceptions_gps_off);
-        area_airplane_mode_on=findViewById(R.id.exceptions_airplanemode_on);
-        area_airplane_mode_off=findViewById(R.id.exceptions_airplanemode_off);
-        area_battery_percentage=findViewById(R.id.exceptions_battery_percentage);
-        area_battery_temperature=findViewById(R.id.exceptions_battery_temperature);
-        area_day_of_week=findViewById(R.id.exceptions_day_of_week);
-        area_period=findViewById(R.id.exceptions_period);
-
-        cb_screen_locked=findViewById(R.id.exceptions_screen_locked_cb);
-        cb_screen_unlocked=findViewById(R.id.exceptions_screen_unlocked_cb);
-        cb_wifi_enabled=findViewById(R.id.exceptions_wifi_enabled_cb);
-        cb_wifi_disabled=findViewById(R.id.exceptions_wifi_disabled_cb);
-        cb_bluetooth_enabled=findViewById(R.id.exceptions_bluetooth_enabled_cb);
-        cb_bluetooth_disabled=findViewById(R.id.exceptions_bluetooth_disabled_cb);
-        cb_ring_vibrate=findViewById(R.id.exceptions_ring_vibrate_cb);
-        cb_ring_normal=findViewById(R.id.exceptions_ring_normal_cb);
-        cb_ring_off=findViewById(R.id.exceptions_ring_off_cb);
-        cb_net_enabled=findViewById(R.id.exceptions_net_enabled_cb);
-        cb_net_disabled=findViewById(R.id.exceptions_net_disabled_cb);
-        cb_gps_enabled=findViewById(R.id.exceptions_net_gps_on_cb);
-        cb_gps_disabled=findViewById(R.id.exceptions_net_gps_off_cb);
-        cb_airplane_mode_on=findViewById(R.id.exceptions_airplanemode_on_cb);
-        cb_airplane_mode_off=findViewById(R.id.exceptions_airplanemode_off_cb);
+        findViewById(R.id.exceptions_connector).setOnClickListener(this);
+        findViewById(R.id.exceptions_screen_locked).setOnClickListener(this);
+        findViewById(R.id.exceptions_screen_unlocked).setOnClickListener(this);
+        findViewById(R.id.exceptions_wifi_enabled).setOnClickListener(this);
+        findViewById(R.id.exceptions_wifi_disabled).setOnClickListener(this);
+        findViewById(R.id.exceptions_bluetooth_enabled).setOnClickListener(this);
+        findViewById(R.id.exceptions_bluetooth_disabled).setOnClickListener(this);
+        findViewById(R.id.exceptions_ring_vibrate).setOnClickListener(this);
+        findViewById(R.id.exceptions_ring_off).setOnClickListener(this);
+        findViewById(R.id.exceptions_ring_normal).setOnClickListener(this);
+        findViewById(R.id.exceptions_net_enabled).setOnClickListener(this);
+        findViewById(R.id.exceptions_net_disabled).setOnClickListener(this);
+        findViewById(R.id.exceptions_gps_on).setOnClickListener(this);
+        findViewById(R.id.exceptions_gps_off).setOnClickListener(this);
+        findViewById(R.id.exceptions_airplanemode_on).setOnClickListener(this);
+        findViewById(R.id.exceptions_airplanemode_off).setOnClickListener(this);
+        findViewById(R.id.exceptions_battery_percentage).setOnClickListener(this);
+        findViewById(R.id.exceptions_battery_temperature).setOnClickListener(this);
+        findViewById(R.id.exceptions_day_of_week).setOnClickListener(this);
+        findViewById(R.id.exceptions_period).setOnClickListener(this);
 
         if(trigger_type==PublicConsts.TRIGGER_TYPE_SINGLE||trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_WEEK){
-            area_period.setVisibility(View.GONE);
-            area_day_of_week.setVisibility(View.GONE);
+            findViewById(R.id.exceptions_period).setVisibility(View.GONE);
+            findViewById(R.id.exceptions_day_of_week).setVisibility(View.GONE);
         }
         if(trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE||trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE){
-            area_battery_temperature.setVisibility(View.GONE);
+            findViewById(R.id.exceptions_battery_temperature).setVisibility(View.GONE);
         }
         if(trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE||trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE){
-            area_battery_percentage.setVisibility(View.GONE);
+            findViewById(R.id.exceptions_battery_percentage).setVisibility(View.GONE);
         }
 
-        area_screen_locked.setOnClickListener(this);
-        area_screen_unlocked.setOnClickListener(this);
-        area_wifi_enabled.setOnClickListener(this);
-        area_wifi_disabled.setOnClickListener(this);
-        area_bluetooth_enabled.setOnClickListener(this);
-        area_bluetooth_disabled.setOnClickListener(this);
-        area_ring_vibrate.setOnClickListener(this);
-        area_ring_off.setOnClickListener(this);
-        area_ring_normal.setOnClickListener(this);
-        area_net_enabled.setOnClickListener(this);
-        area_net_disabled.setOnClickListener(this);
-        area_gps_enabled.setOnClickListener(this);
-        area_gps_disabled.setOnClickListener(this);
-        area_airplane_mode_on.setOnClickListener(this);
-        area_airplane_mode_off.setOnClickListener(this);
-        area_battery_percentage.setOnClickListener(this);
-        area_battery_temperature.setOnClickListener(this);
-        area_day_of_week.setOnClickListener(this);
-        area_period.setOnClickListener(this);
-
-
         try{
-            cb_screen_locked.setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_LOCKEDSCREEN])==1);
-            cb_screen_unlocked.setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_UNLOCKEDSCREEN])==1);
-            cb_wifi_enabled.setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_WIFI_ENABLED])==1);
-            cb_wifi_disabled.setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_WIFI_DISABLED])==1);
-            cb_bluetooth_enabled.setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BLUETOOTH_ENABLED])==1);
-            cb_bluetooth_disabled.setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BLUETOOTH_DISABLED])==1);
-            cb_ring_vibrate.setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_RING_VIBRATE])==1);
-            cb_ring_normal.setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_RING_NORMAL])==1);
-            cb_ring_off.setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_RING_OFF])==1);
-            cb_net_enabled.setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_NET_ENABLED])==1);
-            cb_net_disabled.setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_NET_DISABLED])==1);
-            cb_gps_enabled.setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_GPS_ENABLED])==1);
-            cb_gps_disabled.setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_GPS_DISABLED])==1);
-            cb_airplane_mode_on.setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_AIRPLANE_MODE_ENABLED])==1);
-            cb_airplane_mode_off.setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_AIRPLANE_MODE_DISABLED])==1);
+            ((CheckBox)findViewById(R.id.exceptions_screen_locked_cb)).setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_LOCKEDSCREEN])==1);
+            ((CheckBox)findViewById(R.id.exceptions_screen_unlocked_cb)).setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_UNLOCKEDSCREEN])==1);
+            ((CheckBox)findViewById(R.id.exceptions_wifi_enabled_cb)).setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_WIFI_ENABLED])==1);
+            ((CheckBox)findViewById(R.id.exceptions_wifi_disabled_cb)).setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_WIFI_DISABLED])==1);
+            ((CheckBox)findViewById(R.id.exceptions_bluetooth_enabled_cb)).setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BLUETOOTH_ENABLED])==1);
+            ((CheckBox)findViewById(R.id.exceptions_bluetooth_disabled_cb)).setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BLUETOOTH_DISABLED])==1);
+            ((CheckBox)findViewById(R.id.exceptions_ring_vibrate_cb)).setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_RING_VIBRATE])==1);
+            ((CheckBox)findViewById(R.id.exceptions_ring_normal_cb)).setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_RING_NORMAL])==1);
+            ((CheckBox)findViewById(R.id.exceptions_ring_off_cb)).setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_RING_OFF])==1);
+            ((CheckBox)findViewById(R.id.exceptions_net_enabled_cb)).setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_NET_ENABLED])==1);
+            ((CheckBox)findViewById(R.id.exceptions_net_disabled_cb)).setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_NET_DISABLED])==1);
+            ((CheckBox)findViewById(R.id.exceptions_gps_on_cb)).setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_GPS_ENABLED])==1);
+            ((CheckBox)findViewById(R.id.exceptions_gps_off_cb)).setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_GPS_DISABLED])==1);
+            ((CheckBox)findViewById(R.id.exceptions_airplanemode_on_cb)).setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_AIRPLANE_MODE_ENABLED])==1);
+            ((CheckBox)findViewById(R.id.exceptions_airplanemode_off_cb)).setChecked(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_AIRPLANE_MODE_DISABLED])==1);
         }catch (NumberFormatException ne){
             ne.printStackTrace();
             LogUtil.putExceptionLog(this,ne);
         }
-
+        refreshExceptionConnectorValue();
         refreshBatteryPercentageView();
         refreshBatteryTemperatureView();
         refreshDayOfWeekView();
@@ -165,15 +124,48 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
     @Override
     public void processMessage(Message msg){}
 
+    private String toCheckString(){
+        return Arrays.toString(exceptions)+",connector="+exception_connector;
+    }
+
     private boolean ifHasChanged(){
-        return !Arrays.toString(exceptions).equals(Arrays.toString(exceptions_check));
+        return !check_string.equals(toCheckString());
     }
 
     @Override
     public void onClick(View view) {
         switch(view.getId()){
             default:break;
+            case R.id.exceptions_connector:{
+                final AlertDialog dialog=new AlertDialog.Builder(this)
+                        .setTitle(getResources().getString(R.string.activity_taskgui_exception_connector))
+                        .setView(LayoutInflater.from(this).inflate(R.layout.layout_dialog_with_two_single_choices,null))
+                        .show();
+                ((RadioButton)dialog.findViewById(R.id.dialog_choice_first)).setChecked(exception_connector==PublicConsts.EXCEPTION_CONNECTOR_OR);
+                ((RadioButton)dialog.findViewById(R.id.dialog_choice_second)).setChecked(exception_connector==PublicConsts.EXCEPTION_CONNECTOR_AND);
+                ((RadioButton)dialog.findViewById(R.id.dialog_choice_first)).setText(getResources().getString(R.string.activity_taskgui_exception_connector_or));
+                ((RadioButton)dialog.findViewById(R.id.dialog_choice_second)).setText(getResources().getString(R.string.activity_taskgui_exception_connector_and));
+                (dialog.findViewById(R.id.dialog_choice_first)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.cancel();
+                        exception_connector=PublicConsts.EXCEPTION_CONNECTOR_OR;
+                        refreshExceptionConnectorValue();
+                    }
+                });
+                (dialog.findViewById(R.id.dialog_choice_second)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.cancel();
+                        exception_connector=PublicConsts.EXCEPTION_CONNECTOR_AND;
+                        refreshExceptionConnectorValue();
+                    }
+                });
+            }
+            break;
             case R.id.exceptions_screen_locked:{
+                CheckBox cb_screen_locked=findViewById(R.id.exceptions_screen_locked_cb);
+                CheckBox cb_screen_unlocked=findViewById(R.id.exceptions_screen_unlocked_cb);
                 cb_screen_locked.toggle();
                 if(cb_screen_locked.isChecked()) cb_screen_unlocked.setChecked(false);
                 exceptions[PublicConsts.EXCEPTION_LOCKEDSCREEN]=cb_screen_locked.isChecked()?String.valueOf(1):String.valueOf(0);
@@ -181,6 +173,8 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
             }
             break;
             case R.id.exceptions_screen_unlocked:{
+                CheckBox cb_screen_locked=findViewById(R.id.exceptions_screen_locked_cb);
+                CheckBox cb_screen_unlocked=findViewById(R.id.exceptions_screen_unlocked_cb);
                 cb_screen_unlocked.toggle();
                 if(cb_screen_unlocked.isChecked()) cb_screen_locked.setChecked(false);
                 exceptions[PublicConsts.EXCEPTION_LOCKEDSCREEN]=cb_screen_locked.isChecked()?String.valueOf(1):String.valueOf(0);
@@ -188,6 +182,8 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
             }
             break;
             case R.id.exceptions_wifi_enabled:{
+                CheckBox cb_wifi_enabled=findViewById(R.id.exceptions_wifi_enabled_cb);
+                CheckBox cb_wifi_disabled=findViewById(R.id.exceptions_wifi_disabled_cb);
                 cb_wifi_enabled.toggle();
                 if(cb_wifi_enabled.isChecked()) cb_wifi_disabled.setChecked(false);
                 exceptions[PublicConsts.EXCEPTION_WIFI_ENABLED]=(cb_wifi_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
@@ -195,6 +191,8 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
             }
             break;
             case R.id.exceptions_wifi_disabled:{
+                CheckBox cb_wifi_enabled=findViewById(R.id.exceptions_wifi_enabled_cb);
+                CheckBox cb_wifi_disabled=findViewById(R.id.exceptions_wifi_disabled_cb);
                 cb_wifi_disabled.toggle();
                 if(cb_wifi_disabled.isChecked()) cb_wifi_enabled.setChecked(false);
                 exceptions[PublicConsts.EXCEPTION_WIFI_ENABLED]=(cb_wifi_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
@@ -202,6 +200,8 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
             }
             break;
             case R.id.exceptions_bluetooth_enabled:{
+                CheckBox cb_bluetooth_enabled=findViewById(R.id.exceptions_bluetooth_enabled_cb);
+                CheckBox cb_bluetooth_disabled=findViewById(R.id.exceptions_bluetooth_disabled_cb);
                 cb_bluetooth_enabled.toggle();
                 if(cb_bluetooth_enabled.isChecked()) cb_bluetooth_disabled.setChecked(false);
                 exceptions[PublicConsts.EXCEPTION_BLUETOOTH_ENABLED]=(cb_bluetooth_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
@@ -209,6 +209,8 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
             }
             break;
             case R.id.exceptions_bluetooth_disabled:{
+                CheckBox cb_bluetooth_enabled=findViewById(R.id.exceptions_bluetooth_enabled_cb);
+                CheckBox cb_bluetooth_disabled=findViewById(R.id.exceptions_bluetooth_disabled_cb);
                 cb_bluetooth_disabled.toggle();
                 if(cb_bluetooth_disabled.isChecked()) cb_bluetooth_enabled.setChecked(false);
                 exceptions[PublicConsts.EXCEPTION_BLUETOOTH_ENABLED]=(cb_bluetooth_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
@@ -216,6 +218,9 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
             }
             break;
             case R.id.exceptions_ring_vibrate:{
+                CheckBox cb_ring_vibrate=findViewById(R.id.exceptions_ring_vibrate_cb);
+                CheckBox cb_ring_off=findViewById(R.id.exceptions_ring_off_cb);
+                CheckBox cb_ring_normal=findViewById(R.id.exceptions_ring_normal_cb);
                 cb_ring_vibrate.toggle();
                 if(cb_ring_vibrate.isChecked()) {cb_ring_off.setChecked(false);cb_ring_normal.setChecked(false);}
                 exceptions[PublicConsts.EXCEPTION_RING_VIBRATE]=(cb_ring_vibrate.isChecked()?String.valueOf(1):String.valueOf(0));
@@ -224,6 +229,9 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
             }
             break;
             case R.id.exceptions_ring_off:{
+                CheckBox cb_ring_vibrate=findViewById(R.id.exceptions_ring_vibrate_cb);
+                CheckBox cb_ring_off=findViewById(R.id.exceptions_ring_off_cb);
+                CheckBox cb_ring_normal=findViewById(R.id.exceptions_ring_normal_cb);
                 cb_ring_off.toggle();
                 if(cb_ring_off.isChecked()) {cb_ring_vibrate.setChecked(false);cb_ring_normal.setChecked(false);}
                 exceptions[PublicConsts.EXCEPTION_RING_VIBRATE]=(cb_ring_vibrate.isChecked()?String.valueOf(1):String.valueOf(0));
@@ -232,6 +240,9 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
             }
             break;
             case R.id.exceptions_ring_normal:{
+                CheckBox cb_ring_vibrate=findViewById(R.id.exceptions_ring_vibrate_cb);
+                CheckBox cb_ring_off=findViewById(R.id.exceptions_ring_off_cb);
+                CheckBox cb_ring_normal=findViewById(R.id.exceptions_ring_normal_cb);
                 cb_ring_normal.toggle();
                 if(cb_ring_normal.isChecked()) {cb_ring_vibrate.setChecked(false);cb_ring_off.setChecked(false);}
                 exceptions[PublicConsts.EXCEPTION_RING_VIBRATE]=(cb_ring_vibrate.isChecked()?String.valueOf(1):String.valueOf(0));
@@ -240,6 +251,8 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
             }
             break;
             case R.id.exceptions_net_enabled:{
+                CheckBox cb_net_enabled=findViewById(R.id.exceptions_net_enabled_cb);
+                CheckBox cb_net_disabled=findViewById(R.id.exceptions_net_disabled_cb);
                 cb_net_enabled.toggle();
                 if(cb_net_enabled.isChecked()) cb_net_disabled.setChecked(false);
                 exceptions[PublicConsts.EXCEPTION_NET_ENABLED]=(cb_net_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
@@ -247,6 +260,8 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
             }
             break;
             case R.id.exceptions_net_disabled:{
+                CheckBox cb_net_enabled=findViewById(R.id.exceptions_net_enabled_cb);
+                CheckBox cb_net_disabled=findViewById(R.id.exceptions_net_disabled_cb);
                 cb_net_disabled.toggle();
                 if(cb_net_disabled.isChecked()) cb_net_enabled.setChecked(false);
                 exceptions[PublicConsts.EXCEPTION_NET_ENABLED]=(cb_net_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
@@ -254,6 +269,8 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
             }
             break;
             case R.id.exceptions_gps_on:{
+                CheckBox cb_gps_enabled=findViewById(R.id.exceptions_gps_on_cb);
+                CheckBox cb_gps_disabled=findViewById(R.id.exceptions_gps_off_cb);
                 cb_gps_enabled.toggle();
                 if(cb_gps_enabled.isChecked()) cb_gps_disabled.setChecked(false);
                 exceptions[PublicConsts.EXCEPTION_GPS_ENABLED]=(cb_gps_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
@@ -261,6 +278,8 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
             }
             break;
             case R.id.exceptions_gps_off:{
+                CheckBox cb_gps_enabled=findViewById(R.id.exceptions_gps_on_cb);
+                CheckBox cb_gps_disabled=findViewById(R.id.exceptions_gps_off_cb);
                 cb_gps_disabled.toggle();
                 if(cb_gps_disabled.isChecked()) cb_gps_enabled.setChecked(false);
                 exceptions[PublicConsts.EXCEPTION_GPS_ENABLED]=(cb_gps_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
@@ -268,6 +287,8 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
             }
             break;
             case R.id.exceptions_airplanemode_on:{
+                CheckBox cb_airplane_mode_on=findViewById(R.id.exceptions_airplanemode_on_cb);
+                CheckBox cb_airplane_mode_off=findViewById(R.id.exceptions_airplanemode_off_cb);
                 cb_airplane_mode_on.toggle();
                 if(cb_airplane_mode_on.isChecked()) cb_airplane_mode_off.setChecked(false);
                 exceptions[PublicConsts.EXCEPTION_AIRPLANE_MODE_ENABLED]=(cb_airplane_mode_on.isChecked()?String.valueOf(1):String.valueOf(0));
@@ -275,6 +296,8 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
             }
             break;
             case R.id.exceptions_airplanemode_off:{
+                CheckBox cb_airplane_mode_on=findViewById(R.id.exceptions_airplanemode_on_cb);
+                CheckBox cb_airplane_mode_off=findViewById(R.id.exceptions_airplanemode_off_cb);
                 cb_airplane_mode_off.toggle();
                 if(cb_airplane_mode_off.isChecked()) cb_airplane_mode_on.setChecked(false);
                 exceptions[PublicConsts.EXCEPTION_AIRPLANE_MODE_ENABLED]=(cb_airplane_mode_on.isChecked()?String.valueOf(1):String.valueOf(0));
@@ -536,12 +559,18 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
             case R.id.actions_exceptions_confirm:{
                 Intent i=new Intent();
                 i.putExtra(INTENT_EXTRA_EXCEPTIONS,this.exceptions);
-                setResult(EXCEPTIONS_RESULT_SUCCESS,i);
+                i.putExtra(EXTRA_EXCEPTION_CONNECTOR,exception_connector);
+                setResult(RESULT_OK,i);
                 finish();
             }
             break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void refreshExceptionConnectorValue(){
+        TextView tv=findViewById(R.id.exceptions_connector_value);
+        tv.setText(exception_connector>=0?getResources().getString(R.string.activity_taskgui_exception_connector_and):getResources().getString(R.string.activity_taskgui_exception_connector_or));
     }
 
     private void refreshBatteryPercentageView(){
