@@ -369,25 +369,25 @@ public class ActionDisplayValue {
                 int volume_media=Integer.parseInt(action_volumes[PublicConsts.VOLUME_MEDIA_LOCALE]);
                 int volume_alarm=Integer.parseInt(action_volumes[PublicConsts.VOLUME_ALARM_LOCALE]);
                 if(volume_call>=0) {
-                    builder.append(context.getResources().getString(R.string.activity_taskgui_actions_ring_volume_ring));
+                    builder.append(context.getResources().getString(R.string.adapter_action_volume_call));
                     builder.append((int)(((double)volume_call/audioManager.getStreamMaxVolume(AudioManager.STREAM_RING))*100));
                     builder.append(context.getResources().getString(R.string.percentage));
                 }
                 if(volume_media>=0){
                     if(builder.toString().length()>0) builder.append(",");
-                    builder.append(context.getResources().getString(R.string.activity_taskgui_actions_ring_volume_media));
+                    builder.append(context.getResources().getString(R.string.adapter_action_volume_music));
                     builder.append((int)(((double)volume_media/audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC))*100));
                     builder.append(context.getResources().getString(R.string.percentage));
                 }
                 if(volume_notification>=0){
                     if(builder.toString().length()>0) builder.append(",");
-                    builder.append(context.getResources().getString(R.string.activity_taskgui_actions_ring_volume_notification));
+                    builder.append(context.getResources().getString(R.string.adapter_action_volume_notification));
                     builder.append((int)(((double)volume_notification/audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION))*100));
                     builder.append(context.getResources().getString(R.string.percentage));
                 }
                 if(volume_alarm>=0){
                     if(builder.toString().length()>0) builder.append(",");
-                    builder.append(context.getResources().getString(R.string.activity_taskgui_actions_ring_volume_alarm));
+                    builder.append(context.getResources().getString(R.string.adapter_action_volume_alarm));
                     builder.append((int)(((double)volume_alarm/audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM))*100));
                     builder.append(context.getResources().getString(R.string.percentage));
                 }

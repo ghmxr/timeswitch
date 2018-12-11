@@ -144,7 +144,7 @@ public class TaskItem implements Comparable<TaskItem>{
            week_repeat[i]=true;
         }
 
-        for(int i=0;i<exceptions.length;i++){
+        for(int i=0;i<35;i++){
         	exceptions[i]=String.valueOf(0);
 		}
 
@@ -154,6 +154,10 @@ public class TaskItem implements Comparable<TaskItem>{
         exceptions[PublicConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]=String.valueOf(-1);
         exceptions[PublicConsts.EXCEPTION_START_TIME]=String.valueOf(-1);
         exceptions[PublicConsts.EXCEPTION_END_TIME]=String.valueOf(-1);
+
+        for(int i=35;i<exceptions.length;i++){
+        	exceptions[i]=String.valueOf(-1);
+		}
 
         for(int i=0;i<actions.length;i++){
             actions[i]=String.valueOf(-1);

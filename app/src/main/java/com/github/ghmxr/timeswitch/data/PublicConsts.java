@@ -65,7 +65,7 @@ public class PublicConsts {
 	public static final int WEEK_SATURDAY=6;
 
 
-	public static final int EXCEPTION_LENTH=35;
+	public static final int EXCEPTION_LENTH=37;
 	public static final int EXCEPTION_CONNECTOR_OR								=	-1;
 	public static final int EXCEPTION_CONNECTOR_AND								=	0;
 	/**
@@ -76,10 +76,10 @@ public class PublicConsts {
 	public static final int EXCEPTION_WIFI_ENABLED									=		2;
 	public static final int EXCEPTION_WIFI_DISABLED									=		3;
 	/**
-	 * ssids for used ,or -1 for unused.
+	 * 0-false, 1-disconnected,2-connected
 	 */
-	public static final int EXCEPTION_WIFI_CONNECTED								=		4;
-	public static final int EXCEPTION_WIFI_DISCONNECTED								=		5;
+	public static final int EXCEPTION_HEADSET_STATUS								=		4;
+	public static final int EXCEPTION_NOTUSED										=		5;
 	/**
 	 * 0--false ,1--true
 	 */
@@ -119,7 +119,11 @@ public class PublicConsts {
 	public static final int EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE					=	27;
 	public static final int EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE				=	28;
 	public static final int EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE				=	29;
-	public static final int EXCEPTION_HEADSET_STATUS								=	30;
+	//public static final int EXCEPTION_HEADSET_STATUS								=	30;
+	//the locales 30~34 is not used now and the initial value is 0.
+	//the following initial values are -1.from the locale 35 and on.
+	public static final int EXCEPTION_WIFI_CONNECTED								=	35;
+	public static final int EXCEPTION_WIFI_DISCONNECTED								=	36;
 
 
 	public static final int ACTION_LENGTH =25;

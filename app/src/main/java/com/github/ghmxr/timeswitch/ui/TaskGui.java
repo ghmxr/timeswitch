@@ -856,6 +856,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 	
 	public void refreshExceptionViews(){
 		try{
+			((TextView)findViewById(R.id.layout_taskgui_area_exception_att)).setText(Integer.parseInt(taskitem.addition_exception_connector)==0?getResources().getString(R.string.activity_taskgui_att_exception_and):getResources().getString(R.string.activity_taskgui_att_exception_or));
 			findViewById(R.id.layout_taskgui_area_exception_lockscreen).setVisibility(Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_LOCKEDSCREEN])==1?View.VISIBLE:View.GONE);
 			findViewById(R.id.layout_taskgui_area_exception_unlockscreen).setVisibility(Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_UNLOCKEDSCREEN])==1?View.VISIBLE:View.GONE);
 			findViewById(R.id.layout_taskgui_area_exception_ring_vibrate).setVisibility(Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_RING_VIBRATE])==1?View.VISIBLE:View.GONE);

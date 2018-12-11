@@ -297,6 +297,16 @@ public class MainListAdapter extends BaseAdapter {
                 e.printStackTrace();
             }
 
+            try{
+                if(item.autodelete||item.autoclose){
+                    views[i].findViewById(R.id.item_task_addition_area).setVisibility(View.VISIBLE);
+                    ((TextView)views[i].findViewById(R.id.item_task_addition)).setText(getAdditionValue(item));
+                    if(!item.autodelete&&item.trigger_type==PublicConsts.TRIGGER_TYPE_SINGLE) views[i].findViewById(R.id.item_task_addition_area).setVisibility(View.GONE);
+                }else views[i].findViewById(R.id.item_task_addition_area).setVisibility(View.GONE);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
             final View task_info=views[i].findViewById(R.id.item_task_info);
             final View arrow=views[i].findViewById(R.id.item_task_title_arrow);
 
@@ -523,7 +533,43 @@ public class MainListAdapter extends BaseAdapter {
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.activity_taskgui_exception_airplanemode_off));
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_MONDAY])==1){
+
+            String day_of_week="";
+            String day_of_week_values="";
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_MONDAY])==1) {
+                day_of_week_values+=context.getResources().getString(R.string.monday);
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_TUESDAY])==1){
+                if(day_of_week_values.trim().length()>0)day_of_week_values+=" ";
+                day_of_week_values+=context.getResources().getString(R.string.tuesday);
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_WEDNESDAY])==1){
+                if(day_of_week_values.trim().length()>0)day_of_week_values+=" ";
+                day_of_week_values+=context.getResources().getString(R.string.wednesday);
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_THURSDAY])==1){
+                if(day_of_week_values.trim().length()>0)day_of_week_values+=" ";
+                day_of_week_values+=context.getResources().getString(R.string.thursday);
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_FRIDAY])==1){
+                if(day_of_week_values.trim().length()>0)day_of_week_values+=" ";
+                day_of_week_values+=context.getResources().getString(R.string.friday);
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_SATURDAY])==1){
+                if(day_of_week_values.trim().length()>0)day_of_week_values+=" ";
+                day_of_week_values+=context.getResources().getString(R.string.saturday);
+            }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_SUNDAY])==1){
+                if(day_of_week_values.trim().length()>0)day_of_week_values+=" ";
+                day_of_week_values+=context.getResources().getString(R.string.sunday);
+            }
+            if(day_of_week_values.trim().length()>0){
+                day_of_week+=(context.getResources().getString(R.string.adapter_exception_day_of_week_head));
+                day_of_week+=day_of_week_values;
+            }
+            if(builder.toString().length()>0) builder.append(",");
+            builder.append(day_of_week);
+            /*if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_MONDAY])==1){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.monday));
             }
@@ -550,7 +596,9 @@ public class MainListAdapter extends BaseAdapter {
             if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_SUNDAY])==1){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.sunday));
-            }
+            }*/
+
+
             if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_START_TIME])>=0&&Integer.parseInt(exceptions[PublicConsts.EXCEPTION_END_TIME])>=0){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.log_exceptions_period));
@@ -583,7 +631,12 @@ public class MainListAdapter extends BaseAdapter {
 
             String returnValue=builder.toString();
             if(returnValue.equals("")) return context.getResources().getString(R.string.word_nothing);
-            return returnValue;
+
+            String exception_connector;
+            if(Integer.parseInt(item.addition_exception_connector)==0) exception_connector=context.getResources().getString(R.string.adapter_exception_type_and);
+            else exception_connector=context.getResources().getString(R.string.adapter_exception_type_or);
+
+            return exception_connector+returnValue;
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -820,7 +873,15 @@ public class MainListAdapter extends BaseAdapter {
         }
     }
 
-
+    private String getAdditionValue(TaskItem item){
+        try{
+            if(item.autoclose) return context.getResources().getString(R.string.activity_taskgui_additional_autoclose_cb);
+            if(item.autodelete) return context.getResources().getString(R.string.activity_taskgui_additional_autodelete_cb);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return "";
+    }
 
     public interface SwitchChangedListener{
         void onCheckedChanged(int position,boolean b);

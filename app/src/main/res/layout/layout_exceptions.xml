@@ -88,6 +88,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_centerVertical="true"
                     android:textSize="14sp"
+                    android:textColor="@color/color_text_normal"
                     android:text="@string/activity_taskgui_exception_screen_locked" />
                 <CheckBox
                     android:id="@+id/exceptions_screen_locked_cb"
@@ -123,6 +124,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_centerVertical="true"
                     android:textSize="14sp"
+                    android:textColor="@color/color_text_normal"
                     android:text="@string/activity_taskgui_exception_screen_unlocked" />
                 <CheckBox
                     android:id="@+id/exceptions_screen_unlocked_cb"
@@ -158,6 +160,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_centerVertical="true"
                     android:textSize="14sp"
+                    android:textColor="@color/color_text_normal"
                     android:text="@string/activity_taskgui_exception_wifi_enabled" />
                 <CheckBox
                     android:id="@+id/exceptions_wifi_enabled_cb"
@@ -193,6 +196,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_centerVertical="true"
                     android:textSize="14sp"
+                    android:textColor="@color/color_text_normal"
                     android:text="@string/activity_taskgui_exception_wifi_disabled" />
                 <CheckBox
                     android:id="@+id/exceptions_wifi_disabled_cb"
@@ -228,6 +232,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_centerVertical="true"
                     android:textSize="14sp"
+                    android:textColor="@color/color_text_normal"
                     android:text="@string/activity_taskgui_exception_bluetooth_enabled" />
                 <CheckBox
                     android:id="@+id/exceptions_bluetooth_enabled_cb"
@@ -263,6 +268,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_centerVertical="true"
                     android:textSize="14sp"
+                    android:textColor="@color/color_text_normal"
                     android:text="@string/activity_taskgui_exception_bluetooth_disabled" />
                 <CheckBox
                     android:id="@+id/exceptions_bluetooth_disabled_cb"
@@ -299,6 +305,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_centerVertical="true"
                     android:textSize="14sp"
+                    android:textColor="@color/color_text_normal"
                     android:text="@string/activity_taskgui_exception_ring_vibrate" />
                 <CheckBox
                     android:id="@+id/exceptions_ring_vibrate_cb"
@@ -335,6 +342,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_centerVertical="true"
                     android:textSize="14sp"
+                    android:textColor="@color/color_text_normal"
                     android:text="@string/activity_taskgui_exception_ring_off" />
                 <CheckBox
                     android:id="@+id/exceptions_ring_off_cb"
@@ -371,6 +379,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_centerVertical="true"
                     android:textSize="14sp"
+                    android:textColor="@color/color_text_normal"
                     android:text="@string/activity_taskgui_exception_ring_normal" />
                 <CheckBox
                     android:id="@+id/exceptions_ring_normal_cb"
@@ -407,6 +416,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_centerVertical="true"
                     android:textSize="14sp"
+                    android:textColor="@color/color_text_normal"
                     android:text="@string/activity_taskgui_exception_net_enabled" />
                 <CheckBox
                     android:id="@+id/exceptions_net_enabled_cb"
@@ -443,6 +453,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_centerVertical="true"
                     android:textSize="14sp"
+                    android:textColor="@color/color_text_normal"
                     android:text="@string/activity_taskgui_exception_net_disabled" />
                 <CheckBox
                     android:id="@+id/exceptions_net_disabled_cb"
@@ -479,6 +490,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_centerVertical="true"
                     android:textSize="14sp"
+                    android:textColor="@color/color_text_normal"
                     android:text="@string/activity_taskgui_exception_gps_on" />
                 <CheckBox
                     android:id="@+id/exceptions_gps_on_cb"
@@ -515,6 +527,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_centerVertical="true"
                     android:textSize="14sp"
+                    android:textColor="@color/color_text_normal"
                     android:text="@string/activity_taskgui_exception_gps_off" />
                 <CheckBox
                     android:id="@+id/exceptions_gps_off_cb"
@@ -551,6 +564,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_centerVertical="true"
                     android:textSize="14sp"
+                    android:textColor="@color/color_text_normal"
                     android:text="@string/activity_taskgui_exception_airplanemode_on" />
                 <CheckBox
                     android:id="@+id/exceptions_airplanemode_on_cb"
@@ -587,6 +601,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_centerVertical="true"
                     android:textSize="14sp"
+                    android:textColor="@color/color_text_normal"
                     android:text="@string/activity_taskgui_exception_airplanemode_off" />
                 <CheckBox
                     android:id="@+id/exceptions_airplanemode_off_cb"
@@ -596,6 +611,57 @@
                     android:layout_centerVertical="true"
                     android:clickable="false"/>
 
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="#dddddd"
+                    android:layout_alignParentBottom="true"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/exceptions_headset"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:clickable="true"
+                android:background="?attr/selectableItemBackground">
+
+                <ImageView
+                    android:id="@+id/exceptions_headset_img"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/icon_headset"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/exceptions_headset_img"
+                    android:layout_marginLeft="15dp">
+                    <TextView
+                        android:id="@+id/exceptions_headset_att"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="@color/color_text_normal"
+                        android:text="@string/activity_taskgui_exception_headset" />
+                    <TextView
+                        android:id="@+id/exceptions_headset_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:text="@string/unselected"/>
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/drawable_arrow_right"/>
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="1px"
@@ -630,13 +696,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="14sp"
+                        android:textColor="@color/color_text_normal"
                         android:text="@string/activity_taskgui_exceptions_battery_percentage" />
                     <TextView
                         android:id="@+id/exceptions_battery_percentage_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
-                        android:text="小于50%"/>
+                        android:text="less than 50%"/>
                 </LinearLayout>
 
                 <ImageView
@@ -680,13 +747,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="14sp"
+                        android:textColor="@color/color_text_normal"
                         android:text="@string/activity_taskgui_exceptions_battery_temperature" />
                     <TextView
                         android:id="@+id/exceptions_battery_temperature_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
-                        android:text="高于40℃"/>
+                        android:text="higher than 40℃"/>
                 </LinearLayout>
                 <ImageView
                     android:layout_width="15dp"
@@ -729,6 +797,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="14sp"
+                        android:textColor="@color/color_text_normal"
                         android:text="@string/activity_taskgui_exceptions_day_of_week" />
                     <TextView
                         android:id="@+id/exceptions_day_of_week_value"
@@ -779,6 +848,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="14sp"
+                        android:textColor="@color/color_text_normal"
                         android:text="@string/activity_taskgui_exceptions_period" />
                     <TextView
                         android:id="@+id/exceptions_period_value"

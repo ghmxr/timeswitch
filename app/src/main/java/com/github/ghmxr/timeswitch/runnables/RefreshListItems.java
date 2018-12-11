@@ -134,7 +134,7 @@ public class RefreshListItems implements Runnable {
                     if(!initial_additions[PublicConsts.ADDITION_TITLE_COLOR_LOCALE].equals(String.valueOf(-1))){
                         item.addition_title_color=initial_additions[PublicConsts.ADDITION_TITLE_COLOR_LOCALE];
                     }
-
+                    item.addition_exception_connector=initial_additions[PublicConsts.ADDITION_EXCEPTION_CONNECTOR_LOCALE];
                 }catch(Exception e){
                     e.printStackTrace();
                 }
