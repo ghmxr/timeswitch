@@ -1195,9 +1195,12 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 Snackbar.make(findViewById(R.id.trigger_root),getResources().getString(R.string.snackbar_changes_not_saved_back),Snackbar.LENGTH_SHORT).show();
                 return;
             }
+            setResult(RESULT_CANCELED);
+            finish();
+        }else{
+            setResult(RESULT_CANCELED);
             finish();
         }
-        finish();
     }
 
     private class BroadcastSelectionAdapter extends BaseAdapter {

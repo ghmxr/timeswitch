@@ -6,7 +6,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -37,6 +39,8 @@ public class ActionOfChangingRingtones extends BaseActivity implements View.OnCl
     int selection_phone=-1;
     String value_notification_uri;
     String value_call_uri;
+    private String checkString="";
+    private long first_exit_time=0;
 
     private static final int TYPE_NOTIFICATION=0;
     private static final int TYPE_PHONE=1;
@@ -75,6 +79,11 @@ public class ActionOfChangingRingtones extends BaseActivity implements View.OnCl
             e.printStackTrace();
             LogUtil.putExceptionLog(this,e);
         }
+        checkString=toCheckString();
+    }
+
+    private String toCheckString(){
+        return String.valueOf(selection_phone)+"/"+String.valueOf(value_call_uri)+String.valueOf(selection_notification)+"/"+String.valueOf(value_notification_uri);
     }
 
     @Override
@@ -85,7 +94,7 @@ public class ActionOfChangingRingtones extends BaseActivity implements View.OnCl
         switch (item.getItemId()){
             default:break;
             case android.R.id.home:{
-                finish();
+                checkAndExit();
             }
             break;
             case R.id.action_ring_selection_confirm:{
@@ -102,6 +111,15 @@ public class ActionOfChangingRingtones extends BaseActivity implements View.OnCl
             break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event){
+        if(keyCode==KeyEvent.KEYCODE_BACK){
+            checkAndExit();
+            return true;
+        }
+        return super.onKeyDown(keyCode,event);
     }
 
     @Override
@@ -147,6 +165,22 @@ public class ActionOfChangingRingtones extends BaseActivity implements View.OnCl
                 if(resultCode==RESULT_OK) onPhoneRingtoneSetFromMediaStore(data);
             }
             break;
+        }
+    }
+
+    private void checkAndExit(){
+        long clicked_time=System.currentTimeMillis();
+        if(toCheckString().equals(checkString)){
+            setResult(RESULT_CANCELED);
+            finish();
+        }else{
+            if(clicked_time-first_exit_time>1000){
+                first_exit_time=clicked_time;
+                Snackbar.make(findViewById(R.id.ring_selection_root),getResources().getString(R.string.snackbar_changes_not_saved_back),Snackbar.LENGTH_SHORT).show();
+                return;
+            }
+            setResult(RESULT_CANCELED);
+            finish();
         }
     }
 

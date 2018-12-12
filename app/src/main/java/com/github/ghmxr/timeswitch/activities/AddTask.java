@@ -5,6 +5,8 @@ import com.github.ghmxr.timeswitch.ui.TaskGui;
 import com.github.ghmxr.timeswitch.R;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -14,8 +16,9 @@ import android.view.MenuItem;
 
 public class AddTask extends TaskGui{
 
-    public static final int ACTIVITY_ADD_RESULT_CANCEL  =   0x00000;
-    public static final int ACTIVITY_ADD_RESULT_SUCCESS =   0x00001;
+    //public static final int ACTIVITY_ADD_RESULT_CANCEL  =   0x00000;
+    //public static final int ACTIVITY_ADD_RESULT_SUCCESS =   0x00001;
+    private long first_clicked_back=0;
 
     @Override
 	public void onCreate(Bundle mybundle){
@@ -40,6 +43,31 @@ public class AddTask extends TaskGui{
         return true;
     }
 
+    private void checkAndExit(){
+        long current_time=System.currentTimeMillis();
+        if(!taskitem.toString().equals(checkString)){
+            if(current_time-first_clicked_back>1000){
+                first_clicked_back=current_time;
+                Snackbar.make(findViewById(R.id.layout_taskgui_root),getResources().getString(R.string.snackbar_changes_not_saved_back),Snackbar.LENGTH_SHORT).show();
+                return;
+            }
+            setResult(RESULT_CANCELED);
+            finish();
+        }else{
+            setResult(RESULT_CANCELED);
+            finish();
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event){
+        if(keyCode==KeyEvent.KEYCODE_BACK){
+            checkAndExit();
+            return true;
+        }
+        return super.onKeyDown(keyCode,event);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -50,15 +78,14 @@ public class AddTask extends TaskGui{
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_add_save) {
            if(saveTaskItem2DB(null)!=-1){
-               setResult(ACTIVITY_ADD_RESULT_SUCCESS);
+               setResult(RESULT_OK);
                finish();
                return true;
            }
         }
 
         if(id==android.R.id.home){
-            setResult(ACTIVITY_ADD_RESULT_CANCEL);
-            finish();
+            checkAndExit();
         }
         return super.onOptionsItemSelected(item);
     }

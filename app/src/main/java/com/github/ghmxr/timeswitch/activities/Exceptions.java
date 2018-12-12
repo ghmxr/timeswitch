@@ -536,9 +536,11 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
             }
             setResult(RESULT_CANCELED);
             finish();
+        }else{
+            setResult(RESULT_CANCELED);
+            finish();
         }
-        setResult(RESULT_CANCELED);
-        finish();
+
     }
 
     @Override

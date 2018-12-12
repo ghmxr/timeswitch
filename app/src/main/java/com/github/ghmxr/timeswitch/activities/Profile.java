@@ -79,7 +79,7 @@ public class Profile extends BaseActivity {
     long delete_firstclicked=0;
 
     //public static final int RESULT_NOTHING_CHANGED=0x000000;
-    public static final int RESULT_PROFILE_CHANGED=0x000001;
+    //public static final int RESULT_PROFILE_CHANGED=0x000001;
 
     private static final int MESSAGE_REQUIRE_UPDATE_LIST=0x30000;
     private static final int MESSAGE_EXPORT_TABLES_COMPLETE=0x30001;
@@ -98,7 +98,7 @@ public class Profile extends BaseActivity {
                 MySQLiteOpenHelper.clearCurrentInstance();
                 showWaitDialog();
                 //isChanged=true;
-                setResult(RESULT_PROFILE_CHANGED);
+                setResult(RESULT_OK);
                 if(TimeSwitchService.service_queue.size()>0) TimeSwitchService.service_queue.getLast().refreshTaskItems();
                 else startService(new Intent(Profile.this, TimeSwitchService.class));
             }
@@ -520,7 +520,7 @@ public class Profile extends BaseActivity {
                     }
                     editor.apply();
                     MySQLiteOpenHelper.clearCurrentInstance();
-                    setResult(RESULT_PROFILE_CHANGED);
+                    setResult(RESULT_OK);
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -551,7 +551,7 @@ public class Profile extends BaseActivity {
                     }
                     editor.apply();
                     MySQLiteOpenHelper.clearCurrentInstance();
-                    setResult(RESULT_PROFILE_CHANGED);
+                    setResult(RESULT_OK);
                 }catch (Exception e){
                     e.printStackTrace();
                 }

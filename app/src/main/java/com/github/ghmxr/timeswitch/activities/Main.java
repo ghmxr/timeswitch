@@ -84,7 +84,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
         }
     };
 
-	private boolean isBatteryReceiverRegistered=false;
+	//private boolean isBatteryReceiverRegistered=false;
     private long first_click_delete=0;
    // public static LinkedList<Main> queue=new LinkedList<>();
   /*  public static Handler handler=new Handler(){
@@ -161,17 +161,17 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==REQUEST_CODE_ACTIVITY_ADD){
-            if(resultCode==AddTask.ACTIVITY_ADD_RESULT_SUCCESS){
+            if(resultCode==RESULT_OK){
                 startService2Refresh();
                 //sendEmptyMessage(MESSAGE_GETLIST_COMPLETE);
             }
         }else if(requestCode==REQUEST_CODE_ACTIVITY_EDIT){
-            if(resultCode==EditTask.ACTIVITY_EDIT_RESULT_SUCCESS){
+            if(resultCode==RESULT_OK){
                 startService2Refresh();
                 //sendEmptyMessage(MESSAGE_GETLIST_COMPLETE);
             }
         }else if(requestCode==REQUEST_CODE_ACTIVITY_PROFILE){
-            if(resultCode==Profile.RESULT_PROFILE_CHANGED){
+            if(resultCode==RESULT_OK){
                 adapter=null;
                 listview.setAdapter(null);
                 startService2Refresh();
@@ -414,9 +414,10 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
 
     private void startRefreshingIndicator(){
         this.ifRefresh=true;
-        if(!isBatteryReceiverRegistered){
+        try{
             registerReceiver(batteryReceiver,new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-            isBatteryReceiverRegistered=true;
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
        myHandler.post(new Runnable() {
@@ -495,11 +496,11 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
     public void finish(){
         super.finish();
         this.ifRefresh=false;
-        if(isBatteryReceiverRegistered) {
+        try{
             unregisterReceiver(batteryReceiver);
-            isBatteryReceiverRegistered=false;
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        //adapter=null;
     }
 
     @Override

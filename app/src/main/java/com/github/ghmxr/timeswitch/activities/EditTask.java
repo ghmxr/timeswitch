@@ -27,8 +27,8 @@ public class EditTask extends TaskGui {
     //public static final String TAG_EDITTASK_KEY  = "taskkey";
     public static final String TAG_SELECTED_ITEM_POSITION ="position";
 
-    public static final int ACTIVITY_EDIT_RESULT_CANCEL         =   0x00000;
-    public static final int ACTIVITY_EDIT_RESULT_SUCCESS        =   0x00001;
+    //public static final int ACTIVITY_EDIT_RESULT_CANCEL         =   0x00000;
+    //public static final int ACTIVITY_EDIT_RESULT_SUCCESS        =   0x00001;
 
     private long first_click_time_back =0;
     private long first_click_time_delete=0;
@@ -83,7 +83,7 @@ public class EditTask extends TaskGui {
 
         if(item.getItemId()==R.id.action_edit_save){
             if(saveTaskItem2DB(taskitem.id)==1){
-                setResult(ACTIVITY_EDIT_RESULT_SUCCESS);
+                setResult(RESULT_OK);
                 finish();
             }
         }
@@ -96,7 +96,7 @@ public class EditTask extends TaskGui {
             }
             SQLiteDatabase database= MySQLiteOpenHelper.getInstance(this).getWritableDatabase();
             if(database.delete(SQLConsts.getCurrentTableName(this),SQLConsts.SQL_TASK_COLUMN_ID +"="+taskitem.id,null)==1) {
-                setResult(ACTIVITY_EDIT_RESULT_SUCCESS);
+                setResult(RESULT_OK);
                 this.finish();
             }
             else {
@@ -120,11 +120,12 @@ public class EditTask extends TaskGui {
                 Snackbar.make(findViewById(R.id.layout_taskgui_root),getResources().getString(R.string.snackbar_changes_not_saved_back),Snackbar.LENGTH_SHORT).show();
                 return;
             }
-            setResult(ACTIVITY_EDIT_RESULT_CANCEL);
+            setResult(RESULT_CANCELED);
+            finish();
+        }else{
+            setResult(RESULT_CANCELED);
             finish();
         }
-        setResult(ACTIVITY_EDIT_RESULT_CANCEL);
-        finish();
     }
 
     /*private void showChangesNotSaveDialog(){

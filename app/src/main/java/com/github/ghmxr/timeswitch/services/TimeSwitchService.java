@@ -21,6 +21,7 @@ import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
 import com.github.ghmxr.timeswitch.receivers.AppLaunchDetectionReceiver;
 import com.github.ghmxr.timeswitch.receivers.BatteryReceiver;
+import com.github.ghmxr.timeswitch.receivers.HeadsetPlugReceiver;
 import com.github.ghmxr.timeswitch.receivers.NetworkReceiver;
 import com.github.ghmxr.timeswitch.runnables.RefreshListItems;
 import com.github.ghmxr.timeswitch.timers.CustomTimerTask;
@@ -39,11 +40,8 @@ public class TimeSwitchService extends Service {
 
     public static AlarmManager alarmManager;
 
-    //public static List<CustomTimerTask> timerList=new ArrayList<>();
 
     public static LinkedList<TimeSwitchService> service_queue=new LinkedList<>();
-
-    //public SharedPreferences settings;
 
     public static MyHandler mHandler;
 
@@ -58,12 +56,15 @@ public class TimeSwitchService extends Service {
      */
     public static final int MESSAGE_DISPLAY_CUSTOM_TOAST=0x00003;
 
-    public Thread thread_getlist;
+    //public Thread thread_getlist;
+
     public RefreshListItems runnable_refreshitems;
 
     private BatteryReceiver batteryReceiver;
 
     private NetworkReceiver networkReceiver;
+
+    private HeadsetPlugReceiver headsetPlugReceiver;
 
     public static  PowerManager.WakeLock wakelock;
 
@@ -83,16 +84,33 @@ public class TimeSwitchService extends Service {
                 wakelock=null;
             }
         }
-        if(batteryReceiver==null){
-           // Log.e("TimeSwitchService","batteryReceiver is null");
-            batteryReceiver=new BatteryReceiver(this);
-            batteryReceiver.registerReceiver();
-        }
 
-        if(networkReceiver==null){
-            networkReceiver=new NetworkReceiver(this,null);
-            networkReceiver.registerReceiver();
-        }
+        try{
+            if(batteryReceiver!=null){
+                batteryReceiver.unregisterReceiver();
+            }
+        }catch (Exception e){e.printStackTrace();}
+
+        batteryReceiver=new BatteryReceiver(this);
+        batteryReceiver.registerReceiver();
+
+        try{
+            if(networkReceiver!=null){
+                networkReceiver.unregisterReceiver();
+            }
+        }catch (Exception e){e.printStackTrace();}
+
+        networkReceiver=new NetworkReceiver(this,null);
+        networkReceiver.registerReceiver();
+
+        try{
+            if(headsetPlugReceiver!=null){
+                headsetPlugReceiver.unregisterReceiver();
+            }
+        }catch (Exception e){e.printStackTrace();}
+
+        headsetPlugReceiver=new HeadsetPlugReceiver(this,null);
+        headsetPlugReceiver.registerReceiver();
 
         refreshTaskItems();
         //startService(new Intent(this,AppLaunchingDetectionService.class));
@@ -111,8 +129,7 @@ public class TimeSwitchService extends Service {
             runnable_refreshitems=null;
         }
         this.runnable_refreshitems=new RefreshListItems(this);
-        thread_getlist=new Thread(runnable_refreshitems);
-        thread_getlist.start();
+        new Thread(runnable_refreshitems).start();
    }
 
 
@@ -163,20 +180,26 @@ public class TimeSwitchService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(batteryReceiver!=null) {
-            batteryReceiver.unregisterReceiver();
-            batteryReceiver=null;
-        }
-        if(networkReceiver!=null){
-            networkReceiver.unregisterReceiver();
-            networkReceiver=null;
-        }
+        try{
+            if(batteryReceiver!=null) {
+                batteryReceiver.unregisterReceiver();
+                batteryReceiver=null;
+            }
+            if(networkReceiver!=null){
+                networkReceiver.unregisterReceiver();
+                networkReceiver=null;
+            }
+            if(headsetPlugReceiver!=null){
+                headsetPlugReceiver.unregisterReceiver();
+                headsetPlugReceiver=null;
+            }
+        }catch (Exception e){e.printStackTrace();}
         if(service_queue.contains(this)) service_queue.remove(this);
         if(wakelock!=null) {
             wakelock.release();
             wakelock=null;
         }
-        //mHandler=null;
+        //startService(new Intent(this,TimeSwitchService.class));
     }
 
     private static class MyHandler extends Handler{

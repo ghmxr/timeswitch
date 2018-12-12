@@ -58,6 +58,8 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 	private static final int REQUEST_CODE_EXCEPTIONS=1;
 	private static final int REQUEST_CODE_ACTIONS=2;
 
+	public String checkString="";
+
 	public void onCreate(Bundle mybundle){
 		super.onCreate(mybundle);
 		setContentView(R.layout.layout_taskgui);
@@ -196,6 +198,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		refreshExceptionViews();
 		refreshActionStatus();
 		setTaskThemeColor(taskitem.addition_title_color);
+		checkString=taskitem.toString();
 	}
 
 	public abstract void initialVariables();
