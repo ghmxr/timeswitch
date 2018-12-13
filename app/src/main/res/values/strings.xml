@@ -136,7 +136,7 @@
 	<string name="activity_trigger_wifi_disconnected_att">WiFi断开连接时</string>
 	<string name="activity_trigger_headset">头戴设备</string>
 	<string name="activity_trigger_headset_plug_in">接入时</string>
-	<string name="activity_trigger_headset_plug_out">拔出时</string>
+	<string name="activity_trigger_headset_plug_out">断开时</string>
 	<string name="activity_trigger_app_opened">打开指定应用时</string>
 	<string name="activity_trigger_app_closed">退出指定应用时</string>
     <string name="dialog_app_open_select_title">打开指定应用时</string>
@@ -296,6 +296,9 @@
 	<string name="log_exceptions_battery_percentage_more_than">电池电量大于:</string>
 	<string name="log_exceptions_battery_percentage_less_than">电池电量少于:</string>
 	<string name="log_exceptions_period">例外时间段:</string>
+	<string name="log_exceptions_headset">头戴设备:</string>
+    <string name="log_exceptions_headset_out">断开</string>
+    <string name="log_exceptions_headset_in">接入</string>
 	<string name="log_result_success">成功</string>
 	<string name="log_result_fail">失败</string>
 	<string name="log_result_none">未操作</string>
@@ -382,6 +385,7 @@
 	<string name="word_nothing">无</string>
 	<string name="word_default">默认</string>
 	<string name="word_unsatisfied">未满足</string>
+	<string name="word_unselected">未选择</string>
 	<string name="degree_celsius">℃</string>
 	<string name="percentage">%</string>
 	<string name="toast_location_default">默认位置</string>

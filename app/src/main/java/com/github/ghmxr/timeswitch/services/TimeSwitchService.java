@@ -126,7 +126,7 @@ public class TimeSwitchService extends Service {
    public void refreshTaskItems(){
         if(runnable_refreshitems!=null){
             runnable_refreshitems.setInterrupted();
-            runnable_refreshitems=null;
+            //runnable_refreshitems=null;
         }
         this.runnable_refreshitems=new RefreshListItems(this);
         new Thread(runnable_refreshitems).start();

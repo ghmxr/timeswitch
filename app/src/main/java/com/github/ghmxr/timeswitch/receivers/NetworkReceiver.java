@@ -71,23 +71,19 @@ public class NetworkReceiver extends BroadcastReceiver implements Runnable {
         if(intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)){
             //refresh wifi lists
             if(intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,-1)==WifiManager.WIFI_STATE_ENABLED){
-                final WifiManager wifiManager=(WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                if(wifiManager!=null) {
-                   // new Thread(new Runnable() {
-                       // @Override
-                       // public synchronized void run() {
-                            //synchronized(this){
-                                wifiList=new ArrayList<>();
-                                for(WifiConfiguration w:wifiManager.getConfiguredNetworks()){
-                                    WifiConfigInfo wifi_info = new WifiConfigInfo();
-                                    wifi_info.networkID=w.networkId;
-                                    wifi_info.SSID= ValueUtils.toDisplaySSIDString(w.SSID);
-                                    wifiList.add(wifi_info);
-                                }
-                            //}
-
-                       // }
-                   // }).start();
+                try{
+                    final WifiManager wifiManager=(WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                    if(wifiManager!=null) {
+                        wifiList=new ArrayList<>();
+                        for(WifiConfiguration w:wifiManager.getConfiguredNetworks()){
+                            WifiConfigInfo wifi_info = new WifiConfigInfo();
+                            wifi_info.networkID=w.networkId;
+                            wifi_info.SSID= ValueUtils.toDisplaySSIDString(w.SSID);
+                            wifiList.add(wifi_info);
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
             }
         }

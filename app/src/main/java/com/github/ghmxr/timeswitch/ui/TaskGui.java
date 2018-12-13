@@ -83,12 +83,6 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		findViewById(R.id.layout_taskgui_area_enable).setOnClickListener(this);
 
 		findViewById(R.id.layout_taskgui_trigger).setOnClickListener(this);
-		//findViewById(R.id.layout_taskgui_area_condition_single).setOnClickListener(this);
-		//findViewById(R.id.layout_taskgui_area_condition_percertaintime).setOnClickListener(this);
-		//findViewById(R.id.layout_taskgui_area_condition_weekloop).setOnClickListener(this);
-		//findViewById(R.id.layout_taskgui_area_condition_battery_percentage).setOnClickListener(this);
-		//findViewById(R.id.layout_taskgui_area_condition_battery_temperature).setOnClickListener(this);
-		//findViewById(R.id.layout_taskgui_area_condition_received_broadcast).setOnClickListener(this);
 		
 		findViewById(R.id.layout_taskgui_area_exception_lockscreen).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_area_exception_unlockscreen).setOnClickListener(this);
@@ -109,6 +103,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		findViewById(R.id.layout_taskgui_area_exception_battery_temperature).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_area_exception_day_of_week).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_area_exception_period).setOnClickListener(this);
+		findViewById(R.id.layout_taskgui_area_exception_headset).setOnClickListener(this);
 		
 		findViewById(R.id.layout_taskgui_exception_lockscreen_cancel).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_exception_unlockscreen_cancel).setOnClickListener(this);
@@ -131,6 +126,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		findViewById(R.id.layout_taskgui_area_exception_battery_temperature_cancel).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_area_exception_day_of_week_cancel).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_area_exception_period_cancel).setOnClickListener(this);
+		findViewById(R.id.layout_taskgui_area_exception_headset_cancel).setOnClickListener(this);
 
 		findViewById(R.id.taskgui_operations_area_wifi).setOnClickListener(this);
 		findViewById(R.id.taskgui_operations_area_bluetooth).setOnClickListener(this);
@@ -650,7 +646,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			case R.id.layout_taskgui_area_exception_gps_enabled: case R.id.layout_taskgui_area_exception_gps_disabled:
 			case R.id.layout_taskgui_area_exception_airplane_mode_enabled: case R.id.layout_taskgui_area_exception_airplane_mode_disabled:
 			case R.id.layout_taskgui_area_exception_battery_percentage: case R.id.layout_taskgui_area_exception_battery_temperature:
-			case R.id.layout_taskgui_area_exception_day_of_week: case R.id.layout_taskgui_area_exception_period:{
+			case R.id.layout_taskgui_area_exception_day_of_week: case R.id.layout_taskgui_area_exception_period: case R.id.layout_taskgui_area_exception_headset:{
 				Intent i=new Intent(this,Exceptions.class);
 				i.putExtra(Exceptions.INTENT_EXTRA_EXCEPTIONS,taskitem.exceptions);
 				i.putExtra(Exceptions.INTENT_EXTRA_TRIGGER_TYPE,taskitem.trigger_type);
@@ -760,6 +756,11 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			case R.id.layout_taskgui_area_exception_period_cancel:{
 				taskitem.exceptions[PublicConsts.EXCEPTION_START_TIME]=String.valueOf(-1);
 				taskitem.exceptions[PublicConsts.EXCEPTION_END_TIME]=String.valueOf(-1);
+				refreshExceptionViews();
+			}
+			break;
+			case R.id.layout_taskgui_area_exception_headset_cancel:{
+				taskitem.exceptions[PublicConsts.EXCEPTION_HEADSET_STATUS]=String.valueOf(0);
 				refreshExceptionViews();
 			}
 			break;
@@ -879,6 +880,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			((TextView)findViewById(R.id.layout_taskgui_area_exception_battery_temperature_value)).setText(Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])!=-1?(this.getResources().getString(R.string.dialog_battery_compare_higher_than)+taskitem.exceptions[PublicConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]+"¡æ"):(Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])!=-1?(this.getResources().getString(R.string.dialog_battery_compare_lower_than)+taskitem.exceptions[PublicConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]+"¡æ"):""));
 			findViewById(R.id.layout_taskgui_area_exception_battery_percentage).setVisibility((Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])!=-1||Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])!=-1)?View.VISIBLE:View.GONE);
 			findViewById(R.id.layout_taskgui_area_exception_battery_temperature).setVisibility((Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])!=-1||Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])!=-1)?View.VISIBLE:View.GONE);
+			findViewById(R.id.layout_taskgui_area_exception_headset).setVisibility(Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_HEADSET_STATUS])>0?View.VISIBLE:View.GONE);
 
 			StringBuilder value=new StringBuilder("");
 			value.append(Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_MONDAY])==1?getResources().getString(R.string.monday)+" ":"");
@@ -895,6 +897,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			((TextView)findViewById(R.id.layout_taskgui_area_exception_period_value)).setText((Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_START_TIME])!=-1&&Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_END_TIME])!=-1)?
 					ValueUtils.format(Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_START_TIME])/60)+":"+ ValueUtils.format(Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_START_TIME])%60)+"~"+ ValueUtils.format(Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_END_TIME])/60)+":"+ ValueUtils.format(Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_END_TIME])%60)
 					:getResources().getString(R.string.not_activated));
+			((TextView)findViewById(R.id.layout_taskgui_area_exception_headset_value)).setText(Integer.parseInt(taskitem.exceptions[PublicConsts.EXCEPTION_HEADSET_STATUS])==PublicConsts.EXCEPTION_HEADSET_PLUG_OUT?getResources().getString(R.string.activity_taskgui_exception_headset_out):getResources().getString(R.string.activity_taskgui_exception_headset_in));
 		}catch (NumberFormatException ne){
 			ne.printStackTrace();
 			LogUtil.putExceptionLog(TaskGui.this,ne);

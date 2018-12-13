@@ -46,6 +46,7 @@ import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.SQLConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
 import com.github.ghmxr.timeswitch.receivers.BatteryReceiver;
+import com.github.ghmxr.timeswitch.receivers.HeadsetPlugReceiver;
 import com.github.ghmxr.timeswitch.receivers.SMSReceiver;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 
@@ -750,6 +751,46 @@ public class ProcessTaskItem {
                         log_exception.append(" ");
                         log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
                         return true;
+                    }
+                }
+            }
+
+            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_HEADSET_STATUS])>0){
+                type_and_if_has_exception=true;
+                int value=Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_HEADSET_STATUS]);
+                if(value==PublicConsts.EXCEPTION_HEADSET_PLUG_OUT){
+                    if(!HeadsetPlugReceiver.isHeadsetPluggedIn()){
+                        if(processType==TYPE_OR){
+                            log_exception.append(context.getResources().getString(R.string.log_exceptions_headset));
+                            log_exception.append(context.getResources().getString(R.string.log_exceptions_headset_out));
+                            log_exception.append(" ");
+                            return false;
+                        }
+                    }else{
+                        if(processType==TYPE_AND){
+                            log_exception.append(context.getResources().getString(R.string.log_exceptions_headset));
+                            log_exception.append(context.getResources().getString(R.string.log_exceptions_headset_in));
+                            log_exception.append(" ");
+                            return true;
+                        }
+                    }
+                }
+
+                if(value==PublicConsts.EXCEPTION_HEADSET_PLUG_IN){
+                    if(HeadsetPlugReceiver.isHeadsetPluggedIn()){
+                        if(processType==TYPE_OR){
+                            log_exception.append(context.getResources().getString(R.string.log_exceptions_headset));
+                            log_exception.append(context.getResources().getString(R.string.log_exceptions_headset_in));
+                            log_exception.append(" ");
+                            return false;
+                        }
+                    }else{
+                        if(processType==TYPE_AND){
+                            log_exception.append(context.getResources().getString(R.string.log_exceptions_headset));
+                            log_exception.append(context.getResources().getString(R.string.log_exceptions_headset_out));
+                            log_exception.append(" ");
+                            return true;
+                        }
                     }
                 }
             }
@@ -1558,7 +1599,7 @@ public class ProcessTaskItem {
      * get if wifi is connected
      * @return returns true if wifi is connected
      */
-    private boolean isWifiConnected(){
+    private boolean isWifiConnected(@Nullable Integer[] ssids){
         try{
             ConnectivityManager connectivityManager=(ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
             if(connectivityManager==null) return false;

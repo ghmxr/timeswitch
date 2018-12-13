@@ -79,6 +79,8 @@ public class PublicConsts {
 	 * 0-false, 1-disconnected,2-connected
 	 */
 	public static final int EXCEPTION_HEADSET_STATUS								=		4;
+	public static final int EXCEPTION_HEADSET_PLUG_OUT=1;
+	public static final int EXCEPTION_HEADSET_PLUG_IN=2;
 	public static final int EXCEPTION_NOTUSED										=		5;
 	/**
 	 * 0--false ,1--true

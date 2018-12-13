@@ -533,6 +533,17 @@ public class MainListAdapter extends BaseAdapter {
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.activity_taskgui_exception_airplanemode_off));
             }
+            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_HEADSET_STATUS])>0){
+                if(builder.toString().length()>0) builder.append(",");
+                if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_HEADSET_STATUS])==PublicConsts.EXCEPTION_HEADSET_PLUG_OUT){
+                    builder.append(context.getResources().getString(R.string.activity_taskgui_exception_headset));
+                    builder.append(context.getResources().getString(R.string.activity_taskgui_exception_headset_out));
+                }
+                if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_HEADSET_STATUS])==PublicConsts.EXCEPTION_HEADSET_PLUG_IN){
+                    builder.append(context.getResources().getString(R.string.activity_taskgui_exception_headset));
+                    builder.append(context.getResources().getString(R.string.activity_taskgui_exception_headset_in));
+                }
+            }
 
             String day_of_week="";
             String day_of_week_values="";
@@ -567,7 +578,7 @@ public class MainListAdapter extends BaseAdapter {
                 day_of_week+=(context.getResources().getString(R.string.adapter_exception_day_of_week_head));
                 day_of_week+=day_of_week_values;
             }
-            if(builder.toString().length()>0) builder.append(",");
+            if(builder.toString().length()>0&&day_of_week.length()>0) builder.append(",");
             builder.append(day_of_week);
             /*if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_MONDAY])==1){
                 if(builder.toString().length()>0) builder.append(",");

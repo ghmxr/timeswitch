@@ -16,6 +16,7 @@ import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
@@ -82,6 +83,7 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
         findViewById(R.id.exceptions_battery_temperature).setOnClickListener(this);
         findViewById(R.id.exceptions_day_of_week).setOnClickListener(this);
         findViewById(R.id.exceptions_period).setOnClickListener(this);
+        findViewById(R.id.exceptions_headset).setOnClickListener(this);
 
         if(trigger_type==PublicConsts.TRIGGER_TYPE_SINGLE||trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_WEEK){
             findViewById(R.id.exceptions_period).setVisibility(View.GONE);
@@ -119,6 +121,7 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
         refreshBatteryTemperatureView();
         refreshDayOfWeekView();
         refreshPeriodView();
+        refreshHeadsetStatusView();
     }
 
     @Override
@@ -512,6 +515,54 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
 
             }
             break;
+            case R.id.exceptions_headset:{
+                try{
+                    int headset_selection=Integer.parseInt(exceptions[PublicConsts.EXCEPTION_HEADSET_STATUS]);
+                    final AlertDialog dialog=new AlertDialog.Builder(this)
+                            .setTitle(getResources().getString(R.string.activity_taskgui_exception_headset))
+                            .setIcon(R.drawable.icon_headset)
+                            .setView(LayoutInflater.from(this).inflate(R.layout.layout_dialog_with_three_single_choices,null))
+                            .show();
+                    RadioButton button_unselected=dialog.findViewById(R.id.dialog3_choice_first);
+                    RadioButton button_plugged=dialog.findViewById(R.id.dialog3_choice_second);
+                    RadioButton button_unplugged=dialog.findViewById(R.id.dialog3_choice_third);
+                    button_unselected.setText(getResources().getString(R.string.word_unselected));
+                    button_plugged.setText(getResources().getString(R.string.activity_taskgui_exception_headset_in));
+                    button_unplugged.setText(getResources().getString(R.string.activity_taskgui_exception_headset_out));
+                    button_unselected.setChecked(headset_selection==0);
+                    button_plugged.setChecked(headset_selection==PublicConsts.EXCEPTION_HEADSET_PLUG_IN);
+                    button_unplugged.setChecked(headset_selection==PublicConsts.EXCEPTION_HEADSET_PLUG_OUT);
+                    button_unselected.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            exceptions[PublicConsts.EXCEPTION_HEADSET_STATUS]=String.valueOf(0);
+                            dialog.cancel();
+                            refreshHeadsetStatusView();
+                        }
+                    });
+                    button_unplugged.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            exceptions[PublicConsts.EXCEPTION_HEADSET_STATUS]=String.valueOf(PublicConsts.EXCEPTION_HEADSET_PLUG_OUT);
+                            dialog.cancel();
+                            refreshHeadsetStatusView();
+                        }
+                    });
+                    button_plugged.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            exceptions[PublicConsts.EXCEPTION_HEADSET_STATUS]=String.valueOf(PublicConsts.EXCEPTION_HEADSET_PLUG_IN);
+                            dialog.cancel();
+                            refreshHeadsetStatusView();
+                        }
+                    });
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(this,e.toString(),Toast.LENGTH_SHORT).show();
+                }
+
+            }
+            break;
         }
     }
 
@@ -590,6 +641,21 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
             LogUtil.putExceptionLog(this,ne);
         }
 
+    }
+
+    private void refreshHeadsetStatusView(){
+        try{
+            TextView tv=findViewById(R.id.exceptions_headset_value);
+            int selection=Integer.parseInt(exceptions[PublicConsts.EXCEPTION_HEADSET_STATUS]);
+            switch (selection){
+                default:break;
+                case 0:tv.setText(getResources().getString(R.string.word_unselected));break;
+                case PublicConsts.EXCEPTION_HEADSET_PLUG_OUT:tv.setText(getResources().getString(R.string.activity_taskgui_exception_headset_out));break;
+                case PublicConsts.EXCEPTION_HEADSET_PLUG_IN:tv.setText(getResources().getString(R.string.activity_taskgui_exception_headset_in));break;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void refreshBatteryTemperatureView(){

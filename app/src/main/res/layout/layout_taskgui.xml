@@ -901,6 +901,65 @@
                         </RelativeLayout>
 
                         <RelativeLayout
+                            android:id="@+id/layout_taskgui_area_exception_headset"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:visibility="visible">
+
+                            <ImageView
+                                android:id="@+id/layout_taskgui_area_exception_headset_icon"
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginLeft="15dp"
+                                android:src="@drawable/icon_headset" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:layout_centerVertical="true"
+                                android:layout_marginLeft="15dp"
+                                android:layout_toRightOf="@+id/layout_taskgui_area_exception_headset_icon">
+
+                                <TextView
+                                    android:id="@+id/layout_taskgui_area_exception_headset_att"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/activity_taskgui_exception_headset"
+                                    android:textSize="14sp" />
+
+                                <TextView
+                                    android:id="@+id/layout_taskgui_area_exception_headset_value"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Plugged"
+                                    android:textSize="12sp" />
+
+                            </LinearLayout>
+
+                            <ImageView
+                                android:id="@+id/layout_taskgui_area_exception_headset_cancel"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginRight="25dp"
+                                android:clickable="true"
+                                android:src="@drawable/icon_cancel" />
+
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="1px"
+                                android:layout_alignParentBottom="true"
+                                android:background="#dddddd" />
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
                             android:id="@+id/layout_taskgui_area_exception_battery_percentage"
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
