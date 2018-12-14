@@ -30,6 +30,7 @@ public class AlarmReceiver extends BroadcastReceiver implements Runnable{
     public void run() {
         Log.i("AlarmReceiver","AlarmReceiver received and the id is "+id);
         int position=ProcessTaskItem.getPosition(id);
+        Log.d("AlarmReceiver","position is "+position);
         if(position>=0) {
             final TaskItem item=TimeSwitchService.list.get(position);
             new Thread(new Runnable() {

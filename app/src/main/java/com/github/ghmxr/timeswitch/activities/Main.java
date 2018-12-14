@@ -203,7 +203,8 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
         this.swrlayout.setRefreshing(true);
         listview.setAdapter(null);
         listview.setOnItemLongClickListener(null);
-        this.startService(new Intent(this, TimeSwitchService.class));
+        //this.startService(new Intent(this, TimeSwitchService.class));
+        TimeSwitchService.startService(this);
     }
 
 

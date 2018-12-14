@@ -22,7 +22,8 @@ public class BootReceiver extends BroadcastReceiver {
             //Do starting the service
             SharedPreferences settings=context.getSharedPreferences(PublicConsts.PREFERENCES_NAME, Activity.MODE_PRIVATE);
             if(settings.getBoolean(PublicConsts.PREFERENCES_AUTO_START,PublicConsts.PREFERENCES_AUTO_START_DEFAULT)){
-                context.startService(new Intent(context, TimeSwitchService.class));
+                //context.startService(new Intent(context, TimeSwitchService.class));
+                TimeSwitchService.startService(context);
             }
         }
     }

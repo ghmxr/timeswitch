@@ -100,7 +100,10 @@ public class Profile extends BaseActivity {
                 //isChanged=true;
                 setResult(RESULT_OK);
                 if(TimeSwitchService.service_queue.size()>0) TimeSwitchService.service_queue.getLast().refreshTaskItems();
-                else startService(new Intent(Profile.this, TimeSwitchService.class));
+                else {
+                    //startService(new Intent(Profile.this, TimeSwitchService.class));
+                    TimeSwitchService.startService(Profile.this);
+                }
             }
         }
     };
@@ -525,7 +528,10 @@ public class Profile extends BaseActivity {
                     e.printStackTrace();
                 }
                 if(TimeSwitchService.service_queue.size()>0) TimeSwitchService.service_queue.getLast().refreshTaskItems();
-                else startService(new Intent(Profile.this,TimeSwitchService.class));
+                else {
+                    //startService(new Intent(Profile.this,TimeSwitchService.class));
+                    TimeSwitchService.startService(Profile.this);
+                }
             }
         }).start();
     }
@@ -556,7 +562,10 @@ public class Profile extends BaseActivity {
                     e.printStackTrace();
                 }
                 if(TimeSwitchService.service_queue.size()>0) TimeSwitchService.service_queue.getLast().refreshTaskItems();
-                else startService(new Intent(Profile.this,TimeSwitchService.class));
+                else {
+                    //startService(new Intent(Profile.this,TimeSwitchService.class));
+                    TimeSwitchService.startService(Profile.this);
+                }
             }
         }).start();
     }

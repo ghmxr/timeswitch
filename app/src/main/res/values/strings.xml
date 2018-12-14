@@ -235,6 +235,9 @@
 	<string name="activity_edit_no_position">无法获取此任务信息</string>
     <string name="activity_settings_basic_att">基础选项</string>
     <string name="activity_settings_api_att">计时器API</string>
+	<string name="activity_settings_service_type">服务选项</string>
+	<string name="activity_settings_service_type_background">后台运行</string>
+	<string name="activity_settings_service_type_foreground">保持前台</string>
 	<string name="activity_settings_indicator_att">显示指示器</string>
 	<string name="activity_settings_indicator_att_att">在首页底部显示系统时间和电池信息</string>
 	<string name="activity_settings_autostart_att">开机自启</string>

@@ -2,14 +2,19 @@ package com.github.ghmxr.timeswitch.services;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
@@ -27,6 +32,7 @@ import com.github.ghmxr.timeswitch.runnables.RefreshListItems;
 import com.github.ghmxr.timeswitch.timers.CustomTimerTask;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -68,10 +74,22 @@ public class TimeSwitchService extends Service {
 
     public static  PowerManager.WakeLock wakelock;
 
+    static NotificationCompat.Builder notification=null;
+
+    boolean isBackground=true;
+
+    @Override
+    public void onCreate(){
+        super.onCreate();
+        if(notification!=null) startForeground(1,notification.build());
+        Log.d("TimeSwitchService","onCreate called");
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i("TimeSwitchService","onStartCommand called and queue size is "+service_queue.size());
         if(!service_queue.contains(this)) service_queue.add(this);
+
+        Log.i("TimeSwitchService","onStartCommand called and queue size is "+service_queue.size());
         mHandler=new MyHandler();
         if(alarmManager==null) {
             alarmManager=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
@@ -199,7 +217,53 @@ public class TimeSwitchService extends Service {
             wakelock.release();
             wakelock=null;
         }
+        for(TaskItem i:list){
+            i.cancelTrigger();
+        }
+        list.clear();
+        Log.d("TimeSwitchService","onDestroy method called");
         //startService(new Intent(this,TimeSwitchService.class));
+    }
+
+    public static void startService(@NonNull Context context){
+        try{
+            /*if(service_queue.size()>0){
+
+            }
+            if(notification==null&&context.getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE).getInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_DEFAULT)==PublicConsts.PREFERENCES_SERVICE_TYPE_BACKGROUND){
+                return;
+            }*/
+
+
+            /*if(service_queue.size()==0){
+
+            }else{
+
+            }*/
+            if(service_queue.size()>0) service_queue.getLast().stopSelf();
+            boolean isBackground=context.getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE)
+                    .getInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_DEFAULT)==PublicConsts.PREFERENCES_SERVICE_TYPE_BACKGROUND;
+            if(isBackground){
+                notification=null;
+                context.startService(new Intent(context, TimeSwitchService.class));
+            }else{
+                NotificationManager notificationManager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+                if(Build.VERSION.SDK_INT>=26){
+                    final String channelID="channel_service";
+                    NotificationChannel channel=new NotificationChannel(channelID,"Service",NotificationManager.IMPORTANCE_DEFAULT);
+                    notificationManager.createNotificationChannel(channel);
+                    notification=new NotificationCompat.Builder(context,channelID);
+                    context.startForegroundService(new Intent(context,TimeSwitchService.class));
+                }else{
+                    notification=new NotificationCompat.Builder(context);
+                    context.startService(new Intent(context,TimeSwitchService.class));
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     private static class MyHandler extends Handler{

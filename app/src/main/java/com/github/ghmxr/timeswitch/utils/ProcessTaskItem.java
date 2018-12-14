@@ -1525,6 +1525,7 @@ public class ProcessTaskItem {
             PackageManager manager=context.getPackageManager();
             if(manager==null) return;
             if(packageNames.length==0) return;
+            try{if(Integer.parseInt(values)==-1) return;}catch (Exception e){}
             for(String s:packageNames){
                 if(s==null) continue;
                 try{

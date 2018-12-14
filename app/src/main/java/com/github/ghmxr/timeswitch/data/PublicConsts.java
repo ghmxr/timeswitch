@@ -260,6 +260,14 @@ public class PublicConsts {
 	public static final String PREFERENCES_LOGS_NAME	="Logs";
 
 	/**
+	 * 定义应用服务运行于前台还是后台
+	 */
+	public static final String PREFERENCES_SERVICE_TYPE="service_type";
+	public static final int PREFERENCES_SERVICE_TYPE_FORGROUND=1;
+	public static final int PREFERENCES_SERVICE_TYPE_BACKGROUND=0;
+	public static final int PREFERENCES_SERVICE_TYPE_DEFAULT=PREFERENCES_SERVICE_TYPE_BACKGROUND;
+
+	/**
 	 * 获取Json File 对应的应用的VersionCode
 	 */
 	public static final String JSON_HEAD_VERSION_CODE="version_code";

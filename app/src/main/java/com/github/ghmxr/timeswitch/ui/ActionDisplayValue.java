@@ -327,8 +327,8 @@ public class ActionDisplayValue {
             try{
                 int action_wifi=Integer.parseInt(value);
                 if(action_wifi>=0){
-                    if(action_wifi==0) return context.getResources().getString(R.string.action_wifi_open);
-                    if(action_wifi==1) return context.getResources().getString(R.string.action_wifi_close);
+                    if(action_wifi==1) return context.getResources().getString(R.string.action_wifi_open);
+                    if(action_wifi==0) return context.getResources().getString(R.string.action_wifi_close);
                 }
             }catch (Exception e){
                 e.printStackTrace();

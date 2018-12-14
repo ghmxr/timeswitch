@@ -59,6 +59,7 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
         findViewById(R.id.settings_superuser).setOnClickListener(this);
         findViewById(R.id.settings_about).setOnClickListener(this);
         findViewById(R.id.settings_color).setOnClickListener(this);
+        findViewById(R.id.settings_service_type).setOnClickListener(this);
 
         CheckBox cb_autostart=findViewById(R.id.settings_autostart_cb);
         CheckBox cb_indicator=findViewById(R.id.settings_indicator_cb);
@@ -76,6 +77,7 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
         cb_superuser.setOnCheckedChangeListener(this);
 
         refreshAPIValue();
+        refreshServiceTypeValue();
     }
 
     @Override
@@ -128,7 +130,10 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
 
                         //if(Main.queue.size()>0) Main.queue.getLast().startService2Refresh();
                         if(TimeSwitchService.service_queue.size()>0) TimeSwitchService.service_queue.getLast().refreshTaskItems();
-                        else Settings.this.startService(new Intent(Settings.this,TimeSwitchService.class));
+                        else{
+                            //Settings.this.startService(new Intent(Settings.this,TimeSwitchService.class));
+                            TimeSwitchService.startService(Settings.this);
+                        }
                     }
                 });
                 dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener(){
@@ -187,6 +192,40 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
                         }
                     }
                 });
+            }
+            break;
+            case R.id.settings_service_type:{
+                final AlertDialog dialog=new AlertDialog.Builder(this)
+                        .setTitle(getResources().getString(R.string.activity_settings_service_type))
+                        .setView(LayoutInflater.from(this).inflate(R.layout.layout_dialog_with_two_single_choices,null))
+                        .show();
+                RadioButton ra_background=dialog.findViewById(R.id.dialog_choice_first);
+                RadioButton ra_foreground=dialog.findViewById(R.id.dialog_choice_second);
+                ra_background.setText(getResources().getString(R.string.activity_settings_service_type_background));
+                ra_foreground.setText(getResources().getString(R.string.activity_settings_service_type_foreground));
+                ra_background.setChecked(settings.getInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_DEFAULT)==PublicConsts.PREFERENCES_SERVICE_TYPE_BACKGROUND);
+                ra_foreground.setChecked(settings.getInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_DEFAULT)==PublicConsts.PREFERENCES_SERVICE_TYPE_FORGROUND);
+                ra_background.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        editor.putInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_BACKGROUND);
+                        editor.apply();
+                        dialog.cancel();
+                        refreshServiceTypeValue();
+                        TimeSwitchService.startService(Settings.this);
+                    }
+                });
+                ra_foreground.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        editor.putInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_FORGROUND);
+                        editor.apply();
+                        dialog.cancel();
+                        refreshServiceTypeValue();
+                        TimeSwitchService.startService(Settings.this);
+                    }
+                });
+
             }
             break;
         }
@@ -258,6 +297,17 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
         TextView tv_api_value=findViewById(R.id.settings_api_value);
         int api_type=settings.getInt(PublicConsts.PREFERENCES_API_TYPE,PublicConsts.PREFERENCES_API_TYPE_DEFAULT);
         tv_api_value.setText(api_type==PublicConsts.API_ANDROID_ALARM_MANAGER?"Android Alarm Manager":(api_type==PublicConsts.API_JAVA_TIMER?"Java Timer":""));
+    }
+
+    private void refreshServiceTypeValue(){
+        TextView tv=((TextView)findViewById(R.id.settings_service_type_value));
+        int type=getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE).getInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_DEFAULT);
+        if(type==PublicConsts.PREFERENCES_SERVICE_TYPE_BACKGROUND){
+            tv.setText(getResources().getString(R.string.activity_settings_service_type_background));
+        }
+        if(type==PublicConsts.PREFERENCES_SERVICE_TYPE_FORGROUND){
+            tv.setText(getResources().getString(R.string.activity_settings_service_type_foreground));
+        }
     }
 
     @Override
