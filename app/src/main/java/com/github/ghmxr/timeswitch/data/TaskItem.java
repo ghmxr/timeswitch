@@ -167,7 +167,7 @@ public class TaskItem implements Comparable<TaskItem>{
         actions[PublicConsts.ACTION_RING_SELECTION_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1);
     	//actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL+String.valueOf(" ");
     	actions[PublicConsts.ACTION_VIBRATE_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1);
-		actions[PublicConsts.ACTION_NOTIFICATION_LOCALE]=String.valueOf(PublicConsts.NOTIFICATION_TYPE_UNSELECTED)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(PublicConsts.NOTIFICATION_TYPE_DEFAULT);
+		actions[PublicConsts.ACTION_NOTIFICATION_LOCALE]=String.valueOf(PublicConsts.NOTIFICATION_TYPE_UNSELECTED)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(PublicConsts.NOTIFICATION_TYPE_CONTENT_DEFAULT);
 		actions[PublicConsts.ACTION_TOAST_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(0)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(0);
 		actions[PublicConsts.ACTION_SMS_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(0);
 	}
@@ -305,7 +305,10 @@ public class TaskItem implements Comparable<TaskItem>{
 
 		if(trigger_type==PublicConsts.TRIGGER_TYPE_APP_LAUNCHED||trigger_type==PublicConsts.TRIGGER_TYPE_APP_CLOSED){
 			triggerObject=new AppLaunchDetectionReceiver(context,this);
-			if(AppLaunchingDetectionService.queue==null||AppLaunchingDetectionService.queue.size()<=0) context.startService(new Intent(context,AppLaunchingDetectionService.class));
+			if(AppLaunchingDetectionService.queue==null||AppLaunchingDetectionService.queue.size()<=0){
+				//context.startService(new Intent(context,AppLaunchingDetectionService.class));
+				AppLaunchingDetectionService.startService(context);
+			}
 			((AppLaunchDetectionReceiver)triggerObject).registerReceiver();
 		}
 

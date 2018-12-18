@@ -98,7 +98,7 @@
 	<string name="dialog_actions_notification_operation_custom_message_hint">通知内容</string>
 	<string name="dialog_api_title">选择计时器API</string>
 	<string name="dialog_api_android_alarm_manager">Android Alarm Manager</string>
-	<string name="dialog_api_java_timer">Java Timer</string>
+	<string name="dialog_api_java_timer">Java Timer(会保持唤醒)</string>
 	<string name="dialog_get_superuser_att">授予Root权限</string>
 	<string name="dialog_get_superuser_message">开启超级用户模式需要为本应于授予Root权限。\n请在授权时选择永久授权并且不再询问，否则会造成自动任务无法正常执行。</string>
 	<string name="dialog_get_superuser_button_confirm">授权</string>
@@ -236,8 +236,9 @@
     <string name="activity_settings_basic_att">基础选项</string>
     <string name="activity_settings_api_att">计时器API</string>
 	<string name="activity_settings_service_type">服务选项</string>
+	<string name="activity_settings_service_type_att">在Android8.0及以上系统，请务必关闭电池优化和服务限制，否则任务将不能生效</string>
 	<string name="activity_settings_service_type_background">后台运行</string>
-	<string name="activity_settings_service_type_foreground">保持前台</string>
+	<string name="activity_settings_service_type_foreground">保持前台(常驻通知栏)</string>
 	<string name="activity_settings_indicator_att">显示指示器</string>
 	<string name="activity_settings_indicator_att_att">在首页底部显示系统时间和电池信息</string>
 	<string name="activity_settings_autostart_att">开机自启</string>
@@ -343,6 +344,8 @@
 	<string name="adapter_action_notification_message">内容:</string>
 	<string name="adapter_action_brightness">屏幕亮度:</string>
 	<string name="adapter_action_brightness_auto">自动</string>
+	<string name="notification_title_nothing">没有执行任何任务</string>
+	<string name="notification_title_font">上次运行:</string>
 	<string name="snack_dialog_color_invalid">无效的颜色值</string>
 	<string name="adapter_per">每</string>
 	<string name="adapter_trigger">触发</string>

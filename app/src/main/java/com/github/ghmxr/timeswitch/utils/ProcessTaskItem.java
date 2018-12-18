@@ -54,7 +54,6 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -68,7 +67,8 @@ public class ProcessTaskItem {
     //private boolean canTrigger;
     static final String TAG="ProcessTaskItem";
     private StringBuilder log_taskitem=new StringBuilder("");
-
+    public static String last_activated_task_name="";
+    public static int notification_id=2;
 
     public ProcessTaskItem(@NonNull Context context, @Nullable TaskItem item){
         this.item=item;
@@ -203,6 +203,7 @@ public class ProcessTaskItem {
 
         if(canTrigger){
            log_taskitem.append(" ");
+           last_activated_task_name=item.name;
            int action_wifi=-1;
            int action_bluetooth=-1;
            int action_ring_mode=-1;
@@ -1484,7 +1485,7 @@ public class ProcessTaskItem {
         try{
             String notification_values[]=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             int type=Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_LOCALE]);
-            if(type==PublicConsts.NOTIFICATION_TYPE_VIBRATE||type==PublicConsts.NOTIFICATION_TYPE_NO_VIBRATE){
+            if(type==PublicConsts.NOTIFICATION_TYPE_NOT_OVERRIDE ||type==PublicConsts.NOTIFICATION_TYPE_OVERRIDE_LAST){
                 NotificationManager manager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
                 NotificationCompat.Builder builder;
                 if(Build.VERSION.SDK_INT>=26){
@@ -1499,7 +1500,7 @@ public class ProcessTaskItem {
                 builder.setSmallIcon(R.drawable.ic_launcher);
                 builder.setContentTitle(context.getResources().getString(R.string.notification_task_activated_title));
                 builder.setContentText(log_taskitem.toString());
-                if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])==PublicConsts.NOTIFICATION_TYPE_CUSTOM){
+                if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])==PublicConsts.NOTIFICATION_TYPE_CONTENT_CUSTOM){
                     builder.setContentTitle(item.notification_title);
                     builder.setContentText(item.notification_message);
                 }
@@ -1508,7 +1509,7 @@ public class ProcessTaskItem {
                 builder.setAutoCancel(true);
                 builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
                 builder.setFullScreenIntent(pi,false);
-                manager.notify(0,builder.build());
+                manager.notify(notification_id,builder.build());
                 log_taskitem.append(context.getResources().getString(R.string.activity_taskgui_actions_notification));
                 log_taskitem.append(" ");
             }

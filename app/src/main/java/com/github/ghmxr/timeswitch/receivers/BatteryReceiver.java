@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
-import android.util.Log;
+import android.support.annotation.Nullable;
 
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
@@ -36,13 +36,9 @@ public class BatteryReceiver extends BroadcastReceiver implements Runnable{
     private boolean mLock=true;
     //private boolean isRegistered=false;
 
-    public BatteryReceiver(Context context,TaskItem item){
+    public BatteryReceiver(Context context,@Nullable TaskItem item){
         this.context=context;
         this.item=item;
-    }
-
-    public BatteryReceiver(Context context){
-        this.context=context;
     }
 
     @Override
@@ -51,11 +47,13 @@ public class BatteryReceiver extends BroadcastReceiver implements Runnable{
         final String ACTION=intent.getAction();
         if(ACTION==null) return;
         if(ACTION.equals(Intent.ACTION_BATTERY_CHANGED)){
-            Battery_percentage=intent.getIntExtra(BatteryManager.EXTRA_LEVEL,-1);
-            Battery_voltage=intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE,-1);
-            Battery_temperature=intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE,-100);
-            isInstant=true;
-            if(item==null) return;
+            if(item==null){
+                Battery_percentage=intent.getIntExtra(BatteryManager.EXTRA_LEVEL,-1);
+                Battery_voltage=intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE,-1);
+                Battery_temperature=intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE,-100);
+                isInstant=true;
+                return;
+            }
             if(item.trigger_type== PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE){
                 int percentage_received=intent.getIntExtra(BatteryManager.EXTRA_LEVEL,0);
                 if(percentage_received>item.battery_percentage){

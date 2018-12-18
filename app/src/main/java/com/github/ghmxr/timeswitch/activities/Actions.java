@@ -502,7 +502,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                     final String title=notification_title;//notification_values[PublicConsts.NOTIFICATION_TITLE_LOCALE];
                     final String message=notification_message;//notification_values[PublicConsts.NOTIFICATION_MESSAGE_LOCALE];
                     final RadioButton ra_unselected=dialog.findViewById(R.id.dialog_notification_selection_unselected_ra);
-                    final RadioButton ra_with_vibrate=dialog.findViewById(R.id.dialog_notification_selection_with_vibrate_ra);
+                    //final RadioButton ra_with_vibrate=dialog.findViewById(R.id.dialog_notification_selection_with_vibrate_ra);
                     final RadioButton ra_without_vibrate=dialog.findViewById(R.id.dialog_notification_selection_without_vibrate_ra);
                     final RadioButton ra_default=dialog.findViewById(R.id.dialog_notification_operation_default_ra);
                     final RadioButton ra_custom=dialog.findViewById(R.id.dialog_notification_operation_custom_ra);
@@ -512,14 +512,14 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                     edit_title.setText(title.trim());
                     edit_message.setText(message.trim());
                     (ra_unselected).setChecked(type==PublicConsts.NOTIFICATION_TYPE_UNSELECTED);
-                    (ra_with_vibrate).setChecked(type==PublicConsts.NOTIFICATION_TYPE_VIBRATE);
-                    (ra_without_vibrate).setChecked(type==PublicConsts.NOTIFICATION_TYPE_NO_VIBRATE);
+                    //(ra_with_vibrate).setChecked(type==PublicConsts.NOTIFICATION_TYPE_NOT_OVERRIDE);
+                    (ra_without_vibrate).setChecked(type==PublicConsts.NOTIFICATION_TYPE_OVERRIDE_LAST);
                     (operation_area).setVisibility(type==PublicConsts.NOTIFICATION_TYPE_UNSELECTED?View.GONE:View.VISIBLE);
                     (dialog.findViewById(R.id.dialog_notification_selection_unselected)).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             (ra_unselected).setChecked(true);
-                            ra_with_vibrate.setChecked(false);
+                            //ra_with_vibrate.setChecked(false);
                             ra_without_vibrate.setChecked(false);
                             (operation_area).setVisibility(View.GONE);
                         }
@@ -529,15 +529,15 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                         @Override
                         public void onClick(View view) {
                             (ra_unselected).setChecked(false);
-                            ra_with_vibrate.setChecked(false);
+                            //ra_with_vibrate.setChecked(false);
                             ra_without_vibrate.setChecked(true);
                             (operation_area).setVisibility(View.VISIBLE);
 
                         }
                     });
 
-                    ra_default.setChecked(type_custom==PublicConsts.NOTIFICATION_TYPE_DEFAULT);
-                    ra_custom.setChecked(type_custom==PublicConsts.NOTIFICATION_TYPE_CUSTOM);
+                    ra_default.setChecked(type_custom==PublicConsts.NOTIFICATION_TYPE_CONTENT_DEFAULT);
+                    ra_custom.setChecked(type_custom==PublicConsts.NOTIFICATION_TYPE_CONTENT_CUSTOM);
                     edit_title.setEnabled(ra_custom.isChecked());
                     edit_message.setEnabled(ra_custom.isChecked());
                     ra_custom.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -552,10 +552,8 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                         public void onClick(View view) {
                             dialog.cancel();
                             int type=ra_unselected.isChecked()?PublicConsts.NOTIFICATION_TYPE_UNSELECTED
-                                    :(ra_with_vibrate.isChecked()?PublicConsts.NOTIFICATION_TYPE_VIBRATE:
-                                    (ra_without_vibrate.isChecked()?PublicConsts.NOTIFICATION_TYPE_NO_VIBRATE:PublicConsts.NOTIFICATION_TYPE_UNSELECTED)
-                            );
-                            int type_if_custom=ra_custom.isChecked()?PublicConsts.NOTIFICATION_TYPE_CUSTOM:PublicConsts.NOTIFICATION_TYPE_DEFAULT;
+                                    :PublicConsts.NOTIFICATION_TYPE_OVERRIDE_LAST;
+                            int type_if_custom=ra_custom.isChecked()?PublicConsts.NOTIFICATION_TYPE_CONTENT_CUSTOM :PublicConsts.NOTIFICATION_TYPE_CONTENT_DEFAULT;
                             String custom_title=edit_title.getText().toString();
                             String custom_message=edit_message.getText().toString();
                             actions[PublicConsts.ACTION_NOTIFICATION_LOCALE]=String.valueOf(type)+PublicConsts.SEPARATOR_SECOND_LEVEL

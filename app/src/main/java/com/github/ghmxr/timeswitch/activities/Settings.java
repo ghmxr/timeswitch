@@ -199,8 +199,11 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
                         .setTitle(getResources().getString(R.string.activity_settings_service_type))
                         .setView(LayoutInflater.from(this).inflate(R.layout.layout_dialog_with_two_single_choices,null))
                         .show();
+                TextView tv=dialog.findViewById(R.id.dialog_two_choices_att);
+                tv.setVisibility(View.VISIBLE);
                 RadioButton ra_background=dialog.findViewById(R.id.dialog_choice_first);
                 RadioButton ra_foreground=dialog.findViewById(R.id.dialog_choice_second);
+                tv.setText(getResources().getString(R.string.activity_settings_service_type_att));
                 ra_background.setText(getResources().getString(R.string.activity_settings_service_type_background));
                 ra_foreground.setText(getResources().getString(R.string.activity_settings_service_type_foreground));
                 ra_background.setChecked(settings.getInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_DEFAULT)==PublicConsts.PREFERENCES_SERVICE_TYPE_BACKGROUND);

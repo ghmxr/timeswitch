@@ -1,6 +1,9 @@
 package com.github.ghmxr.timeswitch.services;
 
+import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.app.usage.UsageEvents;
 import android.app.usage.UsageStatsManager;
@@ -8,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.github.ghmxr.timeswitch.data.PublicConsts;
@@ -17,8 +21,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class AppLaunchingDetectionService extends Service implements Runnable {
-    private boolean flag=true;
-    public static List<AppLaunchingDetectionService> queue=new LinkedList<>();
+    private boolean flag=false;
+    public static LinkedList<AppLaunchingDetectionService> queue=new LinkedList<>();
     public static String ACTION_LAUNCH_INFO_CHANGED= PublicConsts.PACKAGE_NAME+"action.PACKAGE_LAUNCH_INFO_CHANGED";
     /**
      * get a string value indicating the package name;
@@ -32,6 +36,14 @@ public class AppLaunchingDetectionService extends Service implements Runnable {
     private Thread thread;
 
     @Override
+    public void onCreate(){
+        super.onCreate();
+        if(getSharedPreferences(PublicConsts.PREFERENCES_NAME,Context.MODE_PRIVATE).getInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_DEFAULT)==PublicConsts.PREFERENCES_SERVICE_TYPE_FORGROUND){
+            makeThisForeGround();
+        }
+    }
+
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(!queue.contains(this)) queue.add(this);
         startRefresh();
@@ -39,9 +51,11 @@ public class AppLaunchingDetectionService extends Service implements Runnable {
     }
 
     private void startRefresh(){
-        flag=true;
-        thread=new Thread(this);
-        thread.start();
+        if(!flag){
+            flag=true;
+            thread=new Thread(this);
+            thread.start();
+        }
     }
 
     @Override
@@ -51,10 +65,55 @@ public class AppLaunchingDetectionService extends Service implements Runnable {
 
     @Override
     public void onDestroy() {
-        flag=false;
-        thread=null;
+        stopDetecting();
         if(queue.contains(this)) queue.remove(this);
         super.onDestroy();
+    }
+
+    public void makeThisBackground(){
+        stopForeground(true);
+        Log.d("AppLDService","Gone to background");
+    }
+
+    public void makeThisForeGround(){
+        try{
+            NotificationCompat.Builder notification=TimeSwitchService.notification;
+            if(notification==null){
+                NotificationManager notificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                if(Build.VERSION.SDK_INT>=26){
+                    final String channelID="channel_service";
+                    NotificationChannel channel=new NotificationChannel(channelID,"Service",NotificationManager.IMPORTANCE_DEFAULT);
+                    notificationManager.createNotificationChannel(channel);
+                    notification=new NotificationCompat.Builder(this,channelID);
+                }else{
+                    notification=new NotificationCompat.Builder(this);
+                }
+            }
+            startForeground(1,notification.build());
+            Log.d("AppLDService","Came to foreground");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void startService(Context context){
+        try{
+            boolean isBackground=context.getSharedPreferences(PublicConsts.PREFERENCES_NAME, Activity.MODE_PRIVATE)
+                    .getInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_DEFAULT)==PublicConsts.PREFERENCES_SERVICE_TYPE_BACKGROUND;
+            if(isBackground){
+                if(queue.size()==0) context.startService(new Intent(context,AppLaunchingDetectionService.class));
+                else {
+                    queue.getLast().makeThisBackground();
+                }
+            }else{
+                if(queue.size()==0) {
+                    if(Build.VERSION.SDK_INT>=26) context.startForegroundService(new Intent(context,AppLaunchingDetectionService.class));
+                    else  context.startService(new Intent(context,AppLaunchingDetectionService.class));
+                }else {
+                    queue.getLast().makeThisForeGround();
+                }
+            }
+        }catch (Exception e){e.printStackTrace();}
     }
 
     @Override
@@ -154,7 +213,7 @@ public class AppLaunchingDetectionService extends Service implements Runnable {
 
     }
 
-    public void stopDececting(){
+    public void stopDetecting(){
         flag=false;
         thread=null;
     }

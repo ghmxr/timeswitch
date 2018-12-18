@@ -67,29 +67,6 @@
                 android:background="@color/color_dividing_line"/>
         </RelativeLayout>
         <RelativeLayout
-            android:id="@+id/dialog_notification_selection_with_vibrate"
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:clickable="true"
-            android:background="?attr/selectableItemBackground"
-            android:visibility="gone">
-            <RadioButton
-                android:id="@+id/dialog_notification_selection_with_vibrate_ra"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="10dp"
-                android:layout_centerVertical="true"
-                android:focusable="false"
-                android:clickable="false"
-                android:text="@string/dialog_actions_notification_selection_with_vibrate"/>
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:layout_alignParentBottom="true"
-                android:background="@color/color_dividing_line"/>
-        </RelativeLayout>
-        <RelativeLayout
             android:id="@+id/dialog_notification_selection_without_vibrate"
             android:layout_width="match_parent"
             android:layout_height="45dp"

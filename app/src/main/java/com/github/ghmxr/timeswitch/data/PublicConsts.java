@@ -191,10 +191,10 @@ public class PublicConsts {
 	public static final int SMS_RESULT_TOAST_LOCALE=2;
 
 	public static final int NOTIFICATION_TYPE_UNSELECTED=-1;
-	public static final int NOTIFICATION_TYPE_VIBRATE=1;
-	public static final int NOTIFICATION_TYPE_NO_VIBRATE=0;
-	public static final int NOTIFICATION_TYPE_DEFAULT=0;
-	public static final int NOTIFICATION_TYPE_CUSTOM=1;
+	public static final int NOTIFICATION_TYPE_NOT_OVERRIDE =1;
+	public static final int NOTIFICATION_TYPE_OVERRIDE_LAST =0;
+	public static final int NOTIFICATION_TYPE_CONTENT_DEFAULT =0;
+	public static final int NOTIFICATION_TYPE_CONTENT_CUSTOM =1;
 
 	public static final int TOAST_TYPE_LOCALE=0;
 	public static final int TOAST_LOCATION_X_OFFSET_LOCALE=1;

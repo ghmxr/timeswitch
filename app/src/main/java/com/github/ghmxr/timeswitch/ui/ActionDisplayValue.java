@@ -4,13 +4,11 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
-import android.util.Log;
 
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
@@ -21,7 +19,6 @@ import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import java.io.File;
-import java.util.EmptyStackException;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
@@ -204,20 +201,20 @@ public class ActionDisplayValue {
             String[] notification_values=value.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_LOCALE])==PublicConsts.NOTIFICATION_TYPE_UNSELECTED){
                 builder.append("");
-            }else if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_LOCALE])==PublicConsts.NOTIFICATION_TYPE_VIBRATE){
+            }else if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_LOCALE])==PublicConsts.NOTIFICATION_TYPE_NOT_OVERRIDE){
                 builder.append(context.getResources().getString(R.string.activity_taskgui_actions_notification_vibrate));
                 builder.append(":");
-                if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])==PublicConsts.NOTIFICATION_TYPE_DEFAULT){
+                if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])==PublicConsts.NOTIFICATION_TYPE_CONTENT_DEFAULT){
                     builder.append(context.getResources().getString(R.string.activity_taskgui_actions_notification_type_default));
-                }else if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])==PublicConsts.NOTIFICATION_TYPE_CUSTOM){
+                }else if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])==PublicConsts.NOTIFICATION_TYPE_CONTENT_CUSTOM){
                     builder.append(context.getResources().getString(R.string.activity_taskgui_actions_notification_type_custom));
                 }
-            }else if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_LOCALE])==PublicConsts.NOTIFICATION_TYPE_NO_VIBRATE){
+            }else if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_LOCALE])==PublicConsts.NOTIFICATION_TYPE_OVERRIDE_LAST){
                 builder.append(context.getResources().getString(R.string.activity_taskgui_actions_notification_no_vibrate));
                 builder.append(":");
-                if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])==PublicConsts.NOTIFICATION_TYPE_DEFAULT){
+                if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])==PublicConsts.NOTIFICATION_TYPE_CONTENT_DEFAULT){
                     builder.append(context.getResources().getString(R.string.activity_taskgui_actions_notification_type_default));
-                }else if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])==PublicConsts.NOTIFICATION_TYPE_CUSTOM){
+                }else if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])==PublicConsts.NOTIFICATION_TYPE_CONTENT_CUSTOM){
                     builder.append(context.getResources().getString(R.string.activity_taskgui_actions_notification_type_custom));
                 }
             }

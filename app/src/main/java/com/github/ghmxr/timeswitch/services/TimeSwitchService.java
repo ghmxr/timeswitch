@@ -8,6 +8,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -17,22 +18,23 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.Gravity;
+import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.activities.Main;
 import com.github.ghmxr.timeswitch.activities.Profile;
 import com.github.ghmxr.timeswitch.activities.Settings;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
-import com.github.ghmxr.timeswitch.receivers.AppLaunchDetectionReceiver;
 import com.github.ghmxr.timeswitch.receivers.BatteryReceiver;
 import com.github.ghmxr.timeswitch.receivers.HeadsetPlugReceiver;
 import com.github.ghmxr.timeswitch.receivers.NetworkReceiver;
 import com.github.ghmxr.timeswitch.runnables.RefreshListItems;
 import com.github.ghmxr.timeswitch.timers.CustomTimerTask;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
+import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,7 +47,6 @@ public class TimeSwitchService extends Service {
     public static List <TaskItem> list =new ArrayList<>();
 
     public static AlarmManager alarmManager;
-
 
     public static LinkedList<TimeSwitchService> service_queue=new LinkedList<>();
 
@@ -61,6 +62,7 @@ public class TimeSwitchService extends Service {
      * message.obj=new TimeSwitchService.CustomToast();
      */
     public static final int MESSAGE_DISPLAY_CUSTOM_TOAST=0x00003;
+    public static final int MESSAGE_START_FOREGROUND=10;
 
     //public Thread thread_getlist;
 
@@ -74,23 +76,26 @@ public class TimeSwitchService extends Service {
 
     public static  PowerManager.WakeLock wakelock;
 
-    static NotificationCompat.Builder notification=null;
+    public static NotificationCompat.Builder notification=null;
 
-    boolean isBackground=true;
+    static boolean flag_refresh_foreground_notification=false;
+
+    //private boolean if_start_foreground_in_onstart_method=false;
 
     @Override
     public void onCreate(){
         super.onCreate();
-        if(notification!=null) startForeground(1,notification.build());
-        Log.d("TimeSwitchService","onCreate called");
+        mHandler=new MyHandler();
+        if(!service_queue.contains(this)) service_queue.add(this);
+        Log.i("TimeSwitchService","onCreate called and queue size is "+service_queue.size());
+        if(getSharedPreferences(PublicConsts.PREFERENCES_NAME,Context.MODE_PRIVATE).getInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_DEFAULT)==PublicConsts.PREFERENCES_SERVICE_TYPE_FORGROUND){
+            makeThisForeground();
+        }
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(!service_queue.contains(this)) service_queue.add(this);
-
-        Log.i("TimeSwitchService","onStartCommand called and queue size is "+service_queue.size());
-        mHandler=new MyHandler();
+        Log.d("TimeSwitchService","onStartCommand called");
         if(alarmManager==null) {
             alarmManager=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
         }
@@ -109,7 +114,7 @@ public class TimeSwitchService extends Service {
             }
         }catch (Exception e){e.printStackTrace();}
 
-        batteryReceiver=new BatteryReceiver(this);
+        batteryReceiver=new BatteryReceiver(this,null);
         batteryReceiver.registerReceiver();
 
         try{
@@ -131,6 +136,7 @@ public class TimeSwitchService extends Service {
         headsetPlugReceiver.registerReceiver();
 
         refreshTaskItems();
+
         //startService(new Intent(this,AppLaunchingDetectionService.class));
         //new AppLaunchDetectionReceiver(this,null).registerReceiver();
         return super.onStartCommand(intent, flags, startId);
@@ -148,6 +154,26 @@ public class TimeSwitchService extends Service {
         }
         this.runnable_refreshitems=new RefreshListItems(this);
         new Thread(runnable_refreshitems).start();
+   }
+
+   private void makeThisForeground(){
+       NotificationManager notificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+       if(Build.VERSION.SDK_INT>=26){
+           final String channelID="channel_service";
+           NotificationChannel channel=new NotificationChannel(channelID,"Service",NotificationManager.IMPORTANCE_DEFAULT);
+           notificationManager.createNotificationChannel(channel);
+           notification=new NotificationCompat.Builder(this,channelID);
+       }else{
+           notification=new NotificationCompat.Builder(this);
+       }
+       startForeground(1,getRefreshedNotificationBuilder(notification).build());
+       refreshForegroundNotification();
+       Log.d("FOREGROUND","STARTED");
+   }
+
+   private void makeThisBackground(){
+        flag_refresh_foreground_notification=false;
+        stopForeground(true);
    }
 
 
@@ -184,6 +210,21 @@ public class TimeSwitchService extends Service {
                 toast.show();
             }
             break;
+            /*case MESSAGE_START_FOREGROUND:{
+                NotificationManager notificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                if(Build.VERSION.SDK_INT>=26){
+                    final String channelID="channel_service";
+                    NotificationChannel channel=new NotificationChannel(channelID,"Service",NotificationManager.IMPORTANCE_DEFAULT);
+                    notificationManager.createNotificationChannel(channel);
+                    notification=new NotificationCompat.Builder(this,channelID);
+                }else{
+                    notification=new NotificationCompat.Builder(this);
+                }
+                startForeground(1,getRefreshedNotificationBuilder(notification).build());
+                refreshForegroundNotification();
+                Log.d("FOREGROUND","STARTED");
+            }
+            break;*/
         }
     }
 
@@ -199,6 +240,7 @@ public class TimeSwitchService extends Service {
     public void onDestroy() {
         super.onDestroy();
         try{
+            flag_refresh_foreground_notification=false;
             if(batteryReceiver!=null) {
                 batteryReceiver.unregisterReceiver();
                 batteryReceiver=null;
@@ -211,6 +253,9 @@ public class TimeSwitchService extends Service {
                 headsetPlugReceiver.unregisterReceiver();
                 headsetPlugReceiver=null;
             }
+            if(AppLaunchingDetectionService.queue.size()>0){
+                AppLaunchingDetectionService.queue.getLast().stopSelf();
+            }
         }catch (Exception e){e.printStackTrace();}
         if(service_queue.contains(this)) service_queue.remove(this);
         if(wakelock!=null) {
@@ -222,48 +267,86 @@ public class TimeSwitchService extends Service {
         }
         list.clear();
         Log.d("TimeSwitchService","onDestroy method called");
-        //startService(new Intent(this,TimeSwitchService.class));
+    }
+
+    private NotificationCompat.Builder getRefreshedNotificationBuilder(NotificationCompat.Builder builder){
+        try{
+            builder.setSmallIcon(R.drawable.ic_launcher);
+            builder.setContentTitle("Widget Trigger");
+            builder.setContentText("Widget Trigger is running");
+            RemoteViews remoteViews=new RemoteViews(PublicConsts.PACKAGE_NAME,R.layout.layout_foreground_notification);
+            String title;
+            if(ProcessTaskItem.last_activated_task_name.equals("")){
+                title=getResources().getString(R.string.notification_title_nothing);
+            }else {
+                title=getResources().getString(R.string.notification_title_font)+ProcessTaskItem.last_activated_task_name;
+            }
+            remoteViews.setTextViewText(R.id.notification_title, title);
+            remoteViews.setTextViewText(R.id.notification_battery_percentage,BatteryReceiver.Battery_percentage+"%");
+            if(Build.VERSION.SDK_INT>=21){
+                try{
+                    BatteryManager batteryManager=(BatteryManager)getSystemService(Context.BATTERY_SERVICE);
+                    int current=batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)/1000;
+                    if(current<0) current=0-current;
+                    remoteViews.setTextViewText(R.id.notification_battery_info,(double)BatteryReceiver.Battery_voltage/1000+"V , "+current+"mA");
+                }catch (Exception e){
+                    e.printStackTrace();
+                    remoteViews.setTextViewText(R.id.notification_battery_info,(double)BatteryReceiver.Battery_voltage/1000+"V");
+                }
+            }else remoteViews.setTextViewText(R.id.notification_battery_info,(double)BatteryReceiver.Battery_voltage/1000+"V");
+            remoteViews.setTextViewText(R.id.notification_battery_temp,(double)BatteryReceiver.Battery_temperature/10+getResources().getString(R.string.degree_celsius));
+            builder.setCustomContentView(remoteViews);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return builder;
     }
 
     public static void startService(@NonNull Context context){
         try{
-            /*if(service_queue.size()>0){
-
-            }
-            if(notification==null&&context.getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE).getInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_DEFAULT)==PublicConsts.PREFERENCES_SERVICE_TYPE_BACKGROUND){
-                return;
-            }*/
-
-
-            /*if(service_queue.size()==0){
-
-            }else{
-
-            }*/
-            if(service_queue.size()>0) service_queue.getLast().stopSelf();
+            //if(service_queue.size()>0) service_queue.getLast().stopSelf();
             boolean isBackground=context.getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE)
                     .getInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_DEFAULT)==PublicConsts.PREFERENCES_SERVICE_TYPE_BACKGROUND;
             if(isBackground){
-                notification=null;
-                context.startService(new Intent(context, TimeSwitchService.class));
-            }else{
-                NotificationManager notificationManager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-                if(Build.VERSION.SDK_INT>=26){
-                    final String channelID="channel_service";
-                    NotificationChannel channel=new NotificationChannel(channelID,"Service",NotificationManager.IMPORTANCE_DEFAULT);
-                    notificationManager.createNotificationChannel(channel);
-                    notification=new NotificationCompat.Builder(context,channelID);
-                    context.startForegroundService(new Intent(context,TimeSwitchService.class));
-                }else{
-                    notification=new NotificationCompat.Builder(context);
-                    context.startService(new Intent(context,TimeSwitchService.class));
+                if(service_queue.size()==0) context.startService(new Intent(context, TimeSwitchService.class));
+                else {
+                    service_queue.getLast().makeThisBackground();
+                    service_queue.getLast().refreshTaskItems();
                 }
+                if(AppLaunchingDetectionService.queue.size()>0) AppLaunchingDetectionService.queue.getLast().makeThisBackground();
+            }else{
+                if(service_queue.size()==0){
+                    if(Build.VERSION.SDK_INT>=26)context.startForegroundService(new Intent(context,TimeSwitchService.class));
+                    else context.startService(new Intent(context,TimeSwitchService.class));
+                }else{
+                    service_queue.getLast().refreshTaskItems();
+                    service_queue.getLast().makeThisForeground();
+                }
+                if(AppLaunchingDetectionService.queue.size()>0) AppLaunchingDetectionService.queue.getLast().makeThisForeGround();
             }
-
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
 
+    private void refreshForegroundNotification(){
+        try{
+            if(!flag_refresh_foreground_notification){
+                flag_refresh_foreground_notification=true;
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (flag_refresh_foreground_notification){
+                            mHandler.postDelayed(this,2000);
+                            if(notification!=null) startForeground(1,getRefreshedNotificationBuilder(notification).build());
+                        }else {
+                            stopForeground(true);
+                        }
+                    }
+                });
+            }
+
+        }catch (Exception e){e.printStackTrace();}
     }
 
     private static class MyHandler extends Handler{
