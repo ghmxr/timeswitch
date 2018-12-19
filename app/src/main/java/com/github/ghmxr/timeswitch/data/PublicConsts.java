@@ -245,7 +245,7 @@ public class PublicConsts {
 	public static final boolean PREFERENCES_MAINPAGE_INDICATOR_DEFAULT	=	false;
 
 	public static final String PREFERENCES_THEME_COLOR="theme_color";
-	public static final String PREFERENCES_THEME_COLOR_DEFAULT="#3F51B5";
+	public static final String PREFERENCES_THEME_COLOR_DEFAULT="#16a085";
 
 	public static final int API_ANDROID_ALARM_MANAGER=0;
 	public static final int API_JAVA_TIMER=1;

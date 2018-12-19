@@ -48,10 +48,13 @@
 	<string name="dialog_triggers_widget_airplane_mode_off">飞行模式关闭时</string>
 	<string name="dialog_triggers_widget_ap_on">打开热点时</string>
 	<string name="dialog_triggers_widget_ap_off">关闭热点时</string>
+	<string name="activity_triggers_screen">屏幕</string>
 	<string name="activity_triggers_screen_on">屏幕点亮时</string>
 	<string name="activity_triggers_screen_off">屏幕关闭时</string>
+	<string name="activity_triggers_power">电源</string>
 	<string name="activity_triggers_power_connected">接通电源时</string>
 	<string name="activity_triggers_power_disconnected">断开电源时</string>
+	<string name="activity_triggers_widget_changed">选择开关</string>
 	<string name="dialog_trigger_type_per_certain_time_invalid_value">无效的数字格式，请重新输入</string>
 	<string name="dialog_trigger_type_per_certain_time_more_than_zero">触发间隔须大于0</string>
 	<string name="dialog_trigger_type_per_certain_time_out_of_range">数值超过范围</string>
@@ -236,7 +239,7 @@
     <string name="activity_settings_basic_att">基础选项</string>
     <string name="activity_settings_api_att">计时器API</string>
 	<string name="activity_settings_service_type">服务选项</string>
-	<string name="activity_settings_service_type_att">在Android8.0及以上系统，请务必关闭电池优化和服务限制，否则任务将不能生效</string>
+    <string name="activity_settings_service_type_att">在Android8.0及以上系统，请务必关闭电池优化和后台限制，否则任务将不能生效</string>
 	<string name="activity_settings_service_type_background">后台运行</string>
 	<string name="activity_settings_service_type_foreground">保持前台(常驻通知栏)</string>
 	<string name="activity_settings_indicator_att">显示指示器</string>

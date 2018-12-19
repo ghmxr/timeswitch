@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.design.widget.Snackbar;
@@ -199,11 +201,23 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
                         .setTitle(getResources().getString(R.string.activity_settings_service_type))
                         .setView(LayoutInflater.from(this).inflate(R.layout.layout_dialog_with_two_single_choices,null))
                         .show();
-                TextView tv=dialog.findViewById(R.id.dialog_two_choices_att);
-                tv.setVisibility(View.VISIBLE);
                 RadioButton ra_background=dialog.findViewById(R.id.dialog_choice_first);
                 RadioButton ra_foreground=dialog.findViewById(R.id.dialog_choice_second);
-                tv.setText(getResources().getString(R.string.activity_settings_service_type_att));
+                if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
+                    TextView tv=dialog.findViewById(R.id.dialog_two_choices_att);
+                    tv.setVisibility(View.VISIBLE);
+                    tv.setTextColor(getResources().getColor(R.color.color_activity_taskgui_att));
+                    tv.setText(getResources().getString(R.string.activity_settings_service_type_att));
+                    tv.setClickable(true);
+                    tv.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent i=new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            i.setData(Uri.fromParts("package", getApplication().getPackageName(), null));
+                            startActivity(i);
+                        }
+                    });
+                }
                 ra_background.setText(getResources().getString(R.string.activity_settings_service_type_background));
                 ra_foreground.setText(getResources().getString(R.string.activity_settings_service_type_foreground));
                 ra_background.setChecked(settings.getInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_DEFAULT)==PublicConsts.PREFERENCES_SERVICE_TYPE_BACKGROUND);

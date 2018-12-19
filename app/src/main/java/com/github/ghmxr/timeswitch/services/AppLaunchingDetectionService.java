@@ -50,7 +50,7 @@ public class AppLaunchingDetectionService extends Service implements Runnable {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void startRefresh(){
+    public void startRefresh(){
         if(!flag){
             flag=true;
             thread=new Thread(this);
@@ -150,6 +150,7 @@ public class AppLaunchingDetectionService extends Service implements Runnable {
                             }*/
 
                         }
+                        Log.d("AppLDService","Loop sleep!!!!!!");
                         Thread.sleep(1000);
                     }catch (Exception e){
                         e.printStackTrace();
@@ -176,6 +177,7 @@ public class AppLaunchingDetectionService extends Service implements Runnable {
                                 break;
                             }
                         }
+                        Log.d("AppLDService","Loop sleep!!!!!!");
                         Thread.sleep(1000);
                     }catch (Exception e){
                         e.printStackTrace();
@@ -201,6 +203,7 @@ public class AppLaunchingDetectionService extends Service implements Runnable {
                                 //Log.d("AppStatus",package_name+" is LAUNCHED");
                             }
                         }
+                        Log.d("AppLDService","Loop sleep!!!!!!");
                         Thread.sleep(1000);
                     }catch (Exception e){
                         e.printStackTrace();

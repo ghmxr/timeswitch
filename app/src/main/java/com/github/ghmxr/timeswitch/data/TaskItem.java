@@ -306,7 +306,6 @@ public class TaskItem implements Comparable<TaskItem>{
 		if(trigger_type==PublicConsts.TRIGGER_TYPE_APP_LAUNCHED||trigger_type==PublicConsts.TRIGGER_TYPE_APP_CLOSED){
 			triggerObject=new AppLaunchDetectionReceiver(context,this);
 			if(AppLaunchingDetectionService.queue==null||AppLaunchingDetectionService.queue.size()<=0){
-				//context.startService(new Intent(context,AppLaunchingDetectionService.class));
 				AppLaunchingDetectionService.startService(context);
 			}
 			((AppLaunchDetectionReceiver)triggerObject).registerReceiver();

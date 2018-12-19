@@ -31,7 +31,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:theme="@android:style/Theme.Holo.Light" />
+                android:theme="@android:style/Theme.Holo.Light"
+                android:visibility="gone"/>
 
             <RelativeLayout
                 android:id="@+id/trigger_single"
@@ -661,7 +662,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/color_text_normal"
-                        android:text="@string/activity_triggers_screen_on"
+                        android:text="@string/activity_triggers_screen"
                         android:textSize="15sp" />
 
                     <TextView
@@ -696,7 +697,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:background="?android:attr/selectableItemBackground"
-                android:clickable="true">
+                android:clickable="true"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/trigger_screen_off_icon"
@@ -781,7 +783,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/color_text_normal"
-                        android:text="@string/activity_triggers_power_connected"
+                        android:text="@string/activity_triggers_power"
                         android:textSize="15sp" />
 
                     <TextView
@@ -816,7 +818,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:background="?android:attr/selectableItemBackground"
-                android:clickable="true">
+                android:clickable="true"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/trigger_power_disconnected_icon"

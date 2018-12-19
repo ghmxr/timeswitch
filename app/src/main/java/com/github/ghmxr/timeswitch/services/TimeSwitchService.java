@@ -5,8 +5,10 @@ import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.BatteryManager;
 import android.os.Build;
@@ -28,6 +30,7 @@ import com.github.ghmxr.timeswitch.activities.Settings;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
 import com.github.ghmxr.timeswitch.receivers.BatteryReceiver;
+import com.github.ghmxr.timeswitch.receivers.CustomBroadcastReceiver;
 import com.github.ghmxr.timeswitch.receivers.HeadsetPlugReceiver;
 import com.github.ghmxr.timeswitch.receivers.NetworkReceiver;
 import com.github.ghmxr.timeswitch.runnables.RefreshListItems;
@@ -62,7 +65,6 @@ public class TimeSwitchService extends Service {
      * message.obj=new TimeSwitchService.CustomToast();
      */
     public static final int MESSAGE_DISPLAY_CUSTOM_TOAST=0x00003;
-    public static final int MESSAGE_START_FOREGROUND=10;
 
     //public Thread thread_getlist;
 
@@ -73,6 +75,8 @@ public class TimeSwitchService extends Service {
     private NetworkReceiver networkReceiver;
 
     private HeadsetPlugReceiver headsetPlugReceiver;
+
+    private BroadcastReceiver receiver_screen_status;
 
     public static  PowerManager.WakeLock wakelock;
 
@@ -135,6 +139,30 @@ public class TimeSwitchService extends Service {
         headsetPlugReceiver=new HeadsetPlugReceiver(this,null);
         headsetPlugReceiver.registerReceiver();
 
+        try{
+            try{
+                if(receiver_screen_status!=null){
+                    unregisterReceiver(receiver_screen_status);
+                }
+            }catch (Exception e){e.printStackTrace();}
+            receiver_screen_status=new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    if(intent==null||intent.getAction()==null) return;
+                    if(intent.getAction().equals(Intent.ACTION_SCREEN_ON)){
+                        if(AppLaunchingDetectionService.queue.size()>0) AppLaunchingDetectionService.queue.getLast().startRefresh();
+                    }
+                    if(intent.getAction().equals(Intent.ACTION_SCREEN_OFF)){
+                        if(AppLaunchingDetectionService.queue.size()>0) AppLaunchingDetectionService.queue.getLast().stopDetecting();
+                    }
+                }
+            };
+            IntentFilter filter=new IntentFilter();
+            filter.addAction(Intent.ACTION_SCREEN_ON);
+            filter.addAction(Intent.ACTION_SCREEN_OFF);
+            registerReceiver(receiver_screen_status,filter);
+        }catch (Exception e){e.printStackTrace();}
+
         refreshTaskItems();
 
         //startService(new Intent(this,AppLaunchingDetectionService.class));
@@ -160,7 +188,7 @@ public class TimeSwitchService extends Service {
        NotificationManager notificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
        if(Build.VERSION.SDK_INT>=26){
            final String channelID="channel_service";
-           NotificationChannel channel=new NotificationChannel(channelID,"Service",NotificationManager.IMPORTANCE_DEFAULT);
+           NotificationChannel channel=new NotificationChannel(channelID,"Service",NotificationManager.IMPORTANCE_LOW);
            notificationManager.createNotificationChannel(channel);
            notification=new NotificationCompat.Builder(this,channelID);
        }else{
@@ -245,18 +273,34 @@ public class TimeSwitchService extends Service {
                 batteryReceiver.unregisterReceiver();
                 batteryReceiver=null;
             }
+        }catch (Exception e){e.printStackTrace();}
+
+        try{
             if(networkReceiver!=null){
                 networkReceiver.unregisterReceiver();
                 networkReceiver=null;
             }
+        }catch (Exception e){e.printStackTrace();}
+
+        try{
             if(headsetPlugReceiver!=null){
                 headsetPlugReceiver.unregisterReceiver();
                 headsetPlugReceiver=null;
             }
+        }catch (Exception e){e.printStackTrace();}
+
+        try{
+            if(receiver_screen_status!=null){
+                unregisterReceiver(receiver_screen_status);
+            }
+        }catch (Exception e){ e.printStackTrace(); }
+
+        try{
             if(AppLaunchingDetectionService.queue.size()>0){
                 AppLaunchingDetectionService.queue.getLast().stopSelf();
             }
         }catch (Exception e){e.printStackTrace();}
+
         if(service_queue.contains(this)) service_queue.remove(this);
         if(wakelock!=null) {
             wakelock.release();

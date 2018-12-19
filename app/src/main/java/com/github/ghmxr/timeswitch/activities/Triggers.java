@@ -8,6 +8,7 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.app.AppOpsManager;
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -66,7 +67,9 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
     private String wifi_ssidinfo ="";
     private String [] package_names=new String[0];
     private String broadcast_intent_action="android.intent.ANSWER";
-
+    /**
+     * @deprecated
+     */
     CustomTimePicker timePicker;
     Calendar calendar;
 
@@ -211,82 +214,82 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
             default:break;
             case PublicConsts.TRIGGER_TYPE_SINGLE:{
                 ((TextView)findViewById(R.id.trigger_single_value)).setText(getSingleTimeDisplayValue(this,calendar.getTimeInMillis()));
-                timePicker.setVisibility(View.VISIBLE);
+                //timePicker.setVisibility(View.VISIBLE);
             }
             break;
             case PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME:{
                 ((TextView)findViewById(R.id.trigger_percertaintime_value)).setText(getCertainLoopTimeDisplayValue(this,interval));
-                timePicker.setVisibility(View.GONE);
+                //timePicker.setVisibility(View.GONE);
             }
             break;
             case PublicConsts.TRIGGER_TYPE_LOOP_WEEK:{
                 ((TextView)findViewById(R.id.trigger_weekloop_value)).setText(getWeekLoopDisplayValue(this,week_repeat,calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE)));
-                timePicker.setVisibility(View.VISIBLE);
+                //timePicker.setVisibility(View.VISIBLE);
             }
             break;
             case PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE: case PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE:{
                 ((TextView)findViewById(R.id.trigger_battery_temperature_value)).setText(getBatteryTemperatureDisplayValue(this,type,battery_temperature));
-                timePicker.setVisibility(View.GONE);
+                //timePicker.setVisibility(View.GONE);
             }
             break;
             case PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE: case PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE:{
                 ((TextView)findViewById(R.id.trigger_battery_percentage_value)).setText(getBatteryPercentageDisplayValue(this,type,battery_percentage));
-                timePicker.setVisibility(View.GONE);
+                //timePicker.setVisibility(View.GONE);
             }
             break;
             case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST:{
                 ((TextView)findViewById(R.id.trigger_received_broadcast_value)).setText(getBroadcastDisplayValue(broadcast_intent_action));
-                timePicker.setVisibility(View.GONE);
+                //timePicker.setVisibility(View.GONE);
             }
             break;
             case PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED:{
                 ((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText(getWifiConnectionDisplayValue(this,wifi_ssidinfo));
-                timePicker.setVisibility(View.GONE);
+                //timePicker.setVisibility(View.GONE);
             }
             break;
             case PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:{
                 ((TextView)findViewById(R.id.trigger_wifi_disconnected_value)).setText(getWifiConnectionDisplayValue(this,wifi_ssidinfo));
-                timePicker.setVisibility(View.GONE);
+                //timePicker.setVisibility(View.GONE);
             }
             break;
             case PublicConsts.TRIGGER_TYPE_APP_LAUNCHED: {
                 ((TextView)findViewById(R.id.trigger_app_opened_value)).setText(getAppNameDisplayValue(this,package_names));
-                timePicker.setVisibility(View.GONE);
+                //timePicker.setVisibility(View.GONE);
             }
             break;
             case PublicConsts.TRIGGER_TYPE_APP_CLOSED:{
                 ((TextView)findViewById(R.id.trigger_app_closed_value)).setText(getAppNameDisplayValue(this,package_names));
-                timePicker.setVisibility(View.GONE);
+                //timePicker.setVisibility(View.GONE);
             }
             break;
             case PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_IN:{
                 ((TextView)findViewById(R.id.trigger_headset_value)).setText(getResources().getString(R.string.activity_trigger_headset_plug_in));
-                timePicker.setVisibility(View.GONE);
+                //timePicker.setVisibility(View.GONE);
             }
             break;
             case PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT:{
                 ((TextView)findViewById(R.id.trigger_headset_value)).setText(getResources().getString(R.string.activity_trigger_headset_plug_out));
-                timePicker.setVisibility(View.GONE);
+                //timePicker.setVisibility(View.GONE);
             }
             break;
             case PublicConsts.TRIGGER_TYPE_SCREEN_ON:{
-                ((TextView)findViewById(R.id.trigger_screen_on_value)).setText(getResources().getString(R.string.selected));
-                timePicker.setVisibility(View.GONE);
+                ((TextView)findViewById(R.id.trigger_screen_on_value)).setText(getResources().getString(R.string.activity_triggers_screen_on));
+                //timePicker.setVisibility(View.GONE);
             }
             break;
             case PublicConsts.TRIGGER_TYPE_SCREEN_OFF:{
-                ((TextView)findViewById(R.id.trigger_screen_off_value)).setText(getResources().getString(R.string.selected));
-                timePicker.setVisibility(View.GONE);
+                ((TextView)findViewById(R.id.trigger_screen_on_value)).setText(getResources().getString(R.string.activity_triggers_screen_off));
+                //timePicker.setVisibility(View.GONE);
             }
             break;
             case PublicConsts.TRIGGER_TYPE_POWER_CONNECTED:{
-                ((TextView)findViewById(R.id.trigger_power_connected_value)).setText(getResources().getString(R.string.selected));
-                timePicker.setVisibility(View.GONE);
+                ((TextView)findViewById(R.id.trigger_power_connected_value)).setText(getResources().getString(R.string.activity_triggers_power_connected));
+                //timePicker.setVisibility(View.GONE);
             }
             break;
             case PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED:{
-                ((TextView)findViewById(R.id.trigger_power_disconnected_value)).setText(getResources().getString(R.string.selected));
-                timePicker.setVisibility(View.GONE);
+                ((TextView)findViewById(R.id.trigger_power_connected_value)).setText(getResources().getString(R.string.activity_triggers_power_disconnected));
+                //timePicker.setVisibility(View.GONE);
             }
             break;
             case PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON: case PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF: case PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON:
@@ -295,7 +298,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
             case PublicConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED: case PublicConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED: case PublicConsts.TRIGGER_TYPE_NET_ON:
             case PublicConsts.TRIGGER_TYPE_NET_OFF:{
                 ((TextView)findViewById(R.id.trigger_widget_changed_value)).setText(getWidgetDisplayValue(this,type));
-                timePicker.setVisibility(View.GONE);
+                //timePicker.setVisibility(View.GONE);
             }
             break;
         }
@@ -386,11 +389,22 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 activateTriggerType(PublicConsts.TRIGGER_TYPE_SINGLE);
                 new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
                     @Override
-                    public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
-                        calendar.set(Calendar.YEAR,year);
-                        calendar.set(Calendar.MONTH,month);
-                        calendar.set(Calendar.DAY_OF_MONTH,dayOfMonth);
-                        activateTriggerType(PublicConsts.TRIGGER_TYPE_SINGLE);
+                    public void onDateSet(DatePicker datePicker, final int year, final int month, final int dayOfMonth) {
+
+                        new TimePickerDialog(Triggers.this, new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                calendar.set(Calendar.YEAR,year);
+                                calendar.set(Calendar.MONTH,month);
+                                calendar.set(Calendar.DAY_OF_MONTH,dayOfMonth);
+
+                                calendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
+                                calendar.set(Calendar.MINUTE,minute);
+                                calendar.set(Calendar.SECOND,0);
+                                activateTriggerType(PublicConsts.TRIGGER_TYPE_SINGLE);
+                            }
+                        },calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE),true).show();
+
                     }
                 }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
             }
@@ -422,6 +436,12 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                         .setTitle(this.getResources().getString(R.string.dialog_weekloop_title))
                         .setView(dialogview)
                         .setPositiveButton(this.getResources().getString(R.string.dialog_button_positive), null)
+                        .setNegativeButton(getResources().getString(R.string.dialog_button_negative), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
                         .setCancelable(true)
                         .create();
 
@@ -447,32 +467,47 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                     @Override
                     public void onClick(View v) {
                         // TODO Auto-generated method stub
-                        week_repeat[PublicConsts.WEEK_MONDAY]=cb_mon.isChecked();
-                        week_repeat[PublicConsts.WEEK_TUESDAY]=cb_tue.isChecked();
-                        week_repeat[PublicConsts.WEEK_WEDNESDAY]=cb_wed.isChecked();
-                        week_repeat[PublicConsts.WEEK_THURSDAY]=cb_thu.isChecked();
-                        week_repeat[PublicConsts.WEEK_FRIDAY]=cb_fri.isChecked();
-                        week_repeat[PublicConsts.WEEK_SATURDAY]=cb_sat.isChecked();
-                        week_repeat[PublicConsts.WEEK_SUNDAY]=cb_sun.isChecked();
-                        boolean allunchecked=true;
-                        for (int i=0;i<7;i++){
-                            if(week_repeat[i]){
-                                allunchecked=false;
-                                break;
-                            }
-                        }
-                        ((TextView)findViewById(R.id.trigger_weekloop_value)).setText(getWeekLoopDisplayValue(Triggers.this,week_repeat,calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE)));
-                        if(allunchecked){
-                            activateTriggerType(PublicConsts.TRIGGER_TYPE_SINGLE);
-                            dialog_weekloop.cancel();
-                            return;
-                        }
                         dialog_weekloop.cancel();
-                        activateTriggerType(PublicConsts.TRIGGER_TYPE_LOOP_WEEK);
+
+                        new TimePickerDialog(Triggers.this, new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                boolean week_repeat[]=new boolean[7];
+                                week_repeat[PublicConsts.WEEK_MONDAY]=cb_mon.isChecked();
+                                week_repeat[PublicConsts.WEEK_TUESDAY]=cb_tue.isChecked();
+                                week_repeat[PublicConsts.WEEK_WEDNESDAY]=cb_wed.isChecked();
+                                week_repeat[PublicConsts.WEEK_THURSDAY]=cb_thu.isChecked();
+                                week_repeat[PublicConsts.WEEK_FRIDAY]=cb_fri.isChecked();
+                                week_repeat[PublicConsts.WEEK_SATURDAY]=cb_sat.isChecked();
+                                week_repeat[PublicConsts.WEEK_SUNDAY]=cb_sun.isChecked();
+                                boolean allunchecked=true;
+                                for (int i=0;i<7;i++){
+                                    if(week_repeat[i]){
+                                        allunchecked=false;
+                                        break;
+                                    }
+                                }
+                                //((TextView)findViewById(R.id.trigger_weekloop_value)).setText(getWeekLoopDisplayValue(Triggers.this,week_repeat,calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE)));
+                                if(allunchecked){
+                                    calendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
+                                    calendar.set(Calendar.MINUTE,minute);
+                                    calendar.set(Calendar.SECOND,0);
+                                    activateTriggerType(PublicConsts.TRIGGER_TYPE_SINGLE);
+                                    //dialog_weekloop.cancel();
+                                    return;
+                                }
+                                //dialog_weekloop.cancel();
+                                Triggers.this.week_repeat=week_repeat;
+                                calendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
+                                calendar.set(Calendar.MINUTE,minute);
+                                calendar.set(Calendar.SECOND,0);
+                                activateTriggerType(PublicConsts.TRIGGER_TYPE_LOOP_WEEK);
+                            }
+                        },calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE),true).show();
                     }
                 });
 
-                dialog_weekloop.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                /*dialog_weekloop.setOnCancelListener(new DialogInterface.OnCancelListener() {
 
                     @Override
                     public void onCancel(DialogInterface dialog) {
@@ -486,7 +521,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                         }
                         if(allunchecked) activateTriggerType(PublicConsts.TRIGGER_TYPE_SINGLE);
                     }
-                });
+                });*/
             }
             break;
             case R.id.trigger_battery_percentage:{
@@ -763,7 +798,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
             }
             break;
             case R.id.trigger_widget_changed:{
-                if(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON
+                /*if(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON
                         ||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE
                         ||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF
                         ||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED||trigger_type==PublicConsts.TRIGGER_TYPE_NET_ON
@@ -771,7 +806,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                     activateTriggerType(trigger_type);
                 }else{
                     activateTriggerType(PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON);
-                }
+                }*/
                 View dialogView=LayoutInflater.from(this).inflate(R.layout.layout_dialog_triggers_widget,null);
                 ((RadioButton)dialogView.findViewById(R.id.triggers_widget_wifi_on_ra)).setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON);
                 ((RadioButton)dialogView.findViewById(R.id.triggers_widget_wifi_off_ra)).setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF);
@@ -787,7 +822,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 ((RadioButton)dialogView.findViewById(R.id.triggers_widget_net_on_ra)).setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_NET_ON);
                 ((RadioButton)dialogView.findViewById(R.id.triggers_widget_net_off_ra)).setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_NET_OFF);
                 final AlertDialog dialog=new AlertDialog.Builder(this)
-                        .setTitle("Ñ¡Ôñ¿ª¹Ø")
+                        .setTitle(getResources().getString(R.string.activity_triggers_widget_changed))
                         .setView(dialogView)
                         .setNegativeButton(getResources().getString(R.string.dialog_button_negative), new DialogInterface.OnClickListener() {
                             @Override
@@ -877,21 +912,63 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
             }
             break;
             case R.id.trigger_screen_on:{
-                activateTriggerType(PublicConsts.TRIGGER_TYPE_SCREEN_ON);
+                final AlertDialog dialog=new AlertDialog.Builder(this)
+                        .setTitle(getResources().getString(R.string.activity_triggers_screen))
+                        .setView(LayoutInflater.from(this).inflate(R.layout.layout_dialog_with_two_single_choices,null))
+                        .show();
+                ((RadioButton)dialog.findViewById(R.id.dialog_choice_first)).setText(getResources().getString(R.string.activity_triggers_screen_on));
+                ((RadioButton)dialog.findViewById(R.id.dialog_choice_second)).setText(getResources().getString(R.string.activity_triggers_screen_off));
+                ((RadioButton)dialog.findViewById(R.id.dialog_choice_first)).setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_SCREEN_ON);
+                ((RadioButton)dialog.findViewById(R.id.dialog_choice_second)).setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_SCREEN_OFF);
+                (dialog.findViewById(R.id.dialog_choice_first)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.cancel();
+                        activateTriggerType(PublicConsts.TRIGGER_TYPE_SCREEN_ON);
+                    }
+                });
+                dialog.findViewById(R.id.dialog_choice_second).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.cancel();
+                        activateTriggerType(PublicConsts.TRIGGER_TYPE_SCREEN_OFF);
+                    }
+                });
             }
             break;
-            case R.id.trigger_screen_off:{
+            /*case R.id.trigger_screen_off:{
                 activateTriggerType(PublicConsts.TRIGGER_TYPE_SCREEN_OFF);
             }
-            break;
+            break;*/
             case R.id.trigger_power_connected:{
-                activateTriggerType(PublicConsts.TRIGGER_TYPE_POWER_CONNECTED);
+                final AlertDialog dialog=new AlertDialog.Builder(this)
+                        .setTitle(getResources().getString(R.string.activity_triggers_power))
+                        .setView(LayoutInflater.from(this).inflate(R.layout.layout_dialog_with_two_single_choices,null))
+                        .show();
+                ((RadioButton)dialog.findViewById(R.id.dialog_choice_first)).setText(getResources().getString(R.string.activity_triggers_power_connected));
+                ((RadioButton)dialog.findViewById(R.id.dialog_choice_second)).setText(getResources().getString(R.string.activity_triggers_power_disconnected));
+                ((RadioButton)dialog.findViewById(R.id.dialog_choice_first)).setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_POWER_CONNECTED);
+                ((RadioButton)dialog.findViewById(R.id.dialog_choice_second)).setChecked(trigger_type==PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED);
+                (dialog.findViewById(R.id.dialog_choice_first)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.cancel();
+                        activateTriggerType(PublicConsts.TRIGGER_TYPE_POWER_CONNECTED);
+                    }
+                });
+                dialog.findViewById(R.id.dialog_choice_second).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.cancel();
+                        activateTriggerType(PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED);
+                    }
+                });
             }
             break;
-            case R.id.trigger_power_disconnected:{
+            /*case R.id.trigger_power_disconnected:{
                 activateTriggerType(PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED);
             }
-            break;
+            break;*/
         }
     }
 
@@ -1159,10 +1236,10 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         ||type==PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF||type==PublicConsts.TRIGGER_TYPE_NET_ON
         ||type==PublicConsts.TRIGGER_TYPE_NET_OFF||type==PublicConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED||type==PublicConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED);
 
-        ((RadioButton)findViewById(R.id.trigger_screen_on_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_SCREEN_ON);
-        ((RadioButton)findViewById(R.id.trigger_screen_off_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_SCREEN_OFF);
-        ((RadioButton)findViewById(R.id.trigger_power_connected_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_POWER_CONNECTED);
-        ((RadioButton)findViewById(R.id.trigger_power_disconnected_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED);
+        ((RadioButton)findViewById(R.id.trigger_screen_on_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_SCREEN_ON||type==PublicConsts.TRIGGER_TYPE_SCREEN_OFF);
+        //((RadioButton)findViewById(R.id.trigger_screen_off_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_SCREEN_OFF);
+        ((RadioButton)findViewById(R.id.trigger_power_connected_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_POWER_CONNECTED||type==PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED);
+        //((RadioButton)findViewById(R.id.trigger_power_disconnected_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED);
         ((RadioButton)findViewById(R.id.trigger_app_opened_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_APP_LAUNCHED);
         ((RadioButton)findViewById(R.id.trigger_app_closed_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_APP_CLOSED);
         ((RadioButton)findViewById(R.id.trigger_headset_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_IN||trigger_type==PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT);

@@ -8,6 +8,7 @@ import android.util.Log;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.SQLConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
+import com.github.ghmxr.timeswitch.services.AppLaunchingDetectionService;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.utils.MySQLiteOpenHelper;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
@@ -46,7 +47,7 @@ public class RefreshListItems implements Runnable {
             Cursor cursor=database.rawQuery("select * from "+ SQLConsts.getCurrentTableName(context),null);
 
             if(!isInterrupted) list.clear();
-
+            boolean applaunching_service=false;
             while (cursor.moveToNext()) {
                 if(isInterrupted){
                     Log.i(TAG,"Refresh list items is interrupted!!");
@@ -99,6 +100,7 @@ public class RefreshListItems implements Runnable {
                     }
                     if(item.trigger_type==PublicConsts.TRIGGER_TYPE_APP_LAUNCHED||item.trigger_type==PublicConsts.TRIGGER_TYPE_APP_CLOSED){
                         item.package_names=trigger_values;
+                        if(item.isenabled) applaunching_service=true;
                     }
                     //exceptions ，应用预留长度>=数据库读取返回的数组长度，即 read_exceptions.length<=item.exceptions.length
                     String [] read_exceptions=ValueUtils.string2StringArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_EXCEPTIONS)));
@@ -142,7 +144,8 @@ public class RefreshListItems implements Runnable {
                 if(item.isenabled) item.activateTrigger(context);
                 list.add(item);
             }
-
+            if(applaunching_service) AppLaunchingDetectionService.startService(context);
+            else if(AppLaunchingDetectionService.queue.size()>0) AppLaunchingDetectionService.queue.getLast().stopSelf();
             cursor.close();
             if(!isInterrupted) TimeSwitchService.sendEmptyMessage(TimeSwitchService.MESSAGE_REFRESH_TASKS_COMPLETE);
         }
