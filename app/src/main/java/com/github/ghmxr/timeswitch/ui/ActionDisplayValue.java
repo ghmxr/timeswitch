@@ -202,7 +202,7 @@ public class ActionDisplayValue {
             if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_LOCALE])==PublicConsts.NOTIFICATION_TYPE_UNSELECTED){
                 builder.append("");
             }else if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_LOCALE])==PublicConsts.NOTIFICATION_TYPE_NOT_OVERRIDE){
-                builder.append(context.getResources().getString(R.string.activity_taskgui_actions_notification_vibrate));
+                builder.append(context.getResources().getString(R.string.activity_taskgui_actions_notification_not_override));
                 builder.append(":");
                 if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])==PublicConsts.NOTIFICATION_TYPE_CONTENT_DEFAULT){
                     builder.append(context.getResources().getString(R.string.activity_taskgui_actions_notification_type_default));
@@ -210,7 +210,7 @@ public class ActionDisplayValue {
                     builder.append(context.getResources().getString(R.string.activity_taskgui_actions_notification_type_custom));
                 }
             }else if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_LOCALE])==PublicConsts.NOTIFICATION_TYPE_OVERRIDE_LAST){
-                builder.append(context.getResources().getString(R.string.activity_taskgui_actions_notification_no_vibrate));
+                builder.append(context.getResources().getString(R.string.activity_taskgui_actions_notification_override_last));
                 builder.append(":");
                 if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])==PublicConsts.NOTIFICATION_TYPE_CONTENT_DEFAULT){
                     builder.append(context.getResources().getString(R.string.activity_taskgui_actions_notification_type_default));

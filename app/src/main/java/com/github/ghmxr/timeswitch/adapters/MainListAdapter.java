@@ -19,7 +19,9 @@ import com.github.ghmxr.timeswitch.activities.Main;
 import com.github.ghmxr.timeswitch.activities.Triggers;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
+import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.ui.ActionDisplayValue;
+import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import java.util.Calendar;
@@ -430,6 +432,40 @@ public class MainListAdapter extends BaseAdapter {
         if(position>=isSelected.length||position<0) return;
         isSelected[position]=!isSelected[position];
         this.notifyDataSetChanged();
+    }
+
+    public void onFoldIconClicked(){
+        try{
+            boolean isAllFolded=true;
+            for(View v:views){
+                View title=v.findViewById(R.id.item_task_info);
+                if(title.getVisibility()!=View.GONE) {
+                    isAllFolded=false;
+                    break;
+                }
+            }
+            if(isAllFolded){
+                for(int i=0;i<views.length;i++){
+                    View title=views[i].findViewById(R.id.item_task_info);
+                    title.setVisibility(View.VISIBLE);
+                    views[i].findViewById(R.id.item_task_title_arrow).setRotation(90);
+                    try{
+                        ProcessTaskItem.setTaskFolded(context, TimeSwitchService.list.get(i).id,false);
+                    }catch (Exception e){e.printStackTrace();}
+                }
+            }else{
+                for(int i=0;i<views.length;i++){
+                    View title=views[i].findViewById(R.id.item_task_info);
+                    title.setVisibility(View.GONE);
+                    views[i].findViewById(R.id.item_task_title_arrow).setRotation(0);
+                    try{
+                        ProcessTaskItem.setTaskFolded(context, TimeSwitchService.list.get(i).id,true);
+                    } catch (Exception e){e.printStackTrace();}
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public boolean[] getIsSelected(){

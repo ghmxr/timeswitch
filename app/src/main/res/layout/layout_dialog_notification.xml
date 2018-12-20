@@ -67,14 +67,13 @@
                 android:background="@color/color_dividing_line"/>
         </RelativeLayout>
         <RelativeLayout
-            android:id="@+id/dialog_notification_selection_without_vibrate"
+            android:id="@+id/dialog_notification_selection_override_last"
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:clickable="true"
-            android:background="?attr/selectableItemBackground"
-            android:layout_marginBottom="15dp">
+            android:background="?attr/selectableItemBackground">
             <RadioButton
-                android:id="@+id/dialog_notification_selection_without_vibrate_ra"
+                android:id="@+id/dialog_notification_selection_override_last_ra"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -82,7 +81,30 @@
                 android:layout_centerVertical="true"
                 android:focusable="false"
                 android:clickable="false"
-                android:text="@string/dialog_actions_notification_selection_without_vibrate"/>
+                android:text="@string/dialog_actions_notification_selection_override_last"/>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_alignParentBottom="true"
+                android:background="@color/color_dividing_line"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/dialog_notification_selection_not_override"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:clickable="true"
+            android:background="?attr/selectableItemBackground"
+            android:layout_marginBottom="15dp">
+            <RadioButton
+                android:id="@+id/dialog_notification_selection_not_override_ra"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10dp"
+                android:layout_centerVertical="true"
+                android:focusable="false"
+                android:clickable="false"
+                android:text="@string/dialog_actions_notification_selection_not_override"/>
         </RelativeLayout>
     </LinearLayout>
     <RelativeLayout

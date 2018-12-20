@@ -502,8 +502,8 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                     final String title=notification_title;//notification_values[PublicConsts.NOTIFICATION_TITLE_LOCALE];
                     final String message=notification_message;//notification_values[PublicConsts.NOTIFICATION_MESSAGE_LOCALE];
                     final RadioButton ra_unselected=dialog.findViewById(R.id.dialog_notification_selection_unselected_ra);
-                    //final RadioButton ra_with_vibrate=dialog.findViewById(R.id.dialog_notification_selection_with_vibrate_ra);
-                    final RadioButton ra_without_vibrate=dialog.findViewById(R.id.dialog_notification_selection_without_vibrate_ra);
+                    final RadioButton ra_not_override=dialog.findViewById(R.id.dialog_notification_selection_not_override_ra);
+                    final RadioButton ra_override_last=dialog.findViewById(R.id.dialog_notification_selection_override_last_ra);
                     final RadioButton ra_default=dialog.findViewById(R.id.dialog_notification_operation_default_ra);
                     final RadioButton ra_custom=dialog.findViewById(R.id.dialog_notification_operation_custom_ra);
                     final RelativeLayout operation_area=dialog.findViewById(R.id.dialog_notification_operation_area);
@@ -512,27 +512,37 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                     edit_title.setText(title.trim());
                     edit_message.setText(message.trim());
                     (ra_unselected).setChecked(type==PublicConsts.NOTIFICATION_TYPE_UNSELECTED);
-                    //(ra_with_vibrate).setChecked(type==PublicConsts.NOTIFICATION_TYPE_NOT_OVERRIDE);
-                    (ra_without_vibrate).setChecked(type==PublicConsts.NOTIFICATION_TYPE_OVERRIDE_LAST);
+                    (ra_not_override).setChecked(type==PublicConsts.NOTIFICATION_TYPE_NOT_OVERRIDE);
+                    (ra_override_last).setChecked(type==PublicConsts.NOTIFICATION_TYPE_OVERRIDE_LAST);
                     (operation_area).setVisibility(type==PublicConsts.NOTIFICATION_TYPE_UNSELECTED?View.GONE:View.VISIBLE);
                     (dialog.findViewById(R.id.dialog_notification_selection_unselected)).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             (ra_unselected).setChecked(true);
-                            //ra_with_vibrate.setChecked(false);
-                            ra_without_vibrate.setChecked(false);
+                            ra_not_override.setChecked(false);
+                            ra_override_last.setChecked(false);
                             (operation_area).setVisibility(View.GONE);
                         }
                     });
 
-                    (dialog.findViewById(R.id.dialog_notification_selection_without_vibrate)).setOnClickListener(new View.OnClickListener() {
+                    (dialog.findViewById(R.id.dialog_notification_selection_override_last)).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             (ra_unselected).setChecked(false);
-                            //ra_with_vibrate.setChecked(false);
-                            ra_without_vibrate.setChecked(true);
+                            ra_not_override.setChecked(false);
+                            ra_override_last.setChecked(true);
                             (operation_area).setVisibility(View.VISIBLE);
 
+                        }
+                    });
+
+                    dialog.findViewById(R.id.dialog_notification_selection_not_override).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            (ra_unselected).setChecked(false);
+                            ra_not_override.setChecked(true);
+                            ra_override_last.setChecked(false);
+                            (operation_area).setVisibility(View.VISIBLE);
                         }
                     });
 
@@ -551,8 +561,10 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                         @Override
                         public void onClick(View view) {
                             dialog.cancel();
-                            int type=ra_unselected.isChecked()?PublicConsts.NOTIFICATION_TYPE_UNSELECTED
-                                    :PublicConsts.NOTIFICATION_TYPE_OVERRIDE_LAST;
+                            int type=-1;
+                            if(ra_unselected.isChecked()) type=PublicConsts.NOTIFICATION_TYPE_UNSELECTED;
+                            if(ra_override_last.isChecked()) type=PublicConsts.NOTIFICATION_TYPE_OVERRIDE_LAST;
+                            if(ra_not_override.isChecked()) type=PublicConsts.NOTIFICATION_TYPE_NOT_OVERRIDE;
                             int type_if_custom=ra_custom.isChecked()?PublicConsts.NOTIFICATION_TYPE_CONTENT_CUSTOM :PublicConsts.NOTIFICATION_TYPE_CONTENT_DEFAULT;
                             String custom_title=edit_title.getText().toString();
                             String custom_message=edit_message.getText().toString();

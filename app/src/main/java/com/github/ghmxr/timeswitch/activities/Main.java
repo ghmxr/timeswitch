@@ -388,12 +388,12 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         adapter.openMultiSelecteMode(longclickposition);
         listview.setOnItemLongClickListener(null);
-        this.menu.getItem(0).setVisible(true);
-        this.menu.getItem(0).setEnabled(true);
         this.menu.getItem(1).setVisible(true);
+        this.menu.getItem(1).setEnabled(true);
         this.menu.getItem(2).setVisible(true);
-        this.menu.getItem(3).setVisible(false);
+        this.menu.getItem(3).setVisible(true);
         this.menu.getItem(4).setVisible(false);
+        this.menu.getItem(5).setVisible(false);
         listview.setOnScrollListener(null);
         setFabVisibility(false);
     }
@@ -404,11 +404,11 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         adapter.closeMultiSelectMode();
         listview.setOnItemLongClickListener(this);
-        this.menu.getItem(0).setVisible(false);
         this.menu.getItem(1).setVisible(false);
         this.menu.getItem(2).setVisible(false);
-        this.menu.getItem(3).setVisible(true);
+        this.menu.getItem(3).setVisible(false);
         this.menu.getItem(4).setVisible(true);
+        this.menu.getItem(5).setVisible(true);
         //setListViewScrollListener();
         setFabVisibility(true);
     }
@@ -531,11 +531,11 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
         }
         if(item.getItemId()==R.id.action_selectall){
             adapter.selectAll();
-            this.menu.getItem(0).setEnabled(true);
+            this.menu.getItem(1).setEnabled(true);
         }
         if(item.getItemId()==R.id.action_deselectall){
             adapter.deselectAll();
-            this.menu.getItem(0).setEnabled(false);
+            this.menu.getItem(1).setEnabled(false);
         }
         if(item.getItemId()==R.id.action_delete_selected){
             long clickedTime=System.currentTimeMillis();
@@ -576,6 +576,9 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
             i.putExtra(EXTRA_TITLE_COLOR,getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE).getString(PublicConsts.PREFERENCES_THEME_COLOR,PublicConsts.PREFERENCES_THEME_COLOR_DEFAULT));
             startActivityForResult(i,REQUEST_CODE_ACTIVITY_PROFILE);
 
+        }
+        if(item.getItemId()==R.id.action_fold){
+            if(adapter!=null) adapter.onFoldIconClicked();
         }
         return super.onOptionsItemSelected(item);
     }

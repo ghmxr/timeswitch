@@ -1509,6 +1509,10 @@ public class ProcessTaskItem {
                 builder.setAutoCancel(true);
                 builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
                 builder.setFullScreenIntent(pi,false);
+                if(type==PublicConsts.NOTIFICATION_TYPE_NOT_OVERRIDE){
+                    if(notification_id<Integer.MAX_VALUE) notification_id++;//Can user make notification shows like that total?
+                    else notification_id=2;
+                }
                 manager.notify(notification_id,builder.build());
                 log_taskitem.append(context.getResources().getString(R.string.activity_taskgui_actions_notification));
                 log_taskitem.append(" ");

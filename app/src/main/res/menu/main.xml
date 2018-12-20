@@ -2,8 +2,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_delete_selected"
+        android:id="@+id/action_fold"
         android:orderInCategory="0"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_fold"
+        android:title="@string/action_fold"/>
+
+    <item
+        android:id="@+id/action_delete_selected"
+        android:orderInCategory="1"
         app:showAsAction="always"
         android:visible="false"
         android:icon="@android:drawable/ic_menu_delete"
@@ -11,21 +18,21 @@
 
     <item
         android:id="@+id/action_selectall"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         app:showAsAction="ifRoom"
         android:visible="false"
         android:title="@string/action_selectall"/>
 
     <item
         android:id="@+id/action_deselectall"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         app:showAsAction="ifRoom"
         android:visible="false"
         android:title="@string/action_deselectall"/>
 
     <item
        android:id="@+id/action_profile"
-        android:orderInCategory="3"
+        android:orderInCategory="4"
         app:showAsAction="never"
         android:visible="true"
         android:icon="@android:drawable/ic_menu_rotate"
@@ -33,7 +40,7 @@
 
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="4"
+        android:orderInCategory="5"
         app:showAsAction="never"
         android:icon="@android:drawable/ic_menu_manage"
         android:title="@string/action_settings"/>

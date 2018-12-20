@@ -150,7 +150,7 @@ public class AppLaunchingDetectionService extends Service implements Runnable {
                             }*/
 
                         }
-                        Log.d("AppLDService","Loop sleep!!!!!!");
+                        //Log.d("AppLDService","Loop sleep!!!!!!");
                         Thread.sleep(1000);
                     }catch (Exception e){
                         e.printStackTrace();
@@ -177,7 +177,7 @@ public class AppLaunchingDetectionService extends Service implements Runnable {
                                 break;
                             }
                         }
-                        Log.d("AppLDService","Loop sleep!!!!!!");
+                        //Log.d("AppLDService","Loop sleep!!!!!!");
                         Thread.sleep(1000);
                     }catch (Exception e){
                         e.printStackTrace();
@@ -203,7 +203,7 @@ public class AppLaunchingDetectionService extends Service implements Runnable {
                                 //Log.d("AppStatus",package_name+" is LAUNCHED");
                             }
                         }
-                        Log.d("AppLDService","Loop sleep!!!!!!");
+                        //Log.d("AppLDService","Loop sleep!!!!!!");
                         Thread.sleep(1000);
                     }catch (Exception e){
                         e.printStackTrace();
