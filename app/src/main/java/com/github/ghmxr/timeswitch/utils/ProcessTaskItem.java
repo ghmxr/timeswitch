@@ -1489,8 +1489,8 @@ public class ProcessTaskItem {
                 NotificationManager manager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
                 NotificationCompat.Builder builder;
                 if(Build.VERSION.SDK_INT>=26){
-                    String channel_id="channel_default";
-                    NotificationChannel channel=new NotificationChannel(channel_id,"Default", NotificationManager.IMPORTANCE_DEFAULT);
+                    String channel_id="channel_tasks";
+                    NotificationChannel channel=new NotificationChannel(channel_id,"Tasks", NotificationManager.IMPORTANCE_DEFAULT);
                     manager.createNotificationChannel(channel);
                     builder=new NotificationCompat.Builder(context,channel_id);
                 }else{

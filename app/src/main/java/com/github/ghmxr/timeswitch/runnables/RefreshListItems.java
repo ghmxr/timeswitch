@@ -5,6 +5,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.github.ghmxr.timeswitch.R;
+import com.github.ghmxr.timeswitch.activities.Triggers;
+import com.github.ghmxr.timeswitch.adapters.MainListAdapter;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.SQLConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
@@ -13,7 +16,10 @@ import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.utils.MySQLiteOpenHelper;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
+import java.util.Calendar;
 import java.util.List;
+
+import static com.github.ghmxr.timeswitch.activities.Triggers.getWeekLoopDisplayValue;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
@@ -137,6 +143,188 @@ public class RefreshListItems implements Runnable {
                         item.addition_title_color=initial_additions[PublicConsts.ADDITION_TITLE_COLOR_LOCALE];
                     }
                     item.addition_exception_connector=initial_additions[PublicConsts.ADDITION_EXCEPTION_CONNECTOR_LOCALE];
+
+                    //initial display values
+                    switch (item.trigger_type){
+                        default:break;
+                        case PublicConsts.TRIGGER_TYPE_SINGLE: {
+                            item.display_trigger_icon_res=R.drawable.icon_repeat_single;
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.setTimeInMillis(item.time);
+                            int month = calendar.get(Calendar.MONTH) + 1;
+                            item.display_trigger=calendar.get(Calendar.YEAR)
+                                    + "/" + ValueUtils.format(month) + "/" + ValueUtils.format(calendar.get(Calendar.DAY_OF_MONTH)) + "/" + ValueUtils.getDayOfWeek(item.time) + "/"
+                                    + ValueUtils.format(calendar.get(Calendar.HOUR_OF_DAY)) + ":" + ValueUtils.format(calendar.get(Calendar.MINUTE));
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME: {
+                            item.display_trigger_icon_res=R.drawable.icon_repeat_percertaintime;
+                            //refreshAllCertainTimeTaskItems();
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_LOOP_WEEK: {
+                            item.display_trigger_icon_res=R.drawable.icon_repeat_weekloop;
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.setTimeInMillis(item.time);
+                            item.display_trigger=getWeekLoopDisplayValue(context, item.week_repeat, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
+                            //holder.trigger_value.setText();
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE: {
+                            item.display_trigger_icon_res=R.drawable.icon_battery_high;
+                            item.display_trigger=context.getResources().getString(R.string.more_than) + item.battery_percentage + "%";
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE: {
+                            item.display_trigger_icon_res=R.drawable.icon_battery_low;
+                            item.display_trigger=context.getResources().getString(R.string.less_than) + item.battery_percentage + "%";
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE: {
+                            item.display_trigger_icon_res=R.drawable.icon_temperature;
+                            item.display_trigger=context.getResources().getString(R.string.higher_than) + item.battery_temperature + "¡æ";
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE: {
+                            item.display_trigger_icon_res=R.drawable.icon_temperature;
+                            item.display_trigger=context.getResources().getString(R.string.lower_than) + item.battery_temperature + "¡æ";
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST: {
+                            item.display_trigger_icon_res=R.drawable.icon_broadcast;
+                            item.display_trigger=item.selectedAction;
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED: {
+                            item.display_trigger_icon_res=R.drawable.icon_wifi_connected;
+                            //holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,10);
+                            String ssidinfo = Triggers.getWifiConnectionDisplayValue(context, item.wifiIds);
+                            //if(ssidinfo.length()>16) ssidinfo=ssidinfo.substring(0,16)+"...";
+                            item.display_trigger=ssidinfo;
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED: {
+                            item.display_trigger_icon_res=R.drawable.icon_wifi_disconnected;
+                            //holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,10);
+                            String ssidinfo = Triggers.getWifiConnectionDisplayValue(context, item.wifiIds);
+                            //if(ssidinfo.length()>16) ssidinfo=ssidinfo.substring(0,16)+"...";
+                            item.display_trigger=ssidinfo;
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_APP_LAUNCHED: {
+                            item.display_trigger_icon_res=R.drawable.icon_app_launch;
+                            String names = Triggers.getAppNameDisplayValue(context, item.package_names);
+                            //if(names.length()>16) names=names.substring(0,16);
+                            item.display_trigger=names;
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_APP_CLOSED: {
+                            item.display_trigger_icon_res=R.drawable.icon_app_stop;
+                            String names = Triggers.getAppNameDisplayValue(context, item.package_names);
+                            //if(names.length()>16) names=names.substring(0,16);
+                            item.display_trigger=names;
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_SCREEN_ON: {
+                            item.display_trigger_icon_res=R.drawable.icon_screen_on;
+                            item.display_trigger=context.getResources().getString(R.string.activity_triggers_screen_on);
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_SCREEN_OFF: {
+                            item.display_trigger_icon_res=R.drawable.icon_screen_off;
+                            item.display_trigger=context.getResources().getString(R.string.activity_triggers_screen_off);
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_POWER_CONNECTED: {
+                            item.display_trigger_icon_res=R.drawable.icon_power_connected;
+                            item.display_trigger=context.getResources().getString(R.string.activity_triggers_power_connected);
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED: {
+                            item.display_trigger_icon_res=R.drawable.icon_power_disconnected;
+                            item.display_trigger=context.getResources().getString(R.string.activity_triggers_power_disconnected);
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON: {
+                            item.display_trigger_icon_res=R.drawable.icon_wifi_on;
+                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF: {
+                            item.display_trigger_icon_res=R.drawable.icon_wifi_off;
+                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON: {
+                            item.display_trigger_icon_res=R.drawable.icon_bluetooth_on;
+                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF: {
+                            item.display_trigger_icon_res=R.drawable.icon_bluetooth_off;
+                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF: {
+                            item.display_trigger_icon_res=R.drawable.icon_ring_off;
+                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE: {
+                            item.display_trigger_icon_res=R.drawable.icon_ring_vibrate;
+                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL: {
+                            item.display_trigger_icon_res=R.drawable.icon_ring_normal;
+                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON: {
+                            item.display_trigger_icon_res=R.drawable.icon_airplanemode_on;
+                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF: {
+                            item.display_trigger_icon_res=R.drawable.icon_airplanemode_off;
+                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED: {
+                            item.display_trigger_icon_res=R.drawable.icon_ap_on;
+                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED: {
+                            item.display_trigger_icon_res=R.drawable.icon_ap_off;
+                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_NET_ON: {
+                            item.display_trigger_icon_res=R.drawable.icon_cellular_on;
+                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_NET_OFF: {
+                            item.display_trigger_icon_res=R.drawable.icon_cellular_off;
+                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_IN: {
+                            item.display_trigger_icon_res=R.drawable.icon_headset;
+                            item.display_trigger=context.getResources().getString(R.string.activity_trigger_headset_plug_in);
+                        }
+                        break;
+                        case PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT: {
+                            item.display_trigger_icon_res=R.drawable.icon_headset;
+                            item.display_trigger=context.getResources().getString(R.string.activity_trigger_headset_plug_out);
+                        }
+                        break;
+
+                    }
+                    item.display_exception= MainListAdapter.getExceptionValue(context,item);
+                    item.display_actions=MainListAdapter.getActionValue(context,item);
+                    item.display_additions=MainListAdapter.getAdditionValue(context,item);
                 }catch(Exception e){
                     e.printStackTrace();
                 }

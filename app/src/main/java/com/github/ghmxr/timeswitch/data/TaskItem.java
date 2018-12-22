@@ -136,7 +136,17 @@ public class TaskItem implements Comparable<TaskItem>{
 	 */
 	public Object triggerObject=null;
 
-    /**
+
+	/**
+	 * adapter display values
+	 */
+	public String display_trigger="";
+	public int display_trigger_icon_res=-1;
+	public String display_exception="";
+	public String display_actions="";
+	public String display_additions="";
+
+	/**
      * 基本构造方法，初始化变量
      */
 	public TaskItem(){

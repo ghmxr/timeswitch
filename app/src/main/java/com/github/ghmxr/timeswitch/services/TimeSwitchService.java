@@ -188,7 +188,7 @@ public class TimeSwitchService extends Service {
        NotificationManager notificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
        if(Build.VERSION.SDK_INT>=26){
            final String channelID="channel_service";
-           NotificationChannel channel=new NotificationChannel(channelID,"Service",NotificationManager.IMPORTANCE_LOW);
+           NotificationChannel channel=new NotificationChannel(channelID,"OngoingService",NotificationManager.IMPORTANCE_LOW);
            notificationManager.createNotificationChannel(channel);
            notification=new NotificationCompat.Builder(this,channelID);
        }else{

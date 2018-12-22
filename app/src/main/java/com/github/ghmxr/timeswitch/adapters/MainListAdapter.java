@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,6 @@ import android.widget.TextView;
 
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.activities.Main;
-import com.github.ghmxr.timeswitch.activities.Triggers;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
@@ -24,35 +24,39 @@ import com.github.ghmxr.timeswitch.ui.ActionDisplayValue;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
-import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
-
-import static com.github.ghmxr.timeswitch.activities.Triggers.getWeekLoopDisplayValue;
+import java.util.Map;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
  */
 public class MainListAdapter extends BaseAdapter {
 
-    Context context;
-    LayoutInflater inflater;
+    private Context context;
+    //private LayoutInflater inflater;
     private List<TaskItem> list;
-    SwitchChangedListener listener_switch;
-    FoldingStatusChangedListener listener_folding;
-    boolean isMultiSelectMode=false;
-    boolean [] isSelected;
-    private View[] views;
-    //private static final int ICON_COUNT_LIMIT=7;
+    private SwitchChangedListener listener_switch;
+    private FoldingStatusChangedListener listener_folding;
+    private boolean isMultiSelectMode=false;
+    private boolean [] isSelected;
     private int taskCount;
-
+    private List<TaskItem> list_refreshes=new ArrayList<>();
+    private Map<Integer,TextView> list_refresh_textviews=new HashMap<>();
+    //private SparseArray<TextView> list_refresh_textviews=new SparseArray<>();
 
     public MainListAdapter (Context context, @NonNull List<TaskItem> list){
         this.context=context;
-        inflater=LayoutInflater.from(context);
+        //inflater=LayoutInflater.from(context);
         this.list= list;
         taskCount=list.size();
         isSelected=new boolean[taskCount];
-        views=new View[taskCount];
+        list_refreshes.clear();
+        for(TaskItem i:list){
+            if(i.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME) list_refreshes.add(i);
+        }
     }
 
     @Override
@@ -72,10 +76,33 @@ public class MainListAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int i, View view, ViewGroup viewGroup) {
+        Log.d("MainListAdapter","getView called and location is "+i);
+        final ViewHolder holder;
+        if(view==null){
+            view=LayoutInflater.from(context).inflate(R.layout.item_task,viewGroup,false);
+            holder=new ViewHolder();
+            holder.title=view.findViewById(R.id.item_task_title);
+            holder.title_arrow=view.findViewById(R.id.item_task_title_arrow);
+            holder.switch_enabled=view.findViewById(R.id.item_task_switch);
+            holder.cb=view.findViewById(R.id.item_task_checkbox);
+            holder.task_area=view.findViewById(R.id.item_task_info);
+            holder.tv_name=view.findViewById(R.id.item_task_name);
+            holder.img_trigger=view.findViewById(R.id.item_task_trigger_icon);
+            holder.tv_trigger=view.findViewById(R.id.item_task_trigger_value);
+            holder.tv_exception=view.findViewById(R.id.item_task_exception);
+            holder.tv_action=view.findViewById(R.id.item_task_action);
+            holder.tv_addition=view.findViewById(R.id.item_task_addition);
+            holder.addition=view.findViewById(R.id.item_task_addition_area);
+            view.setTag(holder);
+        }else {
+            holder=(ViewHolder) view.getTag();
+        }
+
         if(i>=taskCount){
-            View blank_view=inflater.inflate(R.layout.item_task,viewGroup,false);
-            blank_view.setVisibility(View.INVISIBLE);
-            return blank_view;
+            view.setVisibility(View.INVISIBLE);
+            return view;
+        }else {
+            view.setVisibility(View.VISIBLE);
         }
 
         TaskItem item=null;
@@ -87,250 +114,58 @@ public class MainListAdapter extends BaseAdapter {
 
         if(item==null) return null;
 
-        if(views[i]==null) {
-            views[i] = inflater.inflate(R.layout.item_task, viewGroup, false);
-            views[i].setVisibility(View.VISIBLE);
-
-            try {
-                TextView tv_name = views[i].findViewById(R.id.item_task_name);
-                tv_name.setText(item.name);
-                int color_value = Color.parseColor(item.addition_title_color);
-                ((views[i].findViewById(R.id.item_task_title))).setBackgroundColor(color_value);
-                views[i].findViewById(R.id.item_task_info).setVisibility(item.addition_isFolded?View.GONE:View.VISIBLE);
-                views[i].findViewById(R.id.item_task_title_arrow).setRotation(item.addition_isFolded?0:90);
-                if(ValueUtils.isHighLightRGB(color_value)){
-                    ((TextView)views[i].findViewById(R.id.item_task_name)).setTextColor(context.getResources().getColor(R.color.color_black));
-                    ((ImageView)views[i].findViewById(R.id.item_task_title_arrow)).setImageResource(R.drawable.arrow_right_item_folding_black);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+        try{
+            if(item.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME)
+                list_refresh_textviews.put(item.id,holder.tv_trigger);
+            else{
+                Collection<TextView> values=list_refresh_textviews.values();
+                values.remove(holder.tv_trigger);
             }
+        }catch (Exception e){e.printStackTrace();}
 
-            try {
-                switch (item.trigger_type) {
-                    default:break;
-                    case PublicConsts.TRIGGER_TYPE_SINGLE: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_repeat_single);
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.setTimeInMillis(item.time);
-                        int month = calendar.get(Calendar.MONTH) + 1;
-                        getTriggerTextView(i).setText(calendar.get(Calendar.YEAR)
-                                + "/" + ValueUtils.format(month) + "/" + ValueUtils.format(calendar.get(Calendar.DAY_OF_MONTH)) + "/" + ValueUtils.getDayOfWeek(list.get(i).time) + "/"
-                                + ValueUtils.format(calendar.get(Calendar.HOUR_OF_DAY)) + ":" + ValueUtils.format(calendar.get(Calendar.MINUTE)));
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_repeat_percertaintime);
-                        refreshAllCertainTimeTaskItems();
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_LOOP_WEEK: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_repeat_weekloop);
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.setTimeInMillis(item.time);
-                        getTriggerTextView(i).setText(getWeekLoopDisplayValue(context, list.get(i).week_repeat, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE)));
-                        //holder.trigger_value.setText();
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_battery_high);
-                        getTriggerTextView(i).setText(context.getResources().getString(R.string.more_than) + item.battery_percentage + "%");
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_battery_low);
-                        getTriggerTextView(i).setText(context.getResources().getString(R.string.less_than) + item.battery_percentage + "%");
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_temperature);
-                        getTriggerTextView(i).setText(context.getResources().getString(R.string.higher_than) + item.battery_temperature + "¡æ");
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_temperature);
-                        getTriggerTextView(i).setText(context.getResources().getString(R.string.lower_than) + item.battery_temperature + "¡æ");
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_broadcast);
-                        getTriggerTextView(i).setText(item.selectedAction);
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_wifi_connected);
-                        //holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,10);
-                        String ssidinfo = Triggers.getWifiConnectionDisplayValue(context, item.wifiIds);
-                        //if(ssidinfo.length()>16) ssidinfo=ssidinfo.substring(0,16)+"...";
-                        getTriggerTextView(i).setText(ssidinfo);
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_wifi_disconnected);
-                        //holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,10);
-                        String ssidinfo = Triggers.getWifiConnectionDisplayValue(context, item.wifiIds);
-                        //if(ssidinfo.length()>16) ssidinfo=ssidinfo.substring(0,16)+"...";
-                        getTriggerTextView(i).setText(ssidinfo);
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_APP_LAUNCHED: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_app_launch);
-                        String names = Triggers.getAppNameDisplayValue(context, item.package_names);
-                        //if(names.length()>16) names=names.substring(0,16);
-                        getTriggerTextView(i).setText(names);
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_APP_CLOSED: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_app_stop);
-                        String names = Triggers.getAppNameDisplayValue(context, item.package_names);
-                        //if(names.length()>16) names=names.substring(0,16);
-                        getTriggerTextView(i).setText(names);
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_SCREEN_ON: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_screen_on);
-                        getTriggerTextView(i).setText(context.getResources().getString(R.string.activity_triggers_screen_on));
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_SCREEN_OFF: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_screen_off);
-                        getTriggerTextView(i).setText(context.getResources().getString(R.string.activity_triggers_screen_off));
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_POWER_CONNECTED: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_power_connected);
-                        getTriggerTextView(i).setText(context.getResources().getString(R.string.activity_triggers_power_connected));
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_power_disconnected);
-                        getTriggerTextView(i).setText(context.getResources().getString(R.string.activity_triggers_power_disconnected));
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_wifi_on);
-                        getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context, item.trigger_type));
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_wifi_off);
-                        getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context, item.trigger_type));
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_bluetooth_on);
-                        getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context, item.trigger_type));
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_bluetooth_off);
-                        getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context, item.trigger_type));
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_ring_off);
-                        getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context, item.trigger_type));
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_ring_vibrate);
-                        getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context, item.trigger_type));
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_ring_normal);
-                        getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context, item.trigger_type));
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_airplanemode_on);
-                        getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context, item.trigger_type));
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_airplanemode_off);
-                        getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context, item.trigger_type));
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_ap_on);
-                        getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context, item.trigger_type));
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_ap_off);
-                        getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context, item.trigger_type));
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_NET_ON: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_cellular_on);
-                        getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context, item.trigger_type));
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_NET_OFF: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_cellular_off);
-                        getTriggerTextView(i).setText(Triggers.getWidgetDisplayValue(context, item.trigger_type));
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_IN: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_headset);
-                        getTriggerTextView(i).setText(context.getResources().getString(R.string.activity_trigger_headset_plug_in));
-                    }
-                    break;
-                    case PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT: {
-                        getTriggerImageView(i).setImageResource(R.drawable.icon_headset);
-                        getTriggerTextView(i).setText(context.getResources().getString(R.string.activity_trigger_headset_plug_out));
-                    }
-                    break;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+        try {
+            holder.tv_name.setText(item.name);
+            int color_value = Color.parseColor(item.addition_title_color);
+            holder.title.setBackgroundColor(color_value);
+            holder.task_area.setVisibility(item.addition_isFolded?View.GONE:View.VISIBLE);
+            holder.title_arrow.setRotation(item.addition_isFolded?0:90);
+            if(ValueUtils.isHighLightRGB(color_value)){
+                holder.tv_name.setTextColor(context.getResources().getColor(R.color.color_black));
+                holder.title_arrow.setImageResource(R.drawable.arrow_right_item_folding_black);
             }
-
-            try {
-                ((TextView) views[i].findViewById(R.id.item_task_exception)).setText(getExceptionValue(item));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            try {
-                ((TextView) views[i].findViewById(R.id.item_task_action)).setText(getActionValue(item));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            try{
-                if(item.autodelete||item.autoclose){
-                    views[i].findViewById(R.id.item_task_addition_area).setVisibility(View.VISIBLE);
-                    ((TextView)views[i].findViewById(R.id.item_task_addition)).setText(getAdditionValue(item));
-                    if(!item.autodelete&&item.trigger_type==PublicConsts.TRIGGER_TYPE_SINGLE) views[i].findViewById(R.id.item_task_addition_area).setVisibility(View.GONE);
-                }else views[i].findViewById(R.id.item_task_addition_area).setVisibility(View.GONE);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-
-            final View task_info=views[i].findViewById(R.id.item_task_info);
-            final View arrow=views[i].findViewById(R.id.item_task_title_arrow);
-
-            views[i].findViewById(R.id.item_task_title).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (task_info.getVisibility() != View.VISIBLE) {
-                        task_info.setVisibility(View.VISIBLE);
-                        (arrow).setRotation(90);
-                        if(listener_folding!=null) listener_folding.onFoldingStatusChanged(i,false);
-                    } else {
-                        task_info.setVisibility(View.GONE);
-                        (arrow).setRotation(0);
-                        if(listener_folding!=null) listener_folding.onFoldingStatusChanged(i,true);
-                    }
-                }
-            });
-
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        CheckBox cb = views[i].findViewById(R.id.item_task_checkbox);
-        SwitchCompat switchCompat = views[i].findViewById(R.id.item_task_switch);
+        holder.title.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(holder.task_area.getVisibility()!=View.VISIBLE){
+                    holder.task_area.setVisibility(View.VISIBLE);
+                    holder.title_arrow.setRotation(90);
+                    if(listener_folding!=null)listener_folding.onFoldingStatusChanged(i,false);
+                }else{
+                    holder.task_area.setVisibility(View.GONE);
+                    holder.title_arrow.setRotation(0);
+                    if(listener_folding!=null) listener_folding.onFoldingStatusChanged(i,true);
+                }
+            }
+        });
+
+        try{
+            holder.img_trigger.setImageResource(item.display_trigger_icon_res);
+            holder.tv_trigger.setText(item.display_trigger);
+            holder.tv_exception.setText(item.display_exception);
+            holder.tv_action.setText(item.display_actions);
+            holder.tv_addition.setText(item.display_additions);
+            if(item.autodelete||item.autoclose){
+                holder.addition.setVisibility(View.VISIBLE);
+                if(!item.autodelete&&item.trigger_type==PublicConsts.TRIGGER_TYPE_SINGLE) holder.addition.setVisibility(View.GONE);
+            }else holder.addition.setVisibility(View.GONE);
+        }catch (Exception e){e.printStackTrace();}
+
+        CheckBox cb = holder.cb;
+        SwitchCompat switchCompat = holder.switch_enabled;
         if (isMultiSelectMode) {
             switchCompat.setVisibility(View.GONE);
             cb.setVisibility(View.VISIBLE);
@@ -340,10 +175,9 @@ public class MainListAdapter extends BaseAdapter {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     isSelected[i] = isChecked;
-                    //notifyDataSetChanged();
                 }
             });
-            views[i].findViewById(R.id.item_task_title).setOnLongClickListener(null);
+            holder.title.setOnLongClickListener(null);
         } else {
             switchCompat.setVisibility(View.VISIBLE);
             cb.setVisibility(View.GONE);
@@ -353,10 +187,9 @@ public class MainListAdapter extends BaseAdapter {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     if (listener_switch != null) listener_switch.onCheckedChanged(i, b);
-                    refreshAllCertainTimeTaskItems();
                 }
             });
-            views[i].findViewById(R.id.item_task_title).setOnLongClickListener(new View.OnLongClickListener() {
+            holder.title.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     Message msg = new Message();
@@ -368,64 +201,50 @@ public class MainListAdapter extends BaseAdapter {
             });
         }
 
-        return views[i];
-    }
-
-    private ImageView getTriggerImageView(int position){
-        return ((ImageView)views[position].findViewById(R.id.item_task_trigger_icon));
-    }
-
-    private TextView getTriggerTextView(int position){
-        return  ((TextView)views[position].findViewById(R.id.item_task_trigger_value));
+        return view;
     }
 
     public void onDataSetChanged(@NonNull List<TaskItem> list){
         this.list=list;
         taskCount=list.size();
         this.isSelected=new boolean[taskCount];
-        this.views=new View[taskCount];
+        list_refreshes.clear();
+        for(TaskItem i:list){
+            if(i.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME) list_refreshes.add(i);
+        }
         this.notifyDataSetChanged();
     }
 
     public void refreshAllCertainTimeTaskItems(){
-        if(views==null) return;
-        for(int i=0;i<views.length;i++){
-            //if(i>=list.size()) break;
-            if(views[i]==null) continue;
-            TextView tv=views[i].findViewById(R.id.item_task_trigger_value);
-            TaskItem item=null;
-            //if(i>=list.size()) continue;
-            try{
-                item=list.get(i);
-            }catch (Exception e){
-                e.printStackTrace();
-                //LogUtil.putExceptionLog(context,e);
+        try{
+            for(TaskItem item:list_refreshes){
+                try{
+                    long remaining=item.getNextTriggeringTime()-System.currentTimeMillis();
+                    if(remaining<=0) remaining=0;
+                    int day=(int)(remaining/(1000*60*60*24));
+                    int hour=(int)((remaining%(1000*60*60*24))/(1000*60*60));
+                    int minute=(int)((remaining%(1000*60*60))/(1000*60));
+                    int second=(int)((remaining%(1000*60))/1000);
+                    String display;
+                    if(day>0){
+                        display=day+":"+ValueUtils.format(hour)+":"+ValueUtils.format(minute)+":"+ValueUtils.format(second);
+                    }else if(hour>0){
+                        display=ValueUtils.format(hour)+":"+ValueUtils.format(minute)+":"+ValueUtils.format(second);
+                    }else if(minute>0){
+                        display=ValueUtils.format(minute)+":"+ValueUtils.format(second);
+                    }else{
+                        display=ValueUtils.format(second)+"s";
+                    }
+                    if(item.isenabled) {
+                        item.display_trigger=display;
+                    }
+                    else item.display_trigger="Off";
+                    if(list_refresh_textviews.get(item.id)!=null) list_refresh_textviews.get(item.id).setText(item.display_trigger);
+                }catch (Exception e){e.printStackTrace();}
             }
-            if(item==null) continue;
-            if(item.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){
-                long remaining=list.get(i).getNextTriggeringTime()-System.currentTimeMillis();
-                if(remaining<=0) remaining=0;
-                int day=(int)(remaining/(1000*60*60*24));
-                int hour=(int)((remaining%(1000*60*60*24))/(1000*60*60));
-                int minute=(int)((remaining%(1000*60*60))/(1000*60));
-                int second=(int)((remaining%(1000*60))/1000);
-                String display;
-                if(day>0){
-                    display=day+":"+ValueUtils.format(hour)+":"+ValueUtils.format(minute)+":"+ValueUtils.format(second);
-                }else if(hour>0){
-                    display=ValueUtils.format(hour)+":"+ValueUtils.format(minute)+":"+ValueUtils.format(second);
-                }else if(minute>0){
-                    display=ValueUtils.format(minute)+":"+ValueUtils.format(second);
-                }else{
-                    display=ValueUtils.format(second)+"s";
-                }
-                if(item.isenabled) {
-                    tv.setText(display);
-                }
-                else tv.setText("Off");
-            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
     }
 
     public void onMultiSelectModeItemClicked(int position){
@@ -437,27 +256,24 @@ public class MainListAdapter extends BaseAdapter {
     public void onFoldIconClicked(){
         try{
             boolean isAllFolded=true;
-            for(View v:views){
-                View title=v.findViewById(R.id.item_task_info);
-                if(title.getVisibility()!=View.GONE) {
+            for(TaskItem i:TimeSwitchService.list){
+                if(!i.addition_isFolded) {
                     isAllFolded=false;
                     break;
                 }
             }
             if(isAllFolded){
-                for(int i=0;i<views.length;i++){
-                    View title=views[i].findViewById(R.id.item_task_info);
-                    title.setVisibility(View.VISIBLE);
-                    views[i].findViewById(R.id.item_task_title_arrow).setRotation(90);
+                for(int i=0;i<TimeSwitchService.list.size();i++){
+                    TimeSwitchService.list.get(i).addition_isFolded=false;
+                    notifyDataSetChanged();
                     try{
                         ProcessTaskItem.setTaskFolded(context, TimeSwitchService.list.get(i).id,false);
                     }catch (Exception e){e.printStackTrace();}
                 }
             }else{
-                for(int i=0;i<views.length;i++){
-                    View title=views[i].findViewById(R.id.item_task_info);
-                    title.setVisibility(View.GONE);
-                    views[i].findViewById(R.id.item_task_title_arrow).setRotation(0);
+                for(int i=0;i<TimeSwitchService.list.size();i++){
+                    TimeSwitchService.list.get(i).addition_isFolded=true;
+                    notifyDataSetChanged();
                     try{
                         ProcessTaskItem.setTaskFolded(context, TimeSwitchService.list.get(i).id,true);
                     } catch (Exception e){e.printStackTrace();}
@@ -506,7 +322,7 @@ public class MainListAdapter extends BaseAdapter {
         this.notifyDataSetChanged();
     }
 
-    private String getExceptionValue(TaskItem item){
+    public static String getExceptionValue(Context context,TaskItem item){
         try{
             StringBuilder builder=new StringBuilder("");
             String [] exceptions=item.exceptions;
@@ -690,7 +506,7 @@ public class MainListAdapter extends BaseAdapter {
         return "";
     }
 
-    private String getActionValue(TaskItem item){
+    public static String getActionValue(Context context,TaskItem item){
         try{
             String[]actions=item.actions;
             StringBuilder builder=new StringBuilder("");
@@ -920,7 +736,7 @@ public class MainListAdapter extends BaseAdapter {
         }
     }
 
-    private String getAdditionValue(TaskItem item){
+    public static String getAdditionValue(Context context,TaskItem item){
         try{
             if(item.autoclose) return context.getResources().getString(R.string.activity_taskgui_additional_autoclose_cb);
             if(item.autodelete) return context.getResources().getString(R.string.activity_taskgui_additional_autodelete_cb);
@@ -928,6 +744,18 @@ public class MainListAdapter extends BaseAdapter {
             e.printStackTrace();
         }
         return "";
+    }
+
+    private class ViewHolder{
+        View title;
+        ImageView title_arrow;
+        SwitchCompat switch_enabled;
+        View task_area;
+        CheckBox cb;
+        TextView tv_name;
+        ImageView img_trigger;
+        TextView tv_trigger,tv_exception,tv_action,tv_addition;
+        View addition;
     }
 
     public interface SwitchChangedListener{
