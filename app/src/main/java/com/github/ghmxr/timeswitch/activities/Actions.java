@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
@@ -1292,6 +1293,9 @@ public class Actions extends BaseActivity implements View.OnClickListener{
             }
             ((ImageView)view.findViewById(R.id.item_dialog_task_img)).setImageResource(imgRes);
             ((TextView)view.findViewById(R.id.item_dialog_task_name)).setText(item.name);
+            try{
+                ((TextView)view.findViewById(R.id.item_dialog_task_name)).setTextColor(Color.parseColor(item.addition_title_color));
+            }catch (Exception e){e.printStackTrace();}
             ((TextView)view.findViewById(R.id.item_dialog_task_name_description)).setText(String.valueOf(item.isenabled?getResources().getString(R.string.opened):
                     getResources().getString(R.string.closed)));
             ((TextView)view.findViewById(R.id.item_dialog_task_name_description)).setTextColor(item.isenabled?getResources().getColor(R.color.color_task_enabled_font):getResources().getColor(R.color.color_task_disabled_font));

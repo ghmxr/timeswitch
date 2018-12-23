@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.SwitchCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +20,8 @@ import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.ui.ActionDisplayValue;
-import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +40,7 @@ public class MainListAdapter extends BaseAdapter {
     private boolean isMultiSelectMode=false;
     private boolean [] isSelected;
     private int taskCount;
-    private List<TaskItem> list_refreshes=new ArrayList<>();
+    //private List<TaskItem> list_refreshes=new ArrayList<>();
     private Map<Integer,TextView> list_refresh_textviews=new HashMap<>();
     //private SparseArray<TextView> list_refresh_textviews=new SparseArray<>();
 
@@ -53,10 +50,10 @@ public class MainListAdapter extends BaseAdapter {
         this.list= list;
         taskCount=list.size();
         isSelected=new boolean[taskCount];
-        list_refreshes.clear();
+        /*list_refreshes.clear();
         for(TaskItem i:list){
             if(i.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME) list_refreshes.add(i);
-        }
+        }*/
     }
 
     @Override
@@ -76,7 +73,7 @@ public class MainListAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int i, View view, ViewGroup viewGroup) {
-        Log.d("MainListAdapter","getView called and location is "+i);
+        //Log.d("MainListAdapter","getView called and location is "+i);
         final ViewHolder holder;
         if(view==null){
             view=LayoutInflater.from(context).inflate(R.layout.item_task,viewGroup,false);
@@ -115,8 +112,9 @@ public class MainListAdapter extends BaseAdapter {
         if(item==null) return null;
 
         try{
-            if(item.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME)
-                list_refresh_textviews.put(item.id,holder.tv_trigger);
+            if(item.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){
+                list_refresh_textviews.put(i,holder.tv_trigger);
+            }
             else{
                 Collection<TextView> values=list_refresh_textviews.values();
                 values.remove(holder.tv_trigger);
@@ -208,16 +206,16 @@ public class MainListAdapter extends BaseAdapter {
         this.list=list;
         taskCount=list.size();
         this.isSelected=new boolean[taskCount];
-        list_refreshes.clear();
+        /*list_refreshes.clear();
         for(TaskItem i:list){
             if(i.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME) list_refreshes.add(i);
-        }
+        }*/
         this.notifyDataSetChanged();
     }
 
     public void refreshAllCertainTimeTaskItems(){
         try{
-            for(TaskItem item:list_refreshes){
+            /*for(TaskItem item:list_refreshes){
                 try{
                     long remaining=item.getNextTriggeringTime()-System.currentTimeMillis();
                     if(remaining<=0) remaining=0;
@@ -241,6 +239,10 @@ public class MainListAdapter extends BaseAdapter {
                     else item.display_trigger="Off";
                     if(list_refresh_textviews.get(item.id)!=null) list_refresh_textviews.get(item.id).setText(item.display_trigger);
                 }catch (Exception e){e.printStackTrace();}
+            }*/
+            Object[]ids= list_refresh_textviews.keySet().toArray();
+            for(Object i:ids){
+                list_refresh_textviews.get(i).setText(TimeSwitchService.list.get((Integer) i).display_trigger);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -253,36 +255,6 @@ public class MainListAdapter extends BaseAdapter {
         this.notifyDataSetChanged();
     }
 
-    public void onFoldIconClicked(){
-        try{
-            boolean isAllFolded=true;
-            for(TaskItem i:TimeSwitchService.list){
-                if(!i.addition_isFolded) {
-                    isAllFolded=false;
-                    break;
-                }
-            }
-            if(isAllFolded){
-                for(int i=0;i<TimeSwitchService.list.size();i++){
-                    TimeSwitchService.list.get(i).addition_isFolded=false;
-                    notifyDataSetChanged();
-                    try{
-                        ProcessTaskItem.setTaskFolded(context, TimeSwitchService.list.get(i).id,false);
-                    }catch (Exception e){e.printStackTrace();}
-                }
-            }else{
-                for(int i=0;i<TimeSwitchService.list.size();i++){
-                    TimeSwitchService.list.get(i).addition_isFolded=true;
-                    notifyDataSetChanged();
-                    try{
-                        ProcessTaskItem.setTaskFolded(context, TimeSwitchService.list.get(i).id,true);
-                    } catch (Exception e){e.printStackTrace();}
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 
     public boolean[] getIsSelected(){
         return this.isSelected;
@@ -738,8 +710,8 @@ public class MainListAdapter extends BaseAdapter {
 
     public static String getAdditionValue(Context context,TaskItem item){
         try{
-            if(item.autoclose) return context.getResources().getString(R.string.activity_taskgui_additional_autoclose_cb);
             if(item.autodelete) return context.getResources().getString(R.string.activity_taskgui_additional_autodelete_cb);
+            if(item.autoclose) return context.getResources().getString(R.string.activity_taskgui_additional_autoclose_cb);
         }catch (Exception e){
             e.printStackTrace();
         }

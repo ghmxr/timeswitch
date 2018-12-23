@@ -349,6 +349,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 final AppListAdapter adapter=new AppListAdapter(this,(List<AppListAdapter.AppItemInfo>)msg.obj,package_names);
                 listview.setAdapter(adapter);
                 dialog_appinfo.findViewById(R.id.dialog_app_list_area).setVisibility(View.VISIBLE);
+                ((TextView)dialog_appinfo.findViewById(R.id.dialog_app_att)).setText(getResources().getString(R.string.activity_trigger_app_att));
                 listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

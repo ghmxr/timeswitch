@@ -140,7 +140,7 @@ public class TaskItem implements Comparable<TaskItem>{
 	/**
 	 * adapter display values
 	 */
-	public String display_trigger="";
+	public String display_trigger="--";
 	public int display_trigger_icon_res=-1;
 	public String display_exception="";
 	public String display_actions="";

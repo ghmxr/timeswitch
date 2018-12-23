@@ -605,7 +605,11 @@ public class ActionDisplayValue {
                 String notification_values[]=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
                 if(Integer.parseInt(notification_values[0])>=0){
                     StringBuilder builder=new StringBuilder("");
-                    builder.append(context.getResources().getString(R.string.adapter_action_notification));
+                    if(Integer.parseInt(notification_values[0])==0){
+                        builder.append(context.getResources().getString(R.string.adapter_action_notification_override_last));
+                    }else if (Integer.parseInt(notification_values[0])==1){
+                        builder.append(context.getResources().getString(R.string.adapter_action_notification_not_override));
+                    }
                     if(Integer.parseInt(notification_values[1])==0) builder.append(context.getResources().getString(R.string.word_default));
                     if(Integer.parseInt(notification_values[1])==1) {
                         builder.append(context.getResources().getString(R.string.adapter_action_notification_title));

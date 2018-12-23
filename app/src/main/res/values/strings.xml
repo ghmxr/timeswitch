@@ -142,6 +142,7 @@
 	<string name="activity_trigger_headset_plug_out">断开时</string>
 	<string name="activity_trigger_app_opened">打开指定应用时</string>
 	<string name="activity_trigger_app_closed">退出指定应用时</string>
+	<string name="activity_trigger_app_att">*此触发器仅在屏幕点亮时生效</string>
     <string name="dialog_app_open_select_title">打开指定应用时</string>
 	<string name="dialog_app_close_select_title">退出指定应用时</string>
 	<string name="dialog_app_select_z_att">请至少选择一项</string>
@@ -342,7 +343,8 @@
 	<string name="adapter_action_app_close">关闭应用:</string>
 	<string name="adapter_action_task_enable">启用任务:</string>
 	<string name="adapter_action_task_disable">关闭任务:</string>
-	<string name="adapter_action_notification">推送通知:</string>
+	<string name="adapter_action_notification_override_last">推送通知(覆盖上一个):</string>
+	<string name="adapter_action_notification_not_override">推送通知(不覆盖):</string>
 	<string name="adapter_action_notification_title">标题:</string>
 	<string name="adapter_action_notification_message">内容:</string>
 	<string name="adapter_action_brightness">屏幕亮度:</string>
@@ -421,15 +423,15 @@
     <string name="popup_profile_delete">删除</string>
 	<string name="popup_profile_export">导出</string>
     <string name="title_activity_about">关于</string>
-	<string name="activity_about_content_title">Widget Trigger (Build 8)</string>
+	<string name="activity_about_content_title">Widget Trigger (Build 9)</string>
     <string name="large_text">
-        这是一个通过定时来自动触发并执行一些任务的Application。\n\n
+        这是一个通过设置一些触发条件来自动触发并执行一些任务的Application。应用在运行时会自动创建后台服务并维持运行状态。\n\n
 
 
-		请允许本应用所申请的权限，并且添加到系统的清理白名单内，否则本应用可能无法正常运行。\n
+		请允许本应用所申请的权限，并且添加到系统的清理白名单内，否则将可能无法正常运行!\n
 		<b>请不要限制本应用的耗电</b>，系统的一些省电策略可能会影响任务触发的准确性。\n
-		本应用在使用Java Timer 作为定时器接口时，会保持设备唤醒，可能会增加设备耗电量。
-
+		本应用在使用Java Timer 作为定时器接口时，会保持设备唤醒，可能会增加设备耗电量。\n\n
+		<b>对于Android8.0及以上版本系统，请务必关闭电池优化和后台限制，否则后台任务将会被强制清理导致任务不能生效。</b>
 
 		\n\n\n
 
@@ -443,10 +445,10 @@
 
 		本应用使用到了来自 http://www.easyicon.net 的图片资源。\n\n\n
 
-		<b>Build 8 更新日志：\n
-			修复在Android7.0及以上版本静音模式导致的崩溃问题(勿扰模式权限)；\n
-			主界面任务项switch被添加按钮遮挡的问题(listview增加了空白项)；\n
-			修复其他已知的问题；\n
+		<b>Build 9 更新日志：\n
+			调整主界面任务项的显示；\n
+			新增颜色设定、前台常驻通知栏服务选项；\n
+			新增部分新的触发器、触发例外规则和触发行为；\n
 		</b>\n\n
 
 
