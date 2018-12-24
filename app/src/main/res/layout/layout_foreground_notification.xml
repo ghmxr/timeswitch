@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content">
+    android:layout_width="match_parent" android:layout_height="match_parent">
     <ImageView
         android:id="@+id/notification_icon"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="5dp"
         android:layout_centerVertical="true"
@@ -22,6 +22,9 @@
             android:id="@+id/notification_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="2dp"
             android:text="Widget Trigger Custom Notification"/>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -36,6 +39,7 @@
                 android:id="@+id/notification_battery_percentage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="11sp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:text="n/A"/>
@@ -48,6 +52,7 @@
                 android:id="@+id/notification_battery_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="11sp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:text="n/A"/>
@@ -60,6 +65,7 @@
                 android:id="@+id/notification_battery_temp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="11sp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:text="n/A"/>

@@ -72,6 +72,13 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
 	private static final int REQUEST_CODE_ACTIVITY_SETTINGS=0x00102;
 	private static final int REQUEST_CODE_ACTIVITY_PROFILE=0x00103;
 
+	public static final int MENU_FOLD=0;
+	public static final int MENU_DELETE=1;
+	public static final int MENU_SELECT_ALL=2;
+	public static final int MENU_DESELCT_ALL=3;
+	public static final int MENU_PROFILE=4;
+	public static final int MENU_SETTINGS=5;
+
 	private BroadcastReceiver batteryReceiver=new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -258,12 +265,12 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
             editTask(i);
         }else{
             adapter.onMultiSelectModeItemClicked(i);
-            boolean ifHasSelectedItem=false;
+            /*boolean ifHasSelectedItem=false;
             boolean isSelected [] =adapter.getIsSelected();
             for(int j=0;j<isSelected.length;j++){
                 if(isSelected[j]) ifHasSelectedItem=true;
             }
-            this.menu.getItem(0).setEnabled(ifHasSelectedItem);
+            this.menu.getItem(MENU_DELETE).setEnabled(ifHasSelectedItem);*/
         }
     }
 
@@ -346,7 +353,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
             case MESSAGE_DELETE_SELECTED_ITEMS_COMPLETE:{
                 startService2Refresh();
                 try{
-                    menu.getItem(1).setEnabled(true);
+                    menu.getItem(MENU_DELETE).setEnabled(true);
                 }catch (Exception e){e.printStackTrace();}
             }
             break;
@@ -382,7 +389,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
             case MESSAGE_ON_ICON_FOLDED_PROCESS_COMPLETE:{
                 try{
                     swrlayout.setRefreshing(false);
-                    menu.getItem(0).setEnabled(true);
+                    menu.getItem(MENU_FOLD).setEnabled(true);
                     adapter.notifyDataSetChanged();
                 }catch (Exception e){e.printStackTrace();}
             }
@@ -443,13 +450,13 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         adapter.openMultiSelecteMode(longclickposition);
         listview.setOnItemLongClickListener(null);
-        this.menu.getItem(1).setVisible(true);
-        this.menu.getItem(1).setEnabled(true);
-        this.menu.getItem(2).setVisible(true);
-        this.menu.getItem(3).setVisible(true);
-        this.menu.getItem(4).setVisible(false);
-        this.menu.getItem(5).setVisible(false);
-        listview.setOnScrollListener(null);
+        this.menu.getItem(MENU_DELETE).setVisible(true);
+        this.menu.getItem(MENU_DELETE).setEnabled(true);
+        this.menu.getItem(MENU_SELECT_ALL).setVisible(true);
+        this.menu.getItem(MENU_DESELCT_ALL).setVisible(true);
+        this.menu.getItem(MENU_PROFILE).setVisible(false);
+        this.menu.getItem(MENU_SETTINGS).setVisible(false);
+        //listview.setOnScrollListener(null);
         setFabVisibility(false);
     }
 
@@ -459,11 +466,11 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         adapter.closeMultiSelectMode();
         listview.setOnItemLongClickListener(this);
-        this.menu.getItem(1).setVisible(false);
-        this.menu.getItem(2).setVisible(false);
-        this.menu.getItem(3).setVisible(false);
-        this.menu.getItem(4).setVisible(true);
-        this.menu.getItem(5).setVisible(true);
+        this.menu.getItem(MENU_DELETE).setVisible(false);
+        this.menu.getItem(MENU_SELECT_ALL).setVisible(false);
+        this.menu.getItem(MENU_DESELCT_ALL).setVisible(false);
+        this.menu.getItem(MENU_PROFILE).setVisible(true);
+        this.menu.getItem(MENU_SETTINGS).setVisible(true);
         //setListViewScrollListener();
         setFabVisibility(true);
     }
@@ -586,11 +593,11 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
         }
         if(item.getItemId()==R.id.action_selectall){
             adapter.selectAll();
-            this.menu.getItem(1).setEnabled(true);
+            this.menu.getItem(MENU_DELETE).setEnabled(true);
         }
         if(item.getItemId()==R.id.action_deselectall){
             adapter.deselectAll();
-            this.menu.getItem(1).setEnabled(false);
+            this.menu.getItem(MENU_DELETE).setEnabled(false);
         }
         if(item.getItemId()==R.id.action_delete_selected){
             long clickedTime=System.currentTimeMillis();
@@ -601,7 +608,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
             }
 
             try{
-                menu.getItem(1).setEnabled(false);
+                menu.getItem(MENU_DELETE).setEnabled(false);
                 closeMultiSelectMode();
                 swrlayout.setRefreshing(true);
             }catch (Exception e){e.printStackTrace();}
@@ -640,7 +647,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
         }
         if(item.getItemId()==R.id.action_fold){
             try{
-                menu.getItem(0).setEnabled(false);
+                menu.getItem(MENU_FOLD).setEnabled(false);
                 swrlayout.setRefreshing(true);
                 new Thread(new Runnable() {
                     @Override

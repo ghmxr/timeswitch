@@ -65,7 +65,7 @@ public class PublicConsts {
 	public static final int WEEK_SATURDAY=6;
 
 
-	public static final int EXCEPTION_LENTH=37;
+	public static final int EXCEPTION_LENTH=35;
 	public static final int EXCEPTION_CONNECTOR_OR								=	-1;
 	public static final int EXCEPTION_CONNECTOR_AND								=	0;
 	/**
@@ -128,7 +128,7 @@ public class PublicConsts {
 	public static final int EXCEPTION_WIFI_DISCONNECTED								=	36;
 
 
-	public static final int ACTION_LENGTH =25;
+	public static final int ACTION_LENGTH =20;
 	public static final int ACTION_WIFI_LOCALE											=		0;
 	public static final int ACTION_BLUETOOTH_LOCALE										=		1;	
 	public static final int ACTION_RING_MODE_LOCALE 									=		2;
@@ -216,7 +216,7 @@ public class PublicConsts {
 	public static final int ACTION_BRIGHTNESS_UNSELECTED	=-1;
 	public static final int ACTION_BRIGHTNESS_AUTO			=256;
 
-	public static final int ADDITION_LENGTH =10;
+	public static final int ADDITION_LENGTH =6;
 	/**
 	 * @deprecated
 	 */

@@ -1739,6 +1739,7 @@ public class ProcessTaskItem {
             if(cursor.moveToFirst()){
                 String additions_read[]=ValueUtils.string2StringArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ADDITIONS)));
                 String additions[]=new String[PublicConsts.ADDITION_LENGTH];
+                for(int i=0;i<additions.length;i++){additions[i]=String.valueOf(-1);}
                 additions[PublicConsts.ADDITION_TITLE_COLOR_LOCALE]=new TaskItem().addition_title_color;
                 System.arraycopy(additions_read,0,additions,0,additions_read.length);
                 additions[PublicConsts.ADDITION_TITLE_FOLDED_VALUE_LOCALE]=isFolded?String.valueOf(0):String.valueOf(-1);

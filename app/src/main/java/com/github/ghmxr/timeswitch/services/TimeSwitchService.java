@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -194,6 +195,10 @@ public class TimeSwitchService extends Service {
        }else{
            notification=new NotificationCompat.Builder(this);
        }
+       notification.setContentIntent(PendingIntent.getActivity(this,0,new Intent(this,Main.class),PendingIntent.FLAG_UPDATE_CURRENT));
+       notification.setSmallIcon(R.drawable.ic_launcher);
+       notification.setContentTitle("Widget Trigger");
+       notification.setContentText("Widget Trigger is running");
        startForeground(1,getRefreshedNotificationBuilder(notification).build());
        refreshForegroundNotification();
        Log.d("FOREGROUND","STARTED");
@@ -315,9 +320,6 @@ public class TimeSwitchService extends Service {
 
     private NotificationCompat.Builder getRefreshedNotificationBuilder(NotificationCompat.Builder builder){
         try{
-            builder.setSmallIcon(R.drawable.ic_launcher);
-            builder.setContentTitle("Widget Trigger");
-            builder.setContentText("Widget Trigger is running");
             RemoteViews remoteViews=new RemoteViews(PublicConsts.PACKAGE_NAME,R.layout.layout_foreground_notification);
             String title;
             if(ProcessTaskItem.last_activated_task_name.equals("")){
@@ -381,10 +383,12 @@ public class TimeSwitchService extends Service {
                     @Override
                     public void run() {
                         if (flag_refresh_foreground_notification){
-                            mHandler.postDelayed(this,2000);
-                            if(notification!=null) startForeground(1,getRefreshedNotificationBuilder(notification).build());
+                            try{
+                                mHandler.postDelayed(this,2000);
+                                if(notification!=null) startForeground(1,getRefreshedNotificationBuilder(notification).build());
+                            }catch (Exception e){e.printStackTrace();}
                         }else {
-                            stopForeground(true);
+                            try{stopForeground(true);}catch (Exception e){e.printStackTrace();}
                         }
                     }
                 });

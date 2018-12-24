@@ -64,7 +64,7 @@ public class TaskItem implements Comparable<TaskItem>{
 	/**
 	 * 触发类型
 	 */
-	public int trigger_type =0;
+	public int trigger_type =PublicConsts.TRIGGER_TYPE_LOOP_WEEK;
 
 	/**
 	 * 每周重复的布尔值数组
@@ -127,7 +127,7 @@ public class TaskItem implements Comparable<TaskItem>{
 
 	public String addition_exception_connector=String.valueOf(-1);
 
-	public String addition_title_color="#3F51B5";
+	public String addition_title_color="#16a085";
 
 	public boolean addition_isFolded=false;
 
