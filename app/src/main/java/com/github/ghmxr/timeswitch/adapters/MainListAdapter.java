@@ -109,7 +109,10 @@ public class MainListAdapter extends BaseAdapter {
             e.printStackTrace();
         }
 
-        if(item==null) return null;
+        if(item==null){
+            view.setVisibility(View.GONE);
+            return view;
+        }
 
         try{
             try{
@@ -210,6 +213,7 @@ public class MainListAdapter extends BaseAdapter {
         for(TaskItem i:list){
             if(i.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME) list_refreshes.add(i);
         }*/
+        try{list_refresh_textviews.clear();}catch (Exception e){e.printStackTrace();}
         this.notifyDataSetChanged();
     }
 

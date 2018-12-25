@@ -452,7 +452,7 @@ public class ActionDisplayValue {
                 if(action_brightness>=0){
                     StringBuilder builder=new StringBuilder("");
                     builder.append(context.getResources().getString(R.string.adapter_action_brightness));
-                    if(action_brightness==PublicConsts.ACTION_BRIGHTNESS_AUTO) builder.append(R.string.adapter_action_brightness_auto);
+                    if(action_brightness==PublicConsts.ACTION_BRIGHTNESS_AUTO) builder.append(context.getResources().getString(R.string.adapter_action_brightness_auto));
                     else {
                         builder.append((int)(((double)action_brightness/PublicConsts.BRIGHTNESS_MAX)*100));
                         builder.append(context.getResources().getString(R.string.percentage));
