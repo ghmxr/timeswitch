@@ -180,6 +180,25 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                         adapter.deselectAll();
                     }
                 });
+                try{
+                    if(msg_what==MESSAGE_GET_LIST_OPEN_COMPLETE){
+                        dialog_app_oc.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                PackageManager pm=getPackageManager();
+                                for(String s:adapter.getSelectedPackageNames()){
+                                    try{
+                                        Intent i=pm.getLaunchIntentForPackage(s);
+                                        startActivity(i);
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                        Toast.makeText(Actions.this,e.toString(),Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }catch (Exception e){e.printStackTrace();}
                 ((ListView)dialog_app_oc.findViewById(R.id.dialog_app_list)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -776,12 +795,15 @@ public class Actions extends BaseActivity implements View.OnClickListener{
             break;
             case R.id.actions_app_open: case R.id.actions_app_close:{
                 final int id=view.getId();
-                dialog_app_oc=new AlertDialog.Builder(this)
+                AlertDialog.Builder builder=new AlertDialog.Builder(this)
                         .setTitle(id==R.id.actions_app_open?getResources().getString(R.string.activity_action_app_open_title):getResources().getString(R.string.activity_action_app_close_title))
                         .setView(LayoutInflater.from(this).inflate(R.layout.layout_dialog_app_select,null))
                         .setPositiveButton(getResources().getString(R.string.dialog_button_positive),null)
-                        .setNegativeButton(getResources().getString(R.string.action_deselectall),null)
-                        .show();
+                        .setNegativeButton(getResources().getString(R.string.action_deselectall),null);
+                if(id==R.id.actions_app_open){
+                    builder.setNeutralButton(getResources().getString(R.string.action_test),null);
+                }
+                dialog_app_oc=builder.show();
                 new Thread(new Runnable() {
                     @Override
                     public void run() {

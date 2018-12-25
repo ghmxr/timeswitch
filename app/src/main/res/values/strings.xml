@@ -409,6 +409,7 @@
     <string name="action_settings">设置</string>
 	<string name="action_selectall">全选</string>
     <string name="action_deselectall">全不选</string>
+	<string name="action_test">测试</string>
 	<string name="action_ascend">时间升序</string>
 	<string name="action_descend">时间降序</string>
 	<string name="action_clean_logs">清空日志</string>
