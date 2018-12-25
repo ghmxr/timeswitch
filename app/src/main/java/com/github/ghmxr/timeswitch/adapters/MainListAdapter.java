@@ -112,12 +112,12 @@ public class MainListAdapter extends BaseAdapter {
         if(item==null) return null;
 
         try{
-            if(item.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){
-                list_refresh_textviews.put(i,holder.tv_trigger);
-            }
-            else{
+            try{
                 Collection<TextView> values=list_refresh_textviews.values();
                 values.remove(holder.tv_trigger);
+            }catch (Exception e){e.printStackTrace();}
+            if(item.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){
+                list_refresh_textviews.put(i,holder.tv_trigger);
             }
         }catch (Exception e){e.printStackTrace();}
 
