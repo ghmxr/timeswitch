@@ -452,6 +452,10 @@ public class Actions extends BaseActivity implements View.OnClickListener{
             break;
 
             case R.id.actions_wallpaper:{
+                if(Build.VERSION.SDK_INT>=23&&PermissionChecker.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE)!=PermissionChecker.PERMISSION_GRANTED){
+                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},1);
+                    return;
+                }
                 final BottomDialog dialog=new BottomDialog(this);
                 dialog.setContentView(R.layout.layout_dialog_actions_selection_wallpaper);
                 try{
@@ -757,6 +761,9 @@ public class Actions extends BaseActivity implements View.OnClickListener{
             break;
             case R.id.actions_sms:{
                 if(PermissionChecker.checkSelfPermission(this,Manifest.permission.SEND_SMS)!=PermissionChecker.PERMISSION_GRANTED){
+                    if(Build.VERSION.SDK_INT>=23){
+                        requestPermissions(new String[]{Manifest.permission.SEND_SMS,Manifest.permission.READ_PHONE_STATE},1);
+                    }
                     Snackbar snackbar=Snackbar.make(findViewById(R.id.layout_actions_root),getResources().getString(R.string.permission_request_sms_send_message),Snackbar.LENGTH_SHORT);
                     snackbar.setAction(getResources().getString(R.string.permission_grant_action_att), new View.OnClickListener() {
                         @Override
@@ -774,6 +781,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                 i.putExtra(SmsActivity.EXTRA_SMS_VALUES,actions[PublicConsts.ACTION_SMS_LOCALE]);
                 i.putExtra(SmsActivity.EXTRA_SMS_ADDRESS,sms_address);
                 i.putExtra(SmsActivity.EXTRA_SMS_MESSAGE,sms_message);
+                i.putExtra(EXTRA_TITLE_COLOR,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
                 startActivityForResult(i,REQUEST_CODE_SMS_SET);
             }
             break;

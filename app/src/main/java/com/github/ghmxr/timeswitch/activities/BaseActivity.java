@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
@@ -35,6 +35,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		if(queue.size()<=0) myHandler=new MyHandler();
 		if(!queue.contains(this)) queue.add(this);
+		Log.d("BaseActivity","onCreate Method called and queue size is "+queue.size());
 	}
 
 	public void setToolBarAndStatusBarColor(View toolbar,String color){

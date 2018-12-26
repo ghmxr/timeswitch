@@ -1,5 +1,6 @@
 package com.github.ghmxr.timeswitch.activities;
 
+import android.Manifest;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.provider.ContactsContract;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SubscriptionInfo;
@@ -66,7 +68,14 @@ public class SmsActivity extends BaseActivity {
             edit_addresses.setText(getIntent().getStringExtra(EXTRA_SMS_ADDRESS));
             edit_message.setText(getIntent().getStringExtra(EXTRA_SMS_MESSAGE));
             if(Build.VERSION.SDK_INT>=22){
-                final List<SubscriptionInfo> list_subinfo=SubscriptionManager.from(this).getActiveSubscriptionInfoList();
+                List<SubscriptionInfo> list_read=new ArrayList<>();
+                try{
+                    list_read=SubscriptionManager.from(this).getActiveSubscriptionInfoList();
+                }catch (Exception e){
+                    e.printStackTrace();
+                    LogUtil.putExceptionLog(this,e);
+                }
+                final List<SubscriptionInfo> list_subinfo=list_read;
                 //TelephonyManager telephonyManager=(TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
                 List<String> displayNames=new ArrayList<>();
                 int selection=0;
@@ -129,6 +138,10 @@ public class SmsActivity extends BaseActivity {
         findViewById(R.id.layout_sms_address_contact).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(Build.VERSION.SDK_INT>=23&&PermissionChecker.checkSelfPermission(SmsActivity.this, Manifest.permission.READ_CONTACTS)!=PermissionChecker.PERMISSION_GRANTED){
+                    requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},1);
+                    return;
+                }
                 startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUEST_CODE_SELECT_CONTACTS);
             }
         });

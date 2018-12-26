@@ -1195,12 +1195,13 @@
 
                     <LinearLayout
                         android:id="@+id/layout_taskgui_area_exception_additem"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="80dp"
+                        android:layout_height="40dp"
+                        android:gravity="center"
                         android:orientation="horizontal"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="10dp"
-                        android:layout_marginBottom="15dp"
+                        android:layout_marginBottom="10dp"
                         android:background="?android:attr/selectableItemBackground"
                         android:clickable="true">
 
@@ -2254,11 +2255,12 @@
                     </LinearLayout>
                     <LinearLayout
                         android:id="@+id/layout_taskgui_area_action_additem"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="80dp"
+                        android:layout_height="40dp"
+                        android:gravity="center"
                         android:orientation="horizontal"
                         android:layout_gravity="center_horizontal"
-                        android:layout_marginBottom="20dp"
+                        android:layout_marginBottom="10dp"
                         android:layout_marginTop="10dp"
                         android:background="?android:attr/selectableItemBackground"
                         android:clickable="true">

@@ -201,6 +201,16 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
     public void onResume(){
         super.onResume();
         //startService2Refresh();
+        try{
+            if(!queue.getLast().equals(this)){
+                if(queue.contains(this)){
+                    queue.remove(this);
+                    queue.addLast(this);
+                }else{
+                    queue.addLast(this);
+                }
+            }
+        }catch (Exception e){e.printStackTrace();}
     }
 
     @Override
@@ -564,6 +574,9 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
         }catch (Exception e){
             e.printStackTrace();
         }
+        try{
+            while (queue.size()>0) queue.getLast().finish();
+        }catch (Exception e){e.printStackTrace();}
     }
 
     @Override
