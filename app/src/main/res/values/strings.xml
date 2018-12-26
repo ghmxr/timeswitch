@@ -322,7 +322,10 @@
 	<string name="permission_request_write_settings_toast">请为Widget Trigger授权修改设置权限</string>
 	<string name="permission_request_sms_send_title">发送短信权限</string>
 	<string name="permission_request_sms_send_message">此操作需要授权发送短信权限。</string>
+	<string name="permission_request_read_external_storage">此操作需要授权读取媒体存储</string>
+	<string name="permission_request_read_contacts">此操作需要授权读取联系人</string>
 	<string name="permission_grant_action_att">立即授权</string>
+	<string name="permission_denied">PermissionDenied:未授权</string>
 	<string name="adapter_exception_type_or">(满足任一)</string>
 	<string name="adapter_exception_type_and">(满足所有)</string>
 	<string name="adapter_exception_day_of_week_head">指定日期:</string>

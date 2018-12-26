@@ -248,6 +248,8 @@ public class MainListAdapter extends BaseAdapter {
             for(Object i:ids){
                 list_refresh_textviews.get(i).setText(TimeSwitchService.list.get((Integer) i).display_trigger);
             }
+        }catch (IndexOutOfBoundsException ie){
+
         }catch (Exception e){
             e.printStackTrace();
         }

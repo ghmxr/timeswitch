@@ -51,8 +51,14 @@ public class EditTask extends TaskGui {
             Toast.makeText(this,"Can not get the task position",Toast.LENGTH_SHORT).show();
             return;
         }
-        taskitem_read=TimeSwitchService.list.get(position);
-        taskitem=new TaskItem(taskitem_read);
+        try{
+            taskitem_read=TimeSwitchService.list.get(position);
+            taskitem=new TaskItem(taskitem_read);
+        }catch (Exception e){
+            e.printStackTrace();
+            Toast.makeText(this,e.toString(),Toast.LENGTH_SHORT).show();
+            finish();
+        }
         //if(taskid==0) taskid=taskitem.id;
         Log.i("EDIT","task id is "+taskitem.id);
         //if(taskitem_read.trigger_type==PublicConsts.TRIGGER_TYPE_SINGLE||taskitem_read.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_WEEK) {

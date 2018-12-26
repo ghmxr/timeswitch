@@ -293,9 +293,9 @@ public class ActionDisplayValue {
         StringBuilder builder=new StringBuilder("");
         try{
             try{
-                if(Integer.parseInt(packageNames[0])==-1) return "";
+                if(Integer.parseInt(packageNames[0])<0) return "";
             }catch (Exception e){
-                e.printStackTrace();
+                //e.printStackTrace();
             }
             PackageManager manager=context.getPackageManager();
             for(int i=0;i<packageNames.length;i++){
@@ -684,7 +684,7 @@ public class ActionDisplayValue {
                 try{
                     if(Integer.parseInt(package_names[0])<0) return "";
                 }catch (Exception e){
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 }
                 //builder.append(context.getResources().getString(R.string.adapter_action_app_open));
                 PackageManager manager=context.getApplicationContext().getPackageManager();

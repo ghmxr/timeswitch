@@ -367,6 +367,8 @@ public class ValueUtils {
                 cursor.close();
                 return path;
             }
+        }catch (java.lang.SecurityException se){
+            return context.getResources().getString(R.string.permission_denied);
         }catch (Exception e){
             e.printStackTrace();
             LogUtil.putExceptionLog(context,e);

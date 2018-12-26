@@ -140,6 +140,17 @@ public class SmsActivity extends BaseActivity {
             public void onClick(View view) {
                 if(Build.VERSION.SDK_INT>=23&&PermissionChecker.checkSelfPermission(SmsActivity.this, Manifest.permission.READ_CONTACTS)!=PermissionChecker.PERMISSION_GRANTED){
                     requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},1);
+                    Snackbar snackbar=Snackbar.make(findViewById(R.id.layout_sms_root),getResources().getString(R.string.permission_request_read_contacts),Snackbar.LENGTH_SHORT);
+                    snackbar.setAction(getResources().getString(R.string.permission_grant_action_att), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent appdetail = new Intent();
+                            appdetail.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            appdetail.setData(Uri.fromParts("package", getApplication().getPackageName(), null));
+                            startActivity(appdetail);
+                        }
+                    });
+                    snackbar.show();
                     return;
                 }
                 startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUEST_CODE_SELECT_CONTACTS);

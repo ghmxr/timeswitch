@@ -454,6 +454,17 @@ public class Actions extends BaseActivity implements View.OnClickListener{
             case R.id.actions_wallpaper:{
                 if(Build.VERSION.SDK_INT>=23&&PermissionChecker.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE)!=PermissionChecker.PERMISSION_GRANTED){
                     requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},1);
+                    Snackbar snackbar=Snackbar.make(findViewById(R.id.layout_actions_root),getResources().getString(R.string.permission_request_read_external_storage),Snackbar.LENGTH_SHORT);
+                    snackbar.setAction(getResources().getString(R.string.permission_grant_action_att), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent appdetail = new Intent();
+                            appdetail.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            appdetail.setData(Uri.fromParts("package", getApplication().getPackageName(), null));
+                            startActivity(appdetail);
+                        }
+                    });
+                    snackbar.show();
                     return;
                 }
                 final BottomDialog dialog=new BottomDialog(this);
