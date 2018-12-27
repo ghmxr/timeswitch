@@ -1660,9 +1660,11 @@ public class ProcessTaskItem {
      */
     public static int getPosition(int id){
         if(TimeSwitchService.list==null) return -1;
-        for(int i=0;i< TimeSwitchService.list.size();i++){
-            if(id==TimeSwitchService.list.get(i).id) return i;
-        }
+        try{
+            for(int i=0;i< TimeSwitchService.list.size();i++){
+                if(id==TimeSwitchService.list.get(i).id) return i;
+            }
+        }catch (Exception e){e.printStackTrace();}
         return -1;
     }
 

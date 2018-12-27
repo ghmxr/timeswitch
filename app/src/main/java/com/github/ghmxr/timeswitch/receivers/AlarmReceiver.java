@@ -9,6 +9,7 @@ import android.util.Log;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
+import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 
 /**
@@ -32,16 +33,20 @@ public class AlarmReceiver extends BroadcastReceiver implements Runnable{
         int position=ProcessTaskItem.getPosition(id);
         Log.d("AlarmReceiver","position is "+position);
         if(position>=0) {
-            final TaskItem item=TimeSwitchService.list.get(position);
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    if(TimeSwitchService.service_queue!=null&&TimeSwitchService.service_queue.size()>0) new ProcessTaskItem(TimeSwitchService.service_queue.getLast(),item).activateTaskItem();
+            try{
+                final TaskItem item=TimeSwitchService.list.get(position);
+                if((item.trigger_type== PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME||item.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_WEEK)&&(item.triggerObject instanceof PendingIntent)){
+                    item.activateTriggerOfAlarmManager((PendingIntent)item.triggerObject);
+                    Log.i("AlarmReceiver","continue the alarm and the id is "+item.id);
                 }
-            }).start();
-            if((item.trigger_type== PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME||item.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_WEEK)&&(item.triggerObject instanceof PendingIntent)){
-                item.activateTriggerOfAlarmManager((PendingIntent)item.triggerObject);
-                Log.i("AlarmReceiver","continue the alarm and the id is "+item.id);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(TimeSwitchService.service_queue!=null&&TimeSwitchService.service_queue.size()>0) new ProcessTaskItem(TimeSwitchService.service_queue.getLast(),item).activateTaskItem();
+                    }
+                }).start();
+            }catch (Exception e){
+                e.printStackTrace();
             }
         }
     }

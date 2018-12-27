@@ -429,7 +429,7 @@
     <string name="popup_profile_delete">删除</string>
 	<string name="popup_profile_export">导出</string>
     <string name="title_activity_about">关于</string>
-	<string name="activity_about_content_title">Widget Trigger (Build 11)</string>
+	<string name="activity_about_content_title">Widget Trigger (Build 12)</string>
     <string name="large_text">
         这是一个通过设置一些触发条件来自动触发并执行一些任务的Application。应用在运行时会自动创建后台服务并维持运行状态。\n\n
 
@@ -451,10 +451,10 @@
 
 		本应用使用到了来自 http://www.easyicon.net 的图片资源。\n\n\n
 
-		<b>Build 11 更新日志：\n
-			调整主界面任务项的显示；\n
-			新增颜色设定、前台常驻通知栏服务选项；\n
-			新增部分新的触发器、触发例外规则和触发行为；\n
+		<b>Build 12 更新日志：\n
+			解决在某些情况下主界面列表无法完成刷新的问题；\n
+			优化动态权限申请(修复更改壁纸的报错，已保存的任务需要重新编辑一次以获取读取媒体存储权限)；\n
+			其他部分已知的问题；\n
 		</b>\n\n
 
 

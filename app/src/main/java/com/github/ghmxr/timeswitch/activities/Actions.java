@@ -151,9 +151,9 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                 String [] selectedPackages=new String[1];
                 try{
                     selectedPackages=actions[msg_what==MESSAGE_GET_LIST_OPEN_COMPLETE?PublicConsts.ACTION_LAUNCH_APP_PACKAGES:PublicConsts.ACTION_STOP_APP_PACKAGES].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-                    if(Integer.parseInt(selectedPackages[0])==-1) selectedPackages=new String[1];
+                    if(Integer.parseInt(selectedPackages[0])<0) selectedPackages=new String[1];
                 }catch (Exception e){
-                    e.printStackTrace();
+                    //e.printStackTrace();
                     //LogUtil.putExceptionLog(this,e);
                 }
                 final AppListAdapter adapter=new AppListAdapter(this,(List<AppListAdapter.AppItemInfo>)msg.obj,selectedPackages);

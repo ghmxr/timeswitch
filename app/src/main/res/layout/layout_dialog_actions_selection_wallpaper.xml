@@ -14,7 +14,7 @@
         <RelativeLayout
             android:id="@+id/dialog_wallpaper_unselected"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="45dp"
             android:clickable="true"
             android:background="?android:attr/selectableItemBackground">
             <ImageView
@@ -43,12 +43,19 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="25dp"/>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:background="@color/color_dividing_line"/>
         </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/dialog_wallpaper_select"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="45dp"
             android:clickable="true"
             android:background="?android:attr/selectableItemBackground">
             <ImageView
