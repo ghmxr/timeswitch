@@ -220,6 +220,7 @@
 	<string name="activity_taskgui_actions_disable">关闭指定任务</string>
 	<string name="activity_taskgui_actions_app_open">运行应用</string>
 	<string name="activity_taskgui_actions_app_close">关闭应用</string>
+	<string name="activity_taskgui_actions_app_force_close">强制关闭应用</string>
 	<string name="activity_taskgui_actions_ring_selection_notification">更改通知</string>
 	<string name="activity_taskgui_actions_ring_selection_phone">更改来电</string>
 	<string name="activity_taskgui_actions_notification_not_override">通知(不覆盖)</string>
@@ -236,6 +237,7 @@
 	<string name="activity_sms_message_hint">输入短信内容(内容过长将会自动拆分发送)</string>
 	<string name="activity_sms_auto_divide">自动分段</string>
 	<string name="activity_sms_result_toast">显示发送回执Toast</string>
+	<string name="activity_sms_toast_permission_read_phone_state_att">无法读取Sim卡，请检查权限(读取手机状态)</string>
 	<string name="activity_edit_no_position">无法获取此任务信息</string>
     <string name="activity_settings_basic_att">基础选项</string>
     <string name="activity_settings_api_att">计时器API</string>

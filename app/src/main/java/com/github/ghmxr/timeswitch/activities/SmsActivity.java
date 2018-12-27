@@ -24,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
@@ -93,6 +94,9 @@ public class SmsActivity extends BaseActivity {
                 else{
                     displayNames.add(getResources().getString(R.string.subinfo_no_sim_found));
                     selection=0;
+                    if(PermissionChecker.checkSelfPermission(this,Manifest.permission.READ_PHONE_STATE)!=PermissionChecker.PERMISSION_GRANTED){
+                        Toast.makeText(this,getResources().getString(R.string.activity_sms_toast_permission_read_phone_state_att),Toast.LENGTH_SHORT).show();
+                    }
                 }
                 spinner.setAdapter(new ArrayAdapter<>(this,R.layout.item_subinfo,R.id.item_subinfo_textview,displayNames));
                 spinner.setSelection(selection);

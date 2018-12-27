@@ -38,6 +38,23 @@ public abstract class BaseActivity extends AppCompatActivity {
 		Log.d("BaseActivity","onCreate Method called and queue size is "+queue.size());
 	}
 
+	@Override
+	public void onResume(){
+		super.onResume();
+		try{
+			if(!queue.getLast().equals(this)){
+				if(queue.contains(this)){
+					queue.remove(this);
+					queue.addLast(this);
+					Log.d("BaseActivity","Remove from the queue and re-add this activity");
+				}else{
+					queue.addLast(this);
+					Log.d("BaseActivity","re-add this activity");
+				}
+			}
+		}catch (Exception e){e.printStackTrace();}
+	}
+
 	public void setToolBarAndStatusBarColor(View toolbar,String color){
 		try{
 			if(color==null) return;
