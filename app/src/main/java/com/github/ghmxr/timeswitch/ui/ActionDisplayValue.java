@@ -465,7 +465,7 @@ public class ActionDisplayValue {
             return "";
         }
 
-        public static String getWallpapperDisplayValue(Context context,String value,String uri_wallpaper){
+        public static String getWallpaperDisplayValue(Context context, String value, String uri_wallpaper){
             try{
                 StringBuilder builder=new StringBuilder("");
                 int action_wallpaper=Integer.parseInt(value);
@@ -481,7 +481,7 @@ public class ActionDisplayValue {
         }
 
         public static String getWallpaperDisplayValue(Context context,TaskItem item){
-            return getWallpapperDisplayValue(context,item.actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE],item.uri_wallpaper_desktop);
+            return getWallpaperDisplayValue(context,item.actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE],item.uri_wallpaper_desktop);
         }
 
         public static String getSMSDisplayValue(Context context,String values,String addresses,String message){

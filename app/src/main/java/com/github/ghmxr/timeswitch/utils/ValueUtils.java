@@ -2,6 +2,8 @@ package com.github.ghmxr.timeswitch.utils;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -374,6 +376,28 @@ public class ValueUtils {
             LogUtil.putExceptionLog(context,e);
             return "";
         }
+    }
+
+    /**
+     * Use this method in a child thread
+     */
+    public static Bitmap getDecodedBitmapFromFile(String filepath,int width,int height){
+        if(filepath==null) return null;
+        BitmapFactory.Options options=new BitmapFactory.Options();
+        options.inJustDecodeBounds=true;
+        BitmapFactory.decodeFile(filepath,options);
+        int width_res=options.outWidth;
+        int height_res=options.outHeight;
+        int sample=1;
+        while (width<width_res||height<height_res){
+            sample*=2;
+            width_res=width_res/sample;
+            height_res=height_res/sample;
+        }
+        options.inSampleSize=sample;
+        //Log.d("Scale","Bitmap scale value is "+options.inSampleSize);
+        options.inJustDecodeBounds=false;
+        return BitmapFactory.decodeFile(filepath,options);
     }
 
     public static String toDisplaySSIDString(String ssid){

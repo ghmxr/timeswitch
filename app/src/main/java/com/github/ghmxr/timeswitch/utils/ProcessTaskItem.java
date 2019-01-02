@@ -36,6 +36,7 @@ import android.support.v4.content.PermissionChecker;
 import android.telecom.TelecomManager;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -50,7 +51,6 @@ import com.github.ghmxr.timeswitch.receivers.HeadsetPlugReceiver;
 import com.github.ghmxr.timeswitch.receivers.SMSReceiver;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 
-import java.io.FileNotFoundException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -1254,18 +1254,31 @@ public class ProcessTaskItem {
             int value=Integer.parseInt(values);
             if(value>=0){
                 log_taskitem.append(context.getResources().getString(R.string.action_set_wallpaper));
-                WallpaperManager wallpaperManager=WallpaperManager.getInstance(context);
-                //Bitmap bitmap= MediaStore.Images.Media.getBitmap(context.getContentResolver(), Uri.parse(wallpaper_values[1]));
-                Bitmap bitmap= MediaStore.Images.Media.getBitmap(context.getContentResolver(), Uri.parse(item.uri_wallpaper_desktop));
-                wallpaperManager.setBitmap(bitmap);
-                //wallpaperManager.setBitmap(bitmap,null,WallpaperManager.FLAG_LOCK);
-                log_taskitem.append(context.getResources().getString(R.string.log_result_success));
+                Message msg=new Message();
+                msg.what=TimeSwitchService.MESSAGE_DISPLAY_TOAST;
+                msg.obj=String.valueOf(context.getResources().getString(R.string.att_change_wallpaper));
+                TimeSwitchService.sendMessage(msg);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try{
+                            WallpaperManager wallpaperManager=WallpaperManager.getInstance(context);
+                            DisplayMetrics displayMetrics=context.getResources().getDisplayMetrics();
+                            //use file path instead of uri
+                            Bitmap bitmap= ValueUtils.getDecodedBitmapFromFile(item.uri_wallpaper_desktop,displayMetrics.widthPixels,displayMetrics.heightPixels);
+                            //this is for the task already set from old versions and can execute successfully
+                            if(bitmap==null) bitmap= MediaStore.Images.Media.getBitmap(context.getContentResolver(), Uri.parse(item.uri_wallpaper_desktop));
+                            wallpaperManager.setBitmap(bitmap);
+                            //wallpaperManager.setBitmap(bitmap,null,WallpaperManager.FLAG_LOCK);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            LogUtil.putExceptionLog(context,e);
+                        }
+                    }
+                }).start();
+                //log_taskitem.append(context.getResources().getString(R.string.log_result_success));
                 log_taskitem.append(" ");
             }
-        }catch (FileNotFoundException fe){
-            fe.printStackTrace();
-            log_taskitem.append(context.getResources().getString(R.string.action_set_wall_paper_file_not_found));
-            log_taskitem.append(" ");
         }catch (Exception e){
             e.printStackTrace();
             log_taskitem.append(e.toString());

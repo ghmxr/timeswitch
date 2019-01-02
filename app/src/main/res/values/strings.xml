@@ -289,7 +289,7 @@
 	<string name="action_ring_volume">调整音量</string>
 	<string name="action_set_ringtone_notification">更改通知铃声:</string>
 	<string name="action_set_ringtone_phone">更改来电铃声:</string>
-	<string name="action_set_wallpaper">设置壁纸:</string>
+	<string name="action_set_wallpaper">设置壁纸</string>
 	<string name="action_set_wall_paper_file_not_found">失败（文件不存在）</string>
 	<string name="action_sms_send">发送短信</string>
 	<string name="action_device_reboot">重启</string>
@@ -328,6 +328,7 @@
 	<string name="permission_request_read_contacts">此操作需要授权读取联系人</string>
 	<string name="permission_grant_action_att">立即授权</string>
 	<string name="permission_denied">PermissionDenied:未授权</string>
+	<string name="att_change_wallpaper">正在尝试切换壁纸，这可能会花费一点时间</string>
 	<string name="adapter_exception_type_or">(满足任一)</string>
 	<string name="adapter_exception_type_and">(满足所有)</string>
 	<string name="adapter_exception_day_of_week_head">指定日期:</string>

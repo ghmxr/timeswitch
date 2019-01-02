@@ -54,6 +54,7 @@ import com.github.ghmxr.timeswitch.ui.BottomDialogForBrightness;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForVibrate;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
+import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1014,7 +1015,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                     Uri uri=data.getData();
                     if(uri==null) return;
                     actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE]=String.valueOf(0);
-                    uri_wallpaper=uri.toString();
+                    uri_wallpaper= ValueUtils.getRealPathFromUri(this,uri);//uri.toString();
                     refreshActionStatus();
                 }
             }
