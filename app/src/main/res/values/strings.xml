@@ -82,7 +82,7 @@
     <string name="dialog_actions_ring_selection_media">媒体库</string>
 	<string name="dialog_actions_ring_selection_folder">应用内目录</string>
 	<string name="dialog_actions_ring_selection_system_dialog_title">系统铃声</string>
-	<string name="dialog_actions_wallpaper_att">建议使用屏幕分辨率图片</string>
+	<string name="dialog_actions_wallpaper_att">注意:过大的图片可能会导致本应用OOM，请选择合适大小的图片</string>
 	<string name="dialog_actions_wallpaper_select">选择/更改图片</string>
 	<string name="dialog_actions_vibrate_title">振动器</string>
     <string name="dialog_actions_toast_title">显示Toast</string>
@@ -430,7 +430,7 @@
     <string name="popup_profile_delete">删除</string>
 	<string name="popup_profile_export">导出</string>
     <string name="title_activity_about">关于</string>
-	<string name="activity_about_content_title">Widget Trigger (Build 12)</string>
+	<string name="activity_about_content_title">Widget Trigger (Build 13)</string>
     <string name="large_text">
         这是一个通过设置一些触发条件来自动触发并执行一些任务的Application。应用在运行时会自动创建后台服务并维持运行状态。\n\n
 
@@ -452,9 +452,10 @@
 
 		本应用使用到了来自 http://www.easyicon.net 的图片资源。\n\n\n
 
-		<b>Build 12 更新日志：\n
+		<b>Build 13 更新日志：\n
 			解决在某些情况下主界面列表无法完成刷新的问题；\n
-			优化动态权限申请(修复更改壁纸的报错，已保存的任务需要重新编辑一次以获取读取媒体存储权限)；\n
+			优化部分动态权限申请；\n
+			修复更改壁纸的报错，已保存的任务需要重新从图库中选择一次图片并编辑保存以刷新数据库内存储的路径；\n
 			其他部分已知的问题；\n
 		</b>\n\n
 

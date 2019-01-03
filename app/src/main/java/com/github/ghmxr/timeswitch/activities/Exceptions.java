@@ -222,34 +222,34 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
             break;
             case R.id.exceptions_ring_vibrate:{
                 CheckBox cb_ring_vibrate=findViewById(R.id.exceptions_ring_vibrate_cb);
-                CheckBox cb_ring_off=findViewById(R.id.exceptions_ring_off_cb);
-                CheckBox cb_ring_normal=findViewById(R.id.exceptions_ring_normal_cb);
+                //CheckBox cb_ring_off=findViewById(R.id.exceptions_ring_off_cb);
+                //CheckBox cb_ring_normal=findViewById(R.id.exceptions_ring_normal_cb);
                 cb_ring_vibrate.toggle();
-                if(cb_ring_vibrate.isChecked()) {cb_ring_off.setChecked(false);cb_ring_normal.setChecked(false);}
+                //if(cb_ring_vibrate.isChecked()) {cb_ring_off.setChecked(false);cb_ring_normal.setChecked(false);}
                 exceptions[PublicConsts.EXCEPTION_RING_VIBRATE]=(cb_ring_vibrate.isChecked()?String.valueOf(1):String.valueOf(0));
-                exceptions[PublicConsts.EXCEPTION_RING_OFF]=(cb_ring_off.isChecked()?String.valueOf(1):String.valueOf(0));
-                exceptions[PublicConsts.EXCEPTION_RING_NORMAL]=(cb_ring_normal.isChecked()?String.valueOf(1):String.valueOf(0));
+                //exceptions[PublicConsts.EXCEPTION_RING_OFF]=(cb_ring_off.isChecked()?String.valueOf(1):String.valueOf(0));
+                //exceptions[PublicConsts.EXCEPTION_RING_NORMAL]=(cb_ring_normal.isChecked()?String.valueOf(1):String.valueOf(0));
             }
             break;
             case R.id.exceptions_ring_off:{
-                CheckBox cb_ring_vibrate=findViewById(R.id.exceptions_ring_vibrate_cb);
+                //CheckBox cb_ring_vibrate=findViewById(R.id.exceptions_ring_vibrate_cb);
                 CheckBox cb_ring_off=findViewById(R.id.exceptions_ring_off_cb);
-                CheckBox cb_ring_normal=findViewById(R.id.exceptions_ring_normal_cb);
+                //CheckBox cb_ring_normal=findViewById(R.id.exceptions_ring_normal_cb);
                 cb_ring_off.toggle();
-                if(cb_ring_off.isChecked()) {cb_ring_vibrate.setChecked(false);cb_ring_normal.setChecked(false);}
-                exceptions[PublicConsts.EXCEPTION_RING_VIBRATE]=(cb_ring_vibrate.isChecked()?String.valueOf(1):String.valueOf(0));
+                //if(cb_ring_off.isChecked()) {cb_ring_vibrate.setChecked(false);cb_ring_normal.setChecked(false);}
+                //exceptions[PublicConsts.EXCEPTION_RING_VIBRATE]=(cb_ring_vibrate.isChecked()?String.valueOf(1):String.valueOf(0));
                 exceptions[PublicConsts.EXCEPTION_RING_OFF]=(cb_ring_off.isChecked()?String.valueOf(1):String.valueOf(0));
-                exceptions[PublicConsts.EXCEPTION_RING_NORMAL]=(cb_ring_normal.isChecked()?String.valueOf(1):String.valueOf(0));
+                //exceptions[PublicConsts.EXCEPTION_RING_NORMAL]=(cb_ring_normal.isChecked()?String.valueOf(1):String.valueOf(0));
             }
             break;
             case R.id.exceptions_ring_normal:{
-                CheckBox cb_ring_vibrate=findViewById(R.id.exceptions_ring_vibrate_cb);
-                CheckBox cb_ring_off=findViewById(R.id.exceptions_ring_off_cb);
+                //CheckBox cb_ring_vibrate=findViewById(R.id.exceptions_ring_vibrate_cb);
+                //CheckBox cb_ring_off=findViewById(R.id.exceptions_ring_off_cb);
                 CheckBox cb_ring_normal=findViewById(R.id.exceptions_ring_normal_cb);
                 cb_ring_normal.toggle();
-                if(cb_ring_normal.isChecked()) {cb_ring_vibrate.setChecked(false);cb_ring_off.setChecked(false);}
-                exceptions[PublicConsts.EXCEPTION_RING_VIBRATE]=(cb_ring_vibrate.isChecked()?String.valueOf(1):String.valueOf(0));
-                exceptions[PublicConsts.EXCEPTION_RING_OFF]=(cb_ring_off.isChecked()?String.valueOf(1):String.valueOf(0));
+                //if(cb_ring_normal.isChecked()) {cb_ring_vibrate.setChecked(false);cb_ring_off.setChecked(false);}
+                //exceptions[PublicConsts.EXCEPTION_RING_VIBRATE]=(cb_ring_vibrate.isChecked()?String.valueOf(1):String.valueOf(0));
+                //exceptions[PublicConsts.EXCEPTION_RING_OFF]=(cb_ring_off.isChecked()?String.valueOf(1):String.valueOf(0));
                 exceptions[PublicConsts.EXCEPTION_RING_NORMAL]=(cb_ring_normal.isChecked()?String.valueOf(1):String.valueOf(0));
             }
             break;

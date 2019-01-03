@@ -322,15 +322,17 @@ public class RefreshListItems implements Runnable {
                         break;
 
                     }
-                    item.display_exception= MainListAdapter.getExceptionValue(context,item);
-                    item.display_actions=MainListAdapter.getActionValue(context,item);
-                    item.display_additions=MainListAdapter.getAdditionValue(context,item);
                 }catch(Exception e){
                     e.printStackTrace();
                 }
 
                 if(item.isenabled) item.activateTrigger(context);
                 list.add(item);
+            }
+            for(TaskItem item : TimeSwitchService.list){
+                item.display_exception= MainListAdapter.getExceptionValue(context,item);
+                item.display_actions=MainListAdapter.getActionValue(context,item);
+                item.display_additions=MainListAdapter.getAdditionValue(context,item);
             }
             if(applaunching_service) AppLaunchingDetectionService.startService(context);
             else if(AppLaunchingDetectionService.queue.size()>0) AppLaunchingDetectionService.queue.getLast().stopSelf();

@@ -381,7 +381,7 @@ public class ValueUtils {
     /**
      * Use this method in a child thread
      */
-    public static Bitmap getDecodedBitmapFromFile(String filepath,int width,int height){
+    public static Bitmap getDecodedBitmapFromFile(String filepath,long maxSize){
         if(filepath==null) return null;
         BitmapFactory.Options options=new BitmapFactory.Options();
         options.inJustDecodeBounds=true;
@@ -389,7 +389,7 @@ public class ValueUtils {
         int width_res=options.outWidth;
         int height_res=options.outHeight;
         int sample=1;
-        while (width<width_res||height<height_res){
+        while (width_res*height_res>maxSize){
             sample*=2;
             width_res=width_res/sample;
             height_res=height_res/sample;

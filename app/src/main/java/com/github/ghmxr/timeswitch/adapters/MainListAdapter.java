@@ -688,7 +688,7 @@ public class MainListAdapter extends BaseAdapter {
             }
 
             String value_task_disable= ActionDisplayValue.ActionDisplayValueOfAdapter.getDisableTasksDisplayValue(context,actions[PublicConsts.ACTION_DISABLE_TASKS_LOCALE]);
-            if(value_task_enable.length()>0){
+            if(value_task_disable.length()>0){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(value_task_disable);
             }

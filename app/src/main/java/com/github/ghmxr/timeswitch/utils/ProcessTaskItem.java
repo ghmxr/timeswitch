@@ -17,6 +17,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
@@ -1263,9 +1264,9 @@ public class ProcessTaskItem {
                     public void run() {
                         try{
                             WallpaperManager wallpaperManager=WallpaperManager.getInstance(context);
-                            DisplayMetrics displayMetrics=context.getResources().getDisplayMetrics();
+                            //DisplayMetrics displayMetrics=context.getResources().getDisplayMetrics();
                             //use file path instead of uri
-                            Bitmap bitmap= ValueUtils.getDecodedBitmapFromFile(item.uri_wallpaper_desktop,displayMetrics.widthPixels,displayMetrics.heightPixels);
+                            Bitmap bitmap= BitmapFactory.decodeFile(item.uri_wallpaper_desktop);//ValueUtils.getDecodedBitmapFromFile(item.uri_wallpaper_desktop,1920*1080);
                             //this is for the task already set from old versions and can execute successfully
                             if(bitmap==null) bitmap= MediaStore.Images.Media.getBitmap(context.getContentResolver(), Uri.parse(item.uri_wallpaper_desktop));
                             wallpaperManager.setBitmap(bitmap);
