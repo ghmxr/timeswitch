@@ -147,6 +147,8 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		findViewById(R.id.taskgui_operations_area_disable).setOnClickListener(this);
 		findViewById(R.id.taskgui_operations_area_app_launch).setOnClickListener(this);
 		findViewById(R.id.taskgui_operations_area_app_close).setOnClickListener(this);
+		findViewById(R.id.taskgui_operations_area_autorotation).setOnClickListener(this);
+		findViewById(R.id.taskgui_operations_area_app_force_close).setOnClickListener(this);
 
 		findViewById(R.id.layout_taskgui_area_additional_notify).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_area_additional_autodelete).setOnClickListener(this);
@@ -771,7 +773,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			case R.id.taskgui_operations_area_notification: case R.id.taskgui_operations_area_net: case R.id.taskgui_operations_area_gps:
 			case R.id.taskgui_operations_area_airplane_mode: case R.id.taskgui_operations_area_devicecontrol: case R.id.taskgui_operations_area_toast:
 			case R.id.taskgui_operations_area_enable: case R.id.taskgui_operations_area_disable: case R.id.taskgui_operations_area_app_launch:
-			case R.id.taskgui_operations_area_app_close:{
+			case R.id.taskgui_operations_area_app_close: case R.id.taskgui_operations_area_app_force_close: case R.id.taskgui_operations_area_autorotation: {
 				Intent i=new Intent(this,Actions.class);
 				i.putExtra(Actions.EXTRA_TASK_ID,taskitem.id);
 				i.putExtra(Actions.EXTRA_ACTIONS,taskitem.actions);

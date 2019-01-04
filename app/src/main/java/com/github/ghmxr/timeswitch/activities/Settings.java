@@ -340,9 +340,7 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
     public void finish(){
         super.finish();
         if(flag_restart_main){
-            for(BaseActivity b:queue){
-                if(b instanceof Main) b.finish();
-            }
+            while (BaseActivity.queue.size()>0) BaseActivity.queue.getLast().finish();
             startActivity(new Intent(this,Main.class));
         }
     }

@@ -128,7 +128,7 @@ public class PublicConsts {
 	public static final int EXCEPTION_WIFI_DISCONNECTED								=	36;
 
 
-	public static final int ACTION_LENGTH =20;
+	public static final int ACTION_LENGTH =21;
 	public static final int ACTION_WIFI_LOCALE											=		0;
 	public static final int ACTION_BLUETOOTH_LOCALE										=		1;	
 	public static final int ACTION_RING_MODE_LOCALE 									=		2;
@@ -166,6 +166,7 @@ public class PublicConsts {
 	public static final int ACTION_LAUNCH_APP_PACKAGES									=		17;
 	public static final int ACTION_STOP_APP_PACKAGES									=		18;
 	public static final int ACTION_FORCE_STOP_APP_PACKAGES								=		19;
+	public static final int ACTION_AUTOROTATION											=		20;
 
 	public static final int VOLUME_RING_LOCALE=0;
 	public static final int VOLUME_MEDIA_LOCALE=1;

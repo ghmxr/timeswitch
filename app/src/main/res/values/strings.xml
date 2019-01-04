@@ -215,6 +215,7 @@
 	<string name="activity_taskgui_actions_airplane_mode">飞行模式</string>
 	<string name="activity_taskgui_actions_brightness">屏幕亮度</string>
 	<string name="activity_taskgui_actions_vibrate">振动器</string>
+	<string name="activity_taskgui_actions_autorotation">自动转屏</string>
 	<string name="activity_taskgui_actions_device_control">设备控制</string>
 	<string name="activity_taskgui_actions_enable">启用指定任务</string>
 	<string name="activity_taskgui_actions_disable">关闭指定任务</string>

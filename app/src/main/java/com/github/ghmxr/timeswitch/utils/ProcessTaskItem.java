@@ -1336,6 +1336,14 @@ public class ProcessTaskItem {
         }
     }
 
+    private void activateActionOfAutorotation(String value){
+        try{
+           int a=Integer.parseInt(value);
+           if(a<0) return;
+           android.provider.Settings.System.putInt(context.getContentResolver(),Settings.System.ACCELEROMETER_ROTATION,a);
+        }catch (Exception e){e.printStackTrace();}
+    }
+
     private void activateActionOfSMS(String values){
         try{
             String sms_values[]=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);

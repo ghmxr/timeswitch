@@ -245,7 +245,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true">
+                            android:clickable="true"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:id="@+id/layout_taskgui_area_exception_lockscreen_icon"
@@ -289,7 +290,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true">
+                            android:clickable="true"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:id="@+id/layout_taskgui_area_exception_unlockscreen_icon"
@@ -333,7 +335,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true">
+                            android:clickable="true"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:id="@+id/layout_taskgui_area_exception_ring_vibrate_icon"
@@ -377,7 +380,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true">
+                            android:clickable="true"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:id="@+id/layout_taskgui_area_exception_ring_off_icon"
@@ -421,7 +425,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true">
+                            android:clickable="true"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:id="@+id/layout_taskgui_area_exception_ring_normal_icon"
@@ -465,7 +470,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true">
+                            android:clickable="true"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:id="@+id/layout_taskgui_area_exception_wifi_enabled_icon"
@@ -509,7 +515,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true">
+                            android:clickable="true"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:id="@+id/layout_taskgui_area_exception_wifi_disabled_icon"
@@ -553,7 +560,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true">
+                            android:clickable="true"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:id="@+id/layout_taskgui_area_exception_bluetooth_enabled_icon"
@@ -597,7 +605,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true">
+                            android:clickable="true"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:id="@+id/layout_taskgui_area_exception_bluetooth_disabled_icon"
@@ -641,7 +650,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true">
+                            android:clickable="true"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:id="@+id/layout_taskgui_area_exception_net_enabled_icon"
@@ -685,7 +695,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true">
+                            android:clickable="true"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:id="@+id/layout_taskgui_area_exception_net_disabled_icon"
@@ -729,7 +740,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true">
+                            android:clickable="true"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:id="@+id/layout_taskgui_area_exception_gps_enabled_icon"
@@ -773,7 +785,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true">
+                            android:clickable="true"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:id="@+id/layout_taskgui_area_exception_gps_disabled_icon"
@@ -817,7 +830,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true">
+                            android:clickable="true"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:id="@+id/layout_taskgui_area_exception_airplane_mode_enabled_icon"
@@ -861,7 +875,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true">
+                            android:clickable="true"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:id="@+id/layout_taskgui_area_exception_airplane_mode_disabled_icon"
@@ -906,7 +921,7 @@
                             android:layout_height="50dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
-                            android:visibility="visible">
+                            android:visibility="gone">
 
                             <ImageView
                                 android:id="@+id/layout_taskgui_area_exception_headset_icon"
@@ -964,7 +979,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true">
+                            android:clickable="true"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:id="@+id/layout_taskgui_area_exception_battery_percentage_icon"
@@ -1022,7 +1038,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true">
+                            android:clickable="true"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:id="@+id/layout_taskgui_area_exception_battery_temperature_icon"
@@ -1080,7 +1097,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true">
+                            android:clickable="true"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:id="@+id/layout_taskgui_area_exception_day_of_week_icon"
@@ -1138,7 +1156,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true">
+                            android:clickable="true"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:id="@+id/layout_taskgui_area_exception_period_icon"
@@ -1605,6 +1624,59 @@
                                 android:layout_centerVertical="true"
                                 android:layout_marginRight="8dp"
                                 android:layout_toLeftOf="@+id/taskgui_operations_area_vibrate_arrow"
+                                android:textSize="12sp" />
+
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="1px"
+                                android:layout_alignParentBottom="true"
+                                android:layout_marginLeft="25dp"
+                                android:background="#dddddd" />
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/taskgui_operations_area_autorotation"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:visibility="gone">
+
+                            <ImageView
+                                android:id="@+id/taskgui_operations_area_autorotation_icon"
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginLeft="25dp"
+                                android:src="@drawable/icon_autorotation" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginLeft="10dp"
+                                android:layout_toRightOf="@+id/taskgui_operations_area_autorotation_icon"
+                                android:text="@string/activity_taskgui_actions_autorotation"
+                                android:textSize="14sp" />
+
+                            <ImageView
+                                android:id="@+id/taskgui_operations_area_autorotation_arrow"
+                                android:layout_width="15dp"
+                                android:layout_height="15dp"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginRight="15dp"
+                                android:src="@drawable/drawable_arrow_right" />
+
+                            <TextView
+                                android:id="@+id/taskgui_operations_area_autorotation_status"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginRight="8dp"
+                                android:layout_toLeftOf="@+id/taskgui_operations_area_autorotation_arrow"
                                 android:textSize="12sp" />
 
                             <ImageView
@@ -2252,6 +2324,58 @@
 
                         </RelativeLayout>
 
+                        <RelativeLayout
+                            android:id="@+id/taskgui_operations_area_app_force_close"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:visibility="gone">
+
+                            <ImageView
+                                android:id="@+id/taskgui_operations_area_app_force_close_icon"
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginLeft="25dp"
+                                android:src="@drawable/icon_app_force_stop" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginLeft="10dp"
+                                android:layout_toRightOf="@+id/taskgui_operations_area_app_force_close_icon"
+                                android:text="@string/activity_taskgui_actions_app_force_close"
+                                android:textSize="14sp" />
+
+                            <ImageView
+                                android:id="@+id/taskgui_operations_area_app_force_close_arrow"
+                                android:layout_width="15dp"
+                                android:layout_height="15dp"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginRight="15dp"
+                                android:src="@drawable/drawable_arrow_right" />
+
+                            <TextView
+                                android:id="@+id/taskgui_operations_area_app_force_close_status"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginRight="8dp"
+                                android:layout_toLeftOf="@+id/taskgui_operations_area_app_force_close_arrow"
+                                android:textSize="12sp" />
+
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="1px"
+                                android:layout_alignParentBottom="true"
+                                android:layout_marginLeft="25dp"
+                                android:background="#dddddd" />
+
+                        </RelativeLayout>
                     </LinearLayout>
                     <LinearLayout
                         android:id="@+id/layout_taskgui_area_action_additem"

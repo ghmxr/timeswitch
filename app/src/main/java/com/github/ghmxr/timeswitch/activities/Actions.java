@@ -121,6 +121,8 @@ public class Actions extends BaseActivity implements View.OnClickListener{
         findViewById(R.id.actions_disable).setOnClickListener(this);
         findViewById(R.id.actions_app_open).setOnClickListener(this);
         findViewById(R.id.actions_app_close).setOnClickListener(this);
+        findViewById(R.id.actions_app_force_close).setOnClickListener(this);
+        findViewById(R.id.actions_autorotation).setOnClickListener(this);
         try{
             Intent data=getIntent();
             actions=data.getStringArrayExtra(EXTRA_ACTIONS);
@@ -845,6 +847,14 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                 }).start();
             }
             break;
+            case R.id.actions_app_force_close:{
+
+            }
+            break;
+            case R.id.actions_autorotation:{
+
+            }
+            break;
         }
     }
 
@@ -1265,7 +1275,9 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                     @Override
                     public void onClick(View view) {
                         Toast.makeText(Actions.this,getResources().getString(R.string.activity_taskgui_root_toast_attention),Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(Actions.this, com.github.ghmxr.timeswitch.activities.Settings.class));
+                        Intent i=new Intent(Actions.this,com.github.ghmxr.timeswitch.activities.Settings.class);
+                        i.putExtra(EXTRA_TITLE_COLOR,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
+                        startActivity(i);
                     }
                 }).show();
     }

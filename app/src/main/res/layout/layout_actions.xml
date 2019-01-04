@@ -392,6 +392,58 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/actions_autorotation"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true">
+
+                <ImageView
+                    android:id="@+id/actions_autorotation_icon"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="25dp"
+                    android:src="@drawable/icon_autorotation" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@+id/actions_autorotation_icon"
+                    android:text="@string/activity_taskgui_actions_autorotation"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:id="@+id/actions_autorotation_arrow"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/drawable_arrow_right" />
+
+                <TextView
+                    android:id="@+id/actions_autorotation_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="8dp"
+                    android:layout_toLeftOf="@+id/actions_autorotation_arrow"
+                    android:textSize="12sp" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginLeft="25dp"
+                    android:background="#dddddd" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:id="@+id/actions_wallpaper"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -1020,8 +1072,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:visibility="gone">
+                android:clickable="true">
 
                 <ImageView
                     android:id="@+id/actions_app_force_close_icon"

@@ -391,8 +391,8 @@ public class ValueUtils {
         int sample=1;
         while (width_res*height_res>maxSize){
             sample*=2;
-            width_res=width_res/sample;
-            height_res=height_res/sample;
+            width_res=width_res/2;
+            height_res=height_res/2;
         }
         options.inSampleSize=sample;
         //Log.d("Scale","Bitmap scale value is "+options.inSampleSize);
