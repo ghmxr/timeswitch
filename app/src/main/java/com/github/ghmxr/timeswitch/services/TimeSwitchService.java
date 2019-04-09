@@ -10,7 +10,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Handler;
@@ -30,11 +29,10 @@ import com.github.ghmxr.timeswitch.activities.Profile;
 import com.github.ghmxr.timeswitch.activities.Settings;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
-import com.github.ghmxr.timeswitch.receivers.BatteryReceiver;
-import com.github.ghmxr.timeswitch.receivers.HeadsetPlugReceiver;
-import com.github.ghmxr.timeswitch.receivers.NetworkReceiver;
+import com.github.ghmxr.timeswitch.triggers.receivers.BatteryReceiver;
+import com.github.ghmxr.timeswitch.triggers.receivers.HeadsetPlugReceiver;
+import com.github.ghmxr.timeswitch.triggers.receivers.NetworkReceiver;
 import com.github.ghmxr.timeswitch.runnables.RefreshListItems;
-import com.github.ghmxr.timeswitch.timers.CustomTimerTask;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 
@@ -51,7 +49,12 @@ public class TimeSwitchService extends Service {
 
     public static AlarmManager alarmManager;
 
+    /**
+     * @deprecated try to use static field "service"
+     */
     public static LinkedList<TimeSwitchService> service_queue=new LinkedList<>();
+
+    public static TimeSwitchService service;
 
     public static MyHandler mHandler;
 
@@ -89,9 +92,21 @@ public class TimeSwitchService extends Service {
     @Override
     public void onCreate(){
         super.onCreate();
-        mHandler=new MyHandler();
+        if(service!=null){
+            service.stopSelf();
+            service=null;
+        }
+        if(mHandler==null) mHandler=new MyHandler();
         if(!service_queue.contains(this)) service_queue.add(this);
-        Log.i("TimeSwitchService","onCreate called and queue size is "+service_queue.size());
+        if(wakelock==null){
+            try{
+                wakelock=((PowerManager)getSystemService(Context.POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"WakeLock for Java Timer");
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        service=this;
+        //Log.i("TimeSwitchService","onCreate called and queue size is "+service_queue.size());
         if(getSharedPreferences(PublicConsts.PREFERENCES_NAME,Context.MODE_PRIVATE).getInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_DEFAULT)==PublicConsts.PREFERENCES_SERVICE_TYPE_FORGROUND){
             makeThisForeground();
         }
@@ -103,41 +118,33 @@ public class TimeSwitchService extends Service {
         if(alarmManager==null) {
             alarmManager=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
         }
-        SharedPreferences settings=getSharedPreferences(PublicConsts.PREFERENCES_NAME, Activity.MODE_PRIVATE);
-        if(settings.getInt(PublicConsts.PREFERENCES_API_TYPE,PublicConsts.PREFERENCES_API_TYPE_DEFAULT)==PublicConsts.API_ANDROID_ALARM_MANAGER){
-           CustomTimerTask.timerTaskStatus=null;
-            if(wakelock!=null){
-                wakelock.release();
-                wakelock=null;
-            }
-        }
 
         try{
             if(batteryReceiver!=null){
-                batteryReceiver.unregisterReceiver();
+                batteryReceiver.cancel();
             }
         }catch (Exception e){e.printStackTrace();}
 
         batteryReceiver=new BatteryReceiver(this,null);
-        batteryReceiver.registerReceiver();
+        batteryReceiver.activate();
 
         try{
             if(networkReceiver!=null){
-                networkReceiver.unregisterReceiver();
+                networkReceiver.cancel();
             }
         }catch (Exception e){e.printStackTrace();}
 
         networkReceiver=new NetworkReceiver(this,null);
-        networkReceiver.registerReceiver();
+        networkReceiver.activate();
 
         try{
             if(headsetPlugReceiver!=null){
-                headsetPlugReceiver.unregisterReceiver();
+                headsetPlugReceiver.cancel();
             }
         }catch (Exception e){e.printStackTrace();}
 
         headsetPlugReceiver=new HeadsetPlugReceiver(this,null);
-        headsetPlugReceiver.registerReceiver();
+        headsetPlugReceiver.activate();
 
         try{
             try{
@@ -311,7 +318,7 @@ public class TimeSwitchService extends Service {
             wakelock=null;
         }
         for(TaskItem i:list){
-            i.cancelTrigger();
+            i.cancelTask();
         }
         list.clear();
         Log.d("TimeSwitchService","onDestroy method called");
@@ -369,6 +376,25 @@ public class TimeSwitchService extends Service {
                 }
                 if(AppLaunchingDetectionService.queue.size()>0) AppLaunchingDetectionService.queue.getLast().makeThisForeGround();
             }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * can try to call this method on a child thread
+     */
+    public static synchronized void refreshWakeLock(Context context){
+
+        try{
+            boolean need_wakelock=false;
+            for(TaskItem item:list){
+                if(item.trigger_type==PublicConsts.TRIGGER_TYPE_SINGLE||item.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME||item.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_WEEK){
+                    need_wakelock=true;
+                    break;
+                }
+            }
+
         }catch (Exception e){
             e.printStackTrace();
         }

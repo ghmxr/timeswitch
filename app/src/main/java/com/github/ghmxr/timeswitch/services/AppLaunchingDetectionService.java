@@ -22,7 +22,11 @@ import java.util.List;
 
 public class AppLaunchingDetectionService extends Service implements Runnable {
     private boolean flag=false;
+    /**
+     * @deprecated
+     */
     public static LinkedList<AppLaunchingDetectionService> queue=new LinkedList<>();
+    public static AppLaunchingDetectionService service;
     public static String ACTION_LAUNCH_INFO_CHANGED= PublicConsts.PACKAGE_NAME+"action.PACKAGE_LAUNCH_INFO_CHANGED";
     /**
      * get a string value indicating the package name;
@@ -38,6 +42,7 @@ public class AppLaunchingDetectionService extends Service implements Runnable {
     @Override
     public void onCreate(){
         super.onCreate();
+        service=this;
         if(getSharedPreferences(PublicConsts.PREFERENCES_NAME,Context.MODE_PRIVATE).getInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_DEFAULT)==PublicConsts.PREFERENCES_SERVICE_TYPE_FORGROUND){
             makeThisForeGround();
         }

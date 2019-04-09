@@ -1,6 +1,5 @@
-package com.github.ghmxr.timeswitch.receivers;
+package com.github.ghmxr.timeswitch.triggers.receivers;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -9,17 +8,13 @@ import android.util.Log;
 
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
-import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 
-public class HeadsetPlugReceiver extends BroadcastReceiver implements Runnable {
-    Context context;
-    TaskItem item;
+public class HeadsetPlugReceiver extends BaseBroadcastReceiver{
     private boolean mLock=true;
     public static boolean isHeadsetPlugIn =false;
 
     public HeadsetPlugReceiver(Context context, @Nullable TaskItem item) {
-        this.context=context;
-        this.item=item;
+        super(context,item);
     }
 
     public static boolean isHeadsetPluggedIn(){
@@ -44,7 +39,7 @@ public class HeadsetPlugReceiver extends BroadcastReceiver implements Runnable {
             if(item.trigger_type== PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_IN){
                 if(intent.getIntExtra("state",-1)==1){
                     Log.d("HEADSET","is PLUG IN");
-                    activate();
+                    runActions();
                     return;
                 }
                 if(intent.getIntExtra("state",-1)==0){
@@ -55,7 +50,7 @@ public class HeadsetPlugReceiver extends BroadcastReceiver implements Runnable {
             if(item.trigger_type==PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT){
                 if(intent.getIntExtra("state",-1)==0){
                     Log.d("HEADSET","is PLUG OUT");
-                    activate();
+                    runActions();
                     return;
                 }
                 if(intent.getIntExtra("state",-1)==1){
@@ -66,7 +61,8 @@ public class HeadsetPlugReceiver extends BroadcastReceiver implements Runnable {
         }
     }
 
-    public void registerReceiver(){
+    @Override
+    public void activate() {
         try{
             context.registerReceiver(this,new IntentFilter(Intent.ACTION_HEADSET_PLUG));
             //context.registerReceiver(this,new IntentFilter(AudioManager.ACTION_HEADSET_PLUG));
@@ -75,6 +71,21 @@ public class HeadsetPlugReceiver extends BroadcastReceiver implements Runnable {
         }
     }
 
+    @Override
+    public void cancel() {
+        super.cancel();
+    }
+
+    /**
+     * @deprecated
+     */
+    public void registerReceiver(){
+
+    }
+
+    /**
+     * @deprecated
+     */
     public void unregisterReceiver(){
         try{
             context.unregisterReceiver(this);
@@ -83,16 +94,11 @@ public class HeadsetPlugReceiver extends BroadcastReceiver implements Runnable {
         }
     }
 
-    private void activate(){
+    private void runActions(){
         if(!mLock){
             mLock=true;
-            new Thread(this).start();
+            runProcessTask();
         }
 
-    }
-
-    @Override
-    public void run(){
-        new ProcessTaskItem(context,item).activateTaskItem();
     }
 }

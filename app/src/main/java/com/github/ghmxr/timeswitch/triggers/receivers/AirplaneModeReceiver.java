@@ -1,21 +1,16 @@
-package com.github.ghmxr.timeswitch.receivers;
+package com.github.ghmxr.timeswitch.triggers.receivers;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
-import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 
-public class AirplaneModeReceiver extends BroadcastReceiver implements Runnable {
-    private Context context;
-    private TaskItem item;
-    //private boolean isRegistered=false;
+public class AirplaneModeReceiver extends BaseBroadcastReceiver{
+
     public AirplaneModeReceiver(Context context,TaskItem item) {
-        this.context=context;
-        this.item=item;
+        super(context,item);
     }
 
     @Override
@@ -24,24 +19,37 @@ public class AirplaneModeReceiver extends BroadcastReceiver implements Runnable 
         boolean enabled=intent.getBooleanExtra("state",false);
         if(item==null) return;
         if(item.trigger_type== PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON&&enabled){
-            activate();
+            runProcessTask();
         }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF&&!enabled){
-            activate();
+            runProcessTask();
         }
 
     }
 
-    public void registerReceiver(){
-       // if(!isRegistered){
+    @Override
+    public void activate() {
         try{
             context.registerReceiver(this,new IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED));
         }catch (Exception e){
             e.printStackTrace();
         }
-            //isRegistered=true;
-       // }
     }
 
+    @Override
+    public void cancel() {
+        super.cancel();
+    }
+
+    /**
+     * @deprecated
+     */
+    public void registerReceiver(){
+
+    }
+
+    /**
+     * @deprecated
+     */
     public void unRegisterReceiver(){
         //if(isRegistered){
         try{
@@ -53,12 +61,4 @@ public class AirplaneModeReceiver extends BroadcastReceiver implements Runnable 
         //}
     }
 
-    private void activate(){
-        new Thread(this).start();
-    }
-
-    @Override
-    public void run() {
-        new ProcessTaskItem(context,item).activateTaskItem();
-    }
 }

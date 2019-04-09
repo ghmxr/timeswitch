@@ -128,7 +128,7 @@
 
         <service android:name=".services.AppLaunchingDetectionService"/>
 
-        <receiver android:name=".receivers.AlarmReceiver">
+        <receiver android:name=".triggers.timers.CustomAlarmReceiver$AlarmReceiver">
 
         </receiver>
 

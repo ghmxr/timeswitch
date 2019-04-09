@@ -45,7 +45,7 @@ public class RefreshListItems implements Runnable {
             if(list!=null){
                 for(int i=0;i<list.size();i++){
                     if(isInterrupted) break;
-                    list.get(i).cancelTrigger();
+                    list.get(i).cancelTask();
                 }
             }
 
@@ -326,7 +326,7 @@ public class RefreshListItems implements Runnable {
                     e.printStackTrace();
                 }
 
-                if(item.isenabled) item.activateTrigger(context);
+                if(item.isenabled) item.activateTask(context);
                 list.add(item);
             }
             for(TaskItem item : TimeSwitchService.list){

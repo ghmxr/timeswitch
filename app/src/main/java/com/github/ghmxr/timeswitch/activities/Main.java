@@ -625,7 +625,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
                         for(int i=0;i<isSelected.length;i++){
                             if(isSelected[i]){
                                 int key=TimeSwitchService.list.get(i).id;
-                                TimeSwitchService.list.get(i).cancelTrigger();
+                                TimeSwitchService.list.get(i).cancelTask();
                                 //list.remove(i);
                                 database.delete(SQLConsts.getCurrentTableName(Main.this),SQLConsts.SQL_TASK_COLUMN_ID +"="+key,null);
                             }

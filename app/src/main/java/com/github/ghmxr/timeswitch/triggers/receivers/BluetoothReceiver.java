@@ -1,23 +1,17 @@
-package com.github.ghmxr.timeswitch.receivers;
+package com.github.ghmxr.timeswitch.triggers.receivers;
 
 import android.bluetooth.BluetoothAdapter;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
-import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 
-public class BluetoothReceiver extends BroadcastReceiver implements Runnable {
-    private Context context;
-    private  TaskItem item;
-   // private boolean isRegistered=false;
+public class BluetoothReceiver extends BaseBroadcastReceiver{
 
     public BluetoothReceiver(Context context, TaskItem item) {
-        this.context=context;
-        this.item=item;
+       super(context,item);
     }
 
     @Override
@@ -26,43 +20,42 @@ public class BluetoothReceiver extends BroadcastReceiver implements Runnable {
         if(intent.getAction().equals(BluetoothAdapter.ACTION_STATE_CHANGED)){
             if(item==null) return;
             if(item.trigger_type== PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON&&intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,-1)==BluetoothAdapter.STATE_ON){
-                activate();
+                runProcessTask();
             }
 
             if(item.trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF&&intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,-1)==BluetoothAdapter.STATE_OFF){
-                activate();
+                runProcessTask();
             }
         }
     }
 
-    public void registerReceiver(){
-        //if(!isRegistered){
+    @Override
+    public void activate() {
         try{
             context.registerReceiver(this,new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    /**
+     * @deprecated
+     */
+    public void registerReceiver(){
+        //if(!isRegistered){
+
         //    isRegistered=true;
        // }
     }
 
+    /**
+     * @deprecated
+     */
     public void unRegisterReceiver(){
-       // if(isRegistered){
         try{
             context.unregisterReceiver(this);
         }catch (Exception e) {
             e.printStackTrace();
         }
-        //    isRegistered=false;
-       // }
-    }
-
-    private void activate(){
-        new Thread(this).start();
-    }
-
-    @Override
-    public void run() {
-        new ProcessTaskItem(context,item).activateTaskItem();
     }
 }

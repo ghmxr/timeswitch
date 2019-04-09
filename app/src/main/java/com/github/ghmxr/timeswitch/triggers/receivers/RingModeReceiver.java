@@ -1,26 +1,18 @@
-package com.github.ghmxr.timeswitch.receivers;
+package com.github.ghmxr.timeswitch.triggers.receivers;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
-import android.media.RingtoneManager;
 
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
-import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 
-public class RingModeReceiver extends BroadcastReceiver implements Runnable {
-
-    private Context context;
-    private TaskItem item;
-    //private boolean isRegistered=false;
+public class RingModeReceiver extends BaseBroadcastReceiver{
     private boolean mLock=true;
 
     public RingModeReceiver(Context context,TaskItem item) {
-        this.context=context;
-        this.item=item;
+        super(context,item);
     }
 
     @Override
@@ -32,7 +24,7 @@ public class RingModeReceiver extends BroadcastReceiver implements Runnable {
                 default:break;
                 case PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF:{
                     if(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE,-1)==AudioManager.RINGER_MODE_SILENT){
-                        activate();
+                        runActions();
                     }else{
                         mLock=false;
                     }
@@ -40,7 +32,7 @@ public class RingModeReceiver extends BroadcastReceiver implements Runnable {
                 break;
                 case PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE:{
                     if(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE,-1)==AudioManager.RINGER_MODE_VIBRATE){
-                        activate();
+                        runActions();
                     }else {
                         mLock=false;
                     }
@@ -48,7 +40,7 @@ public class RingModeReceiver extends BroadcastReceiver implements Runnable {
                 break;
                 case PublicConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL:{
                     if(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE,-1)==AudioManager.RINGER_MODE_NORMAL){
-                        activate();
+                        runActions();
                     }else {
                         mLock=false;
                     }
@@ -58,17 +50,28 @@ public class RingModeReceiver extends BroadcastReceiver implements Runnable {
         }
     }
 
-    public void registerReceiver(){
-        //if(!isRegistered){
+    @Override
+    public void activate() {
         try{
             context.registerReceiver(this,new IntentFilter(AudioManager.RINGER_MODE_CHANGED_ACTION));
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    /**
+     * @deprecated
+     */
+    public void registerReceiver(){
+        //if(!isRegistered){
+
           //  isRegistered=true;
         //}
     }
 
+    /**
+     * @deprecated
+     */
     public void unRegisterReceiver(){
        // if(isRegistered){
         try{
@@ -80,16 +83,11 @@ public class RingModeReceiver extends BroadcastReceiver implements Runnable {
        // }
     }
 
-    private void activate(){
+    private void runActions(){
         if(!mLock){
-            new Thread(this).start();
             mLock=true;
+            runProcessTask();
         }
 
-    }
-
-    @Override
-    public void run() {
-        new ProcessTaskItem(context,item).activateTaskItem();
     }
 }

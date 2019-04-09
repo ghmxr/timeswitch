@@ -1,26 +1,22 @@
-package com.github.ghmxr.timeswitch.receivers;
+package com.github.ghmxr.timeswitch.triggers.receivers;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.util.Log;
 
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
 import com.github.ghmxr.timeswitch.services.AppLaunchingDetectionService;
-import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
-public class AppLaunchDetectionReceiver extends BroadcastReceiver implements Runnable {
-    private TaskItem item;
-    private Context context;
+public class AppLaunchDetectionReceiver extends BaseBroadcastReceiver{
+    static LinkedList<AppLaunchDetectionReceiver> app_detecting_receivers=new LinkedList<>();
     private Map<String,Boolean> packageLock=new HashMap<>();
     public AppLaunchDetectionReceiver(Context context, TaskItem item) {
-        this.context=context;
-        this.item=item;
+        super(context,item);
         if(item==null||item.package_names==null||item.package_names.length==0) return;
         for(String name:item.package_names){
             if(name.trim().equals("")) continue;
@@ -42,7 +38,7 @@ public class AppLaunchDetectionReceiver extends BroadcastReceiver implements Run
             if(item.trigger_type== PublicConsts.TRIGGER_TYPE_APP_LAUNCHED){
                 for(String packagename:packageNames){
                     if(packagename.equals(package_name)){
-                        if(if_launched) activate(packagename);
+                        if(if_launched) runActions(packagename);
                         else packageLock.put(packagename,false);
                     }
                 }
@@ -51,7 +47,7 @@ public class AppLaunchDetectionReceiver extends BroadcastReceiver implements Run
             if(item.trigger_type==PublicConsts.TRIGGER_TYPE_APP_CLOSED){
                 for(String packagename:packageNames){
                     if(packagename.equals(package_name)){
-                        if(!if_launched) activate(packagename);
+                        if(!if_launched) runActions(packagename);
                         else packageLock.put(packagename,false);
                     }
                 }
@@ -59,7 +55,12 @@ public class AppLaunchDetectionReceiver extends BroadcastReceiver implements Run
         }
     }
 
-    public void registerReceiver(){
+    @Override
+    public void activate() {
+        try{
+            if(!app_detecting_receivers.contains(this)) app_detecting_receivers.add(this);
+            AppLaunchingDetectionService.startService(context);
+        }catch (Exception e){e.printStackTrace();}
         try{
             context.registerReceiver(this,new IntentFilter(AppLaunchingDetectionService.ACTION_LAUNCH_INFO_CHANGED));
         }catch (Exception e){
@@ -67,23 +68,20 @@ public class AppLaunchDetectionReceiver extends BroadcastReceiver implements Run
         }
     }
 
-    public void unregisterReceiver(){
+    @Override
+    public void cancel() {
+        super.cancel();
         try{
-            context.unregisterReceiver(this);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+            if(app_detecting_receivers.contains(this)) app_detecting_receivers.remove(this);
+            if(app_detecting_receivers.size()==0) AppLaunchingDetectionService.queue.getLast().stopDetecting();
+        }catch (Exception e){e.printStackTrace();}
     }
 
-    private void activate(String package_name){
+    private void runActions(String package_name){
         if(!packageLock.get(package_name)){
             packageLock.put(package_name,true);
-            new Thread(this).start();
+            runProcessTask();
         }
     }
 
-    @Override
-    public void run() {
-        new ProcessTaskItem(context,item).activateTaskItem();
-    }
 }

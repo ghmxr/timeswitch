@@ -1,26 +1,9 @@
 package com.github.ghmxr.timeswitch.data;
 
-import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Build;
 
-import com.github.ghmxr.timeswitch.receivers.APReceiver;
-import com.github.ghmxr.timeswitch.receivers.AirplaneModeReceiver;
-import com.github.ghmxr.timeswitch.receivers.AlarmReceiver;
-import com.github.ghmxr.timeswitch.receivers.AppLaunchDetectionReceiver;
-import com.github.ghmxr.timeswitch.receivers.BatteryReceiver;
-import com.github.ghmxr.timeswitch.receivers.BluetoothReceiver;
-import com.github.ghmxr.timeswitch.receivers.CustomBroadcastReceiver;
-import com.github.ghmxr.timeswitch.receivers.HeadsetPlugReceiver;
-import com.github.ghmxr.timeswitch.receivers.NetworkReceiver;
-import com.github.ghmxr.timeswitch.receivers.RingModeReceiver;
-import com.github.ghmxr.timeswitch.services.AppLaunchingDetectionService;
-import com.github.ghmxr.timeswitch.services.TimeSwitchService;
-import com.github.ghmxr.timeswitch.timers.CustomTimerTask;
+import com.github.ghmxr.timeswitch.triggers.Trigger;
+import com.github.ghmxr.timeswitch.triggers.TriggerUtil;
 
 import java.util.Arrays;
 
@@ -131,11 +114,7 @@ public class TaskItem implements Comparable<TaskItem>{
 
 	public boolean addition_isFolded=false;
 
-	/**
-	 *任务的触发器
-	 */
-	public Object triggerObject=null;
-
+	public Trigger trigger;
 
 	/**
 	 * adapter display values
@@ -257,190 +236,13 @@ public class TaskItem implements Comparable<TaskItem>{
 				'}';
 	}
 
-	public void activateTrigger(Context context){
-		SharedPreferences settings=context.getSharedPreferences(PublicConsts.PREFERENCES_NAME, Activity.MODE_PRIVATE);
-		if(settings.getInt(PublicConsts.PREFERENCES_API_TYPE,PublicConsts.PREFERENCES_API_TYPE_DEFAULT)==PublicConsts.API_JAVA_TIMER){
-			if (this.trigger_type == PublicConsts.TRIGGER_TYPE_SINGLE || this.trigger_type == PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME
-					|| this.trigger_type == PublicConsts.TRIGGER_TYPE_LOOP_WEEK) {
-				triggerObject=new CustomTimerTask(context,this).activateTimerTask();
-			}
-		}else if(settings.getInt(PublicConsts.PREFERENCES_API_TYPE,PublicConsts.PREFERENCES_API_TYPE_DEFAULT)==PublicConsts.API_ANDROID_ALARM_MANAGER){
-			if (this.trigger_type == PublicConsts.TRIGGER_TYPE_SINGLE || this.trigger_type == PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME
-					|| this.trigger_type == PublicConsts.TRIGGER_TYPE_LOOP_WEEK){
-				Intent intent = new Intent();
-				intent.setClass(context, AlarmReceiver.class);
-				intent.putExtra(AlarmReceiver.TAG_TASKITEM_ID,id);
-				triggerObject= PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-				activateTriggerOfAlarmManager((PendingIntent)triggerObject);
-			}
-		}
-
-		if(trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE||trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE
-				||trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE||trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE){
-			triggerObject=new BatteryReceiver(context,this);
-			((BatteryReceiver)triggerObject).registerReceiver();
-		}
-
-		if(trigger_type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST){
-			triggerObject=new CustomBroadcastReceiver(context,selectedAction,this);
-			((CustomBroadcastReceiver)triggerObject).registerReceiver();
-		}
-
-		if(trigger_type==PublicConsts.TRIGGER_TYPE_SCREEN_ON){
-			triggerObject=new CustomBroadcastReceiver(context,Intent.ACTION_SCREEN_ON,this);
-			((CustomBroadcastReceiver)triggerObject).registerReceiver();
-		}
-
-		if(trigger_type==PublicConsts.TRIGGER_TYPE_SCREEN_OFF){
-			triggerObject=new CustomBroadcastReceiver(context,Intent.ACTION_SCREEN_OFF,this);
-			((CustomBroadcastReceiver)triggerObject).registerReceiver();
-		}
-
-		if(trigger_type==PublicConsts.TRIGGER_TYPE_POWER_CONNECTED){
-			triggerObject=new CustomBroadcastReceiver(context,Intent.ACTION_POWER_CONNECTED,this);
-			((CustomBroadcastReceiver)triggerObject).registerReceiver();
-		}
-
-		if(trigger_type==PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED){
-			triggerObject=new CustomBroadcastReceiver(context,Intent.ACTION_POWER_DISCONNECTED,this);
-			((CustomBroadcastReceiver)triggerObject).registerReceiver();
-		}
-
-		if(trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED||trigger_type==PublicConsts.TRIGGER_TYPE_WIFI_DISCONNECTED
-				||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF
-				||trigger_type==PublicConsts.TRIGGER_TYPE_NET_ON||trigger_type==PublicConsts.TRIGGER_TYPE_NET_OFF){
-			triggerObject=new NetworkReceiver(context,this);
-			((NetworkReceiver)triggerObject).registerReceiver();
-		}
-
-		if(trigger_type==PublicConsts.TRIGGER_TYPE_APP_LAUNCHED||trigger_type==PublicConsts.TRIGGER_TYPE_APP_CLOSED){
-			triggerObject=new AppLaunchDetectionReceiver(context,this);
-			if(AppLaunchingDetectionService.queue==null||AppLaunchingDetectionService.queue.size()<=0){
-				AppLaunchingDetectionService.startService(context);
-			}
-			((AppLaunchDetectionReceiver)triggerObject).registerReceiver();
-		}
-
-		//if(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF){
-		//	triggerObject=new NetworkReceiver(context,this);
-		//	((NetworkReceiver)triggerObject).registerReceiver();
-		//}
-
-		if(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF){
-			triggerObject=new BluetoothReceiver(context,this);
-			((BluetoothReceiver)triggerObject).registerReceiver();
-		}
-
-		if(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE
-				||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF){
-			triggerObject=new RingModeReceiver(context,this);
-			((RingModeReceiver)triggerObject).registerReceiver();
-		}
-
-		if(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF){
-			triggerObject=new AirplaneModeReceiver(context,this);
-			((AirplaneModeReceiver)triggerObject).registerReceiver();
-		}
-
-		if(trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED||trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED){
-			triggerObject=new APReceiver(context,this);
-			((APReceiver)triggerObject).registerReceiver();
-		}
-
-		if(trigger_type==PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_IN||trigger_type==PublicConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT){
-			triggerObject=new HeadsetPlugReceiver(context,this);
-			((HeadsetPlugReceiver)triggerObject).registerReceiver();
-		}
-
-
-
+	public void activateTask(Context context){
+		trigger= TriggerUtil.getTrigger(context,this);
+		trigger.activate();
 	}
 
-	public void cancelTrigger(){
-		if(triggerObject instanceof PendingIntent){
-			if(TimeSwitchService.alarmManager!=null) {
-				TimeSwitchService.alarmManager.cancel((PendingIntent) triggerObject);
-			}
-
-		}else if(triggerObject instanceof CustomTimerTask){
-			((CustomTimerTask) triggerObject).cancelTimer();
-		}else if(triggerObject instanceof BatteryReceiver){
-			((BatteryReceiver) triggerObject).unregisterReceiver();
-		}else if(triggerObject instanceof CustomBroadcastReceiver){
-			((CustomBroadcastReceiver)triggerObject).unRegisterReceiver();
-		}else if(triggerObject instanceof NetworkReceiver){
-			((NetworkReceiver)triggerObject).unregisterReceiver();
-		}else if(triggerObject instanceof BluetoothReceiver){
-			((BluetoothReceiver)triggerObject).unRegisterReceiver();
-		}else if(triggerObject instanceof RingModeReceiver){
-			((RingModeReceiver)triggerObject).unRegisterReceiver();
-		}else if(triggerObject instanceof APReceiver){
-			((APReceiver)triggerObject).unRegisterReceiver();
-		}else if(triggerObject instanceof AirplaneModeReceiver){
-			((AirplaneModeReceiver)triggerObject).unRegisterReceiver();
-		}else if(triggerObject instanceof AppLaunchDetectionReceiver){
-			((AppLaunchDetectionReceiver)triggerObject).unregisterReceiver();
-		}else if(triggerObject instanceof HeadsetPlugReceiver){
-			((HeadsetPlugReceiver)triggerObject).unregisterReceiver();
-		}
-
-	}
-
-	public void activateTriggerOfAlarmManager(PendingIntent pendingIntent){
-		AlarmManager alarmManager=TimeSwitchService.alarmManager;
-		if(alarmManager!=null){
-			if (trigger_type == PublicConsts.TRIGGER_TYPE_SINGLE) {  //触发仅一次的模式
-				if (Build.VERSION.SDK_INT >= 19) {
-					if (isenabled&&time>System.currentTimeMillis()) {
-						alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent);
-						//Log.e(TAG,"Alarm of exact set and i="+i);
-					}
-					else alarmManager.cancel(pendingIntent);
-				} else {
-					if (isenabled&&time>System.currentTimeMillis())
-						alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
-					else alarmManager.cancel(pendingIntent);
-				}
-			}
-			if (trigger_type == PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME) {  //按照指定时间重复
-				long millis=interval_milliseconds;
-				if(millis<=0) return;
-				long triggerTime=time;
-				while (triggerTime<System.currentTimeMillis()){
-					triggerTime+=millis;
-				}
-				if (Build.VERSION.SDK_INT >= 19) {
-					if (isenabled) {
-						alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
-						//Log.e(TAG,"Alarm of exact set and i="+i);
-					}
-					else alarmManager.cancel(pendingIntent);
-				} else {
-					if (isenabled) {
-						alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
-					}
-					else alarmManager.cancel(pendingIntent);
-				}
-			}
-
-			if(trigger_type ==PublicConsts.TRIGGER_TYPE_LOOP_WEEK){  //按照每周重复
-				long triggerTime=time;
-				while(triggerTime<System.currentTimeMillis()){
-					triggerTime+=24*60*60*1000;
-				}
-				if (Build.VERSION.SDK_INT >= 19) {
-					if (isenabled) {
-						alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
-						//Log.e(TAG,"Alarm of exact set and i="+i);
-					}
-					else alarmManager.cancel(pendingIntent);
-				} else {
-					if (isenabled&&time>System.currentTimeMillis())
-						alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
-					else alarmManager.cancel(pendingIntent);
-				}
-			}
-		}
+	public void cancelTask(){
+		if(trigger!=null) trigger.cancel();
 	}
 
 	/**

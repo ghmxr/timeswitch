@@ -37,7 +37,6 @@ import android.support.v4.content.PermissionChecker;
 import android.telecom.TelecomManager;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -47,8 +46,8 @@ import com.github.ghmxr.timeswitch.activities.SmsActivity;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.SQLConsts;
 import com.github.ghmxr.timeswitch.data.TaskItem;
-import com.github.ghmxr.timeswitch.receivers.BatteryReceiver;
-import com.github.ghmxr.timeswitch.receivers.HeadsetPlugReceiver;
+import com.github.ghmxr.timeswitch.triggers.receivers.BatteryReceiver;
+import com.github.ghmxr.timeswitch.triggers.receivers.HeadsetPlugReceiver;
 import com.github.ghmxr.timeswitch.receivers.SMSReceiver;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 
@@ -173,7 +172,7 @@ public class ProcessTaskItem {
         }
 
         if(item.autoclose&&canTrigger){
-            item.cancelTrigger();
+            item.cancelTask();
             item.isenabled=false;
             try{
                 ContentValues values=new ContentValues();
@@ -188,7 +187,7 @@ public class ProcessTaskItem {
         //do if delete this taskitem
         if(item.autodelete&&canTrigger){
             try{
-                item.cancelTrigger();
+                item.cancelTask();
                 int rows=database.delete(SQLConsts.getCurrentTableName(this.context),SQLConsts.SQL_TASK_COLUMN_ID +"="+item.id,null);
                 Log.i(TAG,"receiver deleted "+rows+" rows");
                 int position=getPosition(item.id);
@@ -1749,7 +1748,7 @@ public class ProcessTaskItem {
                 }
                 cursor.close();
             }
-            if(enabled) TimeSwitchService.list.get(position).activateTrigger(context); else TimeSwitchService.list.get(position).cancelTrigger();
+            if(enabled) TimeSwitchService.list.get(position).activateTask(context); else TimeSwitchService.list.get(position).cancelTask();
         }catch (Exception e){
             e.printStackTrace();
         }

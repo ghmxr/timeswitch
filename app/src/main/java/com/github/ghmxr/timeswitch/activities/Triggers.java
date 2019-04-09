@@ -44,7 +44,7 @@ import android.widget.Toast;
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.adapters.AppListAdapter;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
-import com.github.ghmxr.timeswitch.receivers.NetworkReceiver;
+import com.github.ghmxr.timeswitch.triggers.receivers.NetworkReceiver;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForBattery;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForInterval;
 import com.github.ghmxr.timeswitch.ui.CustomTimePicker;
