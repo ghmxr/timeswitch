@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import com.github.ghmxr.timeswitch.data.PublicConsts;
-import com.github.ghmxr.timeswitch.data.TaskItem;
+import com.github.ghmxr.timeswitch.TaskItem;
+import com.github.ghmxr.timeswitch.data.TriggerTypeConsts;
 
 public class BluetoothReceiver extends BaseBroadcastReceiver{
 
@@ -19,11 +19,11 @@ public class BluetoothReceiver extends BaseBroadcastReceiver{
         if(intent==null||intent.getAction()==null) return;
         if(intent.getAction().equals(BluetoothAdapter.ACTION_STATE_CHANGED)){
             if(item==null) return;
-            if(item.trigger_type== PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON&&intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,-1)==BluetoothAdapter.STATE_ON){
+            if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON&&intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,-1)==BluetoothAdapter.STATE_ON){
                 runProcessTask();
             }
 
-            if(item.trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF&&intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,-1)==BluetoothAdapter.STATE_OFF){
+            if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF&&intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,-1)==BluetoothAdapter.STATE_OFF){
                 runProcessTask();
             }
         }
@@ -38,24 +38,4 @@ public class BluetoothReceiver extends BaseBroadcastReceiver{
         }
     }
 
-    /**
-     * @deprecated
-     */
-    public void registerReceiver(){
-        //if(!isRegistered){
-
-        //    isRegistered=true;
-       // }
-    }
-
-    /**
-     * @deprecated
-     */
-    public void unRegisterReceiver(){
-        try{
-            context.unregisterReceiver(this);
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

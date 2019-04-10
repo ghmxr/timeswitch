@@ -1,7 +1,11 @@
-package com.github.ghmxr.timeswitch.data;
+package com.github.ghmxr.timeswitch;
 
 import android.content.Context;
 
+import com.github.ghmxr.timeswitch.data.ActionConsts;
+import com.github.ghmxr.timeswitch.data.ExceptionConsts;
+import com.github.ghmxr.timeswitch.data.PublicConsts;
+import com.github.ghmxr.timeswitch.data.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.triggers.Trigger;
 import com.github.ghmxr.timeswitch.triggers.TriggerUtil;
 
@@ -47,7 +51,7 @@ public class TaskItem implements Comparable<TaskItem>{
 	/**
 	 * 触发类型
 	 */
-	public int trigger_type =PublicConsts.TRIGGER_TYPE_LOOP_WEEK;
+	public int trigger_type = TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK;
 
 	/**
 	 * 每周重复的布尔值数组
@@ -76,12 +80,12 @@ public class TaskItem implements Comparable<TaskItem>{
 	/**
 	 * 触发例外
 	 */
-	public String [] exceptions=new String[PublicConsts.EXCEPTION_LENTH];
+	public String [] exceptions=new String[ExceptionConsts.EXCEPTION_LENGTH];
 
 	/**
 	 * 任务的动作
 	 */
-	public String [] actions=new String[PublicConsts.ACTION_LENGTH];
+	public String [] actions=new String[ActionConsts.ACTION_LENGTH];
 
 	public String uri_ring_notification="";
 	public String uri_ring_call ="";
@@ -137,12 +141,12 @@ public class TaskItem implements Comparable<TaskItem>{
         	exceptions[i]=String.valueOf(0);
 		}
 
-        exceptions[PublicConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]=String.valueOf(-1);
-        exceptions[PublicConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]=String.valueOf(-1);
-        exceptions[PublicConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]=String.valueOf(-1);
-        exceptions[PublicConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]=String.valueOf(-1);
-        exceptions[PublicConsts.EXCEPTION_START_TIME]=String.valueOf(-1);
-        exceptions[PublicConsts.EXCEPTION_END_TIME]=String.valueOf(-1);
+        exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]=String.valueOf(-1);
+        exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]=String.valueOf(-1);
+        exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]=String.valueOf(-1);
+        exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]=String.valueOf(-1);
+        exceptions[ExceptionConsts.EXCEPTION_START_TIME]=String.valueOf(-1);
+        exceptions[ExceptionConsts.EXCEPTION_END_TIME]=String.valueOf(-1);
 
         for(int i=35;i<exceptions.length;i++){
         	exceptions[i]=String.valueOf(-1);
@@ -152,13 +156,13 @@ public class TaskItem implements Comparable<TaskItem>{
             actions[i]=String.valueOf(-1);
         }
 
-        actions[PublicConsts.ACTION_RING_VOLUME_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1);
-        actions[PublicConsts.ACTION_RING_SELECTION_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1);
+        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1);
+        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1);
     	//actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL+String.valueOf(" ");
-    	actions[PublicConsts.ACTION_VIBRATE_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1);
-		actions[PublicConsts.ACTION_NOTIFICATION_LOCALE]=String.valueOf(PublicConsts.NOTIFICATION_TYPE_UNSELECTED)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(PublicConsts.NOTIFICATION_TYPE_CONTENT_DEFAULT);
-		actions[PublicConsts.ACTION_TOAST_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(0)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(0);
-		actions[PublicConsts.ACTION_SMS_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(0);
+    	actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1);
+		actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE]=String.valueOf(ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_UNSELECTED)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_CONTENT_DEFAULT);
+		actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(0)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(0);
+		actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(0);
 	}
 
     public TaskItem(TaskItem item){
@@ -236,13 +240,21 @@ public class TaskItem implements Comparable<TaskItem>{
 				'}';
 	}
 
+	/**
+	 * 启用此触发任务
+	 * @param context 传入对应的service来维持运行状态
+	 */
 	public void activateTask(Context context){
+		if(trigger!=null) trigger.cancel();
 		trigger= TriggerUtil.getTrigger(context,this);
 		trigger.activate();
 	}
 
 	public void cancelTask(){
-		if(trigger!=null) trigger.cancel();
+		if(trigger!=null) {
+			trigger.cancel();
+			trigger=null;
+		}
 	}
 
 	/**
@@ -250,18 +262,18 @@ public class TaskItem implements Comparable<TaskItem>{
 	 * @return 下次触发的绝对时间
 	 */
 	public long getNextTriggeringTime(){
-		if(trigger_type==PublicConsts.TRIGGER_TYPE_SINGLE){
+		if(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE){
 			if(time-System.currentTimeMillis()<0){
 				return -1;
 			}
 			else return time;
-		}else if(trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){
+		}else if(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){
 			long triggerTime=time;
 			while (triggerTime<System.currentTimeMillis()){
 				triggerTime+=interval_milliseconds;
 			}
 			return triggerTime;
-		}else if(trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_WEEK){
+		}else if(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK){
 			//not used
 		}
 

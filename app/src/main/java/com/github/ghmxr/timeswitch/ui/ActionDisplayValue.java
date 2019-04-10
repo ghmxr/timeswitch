@@ -11,8 +11,9 @@ import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 
 import com.github.ghmxr.timeswitch.R;
+import com.github.ghmxr.timeswitch.data.ActionConsts;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
-import com.github.ghmxr.timeswitch.data.TaskItem;
+import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
@@ -34,9 +35,9 @@ public class ActionDisplayValue {
     public static String getGeneralDisplayValue(@NonNull Context context, String value){
         try{
             int action_value=Integer.parseInt(value);
-            if(action_value==PublicConsts.ACTION_OPEN) return context.getResources().getString(R.string.open);
-            else if(action_value==PublicConsts.ACTION_CLOSE) return  context.getResources().getString(R.string.close);
-            else if(action_value==PublicConsts.ACTION_UNSELECTED) return "";
+            if(action_value== ActionConsts.ActionValueConsts.ACTION_OPEN) return context.getResources().getString(R.string.open);
+            else if(action_value== ActionConsts.ActionValueConsts.ACTION_CLOSE) return  context.getResources().getString(R.string.close);
+            else if(action_value== ActionConsts.ActionValueConsts.ACTION_UNSELECTED) return "";
         }catch (Exception e){
             e.printStackTrace();
             LogUtil.putExceptionLog(context,e);
@@ -48,9 +49,9 @@ public class ActionDisplayValue {
     public static String getDeviceControlDisplayValue(@NonNull Context context,String value){
         try{
             int action_device=Integer.parseInt(value);
-            if(action_device==PublicConsts.ACTION_DEVICECONTROL_REBOOT)  return context.getResources().getString(R.string.reboot);
-            else if(action_device==PublicConsts.ACTION_DEVICECONTROL_SHUTDOWN) return context.getResources().getString(R.string.shut_down);
-            else if(action_device==PublicConsts.ACTION_DEVICECONSTROL_NONE) return "";
+            if(action_device== ActionConsts.ActionValueConsts.ACTION_DEVICECONTROL_REBOOT)  return context.getResources().getString(R.string.reboot);
+            else if(action_device== ActionConsts.ActionValueConsts.ACTION_DEVICECONTROL_SHUTDOWN) return context.getResources().getString(R.string.shut_down);
+            else if(action_device== ActionConsts.ActionValueConsts.ACTION_DEVICECONSTROL_NONE) return "";
         }catch (Exception e){
             e.printStackTrace();
             LogUtil.putExceptionLog(context,e);
@@ -62,10 +63,10 @@ public class ActionDisplayValue {
     public static String getRingModeDisplayValue(@NonNull Context context,String value){
         try{
             int action_ring_mode=Integer.parseInt(value);
-            if(action_ring_mode==PublicConsts.ACTION_RING_VIBRATE)  return context.getResources().getString(R.string.vibrate);
-            else if(action_ring_mode==PublicConsts.ACTION_RING_OFF) return context.getResources().getString(R.string.silent);
-            else if(action_ring_mode==PublicConsts.ACTION_RING_NORMAL) return context.getResources().getString(R.string.ring_normal);
-            else if(action_ring_mode==PublicConsts.ACTION_RING_UNSELECTED) return "";
+            if(action_ring_mode== ActionConsts.ActionValueConsts.ACTION_RING_VIBRATE)  return context.getResources().getString(R.string.vibrate);
+            else if(action_ring_mode== ActionConsts.ActionValueConsts.ACTION_RING_OFF) return context.getResources().getString(R.string.silent);
+            else if(action_ring_mode== ActionConsts.ActionValueConsts.ACTION_RING_NORMAL) return context.getResources().getString(R.string.ring_normal);
+            else if(action_ring_mode== ActionConsts.ActionValueConsts.ACTION_RING_UNSELECTED) return "";
         }catch (Exception e){
             e.printStackTrace();
             LogUtil.putExceptionLog(context,e);
@@ -77,10 +78,10 @@ public class ActionDisplayValue {
         try{
             AudioManager manager=(AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
             String[] volume_values=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-            int volume_ring=Integer.parseInt(volume_values[PublicConsts.VOLUME_RING_LOCALE]);
-            int volume_media=Integer.parseInt(volume_values[PublicConsts.VOLUME_MEDIA_LOCALE]);
-            int volume_notification=Integer.parseInt(volume_values[PublicConsts.VOLUME_NOTIFICATION_LOCALE]);
-            int volume_alarm=Integer.parseInt(volume_values[PublicConsts.VOLUME_ALARM_LOCALE]);
+            int volume_ring=Integer.parseInt(volume_values[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_RING_LOCALE]);
+            int volume_media=Integer.parseInt(volume_values[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_MEDIA_LOCALE]);
+            int volume_notification=Integer.parseInt(volume_values[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_NOTIFICATION_LOCALE]);
+            int volume_alarm=Integer.parseInt(volume_values[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_ALARM_LOCALE]);
             StringBuilder displayBuilder=new StringBuilder("");
             if(volume_ring>=0){
                 displayBuilder.append(context.getResources().getString(R.string.activity_taskgui_actions_ring_volume_ring));
@@ -116,7 +117,7 @@ public class ActionDisplayValue {
     public static String getBrightnessDisplayValue(@NonNull Context context,String value){
         try{
             int action_brightness=Integer.parseInt(value);
-            if(action_brightness==PublicConsts.ACTION_BRIGHTNESS_AUTO)  return context.getResources().getString(R.string.action_brightness_auto);
+            if(action_brightness== ActionConsts.ActionValueConsts.ACTION_BRIGHTNESS_AUTO)  return context.getResources().getString(R.string.action_brightness_auto);
             else if(action_brightness>=0&&action_brightness<=PublicConsts.BRIGHTNESS_MAX)
                 return context.getResources().getString(R.string.action_brightness_manual)+(int)((float)action_brightness/PublicConsts.BRIGHTNESS_MAX*100)+"%";
         }catch (Exception e){
@@ -129,15 +130,15 @@ public class ActionDisplayValue {
     public static String getRingSelectionDisplayValue(@NonNull Context context,@NonNull String values){
         try{
             String ring_selection_values[]=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-            int ring_notification_selection= Integer.parseInt(ring_selection_values[PublicConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE]);
-            int ring_phone_selection=Integer.parseInt(ring_selection_values[PublicConsts.RING_SELECTION_CALL_TYPE_LOCALE]);
+            int ring_notification_selection= Integer.parseInt(ring_selection_values[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE]);
+            int ring_phone_selection=Integer.parseInt(ring_selection_values[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_CALL_TYPE_LOCALE]);
             StringBuilder displayBuilder=new StringBuilder("");
-            if(ring_notification_selection==PublicConsts.RING_TYPE_FROM_SYSTEM ||ring_notification_selection==PublicConsts.RING_TYPE_FROM_MEDIA){
+            if(ring_notification_selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM ||ring_notification_selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_MEDIA){
                 String ringOfNotification=context.getResources().getString(R.string.activity_taskgui_actions_ring_selection_notification);
                 displayBuilder.append(ringOfNotification);
                 displayBuilder.append(" ");
             }
-            if(ring_phone_selection==PublicConsts.RING_TYPE_FROM_SYSTEM ||ring_phone_selection==PublicConsts.RING_TYPE_FROM_MEDIA){
+            if(ring_phone_selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM ||ring_phone_selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_MEDIA){
                 String ringOfPhone=context.getResources().getString(R.string.activity_taskgui_actions_ring_selection_phone);
                 displayBuilder.append(ringOfPhone);
             }
@@ -168,9 +169,9 @@ public class ActionDisplayValue {
         try{
             String[] vibrate_values=value.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             StringBuilder displayValue=new StringBuilder("");
-            int frequency=Integer.parseInt(vibrate_values[PublicConsts.VIBRATE_FREQUENCY_LOCALE]);
-            int duration=Integer.parseInt(vibrate_values[PublicConsts.VIBRATE_DURATION_LOCALE]);
-            int interval=Integer.parseInt(vibrate_values[PublicConsts.VIBRATE_INTERVAL_LOCALE]);
+            int frequency=Integer.parseInt(vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_FREQUENCY_LOCALE]);
+            int duration=Integer.parseInt(vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_DURATION_LOCALE]);
+            int interval=Integer.parseInt(vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_INTERVAL_LOCALE]);
             if(frequency>0){
                 //displayValue.append(getResources().getString(R.string.dialog_actions_vibrate_frequency));
                 //displayValue.append(":");
@@ -199,22 +200,22 @@ public class ActionDisplayValue {
         try{
             StringBuilder builder=new StringBuilder("");
             String[] notification_values=value.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-            if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_LOCALE])==PublicConsts.NOTIFICATION_TYPE_UNSELECTED){
+            if(Integer.parseInt(notification_values[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_LOCALE])== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_UNSELECTED){
                 builder.append("");
-            }else if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_LOCALE])==PublicConsts.NOTIFICATION_TYPE_NOT_OVERRIDE){
+            }else if(Integer.parseInt(notification_values[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_LOCALE])== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_NOT_OVERRIDE){
                 builder.append(context.getResources().getString(R.string.activity_taskgui_actions_notification_not_override));
                 builder.append(":");
-                if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])==PublicConsts.NOTIFICATION_TYPE_CONTENT_DEFAULT){
+                if(Integer.parseInt(notification_values[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_CONTENT_DEFAULT){
                     builder.append(context.getResources().getString(R.string.activity_taskgui_actions_notification_type_default));
-                }else if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])==PublicConsts.NOTIFICATION_TYPE_CONTENT_CUSTOM){
+                }else if(Integer.parseInt(notification_values[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_CONTENT_CUSTOM){
                     builder.append(context.getResources().getString(R.string.activity_taskgui_actions_notification_type_custom));
                 }
-            }else if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_LOCALE])==PublicConsts.NOTIFICATION_TYPE_OVERRIDE_LAST){
+            }else if(Integer.parseInt(notification_values[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_LOCALE])== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_OVERRIDE_LAST){
                 builder.append(context.getResources().getString(R.string.activity_taskgui_actions_notification_override_last));
                 builder.append(":");
-                if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])==PublicConsts.NOTIFICATION_TYPE_CONTENT_DEFAULT){
+                if(Integer.parseInt(notification_values[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_CONTENT_DEFAULT){
                     builder.append(context.getResources().getString(R.string.activity_taskgui_actions_notification_type_default));
-                }else if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])==PublicConsts.NOTIFICATION_TYPE_CONTENT_CUSTOM){
+                }else if(Integer.parseInt(notification_values[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_CONTENT_CUSTOM){
                     builder.append(context.getResources().getString(R.string.activity_taskgui_actions_notification_type_custom));
                 }
             }
@@ -230,9 +231,9 @@ public class ActionDisplayValue {
         try{
             String sms_values[]=value.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             StringBuilder builder=new StringBuilder("");
-            if(Integer.parseInt(sms_values[PublicConsts.SMS_ENABLED_LOCALE])>=0 ){
+            if(Integer.parseInt(sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_ENABLED_LOCALE])>=0 ){
                 builder.append(context.getResources().getString(R.string.activity_taskgui_actions_sms_enabled));
-                if(Integer.parseInt(sms_values[PublicConsts.SMS_RESULT_TOAST_LOCALE])>=0){
+                if(Integer.parseInt(sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_RESULT_TOAST_LOCALE])>=0){
                     builder.append(":");
                     builder.append(context.getResources().getString(R.string.activity_taskgui_actions_sms_receipt));
                 }
@@ -347,9 +348,9 @@ public class ActionDisplayValue {
         public static String getRingModeDisplayValue(Context context,String value){
             try {
                 int action_ring=Integer.parseInt(value);
-                if(action_ring==PublicConsts.ACTION_RING_NORMAL) return context.getResources().getString(R.string.action_ring_mode_normal);
-                if(action_ring==PublicConsts.ACTION_RING_VIBRATE) return (context.getResources().getString(R.string.action_ring_mode_vibrate));
-                if(action_ring==PublicConsts.ACTION_RING_OFF) return (context.getResources().getString(R.string.action_ring_mode_off));
+                if(action_ring== ActionConsts.ActionValueConsts.ACTION_RING_NORMAL) return context.getResources().getString(R.string.action_ring_mode_normal);
+                if(action_ring== ActionConsts.ActionValueConsts.ACTION_RING_VIBRATE) return (context.getResources().getString(R.string.action_ring_mode_vibrate));
+                if(action_ring== ActionConsts.ActionValueConsts.ACTION_RING_OFF) return (context.getResources().getString(R.string.action_ring_mode_off));
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -361,10 +362,10 @@ public class ActionDisplayValue {
                 String [] action_volumes=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
                 StringBuilder builder=new StringBuilder("");
                 AudioManager audioManager=(AudioManager) context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-                int volume_call=Integer.parseInt(action_volumes[PublicConsts.VOLUME_RING_LOCALE]);
-                int volume_notification=Integer.parseInt(action_volumes[PublicConsts.VOLUME_NOTIFICATION_LOCALE]);
-                int volume_media=Integer.parseInt(action_volumes[PublicConsts.VOLUME_MEDIA_LOCALE]);
-                int volume_alarm=Integer.parseInt(action_volumes[PublicConsts.VOLUME_ALARM_LOCALE]);
+                int volume_call=Integer.parseInt(action_volumes[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_RING_LOCALE]);
+                int volume_notification=Integer.parseInt(action_volumes[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_NOTIFICATION_LOCALE]);
+                int volume_media=Integer.parseInt(action_volumes[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_MEDIA_LOCALE]);
+                int volume_alarm=Integer.parseInt(action_volumes[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_ALARM_LOCALE]);
                 if(volume_call>=0) {
                     builder.append(context.getResources().getString(R.string.adapter_action_volume_call));
                     builder.append((int)(((double)volume_call/audioManager.getStreamMaxVolume(AudioManager.STREAM_RING))*100));
@@ -399,8 +400,8 @@ public class ActionDisplayValue {
             try{
                 String[] action_ring_selections=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
                 StringBuilder builder=new StringBuilder("");
-                int action_ring_selection_call=Integer.parseInt(action_ring_selections[PublicConsts.RING_SELECTION_CALL_TYPE_LOCALE]);
-                int action_ring_selection_notification=Integer.parseInt(action_ring_selections[PublicConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE]);
+                int action_ring_selection_call=Integer.parseInt(action_ring_selections[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_CALL_TYPE_LOCALE]);
+                int action_ring_selection_notification=Integer.parseInt(action_ring_selections[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE]);
                 if(action_ring_selection_notification>=0){
                     builder.append(context.getResources().getString(R.string.action_set_ringtone_notification));
                     builder.append(RingtoneManager.getRingtone(context, Uri.parse(uri_notification)).getTitle(context));
@@ -418,17 +419,17 @@ public class ActionDisplayValue {
         }
 
         public static String getRingSelectionDisplayValue(Context context, TaskItem item){
-            return getRingSelectionDisplayValue(context,item.actions[PublicConsts.ACTION_RING_SELECTION_LOCALE],item.uri_ring_notification,item.uri_ring_call);
+            return getRingSelectionDisplayValue(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE],item.uri_ring_notification,item.uri_ring_call);
         }
 
         public static String getVibrateDisplayValue(Context context,String values){
             try{
                 String [] action_vibrate_values=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
                 StringBuilder builder=new StringBuilder("");
-                int vibrate_frequency=Integer.parseInt(action_vibrate_values[PublicConsts.VIBRATE_FREQUENCY_LOCALE]);
+                int vibrate_frequency=Integer.parseInt(action_vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_FREQUENCY_LOCALE]);
                 if(vibrate_frequency>0){
-                    int vibrate_duration=Integer.parseInt(action_vibrate_values[PublicConsts.VIBRATE_DURATION_LOCALE]);
-                    int vibrate_interval=Integer.parseInt(action_vibrate_values[PublicConsts.VIBRATE_INTERVAL_LOCALE]);
+                    int vibrate_duration=Integer.parseInt(action_vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_DURATION_LOCALE]);
+                    int vibrate_interval=Integer.parseInt(action_vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_INTERVAL_LOCALE]);
                     builder.append(context.getResources().getString(R.string.adapter_action_vibrate));
                     builder.append(vibrate_frequency);
                     builder.append(context.getResources().getString(R.string.dialog_actions_vibrate_frequency_measure));
@@ -452,7 +453,7 @@ public class ActionDisplayValue {
                 if(action_brightness>=0){
                     StringBuilder builder=new StringBuilder("");
                     builder.append(context.getResources().getString(R.string.adapter_action_brightness));
-                    if(action_brightness==PublicConsts.ACTION_BRIGHTNESS_AUTO) builder.append(context.getResources().getString(R.string.adapter_action_brightness_auto));
+                    if(action_brightness== ActionConsts.ActionValueConsts.ACTION_BRIGHTNESS_AUTO) builder.append(context.getResources().getString(R.string.adapter_action_brightness_auto));
                     else {
                         builder.append((int)(((double)action_brightness/PublicConsts.BRIGHTNESS_MAX)*100));
                         builder.append(context.getResources().getString(R.string.percentage));
@@ -481,19 +482,19 @@ public class ActionDisplayValue {
         }
 
         public static String getWallpaperDisplayValue(Context context,TaskItem item){
-            return getWallpaperDisplayValue(context,item.actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE],item.uri_wallpaper_desktop);
+            return getWallpaperDisplayValue(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE],item.uri_wallpaper_desktop);
         }
 
         public static String getSMSDisplayValue(Context context,String values,String addresses,String message){
             try{
                 String action_sms_values[]=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
                 StringBuilder builder=new StringBuilder("");
-                if(Integer.parseInt(action_sms_values[PublicConsts.SMS_ENABLED_LOCALE])>=0){
+                if(Integer.parseInt(action_sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_ENABLED_LOCALE])>=0){
                     builder.append(context.getResources().getString(R.string.adapter_action_sms));
                     if(Build.VERSION.SDK_INT>=22){
                         SubscriptionInfo subinfo= null;
                         try{
-                            subinfo=SubscriptionManager.from(context).getActiveSubscriptionInfo(Integer.parseInt(action_sms_values[PublicConsts.SMS_SUBINFO_LOCALE]));
+                            subinfo=SubscriptionManager.from(context).getActiveSubscriptionInfo(Integer.parseInt(action_sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_SUBINFO_LOCALE]));
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -522,7 +523,7 @@ public class ActionDisplayValue {
         }
 
         public static String getSMSDisplayValue(Context context,TaskItem item){
-            return getSMSDisplayValue(context,item.actions[PublicConsts.ACTION_SMS_LOCALE],item.sms_address,item.sms_message);
+            return getSMSDisplayValue(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE],item.sms_address,item.sms_message);
         }
 
         public static String getToastDisplayValue(Context context,String values,String toast){
@@ -532,9 +533,9 @@ public class ActionDisplayValue {
                 if(toast_type>=0){
                     StringBuilder builder=new StringBuilder("");
                     builder.append(context.getResources().getString(R.string.adapter_action_toast));
-                    if(toast_type==PublicConsts.TOAST_TYPE_CUSTOM){
-                        int toast_x_offset=Integer.parseInt(toast_values[PublicConsts.TOAST_LOCATION_X_OFFSET_LOCALE]);
-                        int toast_y_offset=Integer.parseInt(toast_values[PublicConsts.TOAST_LOCATION_Y_OFFSET_LOCALE]);
+                    if(toast_type== ActionConsts.ActionValueConsts.TOAST_TYPE_CUSTOM){
+                        int toast_x_offset=Integer.parseInt(toast_values[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_LOCATION_X_OFFSET_LOCALE]);
+                        int toast_y_offset=Integer.parseInt(toast_values[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_LOCATION_Y_OFFSET_LOCALE]);
                         builder.append(context.getResources().getString(R.string.toast_location_custom));
                         builder.append(":");
                         builder.append(toast_x_offset);
@@ -553,7 +554,7 @@ public class ActionDisplayValue {
         }
 
         public static String getToastDisplayValue(Context context,TaskItem item){
-            return getToastDisplayValue(context,item.actions[PublicConsts.ACTION_TOAST_LOCALE],item.toast);
+            return getToastDisplayValue(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE],item.toast);
         }
 
         public static String getGpsDisplayValue(Context context,String value){
@@ -592,8 +593,8 @@ public class ActionDisplayValue {
         public static String getDeviceControlDisplayValue(Context context,String value){
             try {
                 int action_device=Integer.parseInt(value);
-                if(action_device==PublicConsts.ACTION_DEVICECONTROL_SHUTDOWN) return context.getResources().getString(R.string.action_device_shutdown);
-                if(action_device==PublicConsts.ACTION_DEVICECONTROL_REBOOT) return context.getResources().getString(R.string.action_device_reboot);
+                if(action_device== ActionConsts.ActionValueConsts.ACTION_DEVICECONTROL_SHUTDOWN) return context.getResources().getString(R.string.action_device_shutdown);
+                if(action_device== ActionConsts.ActionValueConsts.ACTION_DEVICECONTROL_REBOOT) return context.getResources().getString(R.string.action_device_reboot);
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -627,7 +628,7 @@ public class ActionDisplayValue {
         }
 
         public static String getNotificationDisplayValue(Context context,TaskItem item){
-            return getNotificationDisplayValue(context,item.actions[PublicConsts.ACTION_NOTIFICATION_LOCALE],item.notification_title,item.notification_message);
+            return getNotificationDisplayValue(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE],item.notification_title,item.notification_message);
         }
 
         public static String getTaskNamesDisplayValue(String values){

@@ -1,11 +1,13 @@
 package com.github.ghmxr.timeswitch.utils;
 
+import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.SQLConsts;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -15,22 +17,17 @@ import android.util.Log;
  */
 public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 
-	public static MySQLiteOpenHelper helper;
+	private static MySQLiteOpenHelper helper;
 	private Context context;
 	
-	public MySQLiteOpenHelper(Context context){
-		this(context, SQLConsts.SQL_DATABASE_NAME,null, SQLConsts.SQL_DATABASE_VERSION);
-	}
-
-	public MySQLiteOpenHelper(Context context, String name, CursorFactory factory, int version) {
-		super(context, name, factory, version);
-		// TODO Auto-generated constructor stub
-		this.context=context;
+	private MySQLiteOpenHelper(Context context){
+		super(context, SQLConsts.SQL_DATABASE_NAME,null, SQLConsts.SQL_DATABASE_VERSION);
+		this.context=context.getApplicationContext();
 	}
 
 	public static MySQLiteOpenHelper getInstance(Context context){
 		if(helper==null){
-			helper=new MySQLiteOpenHelper(context);
+			helper=new MySQLiteOpenHelper(context.getApplicationContext());
 		}
 		return helper;
 	}
@@ -39,10 +36,20 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 		helper=null;
 	}
 
+	/**
+     * 动态获取当前使用的数据库表名。
+     * @param context 调用此方法的activity 或者 context
+     * @return 当前使用的数据库的表名
+     */
+    public static String getCurrentTableName(Context context){
+         SharedPreferences settings = context.getSharedPreferences(PublicConsts.PREFERENCES_NAME, Activity.MODE_PRIVATE);
+         return settings.getString(PublicConsts.PREFERENCES_CURRENT_TABLE_NAME, SQLConsts.SQL_DATABASE_DEFAULT_TABLE_NAME);
+    }
+
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		// TODO Auto-generated method stub
-		db.execSQL(getCreateTableSQLCommand(SQLConsts.getCurrentTableName(context)));
+		db.execSQL(getCreateTableSQLCommand(getCurrentTableName(context)));
 	}
 
 	public static String getCreateTableSQLCommand(String tableName){

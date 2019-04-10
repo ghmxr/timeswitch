@@ -16,8 +16,10 @@ import android.widget.TextView;
 
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.activities.Main;
-import com.github.ghmxr.timeswitch.data.PublicConsts;
-import com.github.ghmxr.timeswitch.data.TaskItem;
+import com.github.ghmxr.timeswitch.data.ActionConsts;
+import com.github.ghmxr.timeswitch.data.ExceptionConsts;
+import com.github.ghmxr.timeswitch.TaskItem;
+import com.github.ghmxr.timeswitch.data.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.ui.ActionDisplayValue;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
@@ -119,7 +121,7 @@ public class MainListAdapter extends BaseAdapter {
                 Collection<TextView> values=list_refresh_textviews.values();
                 values.remove(holder.tv_trigger);
             }catch (Exception e){e.printStackTrace();}
-            if(item.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){
+            if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){
                 list_refresh_textviews.put(i,holder.tv_trigger);
             }
         }catch (Exception e){e.printStackTrace();}
@@ -161,7 +163,7 @@ public class MainListAdapter extends BaseAdapter {
             holder.tv_addition.setText(item.display_additions);
             if(item.autodelete||item.autoclose){
                 holder.addition.setVisibility(View.VISIBLE);
-                if(!item.autodelete&&item.trigger_type==PublicConsts.TRIGGER_TYPE_SINGLE) holder.addition.setVisibility(View.GONE);
+                if(!item.autodelete&&item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE) holder.addition.setVisibility(View.GONE);
             }else holder.addition.setVisibility(View.GONE);
         }catch (Exception e){e.printStackTrace();}
 
@@ -304,72 +306,72 @@ public class MainListAdapter extends BaseAdapter {
         try{
             StringBuilder builder=new StringBuilder("");
             String [] exceptions=item.exceptions;
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_LOCKEDSCREEN])==1){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_LOCKEDSCREEN])==1){
                 builder.append(context.getResources().getString(R.string.activity_taskgui_exception_screen_locked));
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_UNLOCKEDSCREEN])==1){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_UNLOCKEDSCREEN])==1){
                 builder.append(context.getResources().getString(R.string.activity_taskgui_exception_screen_unlocked));
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_WIFI_ENABLED])==1){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_WIFI_ENABLED])==1){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.activity_taskgui_exception_wifi_enabled));
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_WIFI_DISABLED])==1){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_WIFI_DISABLED])==1){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.activity_taskgui_exception_wifi_disabled));
             }
 
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BLUETOOTH_ENABLED])==1){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_ENABLED])==1){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.activity_taskgui_exception_bluetooth_enabled));
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BLUETOOTH_DISABLED])==1){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_DISABLED])==1){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.activity_taskgui_exception_bluetooth_disabled));
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_RING_VIBRATE])==1){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_RING_VIBRATE])==1){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.activity_taskgui_exception_ring_vibrate));
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_RING_OFF])==1){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_RING_OFF])==1){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.activity_taskgui_exception_ring_off));
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_RING_NORMAL])==1){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_RING_NORMAL])==1){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.activity_taskgui_exception_ring_normal));
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_NET_ENABLED])==1){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_NET_ENABLED])==1){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.activity_taskgui_exception_net_enabled));
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_NET_DISABLED])==1){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_NET_DISABLED])==1){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.activity_taskgui_exception_net_disabled));
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_GPS_ENABLED])==1){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_GPS_ENABLED])==1){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.activity_taskgui_exception_gps_on));
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_GPS_DISABLED])==1){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_GPS_DISABLED])==1){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.activity_taskgui_exception_gps_off));
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_AIRPLANE_MODE_ENABLED])==1){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_ENABLED])==1){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.activity_taskgui_exception_airplanemode_on));
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_AIRPLANE_MODE_DISABLED])==1){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_DISABLED])==1){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.activity_taskgui_exception_airplanemode_off));
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_HEADSET_STATUS])>0){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS])>0){
                 if(builder.toString().length()>0) builder.append(",");
-                if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_HEADSET_STATUS])==PublicConsts.EXCEPTION_HEADSET_PLUG_OUT){
+                if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS])== ExceptionConsts.EXCEPTION_HEADSET_PLUG_OUT){
                     builder.append(context.getResources().getString(R.string.activity_taskgui_exception_headset));
                     builder.append(context.getResources().getString(R.string.activity_taskgui_exception_headset_out));
                 }
-                if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_HEADSET_STATUS])==PublicConsts.EXCEPTION_HEADSET_PLUG_IN){
+                if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS])== ExceptionConsts.EXCEPTION_HEADSET_PLUG_IN){
                     builder.append(context.getResources().getString(R.string.activity_taskgui_exception_headset));
                     builder.append(context.getResources().getString(R.string.activity_taskgui_exception_headset_in));
                 }
@@ -377,30 +379,30 @@ public class MainListAdapter extends BaseAdapter {
 
             String day_of_week="";
             String day_of_week_values="";
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_MONDAY])==1) {
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_MONDAY])==1) {
                 day_of_week_values+=context.getResources().getString(R.string.monday);
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_TUESDAY])==1){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_TUESDAY])==1){
                 if(day_of_week_values.trim().length()>0)day_of_week_values+=" ";
                 day_of_week_values+=context.getResources().getString(R.string.tuesday);
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_WEDNESDAY])==1){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_WEDNESDAY])==1){
                 if(day_of_week_values.trim().length()>0)day_of_week_values+=" ";
                 day_of_week_values+=context.getResources().getString(R.string.wednesday);
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_THURSDAY])==1){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_THURSDAY])==1){
                 if(day_of_week_values.trim().length()>0)day_of_week_values+=" ";
                 day_of_week_values+=context.getResources().getString(R.string.thursday);
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_FRIDAY])==1){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_FRIDAY])==1){
                 if(day_of_week_values.trim().length()>0)day_of_week_values+=" ";
                 day_of_week_values+=context.getResources().getString(R.string.friday);
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_SATURDAY])==1){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_SATURDAY])==1){
                 if(day_of_week_values.trim().length()>0)day_of_week_values+=" ";
                 day_of_week_values+=context.getResources().getString(R.string.saturday);
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_SUNDAY])==1){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_SUNDAY])==1){
                 if(day_of_week_values.trim().length()>0)day_of_week_values+=" ";
                 day_of_week_values+=context.getResources().getString(R.string.sunday);
             }
@@ -440,33 +442,33 @@ public class MainListAdapter extends BaseAdapter {
             }*/
 
 
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_START_TIME])>=0&&Integer.parseInt(exceptions[PublicConsts.EXCEPTION_END_TIME])>=0){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_START_TIME])>=0&&Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_END_TIME])>=0){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.log_exceptions_period));
-                builder.append(ValueUtils.timePeriodFormatValue(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_START_TIME]),Integer.parseInt(exceptions[PublicConsts.EXCEPTION_END_TIME])));
+                builder.append(ValueUtils.timePeriodFormatValue(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_START_TIME]),Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_END_TIME])));
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])>=0){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])>=0){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.log_exceptions_battery_percentage_less_than));
-                builder.append(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]));
+                builder.append(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]));
                 builder.append("%");
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])>=0){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])>=0){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.log_exceptions_battery_percentage_more_than));
-                builder.append(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]));
+                builder.append(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]));
                 builder.append("%");
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])>=0){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])>=0){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.log_exceptions_battery_temperature_higher_than));
-                builder.append(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]));
+                builder.append(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]));
                 builder.append(context.getResources().getString(R.string.degree_celsius));
             }
-            if(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])>=0){
+            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])>=0){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(context.getResources().getString(R.string.log_exceptions_battery_temperature_lower_than));
-                builder.append(Integer.parseInt(exceptions[PublicConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]));
+                builder.append(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]));
                 builder.append(context.getResources().getString(R.string.degree_celsius));
             }
 
@@ -494,7 +496,7 @@ public class MainListAdapter extends BaseAdapter {
                 if(action_wifi==0) builder.append(context.getResources().getString(R.string.action_wifi_open));
                 if(action_wifi==1) builder.append(context.getResources().getString(R.string.action_wifi_close));
             }*/
-            builder.append(ActionDisplayValue.ActionDisplayValueOfAdapter.getWifiDisplayValue(context,actions[PublicConsts.ACTION_WIFI_LOCALE]));
+            builder.append(ActionDisplayValue.ActionDisplayValueOfAdapter.getWifiDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_WIFI_LOCALE]));
 
             /*int action_bluetooth=Integer.parseInt(actions[PublicConsts.ACTION_BLUETOOTH_LOCALE]);
             if(action_bluetooth>=0){
@@ -502,7 +504,7 @@ public class MainListAdapter extends BaseAdapter {
                 if(action_bluetooth==0) builder.append(context.getResources().getString(R.string.action_bluetooth_close));
                 if(action_bluetooth==1) builder.append(context.getResources().getString(R.string.action_bluetooth_open));
             }*/
-            String value_bluetooth=ActionDisplayValue.ActionDisplayValueOfAdapter.getBluetoothDisplayValue(context,actions[PublicConsts.ACTION_BLUETOOTH_LOCALE]);
+            String value_bluetooth=ActionDisplayValue.ActionDisplayValueOfAdapter.getBluetoothDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BLUETOOTH_LOCALE]);
             if(value_bluetooth.length()>0){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(value_bluetooth);
@@ -516,7 +518,7 @@ public class MainListAdapter extends BaseAdapter {
                 if(action_ring==PublicConsts.ACTION_RING_VIBRATE)builder.append(context.getResources().getString(R.string.action_ring_mode_vibrate));
                 if(action_ring==PublicConsts.ACTION_RING_OFF) builder.append(context.getResources().getString(R.string.action_ring_mode_off));
             }*/
-            String value_ringmode=ActionDisplayValue.ActionDisplayValueOfAdapter.getRingModeDisplayValue(context,actions[PublicConsts.ACTION_RING_MODE_LOCALE]);
+            String value_ringmode=ActionDisplayValue.ActionDisplayValueOfAdapter.getRingModeDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_MODE_LOCALE]);
             if(value_ringmode.length()>0){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(value_ringmode);
@@ -553,7 +555,7 @@ public class MainListAdapter extends BaseAdapter {
                 builder.append((int)(((double)volume_alarm/audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM))*100));
                 builder.append(context.getResources().getString(R.string.percentage));
             }*/
-            String value_volume=ActionDisplayValue.ActionDisplayValueOfAdapter.getRingVolumeDisplayValue(context,actions[PublicConsts.ACTION_RING_VOLUME_LOCALE]);
+            String value_volume=ActionDisplayValue.ActionDisplayValueOfAdapter.getRingVolumeDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE]);
             if(value_volume.length()>0){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(value_volume);
@@ -596,13 +598,13 @@ public class MainListAdapter extends BaseAdapter {
                 builder.append(vibrate_interval);
                 builder.append(context.getResources().getString(R.string.dialog_actions_vibrate_interval_measure));
             }*/
-            String value_vibrate=ActionDisplayValue.ActionDisplayValueOfAdapter.getVibrateDisplayValue(context,actions[PublicConsts.ACTION_VIBRATE_LOCALE]);
+            String value_vibrate=ActionDisplayValue.ActionDisplayValueOfAdapter.getVibrateDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE]);
             if(value_vibrate.length()>0){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(value_vibrate);
             }
 
-            String values_brightness= ActionDisplayValue.ActionDisplayValueOfAdapter.getBrightnessDisplayValue(context,actions[PublicConsts.ACTION_BRIGHTNESS_LOCALE]);
+            String values_brightness= ActionDisplayValue.ActionDisplayValueOfAdapter.getBrightnessDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BRIGHTNESS_LOCALE]);
             if(values_brightness.length()>0){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(values_brightness);
@@ -657,49 +659,49 @@ public class MainListAdapter extends BaseAdapter {
                 builder.append(value_notification);
             }
 
-            String value_gps= ActionDisplayValue.ActionDisplayValueOfAdapter.getGpsDisplayValue(context,actions[PublicConsts.ACTION_GPS_LOCALE]);
+            String value_gps= ActionDisplayValue.ActionDisplayValueOfAdapter.getGpsDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE]);
             if(value_gps.length()>0){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(value_gps);
             }
 
-            String value_net=ActionDisplayValue.ActionDisplayValueOfAdapter.getNetDisplayValue(context,actions[PublicConsts.ACTION_NET_LOCALE]);
+            String value_net=ActionDisplayValue.ActionDisplayValueOfAdapter.getNetDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE]);
             if(value_net.length()>0){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(value_net);
             }
 
-            String value_airplanemode= ActionDisplayValue.ActionDisplayValueOfAdapter.getAirplaneModeDisplayValue(context,actions[PublicConsts.ACTION_AIRPLANE_MODE_LOCALE]);
+            String value_airplanemode= ActionDisplayValue.ActionDisplayValueOfAdapter.getAirplaneModeDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE]);
             if(value_airplanemode.length()>0){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(value_airplanemode);
             }
 
-            String value_device= ActionDisplayValue.ActionDisplayValueOfAdapter.getDeviceControlDisplayValue(context,actions[PublicConsts.ACTION_DEVICECONTROL_LOCALE]);
+            String value_device= ActionDisplayValue.ActionDisplayValueOfAdapter.getDeviceControlDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICECONTROL_LOCALE]);
             if(value_device.length()>0){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(value_device);
             }
 
-            String value_task_enable= ActionDisplayValue.ActionDisplayValueOfAdapter.getEnableTasksDisplayValue(context,actions[PublicConsts.ACTION_ENABLE_TASKS_LOCALE]);
+            String value_task_enable= ActionDisplayValue.ActionDisplayValueOfAdapter.getEnableTasksDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE]);
             if(value_task_enable.length()>0){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(value_task_enable);
             }
 
-            String value_task_disable= ActionDisplayValue.ActionDisplayValueOfAdapter.getDisableTasksDisplayValue(context,actions[PublicConsts.ACTION_DISABLE_TASKS_LOCALE]);
+            String value_task_disable= ActionDisplayValue.ActionDisplayValueOfAdapter.getDisableTasksDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE]);
             if(value_task_disable.length()>0){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(value_task_disable);
             }
 
-            String value_app_open= ActionDisplayValue.ActionDisplayValueOfAdapter.getAppLaunchDisplayValue(context,actions[PublicConsts.ACTION_LAUNCH_APP_PACKAGES]);
+            String value_app_open= ActionDisplayValue.ActionDisplayValueOfAdapter.getAppLaunchDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES]);
             if(value_app_open.length()>0){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(value_app_open);
             }
 
-            String value_app_close= ActionDisplayValue.ActionDisplayValueOfAdapter.getAppCloseDisplayValue(context,actions[PublicConsts.ACTION_STOP_APP_PACKAGES]);
+            String value_app_close= ActionDisplayValue.ActionDisplayValueOfAdapter.getAppCloseDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES]);
             if(value_app_close.length()>0){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(value_app_close);

@@ -27,6 +27,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.R;
+import com.github.ghmxr.timeswitch.data.ActionConsts;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
 
@@ -64,8 +65,8 @@ public class SmsActivity extends BaseActivity {
         cb_receipt_toast=findViewById(R.id.layout_sms_toast_cb);
         try{
             String sms_values[]=getIntent().getStringExtra(EXTRA_SMS_VALUES).split(PublicConsts.SEPARATOR_SECOND_LEVEL);
-            enabled=Integer.parseInt(sms_values[PublicConsts.SMS_ENABLED_LOCALE])>=0;
-            subid=Integer.parseInt(sms_values[PublicConsts.SMS_SUBINFO_LOCALE]);
+            enabled=Integer.parseInt(sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_ENABLED_LOCALE])>=0;
+            subid=Integer.parseInt(sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_SUBINFO_LOCALE]);
             edit_addresses.setText(getIntent().getStringExtra(EXTRA_SMS_ADDRESS));
             edit_message.setText(getIntent().getStringExtra(EXTRA_SMS_MESSAGE));
             if(Build.VERSION.SDK_INT>=22){
@@ -117,7 +118,7 @@ public class SmsActivity extends BaseActivity {
                 spinner.setSelection(0);
                 spinner.setEnabled(false);
             }
-            cb_receipt_toast.setChecked(Integer.parseInt(sms_values[PublicConsts.SMS_RESULT_TOAST_LOCALE])>=0);
+            cb_receipt_toast.setChecked(Integer.parseInt(sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_RESULT_TOAST_LOCALE])>=0);
 
         }catch (Exception e){
             e.printStackTrace();

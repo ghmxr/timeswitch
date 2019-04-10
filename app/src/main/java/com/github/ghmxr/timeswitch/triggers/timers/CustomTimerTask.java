@@ -3,10 +3,9 @@ package com.github.ghmxr.timeswitch.triggers.timers;
 import android.content.Context;
 import android.os.PowerManager;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 
-import com.github.ghmxr.timeswitch.data.PublicConsts;
-import com.github.ghmxr.timeswitch.data.TaskItem;
+import com.github.ghmxr.timeswitch.TaskItem;
+import com.github.ghmxr.timeswitch.data.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.triggers.Trigger;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 
@@ -23,11 +22,6 @@ public class CustomTimerTask implements Trigger{
     private Context context;
     static final String TAG="TimerTask(Executor)";
     private TaskItem item;
-    /**
-     * @deprecated
-     */
-    public static SparseBooleanArray timerTaskStatus;
-
     private static PowerManager pm;
     private PowerManager.WakeLock wakeLock;
 
@@ -43,7 +37,7 @@ public class CustomTimerTask implements Trigger{
 
     @Override
     public synchronized void activate() {
-        if(item.trigger_type == PublicConsts.TRIGGER_TYPE_SINGLE){   //仅触发一次
+        if(item.trigger_type == TriggerTypeConsts.TRIGGER_TYPE_SINGLE){   //仅触发一次
             long triggerTime=item.time;
             Date date=new Date();
             date.setTime(triggerTime);
@@ -58,7 +52,7 @@ public class CustomTimerTask implements Trigger{
             }
         }
 
-        if(item.trigger_type ==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME||item .trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_WEEK){
+        if(item.trigger_type == TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME||item .trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK){
             setTimerOfRepeatingType(item.trigger_type);
         }
 
@@ -83,7 +77,7 @@ public class CustomTimerTask implements Trigger{
      * @param type 1 or 2
      */
     private void setTimerOfRepeatingType(int type){
-        if(type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){   //按照指定间隔时间触发
+        if(type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){   //按照指定间隔时间触发
             long triggerTime=item.time;
             long millis = item.interval_milliseconds;
             if(millis<=0) return;
@@ -101,7 +95,7 @@ public class CustomTimerTask implements Trigger{
                 }
             }
         }
-        if(type==PublicConsts.TRIGGER_TYPE_LOOP_WEEK){  //按照周重复触发
+        if(type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK){  //按照周重复触发
             long triggerTime=item.time;
             while (triggerTime<System.currentTimeMillis()){
                 triggerTime+=24*60*60*1000;
@@ -129,7 +123,7 @@ public class CustomTimerTask implements Trigger{
                     new ProcessTaskItem(context,item).activateTaskItem();
                 }
             }).start();
-            if(item.trigger_type ==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME||item .trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_WEEK){
+            if(item.trigger_type == TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME||item .trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK){
                 setTimerOfRepeatingType(item.trigger_type);
             }else{
                 try{

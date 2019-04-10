@@ -4,7 +4,8 @@ import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.adapters.MainListAdapter;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.SQLConsts;
-import com.github.ghmxr.timeswitch.data.TaskItem;
+import com.github.ghmxr.timeswitch.TaskItem;
+import com.github.ghmxr.timeswitch.data.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.MySQLiteOpenHelper;
@@ -153,7 +154,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
                 while (ifRefresh){
                     try{
                         for(TaskItem item:TimeSwitchService.list){
-                            if(item.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){
+                            if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){
                                 long remaining=item.getNextTriggeringTime()-System.currentTimeMillis();
                                 if(remaining<=0) remaining=0;
                                 int day=(int)(remaining/(1000*60*60*24));
@@ -237,7 +238,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
     }
 
     private void checkIfHasServiceInstanceAndRun(){
-        if(TimeSwitchService.service_queue.size()==0){
+        if(TimeSwitchService.service==null){
             startService2Refresh();
         }else{
             sendEmptyMessage(MESSAGE_GETLIST_COMPLETE);
@@ -313,7 +314,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
                     @Override
                     public void onCheckedChanged(final int position,boolean b) {
                         if(TimeSwitchService.list==null||position>=TimeSwitchService.list.size()||position<0) return;
-                        if(b&&TimeSwitchService.list.get(position).trigger_type == PublicConsts.TRIGGER_TYPE_SINGLE&&(TimeSwitchService.list.get(position).time<System.currentTimeMillis())){
+                        if(b&&TimeSwitchService.list.get(position).trigger_type == TriggerTypeConsts.TRIGGER_TYPE_SINGLE&&(TimeSwitchService.list.get(position).time<System.currentTimeMillis())){
                             Snackbar.make(fab,getResources().getString(R.string.activity_main_toast_task_invalid),Snackbar.LENGTH_SHORT)
                                     .setAction(getResources().getString(R.string.activity_main_toast_task_invalid_action), new View.OnClickListener() {
                                         @Override
@@ -326,7 +327,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
                             return;
                         }
                         try{
-                            ProcessTaskItem.setTaskEnabled(TimeSwitchService.service_queue.getLast(),TimeSwitchService.list.get(position).id,b);
+                            ProcessTaskItem.setTaskEnabled(TimeSwitchService.service,TimeSwitchService.list.get(position).id,b);
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -627,7 +628,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
                                 int key=TimeSwitchService.list.get(i).id;
                                 TimeSwitchService.list.get(i).cancelTask();
                                 //list.remove(i);
-                                database.delete(SQLConsts.getCurrentTableName(Main.this),SQLConsts.SQL_TASK_COLUMN_ID +"="+key,null);
+                                database.delete(MySQLiteOpenHelper.getCurrentTableName(Main.this),SQLConsts.SQL_TASK_COLUMN_ID +"="+key,null);
                             }
                         }
                         sendEmptyMessage(MESSAGE_DELETE_SELECTED_ITEMS_COMPLETE);

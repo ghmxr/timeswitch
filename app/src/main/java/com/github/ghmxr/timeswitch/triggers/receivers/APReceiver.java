@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 
-import com.github.ghmxr.timeswitch.data.PublicConsts;
-import com.github.ghmxr.timeswitch.data.TaskItem;
+import com.github.ghmxr.timeswitch.TaskItem;
+import com.github.ghmxr.timeswitch.data.TriggerTypeConsts;
 
 public class APReceiver extends BaseBroadcastReceiver{
     private boolean mLock=true;
@@ -20,42 +20,18 @@ public class APReceiver extends BaseBroadcastReceiver{
         super(context,item);
     }
 
-    /**
-     * @deprecated
-     */
-    public void registerReceiver(){
-        //if(!isRegistered) {
-
-            //isRegistered=true;
-       // }
-    }
-
-    /**
-     * @deprecated
-     */
-    public void unRegisterReceiver(){
-        //if(isRegistered){
-        try{
-            context.unregisterReceiver(this);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-           // isRegistered=false;
-        //}
-    }
-
     @Override
     public void onReceive(Context context, Intent intent) {
         if(intent==null||intent.getAction()==null) return;
         if(intent.getAction().equals(ACTION_AP_STATE_CHANGED)){
             int state=intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,0);
             if(item==null) return;
-            if(item.trigger_type== PublicConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED&&state==AP_STATE_ENABLED){
+            if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED&&state==AP_STATE_ENABLED){
                 runActions();
             }else{
                 mLock=false;
             }
-            if(item.trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED&&state==AP_STATE_DISABLED){
+            if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED&&state==AP_STATE_DISABLED){
                 runActions();
             }else{
                 mLock=false;

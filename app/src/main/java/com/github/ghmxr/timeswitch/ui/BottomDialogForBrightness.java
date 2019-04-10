@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 
 import com.github.ghmxr.timeswitch.R;
+import com.github.ghmxr.timeswitch.data.ActionConsts;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 
 /**
@@ -20,8 +21,8 @@ public class BottomDialogForBrightness implements View.OnClickListener{
     private BottomDialog bottomDialog;
     private Context context;
     private RelativeLayout manual_area;
-    private static final int SELECTION_UNSELECTED= PublicConsts.ACTION_BRIGHTNESS_UNSELECTED;
-    private static final int SELECTION_AUTO=PublicConsts.ACTION_BRIGHTNESS_AUTO;
+    private static final int SELECTION_UNSELECTED= ActionConsts.ActionValueConsts.ACTION_BRIGHTNESS_UNSELECTED;
+    private static final int SELECTION_AUTO= ActionConsts.ActionValueConsts.ACTION_BRIGHTNESS_AUTO;
     private static final int BRIGHTNESS_MAX=PublicConsts.BRIGHTNESS_MAX;
     private int selection;
     private SeekBar seekBar;
@@ -81,8 +82,8 @@ public class BottomDialogForBrightness implements View.OnClickListener{
         bottomDialog.findViewById(R.id.bottom_dialog_action_selection_brightness_auto).setOnClickListener(this);
         bottomDialog.findViewById(R.id.bottom_dialog_action_selection_brightness_manual).setOnClickListener(this);
 
-        if(selection==PublicConsts.ACTION_BRIGHTNESS_UNSELECTED) onUnselectedAreaClicked();
-        else if(selection==PublicConsts.ACTION_BRIGHTNESS_AUTO) onAutoAreaClicked();
+        if(selection== ActionConsts.ActionValueConsts.ACTION_BRIGHTNESS_UNSELECTED) onUnselectedAreaClicked();
+        else if(selection== ActionConsts.ActionValueConsts.ACTION_BRIGHTNESS_AUTO) onAutoAreaClicked();
         else onManualAreaClicked();
 
         bottomDialog.show();

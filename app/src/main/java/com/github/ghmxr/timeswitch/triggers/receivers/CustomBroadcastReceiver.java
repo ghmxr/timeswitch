@@ -4,8 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import com.github.ghmxr.timeswitch.data.TaskItem;
-import com.github.ghmxr.timeswitch.triggers.Trigger;
+import com.github.ghmxr.timeswitch.TaskItem;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
@@ -35,29 +34,4 @@ public class CustomBroadcastReceiver extends BaseBroadcastReceiver{
         }
     }
 
-    /**
-     * @deprecated
-     */
-    public void registerReceiver(){
-       // if(!isRegistered){
-           // if(item.isenabled) {
-
-               // this.isRegistered=true;
-           // }
-       // }
-    }
-
-    /**
-     * @deprecated
-     */
-    public void unRegisterReceiver(){
-       // if(isRegistered){
-        try{
-            context.unregisterReceiver(this);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        //    this.isRegistered=false;
-       // }
-    }
 }

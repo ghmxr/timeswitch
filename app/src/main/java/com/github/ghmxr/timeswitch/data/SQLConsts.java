@@ -1,9 +1,5 @@
 package com.github.ghmxr.timeswitch.data;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
-
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
  */
@@ -92,13 +88,4 @@ public class SQLConsts {
 
 	public static final String SQL_TASK_COLUMN_TOAST						="toast";
 
-    /**
-     * 动态获取当前使用的数据库表名。
-     * @param context 调用此方法的activity 或者 context
-     * @return 当前使用的数据库的表名
-     */
-    public static String getCurrentTableName(Context context){
-         SharedPreferences settings = context.getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE);
-         return settings.getString(PublicConsts.PREFERENCES_CURRENT_TABLE_NAME,SQL_DATABASE_DEFAULT_TABLE_NAME);
-    }
 }

@@ -40,14 +40,17 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.github.ghmxr.timeswitch.Global;
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.activities.Main;
 import com.github.ghmxr.timeswitch.activities.SmsActivity;
+import com.github.ghmxr.timeswitch.data.ActionConsts;
+import com.github.ghmxr.timeswitch.data.AdditionConsts;
+import com.github.ghmxr.timeswitch.data.ExceptionConsts;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.data.SQLConsts;
-import com.github.ghmxr.timeswitch.data.TaskItem;
-import com.github.ghmxr.timeswitch.triggers.receivers.BatteryReceiver;
-import com.github.ghmxr.timeswitch.triggers.receivers.HeadsetPlugReceiver;
+import com.github.ghmxr.timeswitch.TaskItem;
+import com.github.ghmxr.timeswitch.data.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.receivers.SMSReceiver;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 
@@ -86,11 +89,11 @@ public class ProcessTaskItem {
         SQLiteDatabase database= MySQLiteOpenHelper.getInstance(this.context).getWritableDatabase();
 
 
-        if(item.trigger_type ==PublicConsts.TRIGGER_TYPE_SINGLE){
+        if(item.trigger_type == TriggerTypeConsts.TRIGGER_TYPE_SINGLE){
             //do close the item
             ContentValues values=new ContentValues();
             values.put(SQLConsts.SQL_TASK_COLUMN_ENABLED,0);
-            database.update(SQLConsts.getCurrentTableName(this.context),values,SQLConsts.SQL_TASK_COLUMN_ID +"="+item.id,null);
+            database.update(MySQLiteOpenHelper.getCurrentTableName(this.context),values,SQLConsts.SQL_TASK_COLUMN_ID +"="+item.id,null);
 
             //do close the single task and refresh the list in Main;
             int position=getPosition(item.id);
@@ -103,7 +106,7 @@ public class ProcessTaskItem {
 
         }*/
 
-        if(item.trigger_type ==PublicConsts.TRIGGER_TYPE_LOOP_WEEK){
+        if(item.trigger_type == TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK){
             Calendar c=Calendar.getInstance();
             c.setTimeInMillis(System.currentTimeMillis());
             int dayofweek=c.get(Calendar.DAY_OF_WEEK);
@@ -147,9 +150,9 @@ public class ProcessTaskItem {
             exception_connector=Integer.parseInt(item.addition_exception_connector);
             //Log.d("ExceptionCon",""+exception_connector);
             if(exception_connector>=0){
-                canTrigger=processExceptions(PublicConsts.EXCEPTION_CONNECTOR_AND,log_exception);
+                canTrigger=processExceptions(ExceptionConsts.EXCEPTION_CONNECTOR_AND,log_exception);
             }else{
-                canTrigger=processExceptions(PublicConsts.EXCEPTION_CONNECTOR_OR,log_exception);
+                canTrigger=processExceptions(ExceptionConsts.EXCEPTION_CONNECTOR_OR,log_exception);
             }
             Log.d("CanTrigger",""+canTrigger);
         }catch (Exception e){
@@ -177,7 +180,7 @@ public class ProcessTaskItem {
             try{
                 ContentValues values=new ContentValues();
                 values.put(SQLConsts.SQL_TASK_COLUMN_ENABLED,0);
-                database.update(SQLConsts.getCurrentTableName(this.context),values,SQLConsts.SQL_TASK_COLUMN_ID +"="+item.id,null);
+                database.update(MySQLiteOpenHelper.getCurrentTableName(this.context),values,SQLConsts.SQL_TASK_COLUMN_ID +"="+item.id,null);
                 Main.sendEmptyMessage(Main.MESSAGE_REQUEST_UPDATE_LIST);
             }catch (Exception e){
                 e.printStackTrace();
@@ -188,7 +191,7 @@ public class ProcessTaskItem {
         if(item.autodelete&&canTrigger){
             try{
                 item.cancelTask();
-                int rows=database.delete(SQLConsts.getCurrentTableName(this.context),SQLConsts.SQL_TASK_COLUMN_ID +"="+item.id,null);
+                int rows=database.delete(MySQLiteOpenHelper.getCurrentTableName(this.context),SQLConsts.SQL_TASK_COLUMN_ID +"="+item.id,null);
                 Log.i(TAG,"receiver deleted "+rows+" rows");
                 int position=getPosition(item.id);
                 if(TimeSwitchService.list!=null&&position>=0&&position<TimeSwitchService.list.size()) {
@@ -213,14 +216,14 @@ public class ProcessTaskItem {
            int action_airplanemode=-1;
            int action_device_control=-1;
            try{
-               action_wifi=Integer.parseInt(item.actions[PublicConsts.ACTION_WIFI_LOCALE]);
-               action_bluetooth=Integer.parseInt(item.actions[PublicConsts.ACTION_BLUETOOTH_LOCALE]);
-               action_ring_mode=Integer.parseInt(item.actions[PublicConsts.ACTION_RING_MODE_LOCALE]);
-               screen_brightness=Integer.parseInt(item.actions[PublicConsts.ACTION_BRIGHTNESS_LOCALE]);
-               action_net=Integer.parseInt(item.actions[PublicConsts.ACTION_NET_LOCALE]);
-               action_gps=Integer.parseInt(item.actions[PublicConsts.ACTION_GPS_LOCALE]);
-               action_airplanemode=Integer.parseInt(item.actions[PublicConsts.ACTION_AIRPLANE_MODE_LOCALE]);
-               action_device_control=Integer.parseInt(item.actions[PublicConsts.ACTION_DEVICECONTROL_LOCALE]);
+               action_wifi=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_WIFI_LOCALE]);
+               action_bluetooth=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BLUETOOTH_LOCALE]);
+               action_ring_mode=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_MODE_LOCALE]);
+               screen_brightness=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BRIGHTNESS_LOCALE]);
+               action_net=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE]);
+               action_gps=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE]);
+               action_airplanemode=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE]);
+               action_device_control=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICECONTROL_LOCALE]);
            }catch (NumberFormatException ne){
                ne.printStackTrace();
                Toast.makeText(context,ne.toString(),Toast.LENGTH_SHORT).show();
@@ -230,15 +233,15 @@ public class ProcessTaskItem {
             activateActionOfWifi(action_wifi);
             activateActionOfBluetooth(action_bluetooth);
             activateActionOfRingMode(action_ring_mode);
-            activateActionOfVolume(item.actions[PublicConsts.ACTION_RING_VOLUME_LOCALE]);
-            activateActionOfSettingRingtone(item.actions[PublicConsts.ACTION_RING_SELECTION_LOCALE]);
+            activateActionOfVolume(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE]);
+            activateActionOfSettingRingtone(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE]);
             activateActionOfBrightness(screen_brightness);
-            activateActionOfWallpaper(item.actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE]);
-            activateActionOfVibrate(item.actions[PublicConsts.ACTION_VIBRATE_LOCALE]);
-            activateActionOfToast(item.actions[PublicConsts.ACTION_TOAST_LOCALE]);
-            activateActionOfSMS(item.actions[PublicConsts.ACTION_SMS_LOCALE]);
-            launchAppsByPackageName(context,item.actions[PublicConsts.ACTION_LAUNCH_APP_PACKAGES]);
-            stopAppsByPackageName(context,item.actions[PublicConsts.ACTION_STOP_APP_PACKAGES]);
+            activateActionOfWallpaper(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE]);
+            activateActionOfVibrate(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE]);
+            activateActionOfToast(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE]);
+            activateActionOfSMS(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE]);
+            launchAppsByPackageName(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES]);
+            stopAppsByPackageName(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES]);
             switchTasks(0);
             switchTasks(1);
 
@@ -250,7 +253,7 @@ public class ProcessTaskItem {
                 activateActionOfAirplaneMode(action_airplanemode);
                 activateActionOfDeviceControl(action_device_control);
             }
-            activateActionOfNotification(item.actions[PublicConsts.ACTION_NOTIFICATION_LOCALE]);
+            activateActionOfNotification(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE]);
         }
         LogUtil.putLog(context,log_taskitem.toString());
         com.github.ghmxr.timeswitch.activities.Log.sendEmptyMessage(com.github.ghmxr.timeswitch.activities.Log.MESSAGE_REQUEST_REFRESH);
@@ -268,7 +271,7 @@ public class ProcessTaskItem {
         boolean type_and_if_has_exception=false;
         try{
             KeyguardManager mKeyguardManager=(KeyguardManager)context.getSystemService(Context.KEYGUARD_SERVICE);
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_LOCKEDSCREEN])==1){
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_LOCKEDSCREEN])==1){
                 type_and_if_has_exception=true;
                 if(mKeyguardManager.inKeyguardRestrictedInputMode()) {
                     if(processType==TYPE_OR){
@@ -286,7 +289,7 @@ public class ProcessTaskItem {
                     }
                 }
             }
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_UNLOCKEDSCREEN])==1){
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_UNLOCKEDSCREEN])==1){
                 type_and_if_has_exception=true;
                 if(!mKeyguardManager.inKeyguardRestrictedInputMode()) {
                     if(processType==TYPE_OR) {
@@ -314,7 +317,7 @@ public class ProcessTaskItem {
 
         try{
             WifiManager mWifiManager=(WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_WIFI_ENABLED])==1){
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_WIFI_ENABLED])==1){
                 type_and_if_has_exception=true;
                 if(mWifiManager.getWifiState()== WifiManager.WIFI_STATE_ENABLED) {
                     if(processType==TYPE_OR){
@@ -332,7 +335,7 @@ public class ProcessTaskItem {
                     }
                 }
             }
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_WIFI_DISABLED])==1){
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_WIFI_DISABLED])==1){
                 type_and_if_has_exception=true;
                 if(mWifiManager.getWifiState()==WifiManager.WIFI_STATE_DISABLED) {
                     if(processType==TYPE_OR){
@@ -404,7 +407,7 @@ public class ProcessTaskItem {
 
         try{
             BluetoothAdapter mBluetoothAdapter=BluetoothAdapter.getDefaultAdapter();
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BLUETOOTH_ENABLED])==1){
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_ENABLED])==1){
                 type_and_if_has_exception=true;
                 if(mBluetoothAdapter.getState()== BluetoothAdapter.STATE_ON) {
                     if(processType==TYPE_OR){
@@ -422,7 +425,7 @@ public class ProcessTaskItem {
                     }
                 }
             }
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BLUETOOTH_DISABLED])==1){
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_DISABLED])==1){
                 type_and_if_has_exception=true;
                 if(mBluetoothAdapter.getState()==BluetoothAdapter.STATE_OFF) {
                     if(processType==TYPE_OR){
@@ -448,7 +451,7 @@ public class ProcessTaskItem {
 
         try{
             AudioManager mAudioManager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_RING_VIBRATE])==1){
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_RING_VIBRATE])==1){
                 type_and_if_has_exception=true;
                 if(mAudioManager.getRingerMode()== AudioManager.RINGER_MODE_VIBRATE) {
                     if(processType==TYPE_OR){
@@ -467,7 +470,7 @@ public class ProcessTaskItem {
                 }
             }
 
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_RING_OFF])==1){
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_RING_OFF])==1){
                 type_and_if_has_exception=true;
                 if(mAudioManager.getRingerMode()==AudioManager.RINGER_MODE_SILENT) {
                     if(processType==TYPE_OR){
@@ -486,7 +489,7 @@ public class ProcessTaskItem {
                 }
             }
 
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_RING_NORMAL])==1){
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_RING_NORMAL])==1){
                 type_and_if_has_exception=true;
                 if(mAudioManager.getRingerMode()==AudioManager.RINGER_MODE_NORMAL) {
                     if(processType==TYPE_OR){
@@ -511,7 +514,7 @@ public class ProcessTaskItem {
         }
 
         try{
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_NET_ENABLED])==1){
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_NET_ENABLED])==1){
                 type_and_if_has_exception=true;
                 if(isCellarNetworkEnabled()) {
                     if(processType==TYPE_OR){
@@ -530,7 +533,7 @@ public class ProcessTaskItem {
                 }
             }
 
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_NET_DISABLED])==1){
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_NET_DISABLED])==1){
                 type_and_if_has_exception=true;
                 if(!isCellarNetworkEnabled()) {
                     if(processType==TYPE_OR){
@@ -553,7 +556,7 @@ public class ProcessTaskItem {
         }
 
         try{
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_GPS_ENABLED])==1){
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_GPS_ENABLED])==1){
                 type_and_if_has_exception=true;
                 if(isLocationServiceEnabled()) {
                     if(processType==TYPE_OR){
@@ -572,7 +575,7 @@ public class ProcessTaskItem {
                 }
             }
 
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_GPS_DISABLED])==1){
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_GPS_DISABLED])==1){
                 type_and_if_has_exception=true;
                 if(!isLocationServiceEnabled()) {
                     if(processType==TYPE_OR){
@@ -595,7 +598,7 @@ public class ProcessTaskItem {
         }
 
         try{
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_AIRPLANE_MODE_ENABLED])==1){
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_ENABLED])==1){
                 type_and_if_has_exception=true;
                 if(isAirplaneModeOn()) {
                     if(processType==TYPE_OR){
@@ -614,7 +617,7 @@ public class ProcessTaskItem {
                 }
             }
 
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_AIRPLANE_MODE_DISABLED])==1){
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_DISABLED])==1){
                 type_and_if_has_exception=true;
                 if(!isAirplaneModeOn()) {
                     if(processType==TYPE_OR){
@@ -638,61 +641,57 @@ public class ProcessTaskItem {
         }
 
         try{
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])!=-1){
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])!=-1){
                 type_and_if_has_exception=true;
                 // Log.e(TAG,"isInstant is "+BatteryReceiver.isInstant+" currentTemp is "+BatteryReceiver.Battery_temperature+" item set is "+item.battery_temperature);
-                if(BatteryReceiver.isInstant){
-                    int currentTemp=BatteryReceiver.Battery_temperature;
-                    if(currentTemp>Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])*10) {
-                        if(processType==TYPE_OR){
-                            log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_temperature_higher_than));
-                            log_exception.append(item.exceptions[PublicConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]);
-                            log_exception.append("¡æ,current:");
-                            log_exception.append((double)currentTemp/10);
-                            log_exception.append("¡æ");
-                            log_exception.append(" ");
-                            return false;
-                        }
-                    }else{
-                        if(processType==TYPE_AND){
-                            log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_temperature_higher_than));
-                            log_exception.append(item.exceptions[PublicConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]);
-                            log_exception.append("¡æ,current:");
-                            log_exception.append((double)currentTemp/10);
-                            log_exception.append("¡æ");
-                            log_exception.append(" ");
-                            log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                            return true;
-                        }
+                int currentTemp=Global.BatteryReceiver.battery_temperature;
+                if(currentTemp>Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])*10) {
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_temperature_higher_than));
+                        log_exception.append(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]);
+                        log_exception.append("¡æ,current:");
+                        log_exception.append((double)currentTemp/10);
+                        log_exception.append("¡æ");
+                        log_exception.append(" ");
+                        return false;
+                    }
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_temperature_higher_than));
+                        log_exception.append(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]);
+                        log_exception.append("¡æ,current:");
+                        log_exception.append((double)currentTemp/10);
+                        log_exception.append("¡æ");
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        return true;
                     }
                 }
             }
 
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])!=-1){
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])!=-1){
                 type_and_if_has_exception=true;
-                if(BatteryReceiver.isInstant){
-                    int currentTemp=BatteryReceiver.Battery_temperature;
-                    if(currentTemp<Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])*10) {
-                        if(processType==TYPE_OR){
-                            log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_temperature_lower_than));
-                            log_exception.append(item.exceptions[PublicConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]);
-                            log_exception.append("¡æ,current:");
-                            log_exception.append((double)currentTemp/10);
-                            log_exception.append("¡æ");
-                            log_exception.append(" ");
-                            return false;
-                        }
-                    }else{
-                        if(processType==TYPE_AND){
-                            log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_temperature_lower_than));
-                            log_exception.append(item.exceptions[PublicConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]);
-                            log_exception.append("¡æ,current:");
-                            log_exception.append((double)currentTemp/10);
-                            log_exception.append("¡æ");
-                            log_exception.append(" ");
-                            log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                            return true;
-                        }
+                int currentTemp=Global.BatteryReceiver.battery_temperature;
+                if(currentTemp<Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])*10) {
+                    if(processType==TYPE_OR){
+                        log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_temperature_lower_than));
+                        log_exception.append(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]);
+                        log_exception.append("¡æ,current:");
+                        log_exception.append((double)currentTemp/10);
+                        log_exception.append("¡æ");
+                        log_exception.append(" ");
+                        return false;
+                    }
+                }else{
+                    if(processType==TYPE_AND){
+                        log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_temperature_lower_than));
+                        log_exception.append(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]);
+                        log_exception.append("¡æ,current:");
+                        log_exception.append((double)currentTemp/10);
+                        log_exception.append("¡æ");
+                        log_exception.append(" ");
+                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
+                        return true;
                     }
                 }
             }
@@ -701,13 +700,13 @@ public class ProcessTaskItem {
         }
 
         try{
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])!=-1) {
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])!=-1) {
                 type_and_if_has_exception=true;
-                int currentLevel=BatteryReceiver.Battery_percentage;
-                if(BatteryReceiver.isInstant&&(currentLevel>Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]))) {
+                int currentLevel=Global.BatteryReceiver.battery_percentage;
+                if(currentLevel>Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])) {
                     if(processType==TYPE_OR){
                         log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_percentage_more_than));
-                        log_exception.append(item.exceptions[PublicConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]);
+                        log_exception.append(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]);
                         log_exception.append("%,current:");
                         log_exception.append(currentLevel);
                         log_exception.append("%");
@@ -717,7 +716,7 @@ public class ProcessTaskItem {
                 }else{
                     if(processType==TYPE_AND){
                         log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_percentage_more_than));
-                        log_exception.append(item.exceptions[PublicConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]);
+                        log_exception.append(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]);
                         log_exception.append("%,current:");
                         log_exception.append(currentLevel);
                         log_exception.append("%");
@@ -728,13 +727,13 @@ public class ProcessTaskItem {
                 }
             }
 
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])!=-1){
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])!=-1){
                 type_and_if_has_exception=true;
-                int currentLevel=BatteryReceiver.Battery_percentage;
-                if(BatteryReceiver.isInstant&&(currentLevel<Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]))) {
+                int currentLevel=Global.BatteryReceiver.battery_percentage;
+                if(currentLevel<Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])) {
                     if(processType==TYPE_OR){
                         log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_percentage_less_than));
-                        log_exception.append(item.exceptions[PublicConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]);
+                        log_exception.append(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]);
                         log_exception.append("%,current:");
                         log_exception.append(currentLevel);
                         log_exception.append("%");
@@ -745,7 +744,7 @@ public class ProcessTaskItem {
                 }else{
                     if(processType==TYPE_AND){
                         log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_percentage_less_than));
-                        log_exception.append(item.exceptions[PublicConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]);
+                        log_exception.append(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]);
                         log_exception.append("%,current:");
                         log_exception.append(currentLevel);
                         log_exception.append("%");
@@ -756,11 +755,11 @@ public class ProcessTaskItem {
                 }
             }
 
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_HEADSET_STATUS])>0){
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS])>0){
                 type_and_if_has_exception=true;
-                int value=Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_HEADSET_STATUS]);
-                if(value==PublicConsts.EXCEPTION_HEADSET_PLUG_OUT){
-                    if(!HeadsetPlugReceiver.isHeadsetPluggedIn()){
+                int value=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS]);
+                if(value== ExceptionConsts.EXCEPTION_HEADSET_PLUG_OUT){
+                    if(!Global.HeadsetPlugReceiver.isHeadsetPluggedIn()){
                         if(processType==TYPE_OR){
                             log_exception.append(context.getResources().getString(R.string.log_exceptions_headset));
                             log_exception.append(context.getResources().getString(R.string.log_exceptions_headset_out));
@@ -777,8 +776,8 @@ public class ProcessTaskItem {
                     }
                 }
 
-                if(value==PublicConsts.EXCEPTION_HEADSET_PLUG_IN){
-                    if(HeadsetPlugReceiver.isHeadsetPluggedIn()){
+                if(value== ExceptionConsts.EXCEPTION_HEADSET_PLUG_IN){
+                    if(Global.HeadsetPlugReceiver.isHeadsetPluggedIn()){
                         if(processType==TYPE_OR){
                             log_exception.append(context.getResources().getString(R.string.log_exceptions_headset));
                             log_exception.append(context.getResources().getString(R.string.log_exceptions_headset_in));
@@ -807,7 +806,7 @@ public class ProcessTaskItem {
                 switch (dayofweek){
                     default:break;
                     case Calendar.SUNDAY:{
-                        if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_SUNDAY])==1) {
+                        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_SUNDAY])==1) {
                             log_exception.append(context.getResources().getString(R.string.sunday));
                             log_exception.append(" ");
                             return false;
@@ -815,7 +814,7 @@ public class ProcessTaskItem {
                     }
                     break;
                     case Calendar.MONDAY:{
-                        if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_MONDAY])==1){
+                        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_MONDAY])==1){
                             log_exception.append(context.getResources().getString(R.string.monday));
                             log_exception.append(" ");
                             return false;
@@ -823,7 +822,7 @@ public class ProcessTaskItem {
                     }
                     break;
                     case Calendar.TUESDAY:{
-                        if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_TUESDAY])==1){
+                        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_TUESDAY])==1){
                             log_exception.append(context.getResources().getString(R.string.tuesday));
                             log_exception.append(" ");
                             return false;
@@ -831,7 +830,7 @@ public class ProcessTaskItem {
                     }
                     break;
                     case Calendar.WEDNESDAY:{
-                        if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_WEDNESDAY])==1){
+                        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_WEDNESDAY])==1){
                             log_exception.append(context.getResources().getString(R.string.wednesday));
                             log_exception.append(" ");
                             return false;
@@ -839,7 +838,7 @@ public class ProcessTaskItem {
                     }
                     break;
                     case Calendar.THURSDAY:{
-                        if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_THURSDAY])==1){
+                        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_THURSDAY])==1){
                             log_exception.append(context.getResources().getString(R.string.thursday));
                             log_exception.append(" ");
                             return false;
@@ -847,7 +846,7 @@ public class ProcessTaskItem {
                     }
                     break;
                     case Calendar.FRIDAY:{
-                        if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_FRIDAY])==1){
+                        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_FRIDAY])==1){
                             log_exception.append(context.getResources().getString(R.string.friday));
                             log_exception.append(" ");
                             return false;
@@ -855,7 +854,7 @@ public class ProcessTaskItem {
                     }
                     break;
                     case Calendar.SATURDAY:{
-                        if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_SATURDAY])==1){
+                        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_SATURDAY])==1){
                             log_exception.append(context.getResources().getString(R.string.saturday));
                             log_exception.append(" ");
                             return false;
@@ -868,13 +867,13 @@ public class ProcessTaskItem {
 
             if(processType==TYPE_AND){
                 List<Integer> selected_dayofweek=new ArrayList<>();
-                if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_SUNDAY])==1) selected_dayofweek.add(Calendar.SUNDAY);
-                if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_MONDAY])==1) selected_dayofweek.add(Calendar.MONDAY);
-                if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_TUESDAY])==1) selected_dayofweek.add(Calendar.TUESDAY);
-                if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_WEDNESDAY])==1) selected_dayofweek.add(Calendar.WEDNESDAY);
-                if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_THURSDAY])==1) selected_dayofweek.add(Calendar.THURSDAY);
-                if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_FRIDAY])==1) selected_dayofweek.add(Calendar.FRIDAY);
-                if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_SATURDAY])==1) selected_dayofweek.add(Calendar.SATURDAY);
+                if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_SUNDAY])==1) selected_dayofweek.add(Calendar.SUNDAY);
+                if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_MONDAY])==1) selected_dayofweek.add(Calendar.MONDAY);
+                if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_TUESDAY])==1) selected_dayofweek.add(Calendar.TUESDAY);
+                if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_WEDNESDAY])==1) selected_dayofweek.add(Calendar.WEDNESDAY);
+                if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_THURSDAY])==1) selected_dayofweek.add(Calendar.THURSDAY);
+                if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_FRIDAY])==1) selected_dayofweek.add(Calendar.FRIDAY);
+                if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_SATURDAY])==1) selected_dayofweek.add(Calendar.SATURDAY);
                 if(selected_dayofweek.size()>0){
                     type_and_if_has_exception=true;
                     switch(dayofweek){
@@ -954,14 +953,14 @@ public class ProcessTaskItem {
             }
 
 
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_START_TIME])!=-1&&Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_END_TIME])!=-1){
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_START_TIME])!=-1&&Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_END_TIME])!=-1){
                 int minuteOfDay=calendar.get(Calendar.HOUR_OF_DAY)*60+calendar.get(Calendar.MINUTE);
                 type_and_if_has_exception=true;
                 //Log.i("Minute of day now",""+minuteOfDay);
                 //Log.i("startTime",""+item.exceptions[PublicConsts.EXCEPTION_START_TIME]);
                 //Log.i("endTime",""+item.exceptions[PublicConsts.EXCEPTION_END_TIME]);
-                int startTime=Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_START_TIME]);
-                int endTime=Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_END_TIME]);
+                int startTime=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_START_TIME]);
+                int endTime=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_END_TIME]);
                 if(endTime-startTime>0){
                     if((minuteOfDay>=startTime)&&minuteOfDay<=endTime) {
                         if(processType==TYPE_OR){
@@ -1038,7 +1037,7 @@ public class ProcessTaskItem {
             WifiManager mWifiManager=(WifiManager)context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             switch (action_wifi){
                 default:break;
-                case PublicConsts.ACTION_OPEN:{
+                case ActionConsts.ActionValueConsts.ACTION_OPEN:{
                     boolean action_wifi_result=mWifiManager.setWifiEnabled(true);
                     Log.i(TAG,"Try to enable wifi...");
                     log_taskitem.append(context.getResources().getString(R.string.action_wifi_open));
@@ -1047,7 +1046,7 @@ public class ProcessTaskItem {
                     log_taskitem.append(" ");
                 }
                 break;
-                case PublicConsts.ACTION_CLOSE:{
+                case ActionConsts.ActionValueConsts.ACTION_CLOSE:{
                     boolean action_wifi_result=mWifiManager.setWifiEnabled(false);
                     Log.i(TAG,"Try to disable wifi...");
                     log_taskitem.append(context.getResources().getString(R.string.action_wifi_close));
@@ -1070,7 +1069,7 @@ public class ProcessTaskItem {
             if(mBluetoothAdapter==null) return;
             switch (action_bluetooth){
                 default:break;
-                case PublicConsts.ACTION_OPEN:{
+                case ActionConsts.ActionValueConsts.ACTION_OPEN:{
                     boolean action_bluetooth_result=mBluetoothAdapter.enable();
                     Log.i(TAG,"try to enable bluetooth...");
                     log_taskitem.append(context.getResources().getString(R.string.action_bluetooth_open));
@@ -1079,7 +1078,7 @@ public class ProcessTaskItem {
                     log_taskitem.append(" ");
                 }
                 break;
-                case PublicConsts.ACTION_CLOSE:{
+                case ActionConsts.ActionValueConsts.ACTION_CLOSE:{
                     boolean action_bluetooth_result=mBluetoothAdapter.disable();
                     Log.i(TAG,"Try to disable bluetooth...");
                     log_taskitem.append(context.getResources().getString(R.string.action_bluetooth_close));
@@ -1103,7 +1102,7 @@ public class ProcessTaskItem {
         if(mAudioManager==null) return ;
         switch (action_ring_mode){
             default:break;
-            case PublicConsts.ACTION_RING_VIBRATE:{
+            case ActionConsts.ActionValueConsts.ACTION_RING_VIBRATE:{
                 try{
                     mAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);Log.i(TAG,"Try to set audio vibrate...");
                 }catch (Exception e){
@@ -1118,7 +1117,7 @@ public class ProcessTaskItem {
                 log_taskitem.append(" ");
                 break;
             }
-            case PublicConsts.ACTION_RING_OFF:{
+            case ActionConsts.ActionValueConsts.ACTION_RING_OFF:{
                 //boolean action_ring_result=fa
                 try{
                     mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);Log.i(TAG,"Try to set audio silent...");
@@ -1134,7 +1133,7 @@ public class ProcessTaskItem {
                 log_taskitem.append(" ");
                 break;
             }
-            case PublicConsts.ACTION_RING_NORMAL:{
+            case ActionConsts.ActionValueConsts.ACTION_RING_NORMAL:{
                 try{
                     mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);Log.i(TAG,"Try to set audio normal...");
                 }catch (Exception e){
@@ -1156,10 +1155,10 @@ public class ProcessTaskItem {
         try{
             String [] volumes=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             AudioManager mAudioManager=(AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-            int volume_ring=Integer.parseInt(volumes[PublicConsts.VOLUME_RING_LOCALE]);
-            int volume_media=Integer.parseInt(volumes[PublicConsts.VOLUME_MEDIA_LOCALE]);
-            int volume_notification=Integer.parseInt(volumes[PublicConsts.VOLUME_NOTIFICATION_LOCALE]);
-            int volume_alarm=Integer.parseInt(volumes[PublicConsts.VOLUME_ALARM_LOCALE]);
+            int volume_ring=Integer.parseInt(volumes[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_RING_LOCALE]);
+            int volume_media=Integer.parseInt(volumes[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_MEDIA_LOCALE]);
+            int volume_notification=Integer.parseInt(volumes[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_NOTIFICATION_LOCALE]);
+            int volume_alarm=Integer.parseInt(volumes[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_ALARM_LOCALE]);
             if(volume_ring>=0) {
                 mAudioManager.setStreamVolume(AudioManager.STREAM_RING,volume_ring,AudioManager.FLAG_SHOW_UI);
                 log_taskitem.append(context.getResources().getString(R.string.dialog_actions_ring_volume_ring));
@@ -1197,11 +1196,11 @@ public class ProcessTaskItem {
         try{
             // RingtoneManager ringtoneManager=new RingtoneManager(context);
             String ring_selection_values[]=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-            int ring_notification_selection= Integer.parseInt(ring_selection_values[PublicConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE]);
-            int ring_phone_selection=Integer.parseInt(ring_selection_values[PublicConsts.RING_SELECTION_CALL_TYPE_LOCALE]);
+            int ring_notification_selection= Integer.parseInt(ring_selection_values[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE]);
+            int ring_phone_selection=Integer.parseInt(ring_selection_values[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_CALL_TYPE_LOCALE]);
             //String ring_value_notification=ring_selection_values[PublicConsts.RING_SELECTION_NOTIFICATION_VALUE_LOCALE];
             //String ring_value_phone=ring_selection_values[PublicConsts.RING_SELECTION_PHONE_VALUE_LOCALE];
-            if(ring_notification_selection==PublicConsts.RING_TYPE_FROM_SYSTEM ||ring_notification_selection==PublicConsts.RING_TYPE_FROM_MEDIA)
+            if(ring_notification_selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM ||ring_notification_selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_MEDIA)
             {
                 //RingtoneManager.setActualDefaultRingtoneUri(context,RingtoneManager.TYPE_NOTIFICATION ,Uri.parse(ring_value_notification));
                 RingtoneManager.setActualDefaultRingtoneUri(context,RingtoneManager.TYPE_NOTIFICATION ,Uri.parse(item.uri_ring_notification));
@@ -1209,7 +1208,7 @@ public class ProcessTaskItem {
                 log_taskitem.append(context.getResources().getString(R.string.log_result_success));
                 log_taskitem.append(" ");
             }
-            if(ring_phone_selection==PublicConsts.RING_TYPE_FROM_SYSTEM ||ring_phone_selection==PublicConsts.RING_TYPE_FROM_MEDIA)
+            if(ring_phone_selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM ||ring_phone_selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_MEDIA)
             {
                 //RingtoneManager.setActualDefaultRingtoneUri(context,RingtoneManager.TYPE_RINGTONE,Uri.parse(ring_value_phone));
                 RingtoneManager.setActualDefaultRingtoneUri(context,RingtoneManager.TYPE_RINGTONE,Uri.parse(item.uri_ring_call));
@@ -1226,7 +1225,7 @@ public class ProcessTaskItem {
 
     private void activateActionOfBrightness(int screen_brightness){
         if(screen_brightness!=-1){
-            if(screen_brightness==PublicConsts.ACTION_BRIGHTNESS_AUTO){
+            if(screen_brightness== ActionConsts.ActionValueConsts.ACTION_BRIGHTNESS_AUTO){
                 try{
                     Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
                 }catch (Exception e){
@@ -1289,9 +1288,9 @@ public class ProcessTaskItem {
     private void activateActionOfVibrate(String values){
         try{
             String vibrate_values[]=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
-            long frequency=Long.parseLong(vibrate_values[PublicConsts.VIBRATE_FREQUENCY_LOCALE]);
-            long duration=Long.parseLong(vibrate_values[PublicConsts.VIBRATE_DURATION_LOCALE]);
-            long interval=Long.parseLong(vibrate_values[PublicConsts.VIBRATE_INTERVAL_LOCALE]);
+            long frequency=Long.parseLong(vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_FREQUENCY_LOCALE]);
+            long duration=Long.parseLong(vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_DURATION_LOCALE]);
+            long interval=Long.parseLong(vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_INTERVAL_LOCALE]);
             if(frequency>0){
                 Vibrator vibrator=(Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
                 if(vibrator==null) return;
@@ -1314,7 +1313,7 @@ public class ProcessTaskItem {
     private void activateActionOfToast(String values){
         try{
             String [] toast_values=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-            int type=Integer.parseInt(toast_values[PublicConsts.TOAST_TYPE_LOCALE]);
+            int type=Integer.parseInt(toast_values[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_TYPE_LOCALE]);
             if(type>=0){
                   /* Toast toast=Toast.makeText(context,item.toast,Toast.LENGTH_SHORT);
                    if(type==PublicConsts.TOAST_TYPE_CUSTOM) toast.setGravity(Gravity.TOP|Gravity.START,
@@ -1346,9 +1345,9 @@ public class ProcessTaskItem {
     private void activateActionOfSMS(String values){
         try{
             String sms_values[]=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
-            if(Integer.parseInt(sms_values[PublicConsts.SMS_ENABLED_LOCALE])>=0){
+            if(Integer.parseInt(sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_ENABLED_LOCALE])>=0){
                 SmsManager manager;
-                int subscriptionId=Integer.parseInt(sms_values[PublicConsts.SMS_SUBINFO_LOCALE]);
+                int subscriptionId=Integer.parseInt(sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_SUBINFO_LOCALE]);
                 if(Build.VERSION.SDK_INT>=22&&subscriptionId>=0){
                     manager=SmsManager.getSmsManagerForSubscriptionId(subscriptionId);
                 }else {
@@ -1365,7 +1364,7 @@ public class ProcessTaskItem {
                         i_sent.putExtra(SmsActivity.EXTRA_SMS_MESSAGE,message);
                         Intent i_delivered=new Intent(PublicConsts.ACTION_SMS_DELIVERED);
                         i_delivered.putExtra(SMSReceiver.EXTRA_SMS_TASK_NAME,item.name);
-                        i_delivered.putExtra(SMSReceiver.SMSReceiptReceiver.EXTRA_IF_SHOW_TOAST,Integer.parseInt(sms_values[PublicConsts.SMS_RESULT_TOAST_LOCALE])>=0);
+                        i_delivered.putExtra(SMSReceiver.SMSReceiptReceiver.EXTRA_IF_SHOW_TOAST,Integer.parseInt(sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_RESULT_TOAST_LOCALE])>=0);
                         i_delivered.putExtra(SmsActivity.EXTRA_SMS_ADDRESS,address);
                         PendingIntent pi_sent=PendingIntent.getBroadcast(context,0,i_sent,PendingIntent.FLAG_UPDATE_CURRENT);
                         PendingIntent pi_receipt=PendingIntent.getBroadcast(context,0,i_delivered,PendingIntent.FLAG_UPDATE_CURRENT);
@@ -1397,7 +1396,7 @@ public class ProcessTaskItem {
     private void activateActionOfNet(int action_net){
         switch (action_net){
             default:break;
-            case PublicConsts.ACTION_OPEN:{
+            case ActionConsts.ActionValueConsts.ACTION_OPEN:{
                 boolean result=RootUtils.executeCommand(RootUtils.COMMAND_ENABLE_CELLUAR_NETWORK)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
                 log_taskitem.append(context.getResources().getString(R.string.action_net_on));
                 log_taskitem.append(":");
@@ -1405,7 +1404,7 @@ public class ProcessTaskItem {
                 log_taskitem.append(" ");
             }
             break;
-            case PublicConsts.ACTION_CLOSE:{
+            case ActionConsts.ActionValueConsts.ACTION_CLOSE:{
                 boolean result=RootUtils.executeCommand(RootUtils.COMMAND_DISABLE_CELLUAR_NETWORK)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
                 log_taskitem.append(context.getResources().getString(R.string.action_net_off));
                 log_taskitem.append(":");
@@ -1420,7 +1419,7 @@ public class ProcessTaskItem {
         Log.d(TAG,"BEGIN TO OPERATE GPS!!!!!!");
         switch (action_gps){
             default:break;
-            case PublicConsts.ACTION_OPEN:{
+            case ActionConsts.ActionValueConsts.ACTION_OPEN:{
                 String command=RootUtils.COMMAND_ENABLE_GPS;
                 if(Build.VERSION.SDK_INT>=23) command=RootUtils.COMMAND_ENABLE_GPS_API23;
                 final String runCommand=command;
@@ -1438,7 +1437,7 @@ public class ProcessTaskItem {
                 //Log.i(TAG,"Root command of enable gps 's result is "+result);
             }
             break;
-            case PublicConsts.ACTION_CLOSE:{
+            case ActionConsts.ActionValueConsts.ACTION_CLOSE:{
                 String command=RootUtils.COMMAND_DISABLE_GPS;
                 if(Build.VERSION.SDK_INT>=23) command=RootUtils.COMMAND_DISABLE_GPS_API23;
                 final String runCommand=command;
@@ -1461,7 +1460,7 @@ public class ProcessTaskItem {
     private void activateActionOfAirplaneMode(int action_airplanemode){
         switch (action_airplanemode){
             default:break;
-            case PublicConsts.ACTION_OPEN:{
+            case ActionConsts.ActionValueConsts.ACTION_OPEN:{
                 boolean result=RootUtils.executeCommand(RootUtils.COMMAND_ENABLE_AIRPLANE_MODE)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
                 log_taskitem.append(context.getResources().getString(R.string.action_airplane_mode_on));
                 log_taskitem.append(":");
@@ -1469,7 +1468,7 @@ public class ProcessTaskItem {
                 log_taskitem.append(" ");
             }
             break;
-            case PublicConsts.ACTION_CLOSE:{
+            case ActionConsts.ActionValueConsts.ACTION_CLOSE:{
                 boolean result=RootUtils.executeCommand(RootUtils.COMMAND_DISABLE_AIRPLANE_MODE)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
                 log_taskitem.append(context.getResources().getString(R.string.action_airplane_mode_off));
                 log_taskitem.append(":");
@@ -1483,7 +1482,7 @@ public class ProcessTaskItem {
     private void activateActionOfDeviceControl(int action_device_control){
         switch (action_device_control){
             default:break;
-            case PublicConsts.ACTION_DEVICECONTROL_SHUTDOWN:{
+            case ActionConsts.ActionValueConsts.ACTION_DEVICECONTROL_SHUTDOWN:{
                 boolean result=RootUtils.executeCommand(RootUtils.COMMAND_SHUTDOWN)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
                 log_taskitem.append(context.getResources().getString(R.string.action_device_shutdown));
                 log_taskitem.append(":");
@@ -1491,7 +1490,7 @@ public class ProcessTaskItem {
                 log_taskitem.append(" ");
             }
             break;
-            case PublicConsts.ACTION_DEVICECONTROL_REBOOT:{
+            case ActionConsts.ActionValueConsts.ACTION_DEVICECONTROL_REBOOT:{
                 boolean result=RootUtils.executeCommand(RootUtils.COMMAND_REBOOT)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
                 log_taskitem.append(context.getResources().getString(R.string.action_device_reboot));
                 log_taskitem.append(":");
@@ -1505,8 +1504,8 @@ public class ProcessTaskItem {
     private void activateActionOfNotification(String values){
         try{
             String notification_values[]=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-            int type=Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_LOCALE]);
-            if(type==PublicConsts.NOTIFICATION_TYPE_NOT_OVERRIDE ||type==PublicConsts.NOTIFICATION_TYPE_OVERRIDE_LAST){
+            int type=Integer.parseInt(notification_values[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_LOCALE]);
+            if(type== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_NOT_OVERRIDE ||type== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_OVERRIDE_LAST){
                 NotificationManager manager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
                 NotificationCompat.Builder builder;
                 if(Build.VERSION.SDK_INT>=26){
@@ -1521,7 +1520,7 @@ public class ProcessTaskItem {
                 builder.setSmallIcon(R.drawable.ic_launcher);
                 builder.setContentTitle(context.getResources().getString(R.string.notification_task_activated_title));
                 builder.setContentText(log_taskitem.toString());
-                if(Integer.parseInt(notification_values[PublicConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])==PublicConsts.NOTIFICATION_TYPE_CONTENT_CUSTOM){
+                if(Integer.parseInt(notification_values[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_CONTENT_CUSTOM){
                     builder.setContentTitle(item.notification_title);
                     builder.setContentText(item.notification_message);
                 }
@@ -1530,7 +1529,7 @@ public class ProcessTaskItem {
                 builder.setAutoCancel(true);
                 builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
                 builder.setFullScreenIntent(pi,false);
-                if(type==PublicConsts.NOTIFICATION_TYPE_NOT_OVERRIDE){
+                if(type== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_NOT_OVERRIDE){
                     if(notification_id<Integer.MAX_VALUE) notification_id++;//Can user make notification shows like that total?
                     else notification_id=2;
                 }
@@ -1696,11 +1695,11 @@ public class ProcessTaskItem {
     private void switchTasks(int enableOrDisable){
         SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
         try{
-            String[] switch_values=item.actions[enableOrDisable==0?PublicConsts.ACTION_ENABLE_TASKS_LOCALE:PublicConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
+            String[] switch_values=item.actions[enableOrDisable==0? ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE: ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
             if(Integer.parseInt(switch_values[0])>=0){
                 for(String s:switch_values){
                     int id=Integer.parseInt(s);
-                    Cursor cursor=database.rawQuery("select * from "+ SQLConsts.getCurrentTableName(context)+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
+                    Cursor cursor=database.rawQuery("select * from "+ MySQLiteOpenHelper.getCurrentTableName(context)+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
                     if(cursor.getCount()>0){
                         //int position=getPosition(id);
                         setTaskEnabled(context,id,enableOrDisable==0);
@@ -1724,16 +1723,16 @@ public class ProcessTaskItem {
         int position=getPosition(id);
         if(position<0||position>=TimeSwitchService.list.size()) return;
         try{
-            if(TimeSwitchService.list.get(position).trigger_type==PublicConsts.TRIGGER_TYPE_SINGLE&&TimeSwitchService.list.get(position).time<=System.currentTimeMillis()) return;
+            if(TimeSwitchService.list.get(position).trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE&&TimeSwitchService.list.get(position).time<=System.currentTimeMillis()) return;
             TimeSwitchService.list.get(position).isenabled=enabled;
             SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
-            database.execSQL("update "+SQLConsts.getCurrentTableName(context)
+            database.execSQL("update "+ MySQLiteOpenHelper.getCurrentTableName(context)
                     +" set "+SQLConsts.SQL_TASK_COLUMN_ENABLED +"="+(enabled?1:0)+
                     " where "+SQLConsts.SQL_TASK_COLUMN_ID +"="+id);
 
-            if(TimeSwitchService.list.get(position).trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME&&enabled){
+            if(TimeSwitchService.list.get(position).trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME&&enabled){
                 TimeSwitchService.list.get(position).time=System.currentTimeMillis();
-                Cursor cursor=database.rawQuery("select * from "+ SQLConsts.getCurrentTableName(context)+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
+                Cursor cursor=database.rawQuery("select * from "+ MySQLiteOpenHelper.getCurrentTableName(context)+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
                 if(cursor.moveToFirst()){
                     long[] values_read=ValueUtils.string2longArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_TRIGGER_VALUES)));
                     if(values_read.length==2){
@@ -1743,7 +1742,7 @@ public class ProcessTaskItem {
                         values_put[1]=interval_read;
                         ContentValues contentValues=new ContentValues();
                         contentValues.put(SQLConsts.SQL_TASK_COLUMN_TRIGGER_VALUES,ValueUtils.longArray2String(values_put));
-                        database.update(SQLConsts.getCurrentTableName(context),contentValues,SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
+                        database.update(MySQLiteOpenHelper.getCurrentTableName(context),contentValues,SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
                     }
                 }
                 cursor.close();
@@ -1757,15 +1756,15 @@ public class ProcessTaskItem {
     public static void setTaskFolded(final Context context, int id , boolean isFolded){
         try{
             SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
-            final String table_name=SQLConsts.getCurrentTableName(context);
+            final String table_name= MySQLiteOpenHelper.getCurrentTableName(context);
             Cursor cursor=database.rawQuery("select * from "+table_name+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
             if(cursor.moveToFirst()){
                 String additions_read[]=ValueUtils.string2StringArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ADDITIONS)));
-                String additions[]=new String[PublicConsts.ADDITION_LENGTH];
+                String additions[]=new String[AdditionConsts.ADDITION_LENGTH];
                 for(int i=0;i<additions.length;i++){additions[i]=String.valueOf(-1);}
-                additions[PublicConsts.ADDITION_TITLE_COLOR_LOCALE]=new TaskItem().addition_title_color;
+                additions[AdditionConsts.ADDITION_TITLE_COLOR_LOCALE]=new TaskItem().addition_title_color;
                 System.arraycopy(additions_read,0,additions,0,additions_read.length);
-                additions[PublicConsts.ADDITION_TITLE_FOLDED_VALUE_LOCALE]=isFolded?String.valueOf(0):String.valueOf(-1);
+                additions[AdditionConsts.ADDITION_TITLE_FOLDED_VALUE_LOCALE]=isFolded?String.valueOf(0):String.valueOf(-1);
                 ContentValues content=new ContentValues();
                 content.put(SQLConsts.SQL_TASK_COLUMN_ADDITIONS,ValueUtils.stringArray2String(additions));
                 database.update(table_name,content,SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);

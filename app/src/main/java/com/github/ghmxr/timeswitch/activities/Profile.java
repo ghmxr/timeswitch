@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -99,7 +98,7 @@ public class Profile extends BaseActivity {
                 showWaitDialog();
                 //isChanged=true;
                 setResult(RESULT_OK);
-                if(TimeSwitchService.service_queue.size()>0) TimeSwitchService.service_queue.getLast().refreshTaskItems();
+                if(TimeSwitchService.service!=null) TimeSwitchService.service.refreshTaskItems();
                 else {
                     //startService(new Intent(Profile.this, TimeSwitchService.class));
                     TimeSwitchService.startService(Profile.this);
@@ -527,7 +526,7 @@ public class Profile extends BaseActivity {
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-                if(TimeSwitchService.service_queue.size()>0) TimeSwitchService.service_queue.getLast().refreshTaskItems();
+                if(TimeSwitchService.service!=null) TimeSwitchService.service.refreshTaskItems();
                 else {
                     //startService(new Intent(Profile.this,TimeSwitchService.class));
                     TimeSwitchService.startService(Profile.this);
@@ -561,7 +560,7 @@ public class Profile extends BaseActivity {
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-                if(TimeSwitchService.service_queue.size()>0) TimeSwitchService.service_queue.getLast().refreshTaskItems();
+                if(TimeSwitchService.service!=null) TimeSwitchService.service.refreshTaskItems();
                 else {
                     //startService(new Intent(Profile.this,TimeSwitchService.class));
                     TimeSwitchService.startService(Profile.this);
@@ -707,7 +706,7 @@ public class Profile extends BaseActivity {
             if(display_filename.length()>26) display_filename=display_filename.substring(0,26)+"...";
             ((TextView)view.findViewById(R.id.item_profile_name)).setText(display_filename);
             ((TextView)view.findViewById(R.id.item_profile_contains)).setText(tablelist.get(i).tasknum+getResources().getString(R.string.activity_profile_task_total_mask));
-            ((RadioButton)view.findViewById(R.id.item_profile_ra)).setChecked(SQLConsts.getCurrentTableName(Profile.this).equals(tablelist.get(i).table_name));
+            ((RadioButton)view.findViewById(R.id.item_profile_ra)).setChecked(MySQLiteOpenHelper.getCurrentTableName(Profile.this).equals(tablelist.get(i).table_name));
             view.findViewById(R.id.item_profile_ra).setVisibility(isMultiSelectMode?View.GONE:View.VISIBLE);
             view.findViewById(R.id.item_profile_more).setOnClickListener(new View.OnClickListener() {
                 @Override

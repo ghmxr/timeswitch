@@ -17,6 +17,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.github.ghmxr.timeswitch.R;
+import com.github.ghmxr.timeswitch.data.ActionConsts;
 import com.github.ghmxr.timeswitch.data.PublicConsts;
 import com.github.ghmxr.timeswitch.ui.BottomDialog;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
@@ -54,8 +55,8 @@ public class ActionOfChangingRingtones extends BaseActivity implements View.OnCl
         try{getSupportActionBar().setDisplayHomeAsUpEnabled(true);}catch (Exception e){e.printStackTrace();}
         try{
             String ring_values[]=getIntent().getStringExtra(EXTRA_RING_VALUES).split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-            selection_notification=Integer.parseInt(ring_values[PublicConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE]);
-            selection_phone=Integer.parseInt(ring_values[PublicConsts.RING_SELECTION_CALL_TYPE_LOCALE]);
+            selection_notification=Integer.parseInt(ring_values[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE]);
+            selection_phone=Integer.parseInt(ring_values[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_CALL_TYPE_LOCALE]);
             //value_notification_uri =ring_values[PublicConsts.RING_SELECTION_NOTIFICATION_VALUE_LOCALE];
             //value_call_uri =ring_values[PublicConsts.RING_SELECTION_PHONE_VALUE_LOCALE];
             value_notification_uri=getIntent().getStringExtra(EXTRA_RING_URI_NOTIFICATION);
@@ -68,12 +69,12 @@ public class ActionOfChangingRingtones extends BaseActivity implements View.OnCl
         findViewById(R.id.ring_selection_phone).setOnClickListener(this);
         try{
             ((TextView)findViewById(R.id.ring_selection_notification_value)).setText(
-                    selection_notification==PublicConsts.RING_TYPE_FROM_SYSTEM ?RingtoneManager.getRingtone(this,Uri.parse(value_notification_uri)).getTitle(this):
-                            (selection_notification==PublicConsts.RING_TYPE_FROM_MEDIA ?RingtoneManager.getRingtone(this,Uri.parse(value_notification_uri)).getTitle(this):getResources().getString(R.string.unselected))
+                    selection_notification== ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM ?RingtoneManager.getRingtone(this,Uri.parse(value_notification_uri)).getTitle(this):
+                            (selection_notification== ActionConsts.ActionValueConsts.RING_TYPE_FROM_MEDIA ?RingtoneManager.getRingtone(this,Uri.parse(value_notification_uri)).getTitle(this):getResources().getString(R.string.unselected))
             );
             ((TextView)findViewById(R.id.ring_selection_phone_value)).setText(
-                    selection_phone==PublicConsts.RING_TYPE_FROM_SYSTEM ?RingtoneManager.getRingtone(this,Uri.parse(value_call_uri)).getTitle(this):
-                            (selection_phone==PublicConsts.RING_TYPE_FROM_MEDIA ?RingtoneManager.getRingtone(this,Uri.parse(value_call_uri)).getTitle(this):getResources().getString(R.string.unselected))
+                    selection_phone== ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM ?RingtoneManager.getRingtone(this,Uri.parse(value_call_uri)).getTitle(this):
+                            (selection_phone== ActionConsts.ActionValueConsts.RING_TYPE_FROM_MEDIA ?RingtoneManager.getRingtone(this,Uri.parse(value_call_uri)).getTitle(this):getResources().getString(R.string.unselected))
             );
         }catch (Exception e){
             e.printStackTrace();
@@ -188,7 +189,7 @@ public class ActionOfChangingRingtones extends BaseActivity implements View.OnCl
         if(data==null) return;
         Uri uri=data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
         if(uri==null) return;
-        selection_notification=PublicConsts.RING_TYPE_FROM_SYSTEM;
+        selection_notification= ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM;
         value_notification_uri =uri.toString();
         ((TextView)findViewById(R.id.ring_selection_notification_value)).setText(RingtoneManager.getRingtone(this,uri).getTitle(this));
     }
@@ -197,7 +198,7 @@ public class ActionOfChangingRingtones extends BaseActivity implements View.OnCl
         if(data==null) return;
         Uri uri=data.getData();
         if(uri==null) return;
-        selection_notification=PublicConsts.RING_TYPE_FROM_MEDIA;
+        selection_notification= ActionConsts.ActionValueConsts.RING_TYPE_FROM_MEDIA;
         value_notification_uri =uri.toString();
         ((TextView)findViewById(R.id.ring_selection_notification_value)).setText(RingtoneManager.getRingtone(this,uri).getTitle(this));//new File(ValueUtils.getRealPathFromUri(this,uri)).getName());
     }
@@ -206,7 +207,7 @@ public class ActionOfChangingRingtones extends BaseActivity implements View.OnCl
         if(data==null) return;
         Uri uri=data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
         if(uri==null) return;
-        selection_phone=PublicConsts.RING_TYPE_FROM_SYSTEM;
+        selection_phone= ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM;
         value_call_uri =uri.toString();
         ((TextView)findViewById(R.id.ring_selection_phone_value)).setText(RingtoneManager.getRingtone(this,uri).getTitle(this));
     }
@@ -215,7 +216,7 @@ public class ActionOfChangingRingtones extends BaseActivity implements View.OnCl
         if(data==null) return;
         Uri uri=data.getData();
         if(uri==null) return;
-        selection_phone=PublicConsts.RING_TYPE_FROM_MEDIA;
+        selection_phone= ActionConsts.ActionValueConsts.RING_TYPE_FROM_MEDIA;
         value_call_uri =uri.toString();
         ((TextView)findViewById(R.id.ring_selection_phone_value)).setText(RingtoneManager.getRingtone(this,uri).getTitle(this));
     }
@@ -230,13 +231,13 @@ public class ActionOfChangingRingtones extends BaseActivity implements View.OnCl
         dialog.show();
         if(type==TYPE_NOTIFICATION){
             ((RadioButton)dialog.findViewById(R.id.dialog_ring_unselected_rb)).setChecked(selection_notification==-1);
-            ((RadioButton)dialog.findViewById(R.id.dialog_ring_system_rb)).setChecked(selection_notification==PublicConsts.RING_TYPE_FROM_SYSTEM);
-            ((RadioButton)dialog.findViewById(R.id.dialog_ring_media_rb)).setChecked(selection_notification==PublicConsts.RING_TYPE_FROM_MEDIA);
+            ((RadioButton)dialog.findViewById(R.id.dialog_ring_system_rb)).setChecked(selection_notification== ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM);
+            ((RadioButton)dialog.findViewById(R.id.dialog_ring_media_rb)).setChecked(selection_notification== ActionConsts.ActionValueConsts.RING_TYPE_FROM_MEDIA);
             //((RadioButton)dialog.findViewById(R.id.dialog_ring_path_rb)).setChecked(selection_notification==PublicConsts.RING_TYPE_PATH);
         }else if(type==TYPE_PHONE){
             ((RadioButton)dialog.findViewById(R.id.dialog_ring_unselected_rb)).setChecked(selection_phone==-1);
-            ((RadioButton)dialog.findViewById(R.id.dialog_ring_system_rb)).setChecked(selection_phone==PublicConsts.RING_TYPE_FROM_SYSTEM);
-            ((RadioButton)dialog.findViewById(R.id.dialog_ring_media_rb)).setChecked(selection_phone==PublicConsts.RING_TYPE_FROM_MEDIA);
+            ((RadioButton)dialog.findViewById(R.id.dialog_ring_system_rb)).setChecked(selection_phone== ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM);
+            ((RadioButton)dialog.findViewById(R.id.dialog_ring_media_rb)).setChecked(selection_phone== ActionConsts.ActionValueConsts.RING_TYPE_FROM_MEDIA);
             //((RadioButton)dialog.findViewById(R.id.dialog_ring_path_rb)).setChecked(selection_phone==PublicConsts.RING_TYPE_PATH);
         }
 
@@ -270,12 +271,12 @@ public class ActionOfChangingRingtones extends BaseActivity implements View.OnCl
                     switch (type){
                         default:break;
                         case TYPE_NOTIFICATION:{
-                            if(value_notification_uri !=null&&!value_notification_uri.trim().equals("")&&selection_notification==PublicConsts.RING_TYPE_FROM_SYSTEM)
+                            if(value_notification_uri !=null&&!value_notification_uri.trim().equals("")&&selection_notification== ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM)
                                 i.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,Uri.parse(value_notification_uri));
                         }
                         break;
                         case TYPE_PHONE:{
-                            if(value_call_uri !=null&&!value_call_uri.trim().equals("")&&selection_phone==PublicConsts.RING_TYPE_FROM_SYSTEM)
+                            if(value_call_uri !=null&&!value_call_uri.trim().equals("")&&selection_phone== ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM)
                                 i.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,Uri.parse(value_call_uri));
                         }
                         break;

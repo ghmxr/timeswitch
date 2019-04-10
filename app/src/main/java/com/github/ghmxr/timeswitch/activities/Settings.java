@@ -131,7 +131,7 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
                         waitDialog.show();
 
                         //if(Main.queue.size()>0) Main.queue.getLast().startService2Refresh();
-                        if(TimeSwitchService.service_queue.size()>0) TimeSwitchService.service_queue.getLast().refreshTaskItems();
+                        if(TimeSwitchService.service!=null) TimeSwitchService.service.refreshTaskItems();
                         else{
                             //Settings.this.startService(new Intent(Settings.this,TimeSwitchService.class));
                             TimeSwitchService.startService(Settings.this);

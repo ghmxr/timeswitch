@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.data.SQLConsts;
-import com.github.ghmxr.timeswitch.data.TaskItem;
+import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.ui.TaskGui;
 import com.github.ghmxr.timeswitch.utils.MySQLiteOpenHelper;
@@ -101,7 +101,7 @@ public class EditTask extends TaskGui {
                 return false;
             }
             SQLiteDatabase database= MySQLiteOpenHelper.getInstance(this).getWritableDatabase();
-            if(database.delete(SQLConsts.getCurrentTableName(this),SQLConsts.SQL_TASK_COLUMN_ID +"="+taskitem.id,null)==1) {
+            if(database.delete(MySQLiteOpenHelper.getCurrentTableName(this),SQLConsts.SQL_TASK_COLUMN_ID +"="+taskitem.id,null)==1) {
                 setResult(RESULT_OK);
                 this.finish();
             }

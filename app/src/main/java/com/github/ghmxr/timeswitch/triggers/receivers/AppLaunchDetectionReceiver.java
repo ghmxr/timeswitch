@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import com.github.ghmxr.timeswitch.data.PublicConsts;
-import com.github.ghmxr.timeswitch.data.TaskItem;
+import com.github.ghmxr.timeswitch.TaskItem;
+import com.github.ghmxr.timeswitch.data.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.services.AppLaunchingDetectionService;
 
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 public class AppLaunchDetectionReceiver extends BaseBroadcastReceiver{
-    static LinkedList<AppLaunchDetectionReceiver> app_detecting_receivers=new LinkedList<>();
+    static final LinkedList<AppLaunchDetectionReceiver> app_detecting_receivers=new LinkedList<>();
     private Map<String,Boolean> packageLock=new HashMap<>();
     public AppLaunchDetectionReceiver(Context context, TaskItem item) {
         super(context,item);
@@ -35,7 +35,7 @@ public class AppLaunchDetectionReceiver extends BaseBroadcastReceiver{
             //Log.d("AppReceiver",package_name+" is "+(if_launched?"LAUNCHED":"CLOSED"));
             String [] packageNames=item.package_names;
             if(packageNames==null||packageNames.length==0) return;
-            if(item.trigger_type== PublicConsts.TRIGGER_TYPE_APP_LAUNCHED){
+            if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED){
                 for(String packagename:packageNames){
                     if(packagename.equals(package_name)){
                         if(if_launched) runActions(packagename);
@@ -44,7 +44,7 @@ public class AppLaunchDetectionReceiver extends BaseBroadcastReceiver{
                 }
             }
 
-            if(item.trigger_type==PublicConsts.TRIGGER_TYPE_APP_CLOSED){
+            if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED){
                 for(String packagename:packageNames){
                     if(packagename.equals(package_name)){
                         if(!if_launched) runActions(packagename);
@@ -71,10 +71,12 @@ public class AppLaunchDetectionReceiver extends BaseBroadcastReceiver{
     @Override
     public void cancel() {
         super.cancel();
-        try{
-            if(app_detecting_receivers.contains(this)) app_detecting_receivers.remove(this);
-            if(app_detecting_receivers.size()==0) AppLaunchingDetectionService.queue.getLast().stopDetecting();
-        }catch (Exception e){e.printStackTrace();}
+        synchronized (app_detecting_receivers){
+            try{
+                if(app_detecting_receivers.contains(this)) app_detecting_receivers.remove(this);
+                if(app_detecting_receivers.size()==0&&AppLaunchingDetectionService.service!=null) AppLaunchingDetectionService.service.stopSelf();
+            }catch (Exception e){e.printStackTrace();}
+        }
     }
 
     private void runActions(String package_name){

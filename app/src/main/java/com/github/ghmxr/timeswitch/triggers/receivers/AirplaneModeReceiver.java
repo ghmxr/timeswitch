@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import com.github.ghmxr.timeswitch.data.PublicConsts;
-import com.github.ghmxr.timeswitch.data.TaskItem;
+import com.github.ghmxr.timeswitch.TaskItem;
+import com.github.ghmxr.timeswitch.data.TriggerTypeConsts;
 
 public class AirplaneModeReceiver extends BaseBroadcastReceiver{
 
@@ -18,9 +18,9 @@ public class AirplaneModeReceiver extends BaseBroadcastReceiver{
         if(intent==null||intent.getAction()==null) return;
         boolean enabled=intent.getBooleanExtra("state",false);
         if(item==null) return;
-        if(item.trigger_type== PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON&&enabled){
+        if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON&&enabled){
             runProcessTask();
-        }else if(item.trigger_type==PublicConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF&&!enabled){
+        }else if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF&&!enabled){
             runProcessTask();
         }
 
@@ -38,27 +38,6 @@ public class AirplaneModeReceiver extends BaseBroadcastReceiver{
     @Override
     public void cancel() {
         super.cancel();
-    }
-
-    /**
-     * @deprecated
-     */
-    public void registerReceiver(){
-
-    }
-
-    /**
-     * @deprecated
-     */
-    public void unRegisterReceiver(){
-        //if(isRegistered){
-        try{
-            context.unregisterReceiver(this);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-            //isRegistered=false;
-        //}
     }
 
 }

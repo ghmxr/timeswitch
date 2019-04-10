@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 
-import com.github.ghmxr.timeswitch.data.PublicConsts;
-import com.github.ghmxr.timeswitch.data.TaskItem;
+import com.github.ghmxr.timeswitch.TaskItem;
+import com.github.ghmxr.timeswitch.data.TriggerTypeConsts;
 
 public class RingModeReceiver extends BaseBroadcastReceiver{
     private boolean mLock=true;
@@ -22,7 +22,7 @@ public class RingModeReceiver extends BaseBroadcastReceiver{
         if(intent.getAction().equals(AudioManager.RINGER_MODE_CHANGED_ACTION)){
             switch (item.trigger_type){
                 default:break;
-                case PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF:{
+                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF:{
                     if(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE,-1)==AudioManager.RINGER_MODE_SILENT){
                         runActions();
                     }else{
@@ -30,7 +30,7 @@ public class RingModeReceiver extends BaseBroadcastReceiver{
                     }
                 }
                 break;
-                case PublicConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE:{
+                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE:{
                     if(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE,-1)==AudioManager.RINGER_MODE_VIBRATE){
                         runActions();
                     }else {
@@ -38,7 +38,7 @@ public class RingModeReceiver extends BaseBroadcastReceiver{
                     }
                 }
                 break;
-                case PublicConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL:{
+                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL:{
                     if(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE,-1)==AudioManager.RINGER_MODE_NORMAL){
                         runActions();
                     }else {
@@ -57,30 +57,6 @@ public class RingModeReceiver extends BaseBroadcastReceiver{
         }catch (Exception e){
             e.printStackTrace();
         }
-    }
-
-    /**
-     * @deprecated
-     */
-    public void registerReceiver(){
-        //if(!isRegistered){
-
-          //  isRegistered=true;
-        //}
-    }
-
-    /**
-     * @deprecated
-     */
-    public void unRegisterReceiver(){
-       // if(isRegistered){
-        try{
-            context.unregisterReceiver(this);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        //    isRegistered=false;
-       // }
     }
 
     private void runActions(){
