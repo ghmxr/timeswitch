@@ -16,10 +16,10 @@ import android.widget.TextView;
 
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.activities.Main;
-import com.github.ghmxr.timeswitch.data.ActionConsts;
-import com.github.ghmxr.timeswitch.data.ExceptionConsts;
+import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
+import com.github.ghmxr.timeswitch.data.v2.ExceptionConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
-import com.github.ghmxr.timeswitch.data.TriggerTypeConsts;
+import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.ui.ActionDisplayValue;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
@@ -726,7 +726,7 @@ public class MainListAdapter extends BaseAdapter {
         return "";
     }
 
-    private class ViewHolder{
+    private static class ViewHolder{
         View title;
         ImageView title_arrow;
         SwitchCompat switch_enabled;

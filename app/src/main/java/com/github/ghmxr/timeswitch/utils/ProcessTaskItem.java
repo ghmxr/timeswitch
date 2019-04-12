@@ -44,16 +44,18 @@ import com.github.ghmxr.timeswitch.Global;
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.activities.Main;
 import com.github.ghmxr.timeswitch.activities.SmsActivity;
-import com.github.ghmxr.timeswitch.data.ActionConsts;
-import com.github.ghmxr.timeswitch.data.AdditionConsts;
-import com.github.ghmxr.timeswitch.data.ExceptionConsts;
-import com.github.ghmxr.timeswitch.data.PublicConsts;
-import com.github.ghmxr.timeswitch.data.SQLConsts;
+import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
+import com.github.ghmxr.timeswitch.data.v2.AdditionConsts;
+import com.github.ghmxr.timeswitch.data.v2.ExceptionConsts;
+import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
+import com.github.ghmxr.timeswitch.data.v2.SQLConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
-import com.github.ghmxr.timeswitch.data.TriggerTypeConsts;
+import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.receivers.SMSReceiver;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -1264,10 +1266,10 @@ public class ProcessTaskItem {
                             WallpaperManager wallpaperManager=WallpaperManager.getInstance(context);
                             //DisplayMetrics displayMetrics=context.getResources().getDisplayMetrics();
                             //use file path instead of uri
-                            Bitmap bitmap= BitmapFactory.decodeFile(item.uri_wallpaper_desktop);//ValueUtils.getDecodedBitmapFromFile(item.uri_wallpaper_desktop,1920*1080);
+                            //Bitmap bitmap= BitmapFactory.decodeFile(item.uri_wallpaper_desktop);//ValueUtils.getDecodedBitmapFromFile(item.uri_wallpaper_desktop,1920*1080);
                             //this is for the task already set from old versions and can execute successfully
-                            if(bitmap==null) bitmap= MediaStore.Images.Media.getBitmap(context.getContentResolver(), Uri.parse(item.uri_wallpaper_desktop));
-                            wallpaperManager.setBitmap(bitmap);
+                            //if(bitmap==null) bitmap= MediaStore.Images.Media.getBitmap(context.getContentResolver(), Uri.parse(item.uri_wallpaper_desktop));
+                            wallpaperManager.setStream(new FileInputStream(new File(item.uri_wallpaper_desktop)));
                             //wallpaperManager.setBitmap(bitmap,null,WallpaperManager.FLAG_LOCK);
                         }catch (Exception e){
                             e.printStackTrace();
@@ -1357,19 +1359,8 @@ public class ProcessTaskItem {
                 String[] addresses=item.sms_address.split(PublicConsts.SEPARATOR_SMS_RECEIVERS);
                 for(String address:addresses){
                     for(String message:messages){
-                        Intent i_sent=new Intent(PublicConsts.ACTION_SMS_SENT);
-                        i_sent.putExtra(SMSReceiver.EXTRA_SMS_SUB_INFO,subscriptionId);
-                        i_sent.putExtra(SMSReceiver.EXTRA_SMS_TASK_NAME,item.name);
-                        i_sent.putExtra(SmsActivity.EXTRA_SMS_ADDRESS,address);
-                        i_sent.putExtra(SmsActivity.EXTRA_SMS_MESSAGE,message);
-                        Intent i_delivered=new Intent(PublicConsts.ACTION_SMS_DELIVERED);
-                        i_delivered.putExtra(SMSReceiver.EXTRA_SMS_TASK_NAME,item.name);
-                        i_delivered.putExtra(SMSReceiver.SMSReceiptReceiver.EXTRA_IF_SHOW_TOAST,Integer.parseInt(sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_RESULT_TOAST_LOCALE])>=0);
-                        i_delivered.putExtra(SmsActivity.EXTRA_SMS_ADDRESS,address);
-                        PendingIntent pi_sent=PendingIntent.getBroadcast(context,0,i_sent,PendingIntent.FLAG_UPDATE_CURRENT);
-                        PendingIntent pi_receipt=PendingIntent.getBroadcast(context,0,i_delivered,PendingIntent.FLAG_UPDATE_CURRENT);
                         try{
-                            manager.sendTextMessage(address,null,message,pi_sent,pi_receipt);
+                            manager.sendTextMessage(address,null,message,null,null);
                         }catch (IllegalArgumentException le){
                             le.printStackTrace();
                             LogUtil.putExceptionLog(context,le);
@@ -1423,13 +1414,8 @@ public class ProcessTaskItem {
                 String command=RootUtils.COMMAND_ENABLE_GPS;
                 if(Build.VERSION.SDK_INT>=23) command=RootUtils.COMMAND_ENABLE_GPS_API23;
                 final String runCommand=command;
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        RootUtils.executeCommand(runCommand);
-                    }
-                }).start();
 
+                RootUtils.executeCommand(runCommand);
                 log_taskitem.append(context.getResources().getString(R.string.action_gps_on));
                 //log_taskitem.append(":");
                 //log_taskitem.append(result?context.getResources().getString(R.string.log_result_success):context.getResources().getString(R.string.log_result_fail));
@@ -1441,12 +1427,7 @@ public class ProcessTaskItem {
                 String command=RootUtils.COMMAND_DISABLE_GPS;
                 if(Build.VERSION.SDK_INT>=23) command=RootUtils.COMMAND_DISABLE_GPS_API23;
                 final String runCommand=command;
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        RootUtils.executeCommand(runCommand);
-                    }
-                }).start();
+                RootUtils.executeCommand(runCommand);
                 log_taskitem.append(context.getResources().getString(R.string.action_gps_off));
                 //log_taskitem.append(":");
                 //log_taskitem.append(result?context.getResources().getString(R.string.log_result_success):context.getResources().getString(R.string.log_result_fail));

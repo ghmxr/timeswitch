@@ -11,9 +11,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.github.ghmxr.timeswitch.Global;
-import com.github.ghmxr.timeswitch.data.PublicConsts;
+import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
-import com.github.ghmxr.timeswitch.data.TriggerTypeConsts;
+import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
 
 public class NetworkReceiver extends BaseBroadcastReceiver{

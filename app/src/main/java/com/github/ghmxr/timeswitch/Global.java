@@ -11,13 +11,15 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.github.ghmxr.timeswitch.activities.Triggers;
 import com.github.ghmxr.timeswitch.adapters.MainListAdapter;
-import com.github.ghmxr.timeswitch.data.AdditionConsts;
-import com.github.ghmxr.timeswitch.data.SQLConsts;
-import com.github.ghmxr.timeswitch.data.TriggerTypeConsts;
+import com.github.ghmxr.timeswitch.data.v2.AdditionConsts;
+import com.github.ghmxr.timeswitch.data.v2.SQLConsts;
+import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.utils.MySQLiteOpenHelper;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
@@ -27,6 +29,8 @@ import java.util.Calendar;
 import static com.github.ghmxr.timeswitch.activities.Triggers.getWeekLoopDisplayValue;
 
 public class Global {
+    public static Handler handler=new Handler(Looper.getMainLooper());
+
     /**
      * 通过SQLite数据库指定的表获取TaskItem列表信息（不激活TaskItem），此方法为耗时操作，可能会阻塞线程
      * @param context 传入context

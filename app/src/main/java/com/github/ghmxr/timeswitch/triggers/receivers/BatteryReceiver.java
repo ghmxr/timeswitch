@@ -6,7 +6,7 @@ import android.content.IntentFilter;
 import android.os.BatteryManager;
 
 import com.github.ghmxr.timeswitch.TaskItem;
-import com.github.ghmxr.timeswitch.data.TriggerTypeConsts;
+import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch

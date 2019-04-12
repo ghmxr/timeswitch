@@ -32,8 +32,8 @@ import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.R;
-import com.github.ghmxr.timeswitch.data.PublicConsts;
-import com.github.ghmxr.timeswitch.data.SQLConsts;
+import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
+import com.github.ghmxr.timeswitch.data.v2.SQLConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.utils.MySQLiteOpenHelper;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;

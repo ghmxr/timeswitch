@@ -45,10 +45,10 @@ import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.adapters.AppListAdapter;
-import com.github.ghmxr.timeswitch.data.ActionConsts;
-import com.github.ghmxr.timeswitch.data.PublicConsts;
+import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
+import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
-import com.github.ghmxr.timeswitch.data.TriggerTypeConsts;
+import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.ui.ActionDisplayValue;
 import com.github.ghmxr.timeswitch.ui.BottomDialog;

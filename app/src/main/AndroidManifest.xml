@@ -159,12 +159,6 @@
 
         <receiver android:name=".receivers.SMSReceiver">
             <intent-filter>
-                <action android:name="com.github.ghmxr.timeswitch.action.sms_sent"/>
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name=".receivers.SMSReceiver$SMSReceiptReceiver">
-            <intent-filter>
                 <action android:name="com.github.ghmxr.timeswitch.action.sms_delivered"/>
             </intent-filter>
         </receiver>

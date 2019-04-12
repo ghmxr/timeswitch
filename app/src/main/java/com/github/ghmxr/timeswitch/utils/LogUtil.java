@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Message;
 import android.support.annotation.NonNull;
 
-import com.github.ghmxr.timeswitch.data.PublicConsts;
+import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 
 /**

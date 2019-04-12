@@ -6,7 +6,7 @@ import android.content.IntentFilter;
 import android.media.AudioManager;
 
 import com.github.ghmxr.timeswitch.TaskItem;
-import com.github.ghmxr.timeswitch.data.TriggerTypeConsts;
+import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 
 public class RingModeReceiver extends BaseBroadcastReceiver{
     private boolean mLock=true;

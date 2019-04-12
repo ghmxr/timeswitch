@@ -5,7 +5,7 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import com.github.ghmxr.timeswitch.TaskItem;
-import com.github.ghmxr.timeswitch.data.TriggerTypeConsts;
+import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.triggers.Trigger;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 

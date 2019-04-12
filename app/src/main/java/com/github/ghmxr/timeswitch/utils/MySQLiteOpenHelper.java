@@ -1,7 +1,7 @@
 package com.github.ghmxr.timeswitch.utils;
 
-import com.github.ghmxr.timeswitch.data.PublicConsts;
-import com.github.ghmxr.timeswitch.data.SQLConsts;
+import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
+import com.github.ghmxr.timeswitch.data.v2.SQLConsts;
 
 import android.app.Activity;
 import android.content.Context;

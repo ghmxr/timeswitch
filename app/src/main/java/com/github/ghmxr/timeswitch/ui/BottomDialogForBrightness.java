@@ -11,8 +11,8 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 
 import com.github.ghmxr.timeswitch.R;
-import com.github.ghmxr.timeswitch.data.ActionConsts;
-import com.github.ghmxr.timeswitch.data.PublicConsts;
+import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
+import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch

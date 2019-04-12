@@ -1,6 +1,6 @@
 package com.github.ghmxr.timeswitch.utils;
 
-import com.github.ghmxr.timeswitch.data.PublicConsts;
+import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -40,6 +40,10 @@ public class RootUtils {
 
             outputStream.writeBytes("exit\n");
             outputStream.flush();
+
+            try{su.getInputStream().close();}catch (Exception e){}
+            try{su.getOutputStream().close();}catch (Exception e){}
+            try{su.getErrorStream().close();}catch (Exception e){}
 
             return su.waitFor();
         }catch (Exception e){

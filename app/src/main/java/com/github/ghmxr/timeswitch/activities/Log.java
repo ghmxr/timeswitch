@@ -24,7 +24,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.github.ghmxr.timeswitch.R;
-import com.github.ghmxr.timeswitch.data.PublicConsts;
+import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import java.util.ArrayList;

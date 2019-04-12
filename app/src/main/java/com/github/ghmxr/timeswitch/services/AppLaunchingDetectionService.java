@@ -16,7 +16,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.github.ghmxr.timeswitch.data.PublicConsts;
+import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 
 import java.lang.reflect.Field;
 import java.util.List;

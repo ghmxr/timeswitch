@@ -6,7 +6,7 @@ import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 
 import com.github.ghmxr.timeswitch.TaskItem;
-import com.github.ghmxr.timeswitch.data.TriggerTypeConsts;
+import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 
 public class APReceiver extends BaseBroadcastReceiver{
     private boolean mLock=true;

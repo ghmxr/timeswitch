@@ -2,10 +2,10 @@ package com.github.ghmxr.timeswitch;
 
 import android.content.Context;
 
-import com.github.ghmxr.timeswitch.data.ActionConsts;
-import com.github.ghmxr.timeswitch.data.ExceptionConsts;
-import com.github.ghmxr.timeswitch.data.PublicConsts;
-import com.github.ghmxr.timeswitch.data.TriggerTypeConsts;
+import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
+import com.github.ghmxr.timeswitch.data.v2.ExceptionConsts;
+import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
+import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.triggers.Trigger;
 import com.github.ghmxr.timeswitch.triggers.TriggerUtil;
 
@@ -246,8 +246,8 @@ public class TaskItem implements Comparable<TaskItem>{
 	 */
 	public void activateTask(Context context){
 		if(trigger!=null) trigger.cancel();
-		trigger= TriggerUtil.getTrigger(context,this);
-		trigger.activate();
+		trigger= TriggerUtil.getTriggerInstanceForTaskItem(context,this);
+		if(trigger!=null) trigger.activate();
 	}
 
 	public void cancelTask(){

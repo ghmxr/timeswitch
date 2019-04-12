@@ -6,7 +6,7 @@ import android.content.IntentFilter;
 import android.util.Log;
 
 import com.github.ghmxr.timeswitch.TaskItem;
-import com.github.ghmxr.timeswitch.data.TriggerTypeConsts;
+import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 
 public class HeadsetPlugReceiver extends BaseBroadcastReceiver{
     private boolean mLock=true;

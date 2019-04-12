@@ -1,4 +1,4 @@
-package com.github.ghmxr.timeswitch.data;
+package com.github.ghmxr.timeswitch.data.v2;
 
 public class AdditionConsts {
     public static final int ADDITION_LENGTH =6;

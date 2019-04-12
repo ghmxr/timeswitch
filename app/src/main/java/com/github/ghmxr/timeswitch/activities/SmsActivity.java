@@ -27,8 +27,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.R;
-import com.github.ghmxr.timeswitch.data.ActionConsts;
-import com.github.ghmxr.timeswitch.data.PublicConsts;
+import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
+import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
 
 import java.util.ArrayList;

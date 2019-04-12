@@ -3,9 +3,9 @@ package com.github.ghmxr.timeswitch.triggers;
 import android.content.Context;
 import android.content.Intent;
 
-import com.github.ghmxr.timeswitch.data.PublicConsts;
+import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
-import com.github.ghmxr.timeswitch.data.TriggerTypeConsts;
+import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.triggers.receivers.APReceiver;
 import com.github.ghmxr.timeswitch.triggers.receivers.AirplaneModeReceiver;
 import com.github.ghmxr.timeswitch.triggers.receivers.AppLaunchDetectionReceiver;
@@ -26,7 +26,7 @@ public class TriggerUtil {
      * @param item TaskItem 任务项
      * @return  根据TaskItem项参数创建的Trigger实例
      */
-    public static Trigger getTrigger(Context context, TaskItem item){
+    public static Trigger getTriggerInstanceForTaskItem(Context context, TaskItem item){
         if(item==null) return null;
         switch (item.trigger_type){
             default:break;
