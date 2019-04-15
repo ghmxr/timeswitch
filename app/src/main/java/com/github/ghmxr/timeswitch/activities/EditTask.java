@@ -14,7 +14,7 @@ import com.github.ghmxr.timeswitch.data.v2.SQLConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.ui.TaskGui;
-import com.github.ghmxr.timeswitch.utils.MySQLiteOpenHelper;
+import com.github.ghmxr.timeswitch.data.v2.MySQLiteOpenHelper;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch

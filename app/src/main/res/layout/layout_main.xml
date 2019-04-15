@@ -35,9 +35,13 @@
                 android:paddingTop="10dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:scrollbars="none">
+                android:scrollbars="none"
+                >
             </ListView>
-
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/main_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
         </android.support.v4.widget.SwipeRefreshLayout>
         <RelativeLayout
             android:id="@+id/main_no_task_att"

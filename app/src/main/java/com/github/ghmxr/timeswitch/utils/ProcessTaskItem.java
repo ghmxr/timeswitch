@@ -16,8 +16,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
@@ -28,7 +26,6 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Message;
 import android.os.Vibrator;
-import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -42,16 +39,15 @@ import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.Global;
 import com.github.ghmxr.timeswitch.R;
-import com.github.ghmxr.timeswitch.activities.Main;
-import com.github.ghmxr.timeswitch.activities.SmsActivity;
+import com.github.ghmxr.timeswitch.activities.MainActivity;
 import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
 import com.github.ghmxr.timeswitch.data.v2.AdditionConsts;
 import com.github.ghmxr.timeswitch.data.v2.ExceptionConsts;
+import com.github.ghmxr.timeswitch.data.v2.MySQLiteOpenHelper;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.data.v2.SQLConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
-import com.github.ghmxr.timeswitch.receivers.SMSReceiver;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 
 import java.io.File;
@@ -100,7 +96,7 @@ public class ProcessTaskItem {
             //do close the single task and refresh the list in Main;
             int position=getPosition(item.id);
             if(TimeSwitchService.list!=null&&position>=0&&position<TimeSwitchService.list.size()) TimeSwitchService.list.get(position).isenabled=false;
-            Main.sendEmptyMessage(Main.MESSAGE_REQUEST_UPDATE_LIST);
+            MainActivity.sendEmptyMessage(MainActivity.MESSAGE_REQUEST_UPDATE_LIST);
         }
 
         /*if(item.trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE||item.trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE
@@ -183,7 +179,7 @@ public class ProcessTaskItem {
                 ContentValues values=new ContentValues();
                 values.put(SQLConsts.SQL_TASK_COLUMN_ENABLED,0);
                 database.update(MySQLiteOpenHelper.getCurrentTableName(this.context),values,SQLConsts.SQL_TASK_COLUMN_ID +"="+item.id,null);
-                Main.sendEmptyMessage(Main.MESSAGE_REQUEST_UPDATE_LIST);
+                MainActivity.sendEmptyMessage(MainActivity.MESSAGE_REQUEST_UPDATE_LIST);
             }catch (Exception e){
                 e.printStackTrace();
                 LogUtil.putExceptionLog(context,e);
@@ -199,7 +195,7 @@ public class ProcessTaskItem {
                 if(TimeSwitchService.list!=null&&position>=0&&position<TimeSwitchService.list.size()) {
                     TimeSwitchService.list.remove(position);
                 }
-                Main.sendEmptyMessage(Main.MESSAGE_REQUEST_UPDATE_LIST);
+                MainActivity.sendEmptyMessage(MainActivity.MESSAGE_REQUEST_UPDATE_LIST);
             }catch (Exception e){
                 e.printStackTrace();
                 LogUtil.putExceptionLog(context,e);
@@ -1687,7 +1683,7 @@ public class ProcessTaskItem {
                     }
                     cursor.close();
                 }
-                Main.sendEmptyMessage(Main.MESSAGE_REQUEST_UPDATE_LIST);
+                MainActivity.sendEmptyMessage(MainActivity.MESSAGE_REQUEST_UPDATE_LIST);
             }
         }catch (Exception e){
             e.printStackTrace();

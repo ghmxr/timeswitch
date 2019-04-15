@@ -35,7 +35,7 @@ import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.data.v2.SQLConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
-import com.github.ghmxr.timeswitch.utils.MySQLiteOpenHelper;
+import com.github.ghmxr.timeswitch.data.v2.MySQLiteOpenHelper;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import org.json.JSONArray;
@@ -94,7 +94,6 @@ public class Profile extends BaseActivity {
                 SharedPreferences.Editor editor=settings.edit();
                 editor.putString(PublicConsts.PREFERENCES_CURRENT_TABLE_NAME,tablelist.get(i).table_name);
                 editor.apply();
-                MySQLiteOpenHelper.clearCurrentInstance();
                 showWaitDialog();
                 //isChanged=true;
                 setResult(RESULT_OK);
@@ -521,7 +520,6 @@ public class Profile extends BaseActivity {
                         editor.remove(table_name);
                     }
                     editor.apply();
-                    MySQLiteOpenHelper.clearCurrentInstance();
                     setResult(RESULT_OK);
                 }catch (Exception e){
                     e.printStackTrace();
@@ -555,7 +553,6 @@ public class Profile extends BaseActivity {
                         }
                     }
                     editor.apply();
-                    MySQLiteOpenHelper.clearCurrentInstance();
                     setResult(RESULT_OK);
                 }catch (Exception e){
                     e.printStackTrace();

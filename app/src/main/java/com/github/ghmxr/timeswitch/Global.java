@@ -13,6 +13,7 @@ import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.github.ghmxr.timeswitch.activities.Triggers;
@@ -20,7 +21,7 @@ import com.github.ghmxr.timeswitch.adapters.MainListAdapter;
 import com.github.ghmxr.timeswitch.data.v2.AdditionConsts;
 import com.github.ghmxr.timeswitch.data.v2.SQLConsts;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
-import com.github.ghmxr.timeswitch.utils.MySQLiteOpenHelper;
+import com.github.ghmxr.timeswitch.data.v2.MySQLiteOpenHelper;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class Global {
      * @param context 传入context
      * @return  对应的TaskItemList
      */
-    public static ArrayList<TaskItem> getTaskItemListFromDatabase(Context context){
+    public static @NonNull ArrayList<TaskItem> getTaskItemListFromDatabase(Context context){
         try{
             SQLiteDatabase database = MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
             Cursor cursor=database.rawQuery("select * from "+ MySQLiteOpenHelper.getCurrentTableName(context),null);
@@ -306,7 +307,7 @@ public class Global {
         }catch (Exception e){
             e.printStackTrace();
         }
-        return null;
+        return new ArrayList<>();
     }
 
     public static class BatteryReceiver extends BroadcastReceiver{

@@ -67,7 +67,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="?attr/selectableItemBackground"
-            android:visibility="gone">
+            android:visibility="visible">
             <RelativeLayout
                 android:id="@+id/item_task_trigger"
                 android:layout_width="match_parent"

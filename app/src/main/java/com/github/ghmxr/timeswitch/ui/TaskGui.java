@@ -44,7 +44,7 @@ import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.utils.DisplayDensity;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
-import com.github.ghmxr.timeswitch.utils.MySQLiteOpenHelper;
+import com.github.ghmxr.timeswitch.data.v2.MySQLiteOpenHelper;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 /**
@@ -917,7 +917,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 	 * @return 插入或者更新数据的结果,插入失败时返回-1，更新失败时返回0
 	 */
 	public long saveTaskItem2DB(@Nullable Integer id){
-		boolean isNull=true;
+		/*boolean isNull=true;
 		for(int i=0;i<taskitem.actions.length;i++){//for(int i=0;i<actions.length;i++){
 			try{
 				if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE){
@@ -1040,7 +1040,8 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		else{
 			Log.d("UPDATE","id is "+id);
 			return db.update(MySQLiteOpenHelper.getCurrentTableName(this),values,SQLConsts.SQL_TASK_COLUMN_ID +"="+id,null);
-		}
+		}*/
+		return MySQLiteOpenHelper.insertOrUpdateRow(this,this.taskitem,id);
 	}
 
 	/**

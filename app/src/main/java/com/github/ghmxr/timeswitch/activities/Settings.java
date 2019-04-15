@@ -259,7 +259,7 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
             }
             break;
             case R.id.settings_indicator_cb:{
-                Main.sendEmptyMessage(b?Main.MESSAGE_SHOW_INDICATOR:Main.MESSAGE_HIDE_INDICATOR);
+                MainActivity.sendEmptyMessage(b? MainActivity.MESSAGE_SHOW_INDICATOR: MainActivity.MESSAGE_HIDE_INDICATOR);
                 editor.putBoolean(PublicConsts.PREFERENCES_MAINPAGE_INDICATOR,b);
                 editor.apply();
             }
@@ -341,7 +341,7 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
         super.finish();
         if(flag_restart_main){
             while (BaseActivity.queue.size()>0) BaseActivity.queue.getLast().finish();
-            startActivity(new Intent(this,Main.class));
+            startActivity(new Intent(this,MainActivity.class));
         }
     }
 

@@ -258,25 +258,18 @@ public class TaskItem implements Comparable<TaskItem>{
 	}
 
 	/**
-	 * 只用于间隔指定时间使用
-	 * @return 下次触发的绝对时间
+	 * 用于获取指定循环触发类型任务的剩余触发时间
+	 * @return 剩余的时间，毫秒
 	 */
-	public long getNextTriggeringTime(){
-		if(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE){
-			if(time-System.currentTimeMillis()<0){
-				return -1;
-			}
-			else return time;
-		}else if(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){
+	public long getRemainingTimeOfTypeLoopByCertainTime(){
+		if(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){
 			long triggerTime=time;
-			while (triggerTime<System.currentTimeMillis()){
+			long current=System.currentTimeMillis();
+			while (triggerTime<current){
 				triggerTime+=interval_milliseconds;
 			}
-			return triggerTime;
-		}else if(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK){
-			//not used
+			return triggerTime-current;
 		}
-
 		return -1;
 	}
 

@@ -8,7 +8,7 @@ import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
-import com.github.ghmxr.timeswitch.utils.MySQLiteOpenHelper;
+import com.github.ghmxr.timeswitch.data.v2.MySQLiteOpenHelper;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
@@ -24,14 +24,21 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.support.v7.widget.Toolbar;
@@ -40,38 +47,37 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
  */
-public class Main extends BaseActivity implements AdapterView.OnItemClickListener,AdapterView.OnItemLongClickListener{
+public class MainActivity extends BaseActivity implements AdapterView.OnItemClickListener,AdapterView.OnItemLongClickListener{
 	ListView listview;
     FloatingActionButton fab;
-    //boolean isFabVisible=true;
+
 	public MainListAdapter adapter;
 	SwipeRefreshLayout swrlayout;
-	//public List<TaskItem> list=new ArrayList<>();
-	//private List<TaskItem> list_private;
-	//Thread  thread_delete;
+
 	boolean isMultiSelectMode=false;
 	Menu menu;
 	private boolean ifRefresh=true;
-	//private boolean ifRefresh_has_certain_time=false;
-    public static final int MESSAGE_START_SERVICE       =  0x00000;
-	public static final int MESSAGE_GETLIST_COMPLETE   =   0x00001;
-	public static final int MESSAGE_BATTERY_CHANGED    =   0x00002;
-	public static final int MESSAGE_SHOW_INDICATOR      =   0x00003;
-	public static final int MESSAGE_HIDE_INDICATOR      =   0x00004;
-	public static final int MESSAGE_REQUEST_UPDATE_LIST =0x00005;
-	public static final int MESSAGE_OPEN_MULTI_SELECT_MODE=0x00006;
-	public static final int MESSAGE_ON_ICON_FOLDED_PROCESS_COMPLETE=0x00007;
 
-	private static final int MESSAGE_DELETE_SELECTED_ITEMS_COMPLETE  =0x00010;
+    public static final int MESSAGE_START_SERVICE       =  0;
+	public static final int MESSAGE_GETLIST_COMPLETE   =   1;
+	public static final int MESSAGE_BATTERY_CHANGED    =   2;
+	public static final int MESSAGE_SHOW_INDICATOR      =   3;
+	public static final int MESSAGE_HIDE_INDICATOR      =   4;
+	public static final int MESSAGE_REQUEST_UPDATE_LIST =5;
+	public static final int MESSAGE_OPEN_MULTI_SELECT_MODE=6;
+	public static final int MESSAGE_ON_ICON_FOLDED_PROCESS_COMPLETE=7;
 
-	private static final int REQUEST_CODE_ACTIVITY_ADD=0x00100;
-	private static final int REQUEST_CODE_ACTIVITY_EDIT=0x00101;
-	private static final int REQUEST_CODE_ACTIVITY_SETTINGS=0x00102;
-	private static final int REQUEST_CODE_ACTIVITY_PROFILE=0x00103;
+	private static final int MESSAGE_DELETE_SELECTED_ITEMS_COMPLETE  =10;
+
+	private static final int REQUEST_CODE_ACTIVITY_ADD=100;
+	private static final int REQUEST_CODE_ACTIVITY_EDIT=101;
+	private static final int REQUEST_CODE_ACTIVITY_SETTINGS=102;
+	private static final int REQUEST_CODE_ACTIVITY_PROFILE=103;
 
 	public static final int MENU_FOLD=0;
 	public static final int MENU_DELETE=1;
@@ -88,26 +94,14 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
             if(ACTION==null) return;
             if(ACTION.equals(Intent.ACTION_BATTERY_CHANGED)){
                 Message msg=new Message();
-                msg.what=Main.MESSAGE_BATTERY_CHANGED;
+                msg.what= MainActivity.MESSAGE_BATTERY_CHANGED;
                 msg.obj=intent;
                 sendMessage(msg);
             }
         }
     };
 
-	//private boolean isBatteryReceiverRegistered=false;
     private long first_click_delete=0;
-   // public static LinkedList<Main> queue=new LinkedList<>();
-  /*  public static Handler handler=new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            //super.handleMessage(msg);
-            if(queue.size()>0) queue.getLast().processMessage(msg);
-        }
-    };  */
-
-    //public static MyHandler mhandler;
-
 
     public void onCreate(Bundle mybundle){
 		super.onCreate(mybundle);
@@ -137,7 +131,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
 
                 if(isMultiSelectMode) closeMultiSelectMode();
                 //Main.this.startActivity(new Intent(Main.this,AddTask.class));
-                startActivityForResult(new Intent(Main.this,AddTask.class),REQUEST_CODE_ACTIVITY_ADD);
+                startActivityForResult(new Intent(MainActivity.this,AddTask.class),REQUEST_CODE_ACTIVITY_ADD);
             }
         });
 
@@ -155,7 +149,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
                     try{
                         for(TaskItem item:TimeSwitchService.list){
                             if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){
-                                long remaining=item.getNextTriggeringTime()-System.currentTimeMillis();
+                                long remaining=item.getRemainingTimeOfTypeLoopByCertainTime();
                                 if(remaining<=0) remaining=0;
                                 int day=(int)(remaining/(1000*60*60*24));
                                 int hour=(int)((remaining%(1000*60*60*24))/(1000*60*60));
@@ -302,6 +296,10 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
             break;
             case MESSAGE_GETLIST_COMPLETE:{
                 //this.list=TimeSwitchService.list;
+                LinearLayoutManager manager=new LinearLayoutManager(this);
+                manager.setOrientation(LinearLayoutManager.VERTICAL);
+                ((RecyclerView)findViewById(R.id.main_recyclerview)).setLayoutManager(manager);
+                ((RecyclerView)findViewById(R.id.main_recyclerview)).setAdapter(new ListAdapter());
                 if(adapter==null){
                     adapter=new MainListAdapter(this,TimeSwitchService.list);
                 }
@@ -338,7 +336,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
                     @Override
                     public void onFoldingStatusChanged(int position, boolean isFolded) {
                         try{
-                            ProcessTaskItem.setTaskFolded(Main.this,TimeSwitchService.list.get(position).id,isFolded);
+                            ProcessTaskItem.setTaskFolded(MainActivity.this,TimeSwitchService.list.get(position).id,isFolded);
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -400,7 +398,7 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
 
     private void setFabVisibility(boolean isVisible){
         if(fab==null) return;
-        fab.setAnimation(isVisible?AnimationUtils.loadAnimation(Main.this,R.anim.anim_fab_enter):AnimationUtils.loadAnimation(Main.this,R.anim.anim_fab_exit));
+        fab.setAnimation(isVisible?AnimationUtils.loadAnimation(MainActivity.this,R.anim.anim_fab_enter):AnimationUtils.loadAnimation(MainActivity.this,R.anim.anim_fab_exit));
         fab.setVisibility(isVisible?View.VISIBLE:View.GONE);
         //isFabVisible=isVisible;
     }
@@ -621,14 +619,14 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
                 @Override
                 public void run() {
                     try{
-                        SQLiteDatabase database=MySQLiteOpenHelper.getInstance(Main.this).getWritableDatabase();
-                        boolean isSelected[]=Main.this.adapter.getIsSelected();
+                        SQLiteDatabase database=MySQLiteOpenHelper.getInstance(MainActivity.this).getWritableDatabase();
+                        boolean isSelected[]=MainActivity.this.adapter.getIsSelected();
                         for(int i=0;i<isSelected.length;i++){
                             if(isSelected[i]){
                                 int key=TimeSwitchService.list.get(i).id;
                                 TimeSwitchService.list.get(i).cancelTask();
                                 //list.remove(i);
-                                database.delete(MySQLiteOpenHelper.getCurrentTableName(Main.this),SQLConsts.SQL_TASK_COLUMN_ID +"="+key,null);
+                                database.delete(MySQLiteOpenHelper.getCurrentTableName(MainActivity.this),SQLConsts.SQL_TASK_COLUMN_ID +"="+key,null);
                             }
                         }
                         sendEmptyMessage(MESSAGE_DELETE_SELECTED_ITEMS_COMPLETE);
@@ -668,14 +666,14 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
                                 for(int i=0;i<TimeSwitchService.list.size();i++){
                                     //TimeSwitchService.list.get(i).addition_isFolded=false;
                                     try{
-                                        ProcessTaskItem.setTaskFolded(Main.this, TimeSwitchService.list.get(i).id,false);
+                                        ProcessTaskItem.setTaskFolded(MainActivity.this, TimeSwitchService.list.get(i).id,false);
                                     }catch (Exception e){e.printStackTrace();}
                                 }
                             }else{
                                 for(int i=0;i<TimeSwitchService.list.size();i++){
                                     //TimeSwitchService.list.get(i).addition_isFolded=true;
                                     try{
-                                        ProcessTaskItem.setTaskFolded(Main.this, TimeSwitchService.list.get(i).id,true);
+                                        ProcessTaskItem.setTaskFolded(MainActivity.this, TimeSwitchService.list.get(i).id,true);
                                     } catch (Exception e){e.printStackTrace();}
                                 }
                             }
@@ -704,5 +702,66 @@ public class Main extends BaseActivity implements AdapterView.OnItemClickListene
             }
         }
     }   */
+
+   private class ListAdapter extends RecyclerView.Adapter<ViewHolder>{
+       @NonNull
+       @Override
+       public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+           return new ViewHolder(LayoutInflater.from(MainActivity.this).inflate(R.layout.item_task,parent,false));
+       }
+
+       @Override
+       public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+           TaskItem item=TimeSwitchService.list.get(position);
+           holder.tv_name.setText(item.name);
+           int color_value = Color.parseColor(item.addition_title_color);
+           holder.title.setBackgroundColor(color_value);
+           holder.task_area.setVisibility(item.addition_isFolded?View.GONE:View.VISIBLE);
+           holder.title_arrow.setRotation(item.addition_isFolded?0:90);
+           if(ValueUtils.isHighLightRGB(color_value)){
+               holder.tv_name.setTextColor(getResources().getColor(R.color.color_black));
+               holder.title_arrow.setImageResource(R.drawable.arrow_right_item_folding_black);
+           }
+       }
+
+       @Override
+       public int getItemCount() {
+           return TimeSwitchService.list.size();
+       }
+   }
+
+   private static class ViewHolder extends RecyclerView.ViewHolder{
+       View root;
+       View title;
+       ImageView title_arrow;
+       SwitchCompat switch_enabled;
+       View task_area;
+       CheckBox cb;
+       TextView tv_name;
+       ImageView img_trigger;
+       TextView tv_trigger,tv_exception,tv_action,tv_addition;
+       View addition;
+
+       public ViewHolder(View view) {
+           super(view);
+           title=view.findViewById(R.id.item_task_title);
+           title_arrow=view.findViewById(R.id.item_task_title_arrow);
+           switch_enabled=view.findViewById(R.id.item_task_switch);
+           cb=view.findViewById(R.id.item_task_checkbox);
+           task_area=view.findViewById(R.id.item_task_info);
+           tv_name=view.findViewById(R.id.item_task_name);
+           img_trigger=view.findViewById(R.id.item_task_trigger_icon);
+           tv_trigger=view.findViewById(R.id.item_task_trigger_value);
+           tv_exception=view.findViewById(R.id.item_task_exception);
+           tv_action=view.findViewById(R.id.item_task_action);
+           tv_addition=view.findViewById(R.id.item_task_addition);
+           addition=view.findViewById(R.id.item_task_addition_area);
+           root=view;
+       }
+
+       public View getView(){
+          return root;
+       }
+   }
 	
 }

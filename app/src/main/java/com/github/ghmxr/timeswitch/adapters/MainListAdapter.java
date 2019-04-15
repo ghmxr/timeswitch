@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.ghmxr.timeswitch.R;
-import com.github.ghmxr.timeswitch.activities.Main;
+import com.github.ghmxr.timeswitch.activities.MainActivity;
 import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
 import com.github.ghmxr.timeswitch.data.v2.ExceptionConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
@@ -196,9 +196,9 @@ public class MainListAdapter extends BaseAdapter {
                 @Override
                 public boolean onLongClick(View v) {
                     Message msg = new Message();
-                    msg.what = Main.MESSAGE_OPEN_MULTI_SELECT_MODE;
+                    msg.what = MainActivity.MESSAGE_OPEN_MULTI_SELECT_MODE;
                     msg.obj = i;
-                    Main.sendMessage(msg);
+                    MainActivity.sendMessage(msg);
                     return true;
                 }
             });
@@ -223,7 +223,7 @@ public class MainListAdapter extends BaseAdapter {
         try{
             /*for(TaskItem item:list_refreshes){
                 try{
-                    long remaining=item.getNextTriggeringTime()-System.currentTimeMillis();
+                    long remaining=item.getRemainingTimeOfTypeLoopByCertainTime()-System.currentTimeMillis();
                     if(remaining<=0) remaining=0;
                     int day=(int)(remaining/(1000*60*60*24));
                     int hour=(int)((remaining%(1000*60*60*24))/(1000*60*60));

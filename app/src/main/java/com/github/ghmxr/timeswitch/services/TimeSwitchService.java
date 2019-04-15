@@ -21,7 +21,7 @@ import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.Global;
 import com.github.ghmxr.timeswitch.R;
-import com.github.ghmxr.timeswitch.activities.Main;
+import com.github.ghmxr.timeswitch.activities.MainActivity;
 import com.github.ghmxr.timeswitch.activities.Profile;
 import com.github.ghmxr.timeswitch.activities.Settings;
 import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
@@ -92,11 +92,12 @@ public class TimeSwitchService extends Service {
             public void run() {
                 synchronized (TimeSwitchService.class){
                     for(TaskItem item:list){
+                        if(item==null) continue;
                         item.cancelTask();
                     }
                     list= Global.getTaskItemListFromDatabase(TimeSwitchService.this);
-                    if(list==null) return;
                     for(TaskItem item:list){
+                        if(item==null) continue;
                         if(item.isenabled) item.activateTask(TimeSwitchService.this);
                     }
                     sendEmptyMessage(TimeSwitchService.MESSAGE_REFRESH_TASKS_COMPLETE);
@@ -115,7 +116,7 @@ public class TimeSwitchService extends Service {
        }else{
            notification=new NotificationCompat.Builder(this);
        }
-       notification.setContentIntent(PendingIntent.getActivity(this,0,new Intent(this,Main.class),PendingIntent.FLAG_UPDATE_CURRENT));
+       notification.setContentIntent(PendingIntent.getActivity(this,0,new Intent(this,MainActivity.class),PendingIntent.FLAG_UPDATE_CURRENT));
        notification.setSmallIcon(R.drawable.ic_launcher);
        notification.setContentTitle("Widget Trigger");
        notification.setContentText("Widget Trigger is running");
@@ -137,7 +138,7 @@ public class TimeSwitchService extends Service {
             }
             break;
             case MESSAGE_REFRESH_TASKS_COMPLETE:{
-                Main.sendEmptyMessage(Main.MESSAGE_GETLIST_COMPLETE);
+                MainActivity.sendEmptyMessage(MainActivity.MESSAGE_GETLIST_COMPLETE);
                 Settings.sendEmptyMessage(Settings.MESSAGE_CHANGE_API_COMPLETE);
                 Profile.sendEmptyMessage(Profile.MESSAGE_REFRESH_TABLES);
             }
@@ -183,6 +184,7 @@ public class TimeSwitchService extends Service {
             AppLaunchingDetectionService.service.stopSelf();
         }
 
+        service=null;
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -195,7 +197,6 @@ public class TimeSwitchService extends Service {
             }
         }).start();
 
-        service=null;
         Log.d("TimeSwitchService","onDestroy method called");
     }
 
