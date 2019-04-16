@@ -44,11 +44,14 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 
 	private Context context;
 	
-	public MySQLiteOpenHelper(Context context){
+	private MySQLiteOpenHelper(Context context){
 		super(context, SQLConsts.SQL_DATABASE_NAME,null, SQLConsts.SQL_DATABASE_VERSION);
 		this.context=context;
 	}
 
+	/**
+	 * get an instance
+	 */
 	public static MySQLiteOpenHelper getInstance(Context context){
 		return new MySQLiteOpenHelper(context.getApplicationContext());
 	}
@@ -309,7 +312,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 	 * @throws Exception 运行过程中可能会抛出的异常
 	 */
 	public static void saveTable2File(Context context, String table,String path) throws Exception{
-		SQLiteDatabase database=new MySQLiteOpenHelper(context).getWritableDatabase();
+		SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
 		JSONObject head=new JSONObject();
 		head.put(PublicConsts.JSON_HEAD_VERSION_CODE,context.getPackageManager().getPackageInfo(context.getApplicationInfo().packageName, PackageManager.COMPONENT_ENABLED_STATE_DEFAULT).versionCode);
 		JSONArray jsonArray=new JSONArray();
@@ -350,7 +353,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 	public static @NonNull List<SqlTableItem> getTableListFromDatabase(Context context){
 		try{
 			List<SqlTableItem> list=new ArrayList<>();
-			SQLiteDatabase database= new MySQLiteOpenHelper(context).getWritableDatabase();
+			SQLiteDatabase database= MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
 			SharedPreferences settings=context.getSharedPreferences(PublicConsts.PREFERENCES_NAME, Activity.MODE_PRIVATE);
 			final String sql="select name from "+ "sqlite_master"+" where type='table' order by name";
 			Cursor cursor=database.rawQuery(sql,null);
@@ -382,7 +385,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 	 * @throws Exception 可能抛出的异常
 	 */
 	public static void readFile2Table(Context context,File file) throws Exception{
-		SQLiteDatabase database=new MySQLiteOpenHelper(context).getWritableDatabase();
+		SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
 		SharedPreferences.Editor editor=context.getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE).edit();
 		StringBuilder builder=new StringBuilder("");
 		InputStream in=new FileInputStream(file);

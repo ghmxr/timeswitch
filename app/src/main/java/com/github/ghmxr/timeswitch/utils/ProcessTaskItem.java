@@ -1731,27 +1731,23 @@ public class ProcessTaskItem {
     }
 
     public static void setTaskFolded(final Context context, int id , boolean isFolded){
-        try{
-            SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
-            final String table_name= MySQLiteOpenHelper.getCurrentTableName(context);
-            Cursor cursor=database.rawQuery("select * from "+table_name+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
-            if(cursor.moveToFirst()){
-                String additions_read[]=ValueUtils.string2StringArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ADDITIONS)));
-                String additions[]=new String[AdditionConsts.ADDITION_LENGTH];
-                for(int i=0;i<additions.length;i++){additions[i]=String.valueOf(-1);}
-                additions[AdditionConsts.ADDITION_TITLE_COLOR_LOCALE]=new TaskItem().addition_title_color;
-                System.arraycopy(additions_read,0,additions,0,additions_read.length);
-                additions[AdditionConsts.ADDITION_TITLE_FOLDED_VALUE_LOCALE]=isFolded?String.valueOf(0):String.valueOf(-1);
-                ContentValues content=new ContentValues();
-                content.put(SQLConsts.SQL_TASK_COLUMN_ADDITIONS,ValueUtils.stringArray2String(additions));
-                database.update(table_name,content,SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
-            }
-            cursor.close();
-            TimeSwitchService.list.get(getPosition(id)).addition_isFolded=isFolded;
-        }catch (Exception e){
-            e.printStackTrace();
+        SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
+        final String table_name= MySQLiteOpenHelper.getCurrentTableName(context);
+        Cursor cursor=database.rawQuery("select * from "+table_name+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
+        if(cursor.moveToFirst()){
+            String additions_read[]=ValueUtils.string2StringArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ADDITIONS)));
+            String additions[]=new String[AdditionConsts.ADDITION_LENGTH];
+            for(int i=0;i<additions.length;i++){additions[i]=String.valueOf(-1);}
+            additions[AdditionConsts.ADDITION_TITLE_COLOR_LOCALE]=new TaskItem().addition_title_color;
+            System.arraycopy(additions_read,0,additions,0,additions_read.length);
+            additions[AdditionConsts.ADDITION_TITLE_FOLDED_VALUE_LOCALE]=isFolded?String.valueOf(0):String.valueOf(-1);
+            ContentValues content=new ContentValues();
+            content.put(SQLConsts.SQL_TASK_COLUMN_ADDITIONS,ValueUtils.stringArray2String(additions));
+            database.update(table_name,content,SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
         }
-
+        cursor.close();
+        database.close();
+        TimeSwitchService.list.get(getPosition(id)).addition_isFolded=isFolded;
     }
 
 }

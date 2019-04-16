@@ -108,6 +108,7 @@ public class EditTask extends TaskGui {
             else {
                 Toast.makeText(this, "Task does not exist", Toast.LENGTH_SHORT).show();
             }
+            database.close();
         }
 
         return super.onOptionsItemSelected(item);

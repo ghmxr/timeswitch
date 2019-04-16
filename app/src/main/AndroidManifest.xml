@@ -145,12 +145,6 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".Global$BatteryReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BATTERY_CHANGED"/>
-            </intent-filter>
-        </receiver>
-
         <receiver android:name=".receivers.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

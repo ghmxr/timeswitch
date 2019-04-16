@@ -303,6 +303,7 @@ public class Global {
                 }catch (Exception e){e.printStackTrace();}
             }
             cursor.close();
+            database.close();
             return list;
         }catch (Exception e){
             e.printStackTrace();

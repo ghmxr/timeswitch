@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Handler;
@@ -28,8 +29,10 @@ import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.Global.BatteryReceiver;
+import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
+import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import java.util.ArrayList;
 
@@ -59,6 +62,8 @@ public class TimeSwitchService extends Service {
 
     static boolean flag_refresh_foreground_notification=false;
 
+    private final BatteryReceiver batteryReceiver=new BatteryReceiver();
+
     @Override
     public void onCreate(){
         super.onCreate();
@@ -72,6 +77,9 @@ public class TimeSwitchService extends Service {
         if(getSharedPreferences(PublicConsts.PREFERENCES_NAME,Context.MODE_PRIVATE).getInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_DEFAULT)==PublicConsts.PREFERENCES_SERVICE_TYPE_FORGROUND){
             makeThisForeground();
         }
+        try{
+            registerReceiver(batteryReceiver,new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        }catch (Exception e){e.printStackTrace();}
     }
 
     @Override
@@ -141,6 +149,8 @@ public class TimeSwitchService extends Service {
                 MainActivity.sendEmptyMessage(MainActivity.MESSAGE_GETLIST_COMPLETE);
                 Settings.sendEmptyMessage(Settings.MESSAGE_CHANGE_API_COMPLETE);
                 Profile.sendEmptyMessage(Profile.MESSAGE_REFRESH_TABLES);
+
+                new Thread(new RefreshListRemainingTimeTask()).start();
             }
             break;
             case MESSAGE_DISPLAY_TOAST:{
@@ -183,6 +193,10 @@ public class TimeSwitchService extends Service {
         if(AppLaunchingDetectionService.service!=null){
             AppLaunchingDetectionService.service.stopSelf();
         }
+
+        try{
+            unregisterReceiver(batteryReceiver);
+        }catch (Exception e){e.printStackTrace();}
 
         service=null;
         new Thread(new Runnable() {
@@ -258,25 +272,22 @@ public class TimeSwitchService extends Service {
     }
 
     private void refreshForegroundNotification(){
-        try{
-            if(!flag_refresh_foreground_notification){
-                flag_refresh_foreground_notification=true;
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (flag_refresh_foreground_notification){
-                            try{
-                                mHandler.postDelayed(this,2000);
-                                if(notification!=null) startForeground(1,getRefreshedNotificationBuilder(notification).build());
-                            }catch (Exception e){e.printStackTrace();}
-                        }else {
-                            try{stopForeground(true);}catch (Exception e){e.printStackTrace();}
-                        }
+        if(!flag_refresh_foreground_notification){
+            flag_refresh_foreground_notification=true;
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (flag_refresh_foreground_notification){
+                        try{
+                            mHandler.postDelayed(this,2000);
+                            if(notification!=null) startForeground(1,getRefreshedNotificationBuilder(notification).build());
+                        }catch (Exception e){e.printStackTrace();}
+                    }else {
+                        try{stopForeground(true);}catch (Exception e){e.printStackTrace();}
                     }
-                });
-            }
-
-        }catch (Exception e){e.printStackTrace();}
+                }
+            });
+        }
     }
 
     private static class MyHandler extends Handler{
@@ -294,5 +305,55 @@ public class TimeSwitchService extends Service {
     public static final class CustomToast{
        public String toast_value[]=new String[3];
        public String toast="";
+    }
+
+
+    private static class RefreshListRemainingTimeTask implements Runnable{
+        private boolean active=true;
+        private final ArrayList<TaskItem> list;
+        private RefreshListRemainingTimeTask(){
+            this.list=TimeSwitchService.list;
+        }
+        @Override
+        public void run() {
+           while (active){
+               if(list!=TimeSwitchService.list){
+                   active=false;
+                   //list=null;
+                   Log.d("TList","The global list has been changed and this runnable returns!! "+Runtime.getRuntime().freeMemory());
+                   return;
+               }
+               synchronized (list){
+                   try{
+                       for(TaskItem item:TimeSwitchService.list){
+                           if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){
+                               long remaining=item.getRemainingTimeOfTypeLoopByCertainTime();
+                               if(remaining<=0) remaining=0;
+                               int day=(int)(remaining/(1000*60*60*24));
+                               int hour=(int)((remaining%(1000*60*60*24))/(1000*60*60));
+                               int minute=(int)((remaining%(1000*60*60))/(1000*60));
+                               int second=(int)((remaining%(1000*60))/1000);
+                               String display;
+                               if(day>0){
+                                   display=day+":"+ ValueUtils.format(hour)+":"+ValueUtils.format(minute)+":"+ValueUtils.format(second);
+                               }else if(hour>0){
+                                   display=ValueUtils.format(hour)+":"+ValueUtils.format(minute)+":"+ValueUtils.format(second);
+                               }else if(minute>0){
+                                   display=ValueUtils.format(minute)+":"+ValueUtils.format(second);
+                               }else{
+                                   display=ValueUtils.format(second)+"s";
+                               }
+                               if(item.isenabled) {
+                                   item.display_trigger=display;
+                               }
+                               else item.display_trigger="Off";
+                           }
+                       }
+                       Thread.sleep(500);
+                       //Log.d("Thread_REFRESH_A","Thread sleep!!!");
+                   }catch (Exception e){e.printStackTrace();}
+               }
+           }
+        }
     }
 }

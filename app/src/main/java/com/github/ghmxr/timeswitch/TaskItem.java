@@ -121,7 +121,7 @@ public class TaskItem implements Comparable<TaskItem>{
 	public Trigger trigger;
 
 	/**
-	 * adapter display values
+	 * 触发器显示内容，如果触发类型为指定时间重复时，会被TimeSwitchService的一个线程每隔500毫秒刷新一次倒计时值
 	 */
 	public String display_trigger="--";
 	public int display_trigger_icon_res=-1;
