@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="false"
+    android:id="@+id/layout_exception_item">
+
+    <ImageView
+        android:id="@+id/layout_taskgui_area_exception_icon"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="15dp"
+        android:src="@drawable/ic_launcher" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="15dp"
+        android:layout_toRightOf="@+id/layout_taskgui_area_exception_icon">
+
+        <TextView
+            android:id="@+id/layout_taskgui_area_exception_att"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Exception"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/layout_taskgui_area_exception_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:textSize="12sp"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/layout_taskgui_exception_cancel"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="25dp"
+        android:clickable="true"
+        android:focusable="false"
+        android:src="@drawable/icon_cancel" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_alignParentBottom="true"
+        android:background="#dddddd" />
+
+</RelativeLayout>

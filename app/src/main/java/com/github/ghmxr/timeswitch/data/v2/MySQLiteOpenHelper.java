@@ -165,6 +165,15 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 				}
 				cursor.close();
 			}
+			case 2:{
+				/*String sql_lookup_table_names="select name from "+ "sqlite_master"+" where type='table' order by name";
+				Cursor cursor=db.rawQuery(sql_lookup_table_names,null);
+				while (cursor.moveToNext()){
+					String table_name=cursor.getString(0);
+					db.execSQL("alter table "+table_name +"");
+				}
+				cursor.close();*/
+			}
 
 		}
 	}
@@ -177,126 +186,126 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 	 * @return 插入的行数或者更新的行数，-1则表示有错误
 	 */
 	public static long insertOrUpdateRow(@NonNull Activity activity, @NonNull TaskItem taskitem, @Nullable Integer id){
-		try{
-			boolean isNull=true;
-			for(int i=0;i<taskitem.actions.length;i++){//for(int i=0;i<actions.length;i++){
-				if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE){
-					String volume_values[]=taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
-					if(Integer.parseInt(volume_values[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_RING_LOCALE])>=0||Integer.parseInt(volume_values[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_MEDIA_LOCALE])>=0
-							||Integer.parseInt(volume_values[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_NOTIFICATION_LOCALE])>=0||Integer.parseInt(volume_values[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_ALARM_LOCALE])>=0)
-						isNull=false;
-				}
-				else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE){
-					if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE])>=0
-							||Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_CALL_TYPE_LOCALE])>=0) isNull=false;
-				}
-				else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE){
-					if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[0])>=0) isNull=false;
-				}
-				else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE){
-					if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_FREQUENCY_LOCALE])>0) isNull=false;
-				}
-				else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE){
-					if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_LOCALE])!= ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_UNSELECTED) isNull=false;
-				}
-				else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE){
-					if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[0])>=0) isNull=false;
-				}
-				else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE){
-					if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_TYPE_LOCALE])>=0) isNull=false;
-				}
-				else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE){
-					if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[0])>=0) isNull=false;
-				}
-				else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE){
-					if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[0])>=0) isNull=false;
-				}else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES){
-					if(!taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES].equals(String.valueOf(-1))) isNull=false;
-				}else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES){
-					if(!taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES].equals(String.valueOf(-1))) isNull=false;
-				}
-				else if(Integer.parseInt(taskitem.actions[i])!= ActionConsts.ActionValueConsts.ACTION_UNSELECTED) isNull=false;
+		boolean isNull=true;
+		for(int i=0;i<taskitem.actions.length;i++){//for(int i=0;i<actions.length;i++){
+			if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE){
+				String volume_values[]=taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
+				if(Integer.parseInt(volume_values[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_RING_LOCALE])>=0||Integer.parseInt(volume_values[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_MEDIA_LOCALE])>=0
+						||Integer.parseInt(volume_values[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_NOTIFICATION_LOCALE])>=0||Integer.parseInt(volume_values[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_ALARM_LOCALE])>=0)
+					isNull=false;
 			}
-			if(isNull) {
-				Snackbar.make(activity.findViewById(android.R.id.content),activity.getResources().getString(R.string.activity_taskgui_toast_no_actions),Snackbar.LENGTH_SHORT).show();
-				return -1;
+			else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE){
+				if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE])>=0
+						||Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_CALL_TYPE_LOCALE])>=0) isNull=false;
 			}
-			if(taskitem.trigger_type == TriggerTypeConsts.TRIGGER_TYPE_SINGLE&&taskitem.time<System.currentTimeMillis()){
-				Snackbar.make(activity.findViewById(android.R.id.content),activity.getResources().getString(R.string.activity_taskgui_toast_time_invalid),Snackbar.LENGTH_SHORT).show();
-				return -1;
+			else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE){
+				if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[0])>=0) isNull=false;
 			}
-			SQLiteDatabase db= MySQLiteOpenHelper.getInstance(activity).getWritableDatabase();
-			ContentValues values=new ContentValues();
+			else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE){
+				if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_FREQUENCY_LOCALE])>0) isNull=false;
+			}
+			else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE){
+				if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_LOCALE])!= ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_UNSELECTED) isNull=false;
+			}
+			else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE){
+				if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[0])>=0) isNull=false;
+			}
+			else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE){
+				if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_TYPE_LOCALE])>=0) isNull=false;
+			}
+			else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE){
+				if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[0])>=0) isNull=false;
+			}
+			else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE){
+				if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[0])>=0) isNull=false;
+			}else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES){
+				if(!taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES].equals(String.valueOf(-1))) isNull=false;
+			}else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES){
+				if(!taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES].equals(String.valueOf(-1))) isNull=false;
+			}
+			else if(Integer.parseInt(taskitem.actions[i])!= ActionConsts.ActionValueConsts.ACTION_UNSELECTED) isNull=false;
+		}
+		if(isNull) {
+			Snackbar.make(activity.findViewById(android.R.id.content),activity.getResources().getString(R.string.activity_taskgui_toast_no_actions),Snackbar.LENGTH_SHORT).show();
+			return -1;
+		}
+		if(taskitem.trigger_type == TriggerTypeConsts.TRIGGER_TYPE_SINGLE&&taskitem.time<System.currentTimeMillis()){
+			Snackbar.make(activity.findViewById(android.R.id.content),activity.getResources().getString(R.string.activity_taskgui_toast_time_invalid),Snackbar.LENGTH_SHORT).show();
+			return -1;
+		}
+		SQLiteDatabase db= MySQLiteOpenHelper.getInstance(activity).getWritableDatabase();
+		ContentValues values=new ContentValues();
 
-			values.put(SQLConsts.SQL_TASK_COLUMN_NAME,taskitem.name);
+		values.put(SQLConsts.SQL_TASK_COLUMN_NAME,taskitem.name);
 
-			String[] triggerValues=new String[1];
-			if(taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE){//0（仅一次）--{time};
-				triggerValues=new String[1];
-				triggerValues[0]=String.valueOf(taskitem.time);
+		String[] triggerValues=new String[1];
+		if(taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE){//0（仅一次）--{time};
+			triggerValues=new String[1];
+			triggerValues[0]=String.valueOf(taskitem.time);
+		}
+		if(taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){//1（指定时间长度重复） --{time,period};
+			triggerValues=new String[2];
+			triggerValues[0]=String.valueOf(System.currentTimeMillis());
+			triggerValues[1]=String.valueOf(taskitem.interval_milliseconds);
+		}
+		if(taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK){//2(周重复) --{time,SUNDAY,MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY};
+			triggerValues=new String[8];
+			triggerValues[0]=String.valueOf(taskitem.time);
+			for(int i=1;i<triggerValues.length;i++){
+				triggerValues[i]=String.valueOf(taskitem.week_repeat[i-1]?1:0);
 			}
-			if(taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){//1（指定时间长度重复） --{time,period};
-				triggerValues=new String[2];
-				triggerValues[0]=String.valueOf(System.currentTimeMillis());
-				triggerValues[1]=String.valueOf(taskitem.interval_milliseconds);
-			}
-			if(taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK){//2(周重复) --{time,SUNDAY,MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY};
-				triggerValues=new String[8];
-				triggerValues[0]=String.valueOf(taskitem.time);
-				for(int i=1;i<triggerValues.length;i++){
-					triggerValues[i]=String.valueOf(taskitem.week_repeat[i-1]?1:0);
-				}
-			}
-			if(taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE||taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE){ //3,4(电池电量低于/高于某值)  --{percent}
-				triggerValues=new String[1];
-				triggerValues[0]=String.valueOf(taskitem.battery_percentage);
-			}
-			if(taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE||taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE){  //5,6(电池温度低于/高于某值) --{temperature}
-				triggerValues=new String[1];
-				triggerValues[0]=String.valueOf(taskitem.battery_temperature);
-			}
-			if(taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_RECEIVED_BROADCAST){
-				triggerValues=new String[1];
-				triggerValues[0]=String.valueOf(taskitem.selectedAction);
-			}
-			if(taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIFI_CONNECTED||taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIFI_DISCONNECTED){
-				triggerValues=new String[1];
-				triggerValues[0]=String.valueOf(taskitem.wifiIds);
-			}
-			if(taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED||taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED){
-				triggerValues=taskitem.package_names;
-				if(triggerValues==null||triggerValues.length==0) triggerValues=new String[1];
-			}
+		}
+		if(taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE||taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE){ //3,4(电池电量低于/高于某值)  --{percent}
+			triggerValues=new String[1];
+			triggerValues[0]=String.valueOf(taskitem.battery_percentage);
+		}
+		if(taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE||taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE){  //5,6(电池温度低于/高于某值) --{temperature}
+			triggerValues=new String[1];
+			triggerValues[0]=String.valueOf(taskitem.battery_temperature);
+		}
+		if(taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_RECEIVED_BROADCAST){
+			triggerValues=new String[1];
+			triggerValues[0]=String.valueOf(taskitem.selectedAction);
+		}
+		if(taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIFI_CONNECTED||taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIFI_DISCONNECTED){
+			triggerValues=new String[1];
+			triggerValues[0]=String.valueOf(taskitem.wifiIds);
+		}
+		if(taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED||taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED){
+			triggerValues=taskitem.package_names;
+			if(triggerValues==null||triggerValues.length==0) triggerValues=new String[1];
+		}
 
-			values.put(SQLConsts.SQL_TASK_COLUMN_ENABLED,taskitem.isenabled?1:0);
-			values.put(SQLConsts.SQL_TASK_COLUMN_TYPE,taskitem.trigger_type);
-			values.put(SQLConsts.SQL_TASK_COLUMN_TRIGGER_VALUES, ValueUtils.stringArray2String(triggerValues));
-			values.put(SQLConsts.SQL_TASK_COLUMN_EXCEPTIONS,ValueUtils.stringArray2String(taskitem.exceptions));
-			values.put(SQLConsts.SQL_TASK_COLUMN_ACTIONS,ValueUtils.stringArray2String(taskitem.actions));
-			values.put(SQLConsts.SQL_TASK_COLUMN_URI_RING_NOTIFICATION,taskitem.uri_ring_notification);
-			values.put(SQLConsts.SQL_TASK_COLUMN_URI_RING_CALL,taskitem.uri_ring_call);
-			values.put(SQLConsts.SQL_TASK_COLUMN_URI_WALLPAPER_DESKTOP,taskitem.uri_wallpaper_desktop);
-			values.put(SQLConsts.SQL_TASK_COLUMN_NOTIFICATION_TITLE,taskitem.notification_title);
-			values.put(SQLConsts.SQL_TASK_COLUMN_NOTIFICATION_MESSAGE,taskitem.notification_message);
-			values.put(SQLConsts.SQL_TASK_COLUMN_TOAST,taskitem.toast);
-			values.put(SQLConsts.SQL_TASK_COLUMN_SMS_SEND_PHONE_NUMBERS,taskitem.sms_address);
-			values.put(SQLConsts.SQL_TASK_COLUMN_SMS_SEND_MESSAGE,taskitem.sms_message);
-			String [] additions=new String[AdditionConsts.ADDITION_LENGTH];
-			for(int i=0;i<additions.length;i++) additions[i]=String.valueOf(-1);
-			additions[AdditionConsts.ADDITION_NOTIFY]=taskitem.notify?String.valueOf(1):String.valueOf(0);
-			additions[AdditionConsts.ADDITION_AUTO_DELETE]=taskitem.autodelete?String.valueOf(1):String.valueOf(0);
-			additions[AdditionConsts.ADDITION_AUTO_CLOSE]=taskitem.autoclose?String.valueOf(1):String.valueOf(0);
-			additions[AdditionConsts.ADDITION_TITLE_COLOR_LOCALE]=taskitem.addition_title_color;
-			additions[AdditionConsts.ADDITION_EXCEPTION_CONNECTOR_LOCALE]=taskitem.addition_exception_connector;
-			additions[AdditionConsts.ADDITION_TITLE_FOLDED_VALUE_LOCALE]=taskitem.addition_isFolded?String.valueOf(0):String.valueOf(-1);
-			values.put(SQLConsts.SQL_TASK_COLUMN_ADDITIONS,ValueUtils.stringArray2String(additions));
-			if(id==null) return db.insert(MySQLiteOpenHelper.getCurrentTableName(activity),null,values);
-			else{
-				Log.d("UPDATE","id is "+id);
-				return db.update(MySQLiteOpenHelper.getCurrentTableName(activity),values,SQLConsts.SQL_TASK_COLUMN_ID +"="+id,null);
-			}
-		}catch (Exception e){e.printStackTrace();}
-    	return -1;
+		values.put(SQLConsts.SQL_TASK_COLUMN_ENABLED,taskitem.isenabled?1:0);
+		values.put(SQLConsts.SQL_TASK_COLUMN_TYPE,taskitem.trigger_type);
+		values.put(SQLConsts.SQL_TASK_COLUMN_TRIGGER_VALUES, ValueUtils.stringArray2String(triggerValues));
+		values.put(SQLConsts.SQL_TASK_COLUMN_EXCEPTIONS,ValueUtils.stringArray2String(taskitem.exceptions));
+		values.put(SQLConsts.SQL_TASK_COLUMN_ACTIONS,ValueUtils.stringArray2String(taskitem.actions));
+		values.put(SQLConsts.SQL_TASK_COLUMN_URI_RING_NOTIFICATION,taskitem.uri_ring_notification);
+		values.put(SQLConsts.SQL_TASK_COLUMN_URI_RING_CALL,taskitem.uri_ring_call);
+		values.put(SQLConsts.SQL_TASK_COLUMN_URI_WALLPAPER_DESKTOP,taskitem.uri_wallpaper_desktop);
+		values.put(SQLConsts.SQL_TASK_COLUMN_NOTIFICATION_TITLE,taskitem.notification_title);
+		values.put(SQLConsts.SQL_TASK_COLUMN_NOTIFICATION_MESSAGE,taskitem.notification_message);
+		values.put(SQLConsts.SQL_TASK_COLUMN_TOAST,taskitem.toast);
+		values.put(SQLConsts.SQL_TASK_COLUMN_SMS_SEND_PHONE_NUMBERS,taskitem.sms_address);
+		values.put(SQLConsts.SQL_TASK_COLUMN_SMS_SEND_MESSAGE,taskitem.sms_message);
+		String [] additions=new String[AdditionConsts.ADDITION_LENGTH];
+		for(int i=0;i<additions.length;i++) additions[i]=String.valueOf(-1);
+		additions[AdditionConsts.ADDITION_NOTIFY]=taskitem.notify?String.valueOf(1):String.valueOf(0);
+		additions[AdditionConsts.ADDITION_AUTO_DELETE]=taskitem.autodelete?String.valueOf(1):String.valueOf(0);
+		additions[AdditionConsts.ADDITION_AUTO_CLOSE]=taskitem.autoclose?String.valueOf(1):String.valueOf(0);
+		additions[AdditionConsts.ADDITION_TITLE_COLOR_LOCALE]=taskitem.addition_title_color;
+		additions[AdditionConsts.ADDITION_EXCEPTION_CONNECTOR_LOCALE]=taskitem.addition_exception_connector;
+		additions[AdditionConsts.ADDITION_TITLE_FOLDED_VALUE_LOCALE]=taskitem.addition_isFolded?String.valueOf(0):String.valueOf(-1);
+		values.put(SQLConsts.SQL_TASK_COLUMN_ADDITIONS,ValueUtils.stringArray2String(additions));
+		long result;
+		if(id==null) result= db.insert(MySQLiteOpenHelper.getCurrentTableName(activity),null,values);
+		else{
+			Log.d("UPDATE","id is "+id);
+			result= db.update(MySQLiteOpenHelper.getCurrentTableName(activity),values,SQLConsts.SQL_TASK_COLUMN_ID +"="+id,null);
+		}
+		db.close();
+		return result;
 	}
 
 	public static class SqlTableItem{

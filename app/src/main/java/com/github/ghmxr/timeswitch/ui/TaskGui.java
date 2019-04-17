@@ -6,19 +6,19 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.transition.TransitionManager;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.activities.Actions;
@@ -36,10 +37,8 @@ import com.github.ghmxr.timeswitch.activities.BaseActivity;
 import com.github.ghmxr.timeswitch.activities.Exceptions;
 import com.github.ghmxr.timeswitch.activities.Triggers;
 import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
-import com.github.ghmxr.timeswitch.data.v2.AdditionConsts;
 import com.github.ghmxr.timeswitch.data.v2.ExceptionConsts;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
-import com.github.ghmxr.timeswitch.data.v2.SQLConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.utils.DisplayDensity;
@@ -52,11 +51,6 @@ import com.github.ghmxr.timeswitch.utils.ValueUtils;
  */
 public abstract class TaskGui extends BaseActivity implements View.OnClickListener{
 
-	//public CustomTimePicker timepicker;
-	/**
-	 * @deprecated
-	 */
-	public Calendar calendar=Calendar.getInstance();
 	public TaskItem taskitem=new TaskItem();
 	private static final int REQUEST_CODE_TRIGGERS=0;
 	private static final int REQUEST_CODE_EXCEPTIONS=1;
@@ -64,22 +58,27 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 
 	public String checkString="";
 
+	private final View.OnClickListener listener_on_exception_item_clicked=new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			Intent i=new Intent(TaskGui.this,Exceptions.class);
+			i.putExtra(Exceptions.INTENT_EXTRA_EXCEPTIONS,taskitem.exceptions);
+			i.putExtra(Exceptions.INTENT_EXTRA_TRIGGER_TYPE,taskitem.trigger_type);
+			try{i.putExtra(Exceptions.EXTRA_EXCEPTION_CONNECTOR,Integer.parseInt(taskitem.addition_exception_connector));}catch (Exception e){e.printStackTrace();}
+			i.putExtra(EXTRA_TITLE_COLOR,taskitem.addition_title_color);
+			TaskGui.this.startActivityForResult(i,REQUEST_CODE_EXCEPTIONS);
+		}
+	};
+
 	public void onCreate(Bundle mybundle){
 		super.onCreate(mybundle);
 		setContentView(R.layout.layout_taskgui);
 		Toolbar toolbar =findViewById(R.id.taskgui_toolbar);
 		setSupportActionBar(toolbar);
-		//timepicker=findViewById(R.id.layout_taskgui_timepicker);
-
-		/*Calendar current=Calendar.getInstance();
-		current.setTimeInMillis(System.currentTimeMillis());
-		calendar.set(current.get(Calendar.YEAR),current.get(Calendar.MONTH),current.get(Calendar.DAY_OF_MONTH),current.get(Calendar.HOUR_OF_DAY),current.get(Calendar.MINUTE));
-		calendar.setTimeInMillis(calendar.getTimeInMillis()+10*60*1000);*/
 
 		Calendar calendar=Calendar.getInstance();
 		calendar.setTimeInMillis(System.currentTimeMillis()+10*60*1000);
 		calendar.set(Calendar.SECOND,0);
-		//timepicker.setIs24HourView(true);
 
 		taskitem.time=calendar.getTimeInMillis();
 
@@ -87,50 +86,6 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		findViewById(R.id.layout_taskgui_area_enable).setOnClickListener(this);
 
 		findViewById(R.id.layout_taskgui_trigger).setOnClickListener(this);
-		
-		findViewById(R.id.layout_taskgui_area_exception_lockscreen).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_unlockscreen).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_wifi_enabled).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_wifi_disabled).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_ring_vibrate).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_ring_off).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_ring_normal).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_bluetooth_enabled).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_bluetooth_disabled).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_net_enabled).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_net_disabled).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_gps_enabled).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_gps_disabled).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_airplane_mode_enabled).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_airplane_mode_disabled).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_battery_percentage).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_battery_temperature).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_day_of_week).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_period).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_headset).setOnClickListener(this);
-		
-		findViewById(R.id.layout_taskgui_exception_lockscreen_cancel).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_exception_unlockscreen_cancel).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_exception_wifi_enabled_cancel).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_exception_wifi_disabled_cancel).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_exception_bluetooth_enabled_cancel).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_exception_bluetooth_disabled_cancel).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_exception_ring_normal_cancel).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_exception_ring_off_cancel).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_exception_ring_vibrate_cancel).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_exception_net_enabled_cancel).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_exception_net_disabled_cancel).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_airplane_mode_enabled).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_airplane_mode_disabled).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_exception_gps_enabled_cancel).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_exception_gps_disabled_cancel).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_airplane_mode_enabled_cancel).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_airplane_mode_disabled_cancel).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_battery_percentage_cancel).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_battery_temperature_cancel).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_day_of_week_cancel).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_period_cancel).setOnClickListener(this);
-		findViewById(R.id.layout_taskgui_area_exception_headset_cancel).setOnClickListener(this);
 
 		findViewById(R.id.taskgui_operations_area_wifi).setOnClickListener(this);
 		findViewById(R.id.taskgui_operations_area_bluetooth).setOnClickListener(this);
@@ -159,7 +114,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		findViewById(R.id.layout_taskgui_area_additional_autoclose).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_additional_titlecolor).setOnClickListener(this);
 
-		findViewById(R.id.layout_taskgui_area_exception_additem).setOnClickListener(this);
+		findViewById(R.id.layout_taskgui_area_exception_additem).setOnClickListener(listener_on_exception_item_clicked);
 		findViewById(R.id.layout_taskgui_area_action_additem).setOnClickListener(this);
 
 		taskitem.addition_title_color=(getSharedPreferences(PublicConsts.PREFERENCES_NAME, Activity.MODE_PRIVATE).getString(PublicConsts.PREFERENCES_THEME_COLOR,PublicConsts.PREFERENCES_THEME_COLOR_DEFAULT));
@@ -167,16 +122,6 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		initialVariables();
 
 		//do set the views of the variables.
-
-		/*if(Build.VERSION.SDK_INT<23){
-			timepicker.setCurrentHour(calendar.get(Calendar.HOUR_OF_DAY));
-			timepicker.setCurrentMinute(calendar.get(Calendar.MINUTE));
-
-		}else{
-			timepicker.setHour(calendar.get(Calendar.HOUR_OF_DAY));
-			timepicker.setMinute(calendar.get(Calendar.MINUTE));
-		} */
-		//timepicker.setOnTimeChangedListener(this);
 
 		String taskname=taskitem.name;
 		if(taskname.length()>24) taskname=taskname.substring(0,24)+"...";
@@ -201,6 +146,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		refreshActionStatus();
 		setTaskThemeColor(taskitem.addition_title_color);
 		checkString=taskitem.toString();
+
 	}
 
 	public abstract void initialVariables();
@@ -480,73 +426,6 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		}
 	}
 
-	/*public void activateTriggerType(int type){
-		taskitem.trigger_type =type;
-        refreshTriggerView(type);
-		switch(type){
-			default:break;
-			case PublicConsts.TRIGGER_TYPE_SINGLE:{
-                clearExceptionsOfTimeType();
-				this.timepicker.setVisibility(View.VISIBLE);
-				//refreshSingleTimeTextView();
-
-			}
-			break;
-
-			case PublicConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME:{
-				this.timepicker.setVisibility(View.GONE);
-				refreshRepeatTextView();
-			}
-			break;
-			
-			case PublicConsts.TRIGGER_TYPE_LOOP_WEEK:{
-                clearExceptionsOfTimeType();
-				this.timepicker.setVisibility(View.VISIBLE);
-				refreshWeekLoopTextView();
-			}
-			break;
-
-			case PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE:{
-				clearExceptionsOfBatteryPercentage();
-				timepicker.setVisibility(View.GONE);
-				refreshBatteryPercentageTextView();
-			}
-			break;
-
-			case PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE:{
-			    clearExceptionsOfBatteryPercentage();
-				timepicker.setVisibility(View.GONE);
-				refreshBatteryPercentageTextView();
-			}
-			break;
-
-			case PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE:{
-			    clearExceptionsOfBatteryTemperature();
-				timepicker.setVisibility(View.GONE);
-				refreshBatteryTemperatureTextView();
-			}
-			break;
-
-			case PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE:{
-			    clearExceptionsOfBatteryTemperature();
-				timepicker.setVisibility(View.GONE);
-				refreshBatteryTemperatureTextView();
-			}
-			break;
-			case PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST:{
-				timepicker.setVisibility(View.GONE);
-				refreshBroadcastTextView();
-			}
-			break;
-		}
-
-		if(type==PublicConsts.TRIGGER_TYPE_SINGLE) setAutoCloseAreaEnabled(false);
-		else {
-			setAutoCloseAreaEnabled(!((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autodelete_cb)).isChecked());
-		}
-
-	}  */
-
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
@@ -643,133 +522,6 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				startActivityForResult(i,REQUEST_CODE_TRIGGERS);
 			}
 			break;
-
-			case R.id.layout_taskgui_area_exception_bluetooth_disabled: case R.id.layout_taskgui_area_exception_bluetooth_enabled:
-			case R.id.layout_taskgui_area_exception_lockscreen: case R.id.layout_taskgui_area_exception_unlockscreen:
-			case R.id.layout_taskgui_area_exception_wifi_disabled: case R.id.layout_taskgui_area_exception_wifi_enabled:
-			case R.id.layout_taskgui_area_exception_ring_normal: case R.id.layout_taskgui_area_exception_ring_off: case R.id.layout_taskgui_area_exception_ring_vibrate:
-			case R.id.layout_taskgui_area_exception_net_disabled: case R.id.layout_taskgui_area_exception_net_enabled: case R.id.layout_taskgui_area_exception_additem:
-			case R.id.layout_taskgui_area_exception_gps_enabled: case R.id.layout_taskgui_area_exception_gps_disabled:
-			case R.id.layout_taskgui_area_exception_airplane_mode_enabled: case R.id.layout_taskgui_area_exception_airplane_mode_disabled:
-			case R.id.layout_taskgui_area_exception_battery_percentage: case R.id.layout_taskgui_area_exception_battery_temperature:
-			case R.id.layout_taskgui_area_exception_day_of_week: case R.id.layout_taskgui_area_exception_period: case R.id.layout_taskgui_area_exception_headset:{
-				Intent i=new Intent(this,Exceptions.class);
-				i.putExtra(Exceptions.INTENT_EXTRA_EXCEPTIONS,taskitem.exceptions);
-				i.putExtra(Exceptions.INTENT_EXTRA_TRIGGER_TYPE,taskitem.trigger_type);
-				try{i.putExtra(Exceptions.EXTRA_EXCEPTION_CONNECTOR,Integer.parseInt(taskitem.addition_exception_connector));}catch (Exception e){e.printStackTrace();}
-				i.putExtra(EXTRA_TITLE_COLOR,taskitem.addition_title_color);
-				this.startActivityForResult(i,REQUEST_CODE_EXCEPTIONS);
-
-			}
-			break;
-			case R.id.layout_taskgui_exception_bluetooth_disabled_cancel:
-				//taskitem.exception[PublicConsts.EXCEPTION_BLUETOOTH_DISABLED]=false;
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_DISABLED]=String.valueOf(0);
-				this.refreshExceptionViews();
-				break;
-			case R.id.layout_taskgui_exception_bluetooth_enabled_cancel:
-				//taskitem.exception[PublicConsts.EXCEPTION_BLUETOOTH_ENABLED]=false;
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_ENABLED]=String.valueOf(0);
-				this.refreshExceptionViews();
-				break;
-			case R.id.layout_taskgui_exception_wifi_enabled_cancel:
-				//taskitem.exception[PublicConsts.EXCEPTION_WIFI_ENABLED]=false;
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_WIFI_ENABLED]=String.valueOf(0);
-				this.refreshExceptionViews();
-				break;
-			case R.id.layout_taskgui_exception_wifi_disabled_cancel:
-				//taskitem.exception[PublicConsts.EXCEPTION_WIFI_DISABLED]=false;
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_WIFI_DISABLED]=String.valueOf(0);
-				this.refreshExceptionViews();
-				break;
-			case R.id.layout_taskgui_exception_ring_off_cancel:
-				//taskitem.exception[PublicConsts.EXCEPTION_RING_OFF]=false;
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_RING_OFF]=String.valueOf(0);
-				this.refreshExceptionViews();
-				break;
-			case R.id.layout_taskgui_exception_ring_vibrate_cancel:
-				//taskitem.exception[PublicConsts.EXCEPTION_RING_VIBRATE]=false;
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_RING_VIBRATE]=String.valueOf(0);
-				this.refreshExceptionViews();
-				break;
-			case R.id.layout_taskgui_exception_ring_normal_cancel:
-				//taskitem.exception[PublicConsts.EXCEPTION_RING_NORMAL]=false;
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_RING_NORMAL]=String.valueOf(0);
-				this.refreshExceptionViews();
-				break;
-			case R.id.layout_taskgui_exception_net_enabled_cancel:
-				//taskitem.exception[PublicConsts.EXCEPTION_NET_ENABLED]=false;
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_NET_ENABLED]=String.valueOf(0);
-				this.refreshExceptionViews();
-				break;
-			case R.id.layout_taskgui_exception_net_disabled_cancel:
-				//taskitem.exception[PublicConsts.EXCEPTION_NET_DISABLED]=false;
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_NET_DISABLED]=String.valueOf(0);
-				this.refreshExceptionViews();
-				break;
-			case R.id.layout_taskgui_exception_lockscreen_cancel:
-				//taskitem.exception[PublicConsts.EXCEPTION_LOCKEDSCREEN]=false;
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_LOCKEDSCREEN]=String.valueOf(0);
-				this.refreshExceptionViews();
-				break;
-			case R.id.layout_taskgui_exception_unlockscreen_cancel:
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_UNLOCKEDSCREEN]=String.valueOf(0);
-				this.refreshExceptionViews();
-				break;
-			case R.id.layout_taskgui_area_exception_battery_percentage_cancel:{
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]=String.valueOf(-1);
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]=String.valueOf(-1);
-				refreshExceptionViews();
-			}
-			break;
-			case R.id.layout_taskgui_area_exception_battery_temperature_cancel:{
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]=String.valueOf(-1);
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]=String.valueOf(-1);
-				refreshExceptionViews();
-			}
-			break;
-			case R.id.layout_taskgui_exception_gps_disabled_cancel:{
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_GPS_DISABLED]=String.valueOf(0);
-				refreshExceptionViews();
-			}
-			break;
-			case R.id.layout_taskgui_exception_gps_enabled_cancel:{
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_GPS_ENABLED]=String.valueOf(0);
-				refreshExceptionViews();
-			}
-			break;
-			case R.id.layout_taskgui_area_exception_airplane_mode_disabled_cancel:{
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_DISABLED]=String.valueOf(0);
-				refreshExceptionViews();
-			}
-			break;
-			case R.id.layout_taskgui_area_exception_airplane_mode_enabled_cancel:{
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_ENABLED]=String.valueOf(0);
-				refreshExceptionViews();
-			}
-			break;
-			case R.id.layout_taskgui_area_exception_day_of_week_cancel:{
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_MONDAY]=String.valueOf(0);
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_TUESDAY]=String.valueOf(0);
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_WEDNESDAY]=String.valueOf(0);
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_THURSDAY]=String.valueOf(0);
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_FRIDAY]=String.valueOf(0);
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_SATURDAY]=String.valueOf(0);
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_SUNDAY]=String.valueOf(0);
-				refreshExceptionViews();
-			}
-			break;
-			case R.id.layout_taskgui_area_exception_period_cancel:{
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_START_TIME]=String.valueOf(-1);
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_END_TIME]=String.valueOf(-1);
-				refreshExceptionViews();
-			}
-			break;
-			case R.id.layout_taskgui_area_exception_headset_cancel:{
-				taskitem.exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS]=String.valueOf(0);
-				refreshExceptionViews();
-			}
-			break;
 			case R.id.layout_taskgui_area_action_additem:
 			case R.id.taskgui_operations_area_wifi: case R.id.taskgui_operations_area_bluetooth: case R.id.taskgui_operations_area_ring_mode:
 			case R.id.taskgui_operations_area_ring_volume: case R.id.taskgui_operations_area_ring_selection: case R.id.taskgui_operations_area_brightness:
@@ -846,26 +598,8 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		}
 	}
 
-	/*@Override
-	public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
-		// TODO Auto-generated method stub
-		calendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
-		calendar.set(Calendar.MINUTE,minute);
-		calendar.set(Calendar.SECOND,0);
-		if(taskitem.trigger_type ==PublicConsts.TRIGGER_TYPE_SINGLE) refreshSingleTimeTextView();
-		
-	}  */
-	
-	/*@Override
-	public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-		// TODO Auto-generated method stub
-		this.calendar.set(year, month, dayOfMonth);
-		TaskGui.this.activateTriggerType(PublicConsts.TRIGGER_TYPE_SINGLE);
-	}  */
-	
-	
 	public void refreshExceptionViews(){
-		try{
+		/*try{
 			((TextView)findViewById(R.id.layout_taskgui_area_exception_att)).setText(Integer.parseInt(taskitem.addition_exception_connector)==0?getResources().getString(R.string.activity_taskgui_att_exception_and):getResources().getString(R.string.activity_taskgui_att_exception_or));
 			findViewById(R.id.layout_taskgui_area_exception_lockscreen).setVisibility(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_LOCKEDSCREEN])==1?View.VISIBLE:View.GONE);
 			findViewById(R.id.layout_taskgui_area_exception_unlockscreen).setVisibility(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_UNLOCKEDSCREEN])==1?View.VISIBLE:View.GONE);
@@ -907,8 +641,295 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		}catch (NumberFormatException ne){
 			ne.printStackTrace();
 			LogUtil.putExceptionLog(TaskGui.this,ne);
+		}*/
+		ViewGroup group=((ViewGroup)findViewById(R.id.layout_taskgui_area_exception));
+		group.removeAllViews();
+		//TransitionManager.beginDelayedTransition((ViewGroup)findViewById(R.id.taskgui_exception_card));
+		Resources resources=getResources();
+		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_LOCKEDSCREEN])==1){
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_screen_off,resources.getString(R.string.activity_taskgui_exception_screen_locked),null);
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_LOCKEDSCREEN]=String.valueOf(0);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
+		}
+		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_UNLOCKEDSCREEN])==1){
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_screen_on,resources.getString(R.string.activity_taskgui_exception_screen_unlocked),null);
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_UNLOCKEDSCREEN]=String.valueOf(0);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
+		}
+		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_RING_VIBRATE])==1){
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_ring_vibrate,resources.getString(R.string.activity_taskgui_exception_ring_vibrate),null);
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_RING_VIBRATE]=String.valueOf(0);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
+		}
+		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_RING_OFF])==1){
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_ring_off,resources.getString(R.string.activity_taskgui_exception_ring_off),null);
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_RING_OFF]=String.valueOf(0);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
+		}
+		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_RING_NORMAL])==1){
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_ring_normal,resources.getString(R.string.activity_taskgui_exception_ring_normal),null);
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_RING_NORMAL]=String.valueOf(0);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
+		}
+		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_WIFI_ENABLED])==1){
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_wifi_on,resources.getString(R.string.activity_taskgui_exception_wifi_enabled),null);
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_WIFI_ENABLED]=String.valueOf(0);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
+		}
+		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_WIFI_DISABLED])==1){
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_wifi_off,resources.getString(R.string.activity_taskgui_exception_wifi_disabled),null);
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_WIFI_DISABLED]=String.valueOf(0);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
+		}
+		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_ENABLED])==1){
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_bluetooth_on,resources.getString(R.string.activity_taskgui_exception_bluetooth_enabled),null);
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_ENABLED]=String.valueOf(0);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
+		}
+		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_DISABLED])==1){
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_bluetooth_off,resources.getString(R.string.activity_taskgui_exception_bluetooth_disabled),null);
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_DISABLED]=String.valueOf(0);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
+		}
+		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_NET_ENABLED])==1){
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_cellular_on,resources.getString(R.string.activity_taskgui_exception_net_enabled),null);
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_NET_ENABLED]=String.valueOf(0);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
+		}
+		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_NET_DISABLED])==1){
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_cellular_off,resources.getString(R.string.activity_taskgui_exception_net_disabled),null);
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_NET_DISABLED]=String.valueOf(0);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
+		}
+		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_GPS_ENABLED])==1){
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_location_on,resources.getString(R.string.activity_taskgui_exception_gps_on),null);
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_GPS_ENABLED]=String.valueOf(0);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
+		}
+		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_GPS_DISABLED])==1){
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_location_off,resources.getString(R.string.activity_taskgui_exception_gps_off),null);
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_GPS_DISABLED]=String.valueOf(0);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
+		}
+		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_ENABLED])==1){
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_airplanemode_on,resources.getString(R.string.activity_taskgui_exception_airplanemode_on),null);
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_ENABLED]=String.valueOf(0);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
+		}
+		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_DISABLED])==1){
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_airplanemode_off,resources.getString(R.string.activity_taskgui_exception_airplanemode_off),null);
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_DISABLED]=String.valueOf(0);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
+		}
+		int headset_status=Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS]);
+		if(headset_status==ExceptionConsts.EXCEPTION_HEADSET_PLUG_IN){
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_headset,resources.getString(R.string.activity_taskgui_exception_headset),resources.getString(R.string.activity_taskgui_exception_headset_in));
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS]=String.valueOf(0);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
+		}
+		if(headset_status==ExceptionConsts.EXCEPTION_HEADSET_PLUG_OUT){
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_headset,resources.getString(R.string.activity_taskgui_exception_headset),resources.getString(R.string.activity_taskgui_exception_headset_out));
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS]=String.valueOf(0);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
+		}
+		int battery_more_than_percentage=Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]);
+		if(battery_more_than_percentage>=0){
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_battery,resources.getString(R.string.activity_taskgui_exceptions_battery_percentage),resources.getString(R.string.dialog_battery_compare_more_than)+battery_more_than_percentage+"%");
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]=String.valueOf(-1);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
 		}
 
+		int battery_less_than_percentage=Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]);
+		if(battery_less_than_percentage>=0){
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_battery_low,resources.getString(R.string.activity_taskgui_exceptions_battery_percentage),resources.getString(R.string.dialog_battery_compare_less_than)+battery_less_than_percentage+"%");
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]=String.valueOf(-1);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
+		}
+
+		int battery_higher_than_temperature=Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]);
+		if(battery_higher_than_temperature>=0){
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_temperature,resources.getString(R.string.activity_taskgui_exceptions_battery_temperature),resources.getString(R.string.dialog_battery_compare_higher_than)+battery_higher_than_temperature+"℃");
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]=String.valueOf(-1);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
+		}
+
+		int battery_lower_than_temperature=Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]);
+		if(battery_lower_than_temperature>=0){
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_temperature,resources.getString(R.string.activity_taskgui_exceptions_battery_temperature),resources.getString(R.string.dialog_battery_compare_lower_than)+battery_lower_than_temperature+"℃");
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]=String.valueOf(-1);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
+		}
+
+		StringBuilder value=new StringBuilder("");
+		value.append(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_MONDAY])==1?getResources().getString(R.string.monday)+" ":"");
+		value.append(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_TUESDAY])==1?getResources().getString(R.string.tuesday)+" ":"");
+		value.append(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_WEDNESDAY])==1?getResources().getString(R.string.wednesday)+" ":"");
+		value.append(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_THURSDAY])==1?getResources().getString(R.string.thursday)+" ":"");
+		value.append(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_FRIDAY])==1?getResources().getString(R.string.friday)+" ":"");
+		value.append(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_SATURDAY])==1?getResources().getString(R.string.saturday)+' ':"");
+		value.append(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_SUNDAY])==1?getResources().getString(R.string.sunday)+" ":"");
+		if(!value.toString().equals("")){
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_repeat_weekloop,resources.getString(R.string.activity_taskgui_exceptions_day_of_week),value.toString());
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_MONDAY]=String.valueOf(0);
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_TUESDAY]=String.valueOf(0);
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_WEDNESDAY]=String.valueOf(0);
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_THURSDAY]=String.valueOf(0);
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_FRIDAY]=String.valueOf(0);
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_SATURDAY]=String.valueOf(0);
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_SUNDAY]=String.valueOf(0);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
+		}
+
+		int startTime=Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_START_TIME]);
+		int endTime=Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_END_TIME]);
+		if(startTime>=0&&endTime>=0){
+			String display= ValueUtils.format(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_START_TIME])/60)+":"
+							+ ValueUtils.format(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_START_TIME])%60)
+							+"~"+ ValueUtils.format(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_END_TIME])/60)+":"
+							+ ValueUtils.format(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_END_TIME])%60);
+			View v= getExceptionItemViewForViewGroup(group,R.drawable.icon_repeat_percertaintime,resources.getString(R.string.activity_taskgui_exceptions_period),display);
+			v.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_START_TIME]=String.valueOf(-1);
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_END_TIME]=String.valueOf(-1);
+					refreshExceptionViews();
+				}
+			});
+			group.addView(v);
+		}
 	}
 
 	/**
@@ -917,131 +938,13 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 	 * @return 插入或者更新数据的结果,插入失败时返回-1，更新失败时返回0
 	 */
 	public long saveTaskItem2DB(@Nullable Integer id){
-		/*boolean isNull=true;
-		for(int i=0;i<taskitem.actions.length;i++){//for(int i=0;i<actions.length;i++){
-			try{
-				if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE){
-					String volume_values[]=taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
-					if(Integer.parseInt(volume_values[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_RING_LOCALE])>=0||Integer.parseInt(volume_values[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_MEDIA_LOCALE])>=0
-							||Integer.parseInt(volume_values[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_NOTIFICATION_LOCALE])>=0||Integer.parseInt(volume_values[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_ALARM_LOCALE])>=0)
-						isNull=false;
-				}
-				else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE){
-					if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE])>=0
-							||Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_CALL_TYPE_LOCALE])>=0) isNull=false;
-				}
-				else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE){
-					if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[0])>=0) isNull=false;
-				}
-				else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE){
-					if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_FREQUENCY_LOCALE])>0) isNull=false;
-				}
-				else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE){
-					if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_LOCALE])!= ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_UNSELECTED) isNull=false;
-				}
-				else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE){
-					if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[0])>=0) isNull=false;
-				}
-				else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE){
-					if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_TYPE_LOCALE])>=0) isNull=false;
-				}
-				else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE){
-					if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[0])>=0) isNull=false;
-				}
-				else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE){
-					if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[0])>=0) isNull=false;
-				}else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES){
-					if(!taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES].equals(String.valueOf(-1))) isNull=false;
-				}else if(i== ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES){
-					if(!taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES].equals(String.valueOf(-1))) isNull=false;
-				}
-				else if(Integer.parseInt(taskitem.actions[i])!= ActionConsts.ActionValueConsts.ACTION_UNSELECTED) isNull=false;
-			}catch (NumberFormatException ne){
-				ne.printStackTrace();
-				LogUtil.putExceptionLog(TaskGui.this,ne);
-				return -1;
-			}
+		try{
+			return MySQLiteOpenHelper.insertOrUpdateRow(this,this.taskitem,id);
+		}catch (Exception e){
+			e.printStackTrace();
+			Toast.makeText(this,e.toString(),Toast.LENGTH_SHORT).show();
 		}
-		if(isNull) {
-			Snackbar.make(findViewById(R.id.layout_taskgui_root),getResources().getString(R.string.activity_taskgui_toast_no_actions),Snackbar.LENGTH_SHORT).show();
-			return -1;
-		}
-		if(taskitem.trigger_type == TriggerTypeConsts.TRIGGER_TYPE_SINGLE&&taskitem.time<System.currentTimeMillis()){
-			Snackbar.make(findViewById(R.id.layout_taskgui_root),getResources().getString(R.string.activity_taskgui_toast_time_invalid),Snackbar.LENGTH_SHORT).show();
-			return -1;
-		}
-
-		SQLiteDatabase db= MySQLiteOpenHelper.getInstance(this).getWritableDatabase();
-		ContentValues values=new ContentValues();
-
-		values.put(SQLConsts.SQL_TASK_COLUMN_NAME,taskitem.name);
-
-		String[] triggerValues=new String[1];
-		if(this.taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE){//0（仅一次）--{time};
-			triggerValues=new String[1];
-			triggerValues[0]=String.valueOf(taskitem.time);
-		}
-		if(this.taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME){//1（指定时间长度重复） --{time,period};
-			triggerValues=new String[2];
-			triggerValues[0]=String.valueOf(System.currentTimeMillis());
-			triggerValues[1]=String.valueOf(this.taskitem.interval_milliseconds);
-		}
-		if(this.taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK){//2(周重复) --{time,SUNDAY,MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY};
-			triggerValues=new String[8];
-			triggerValues[0]=String.valueOf(taskitem.time);
-			for(int i=1;i<triggerValues.length;i++){
-				triggerValues[i]=String.valueOf(this.taskitem.week_repeat[i-1]?1:0);
-			}
-		}
-		if(this.taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE||this.taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE){ //3,4(电池电量低于/高于某值)  --{percent}
-			triggerValues=new String[1];
-			triggerValues[0]=String.valueOf(this.taskitem.battery_percentage);
-		}
-		if(this.taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE||this.taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE){  //5,6(电池温度低于/高于某值) --{temperature}
-			triggerValues=new String[1];
-			triggerValues[0]=String.valueOf(this.taskitem.battery_temperature);
-		}
-		if(taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_RECEIVED_BROADCAST){
-			triggerValues=new String[1];
-			triggerValues[0]=String.valueOf(taskitem.selectedAction);
-		}
-		if(taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIFI_CONNECTED||taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIFI_DISCONNECTED){
-			triggerValues=new String[1];
-			triggerValues[0]=String.valueOf(taskitem.wifiIds);
-		}
-		if(taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED||taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED){
-		    triggerValues=taskitem.package_names;
-		    if(triggerValues==null||triggerValues.length==0) triggerValues=new String[1];
-        }
-
-		values.put(SQLConsts.SQL_TASK_COLUMN_ENABLED,taskitem.isenabled?1:0);
-		values.put(SQLConsts.SQL_TASK_COLUMN_TYPE,taskitem.trigger_type);
-		values.put(SQLConsts.SQL_TASK_COLUMN_TRIGGER_VALUES, ValueUtils.stringArray2String(triggerValues));
-		values.put(SQLConsts.SQL_TASK_COLUMN_EXCEPTIONS,ValueUtils.stringArray2String(taskitem.exceptions));
-		values.put(SQLConsts.SQL_TASK_COLUMN_ACTIONS,ValueUtils.stringArray2String(taskitem.actions));
-		values.put(SQLConsts.SQL_TASK_COLUMN_URI_RING_NOTIFICATION,taskitem.uri_ring_notification);
-		values.put(SQLConsts.SQL_TASK_COLUMN_URI_RING_CALL,taskitem.uri_ring_call);
-		values.put(SQLConsts.SQL_TASK_COLUMN_URI_WALLPAPER_DESKTOP,taskitem.uri_wallpaper_desktop);
-		values.put(SQLConsts.SQL_TASK_COLUMN_NOTIFICATION_TITLE,taskitem.notification_title);
-		values.put(SQLConsts.SQL_TASK_COLUMN_NOTIFICATION_MESSAGE,taskitem.notification_message);
-		values.put(SQLConsts.SQL_TASK_COLUMN_TOAST,taskitem.toast);
-		values.put(SQLConsts.SQL_TASK_COLUMN_SMS_SEND_PHONE_NUMBERS,taskitem.sms_address);
-		values.put(SQLConsts.SQL_TASK_COLUMN_SMS_SEND_MESSAGE,taskitem.sms_message);
-		String [] additions=new String[AdditionConsts.ADDITION_LENGTH];
-		for(int i=0;i<additions.length;i++) additions[i]=String.valueOf(-1);
-		additions[AdditionConsts.ADDITION_NOTIFY]=this.taskitem.notify?String.valueOf(1):String.valueOf(0);
-		additions[AdditionConsts.ADDITION_AUTO_DELETE]=this.taskitem.autodelete?String.valueOf(1):String.valueOf(0);
-		additions[AdditionConsts.ADDITION_AUTO_CLOSE]=this.taskitem.autoclose?String.valueOf(1):String.valueOf(0);
-		additions[AdditionConsts.ADDITION_TITLE_COLOR_LOCALE]=taskitem.addition_title_color;
-		additions[AdditionConsts.ADDITION_EXCEPTION_CONNECTOR_LOCALE]=taskitem.addition_exception_connector;
-		additions[AdditionConsts.ADDITION_TITLE_FOLDED_VALUE_LOCALE]=taskitem.addition_isFolded?String.valueOf(0):String.valueOf(-1);
-		values.put(SQLConsts.SQL_TASK_COLUMN_ADDITIONS,ValueUtils.stringArray2String(additions));
-		if(id==null) return db.insert(MySQLiteOpenHelper.getCurrentTableName(this),null,values);
-		else{
-			Log.d("UPDATE","id is "+id);
-			return db.update(MySQLiteOpenHelper.getCurrentTableName(this),values,SQLConsts.SQL_TASK_COLUMN_ID +"="+id,null);
-		}*/
-		return MySQLiteOpenHelper.insertOrUpdateRow(this,this.taskitem,id);
+		return -1;
 	}
 
 	/**
@@ -1202,6 +1105,29 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 	    taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]=String.valueOf(-1);
 	    refreshExceptionViews();
     }
+
+	/**
+	 * 为ViewGroup获取一个ExceptionView实例
+	 * @param group 要添加view实例的group
+	 * @param icon_res 图标资源值
+	 * @param title 标题，不可为空
+	 * @param description 描述，可为空
+	 * @return  添加的view 实例
+	 */
+    public View getExceptionItemViewForViewGroup(ViewGroup group, int icon_res, @NonNull String title , @Nullable String description){
+		View view=LayoutInflater.from(this).inflate(R.layout.layout_taskgui_item_exception,group,false);
+		((ImageView)view.findViewById(R.id.layout_taskgui_area_exception_icon)).setImageResource(icon_res);
+		((TextView)view.findViewById(R.id.layout_taskgui_area_exception_att)).setText(title);
+		TextView tv_description=view.findViewById(R.id.layout_taskgui_area_exception_value);
+		if(description==null) {
+			tv_description.setVisibility(View.GONE);
+		}else{
+			tv_description.setVisibility(View.VISIBLE);
+			tv_description.setText(description);
+		}
+		view.findViewById(R.id.layout_exception_item).setOnClickListener(listener_on_exception_item_clicked);
+		return view;
+	}
 
     private class BroadcastSelectionAdapter extends BaseAdapter{
 		List<String> intent_list=new ArrayList<>();

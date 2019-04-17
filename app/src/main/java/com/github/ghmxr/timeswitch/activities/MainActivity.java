@@ -51,6 +51,7 @@ import android.widget.TextView;
 
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
@@ -65,7 +66,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     /**
      * @deprecated
      */
-	public MainListAdapter adapter;
+	public MainListAdapter listview_adapter;
 	SwipeRefreshLayout swrlayout;
 	RecyclerView recyclerView;
 
@@ -104,49 +105,6 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         }
     };
 
-	private final ItemTouchHelper helper =new ItemTouchHelper(new ItemTouchHelper.Callback(){
-        @Override
-        public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-            if (recyclerView.getLayoutManager() instanceof GridLayoutManager) {
-                final int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN |
-                        ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
-                final int swipeFlags = 0;
-                return makeMovementFlags(dragFlags, swipeFlags);
-            } else {
-                final int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-                final int swipeFlags = 0;
-                return makeMovementFlags(dragFlags, swipeFlags);
-            }
-        }
-
-        @Override
-        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-            //得到当拖拽的viewHolder的Position
-            int fromPosition = viewHolder.getAdapterPosition();
-            //拿到当前拖拽到的item的viewHolder
-            int toPosition = target.getAdapterPosition();
-
-            if(toPosition>=TimeSwitchService.list.size()) return false;
-
-            if (fromPosition < toPosition) {
-                for (int i = fromPosition; i < toPosition; i++) {
-                    Collections.swap(TimeSwitchService.list, i, i + 1);
-                }
-            } else {
-                for (int i = fromPosition; i > toPosition; i--) {
-                    Collections.swap(TimeSwitchService.list, i, i - 1);
-                }
-            }
-            recyclerView.getAdapter().notifyItemMoved(fromPosition, toPosition);
-            return true;
-        }
-
-        @Override
-        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-
-        }
-    } );
-
     private long first_click_delete=0;
 
     public void onCreate(Bundle mybundle){
@@ -171,10 +129,25 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             }
         });
 
+        swrlayout.setColorSchemeColors(Color.parseColor(getSharedPreferences(PublicConsts.PREFERENCES_NAME,Context.MODE_PRIVATE)
+                .getString(PublicConsts.PREFERENCES_THEME_COLOR,PublicConsts.PREFERENCES_THEME_COLOR_DEFAULT)));
         swrlayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                startService2Refresh();
+            }
+        });
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                TransitionManager.endTransitions(((ViewGroup)recyclerView));
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
             }
         });
 
@@ -185,7 +158,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             public void run() {
                 if(ifRefresh){
                     myHandler.postDelayed(this,500);
-                    if(adapter!=null) adapter.refreshAllCertainTimeTaskItems();
+                    if(listview_adapter!=null) listview_adapter.refreshAllCertainTimeTaskItems();
                     //Log.d("Thread_refrfesh_B","Thread sleep!!!");
                 }
 
@@ -216,7 +189,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             }
         }else if(requestCode==REQUEST_CODE_ACTIVITY_PROFILE){
             if(resultCode==RESULT_OK){
-                adapter=null;
+                listview_adapter =null;
                 listview.setAdapter(null);
                 startService2Refresh();
             }
@@ -238,14 +211,9 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     }
 
     public void startService2Refresh(){
-        try{
-            swrlayout.setColorSchemeColors(Color.parseColor(getSharedPreferences(PublicConsts.PREFERENCES_NAME,Context.MODE_PRIVATE).getString(PublicConsts.PREFERENCES_THEME_COLOR,PublicConsts.PREFERENCES_THEME_COLOR_DEFAULT)));
-            swrlayout.setRefreshing(true);
-            //listview.setAdapter(null);
-            //listview.setOnItemLongClickListener(null);
-            recyclerView.setAdapter(null);
-        }catch (Exception e){e.printStackTrace();}
-        //this.startService(new Intent(this, TimeSwitchService.class));
+        swrlayout.setRefreshing(true);
+        ((ListAdapter)recyclerView.getAdapter()).removeTouchHelper();
+        recyclerView.setAdapter(null);
         TimeSwitchService.startService(this);
     }
 
@@ -256,11 +224,11 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         if(!isMultiSelectMode) {
-            editTask(i);
+            startEditTaskActivity(i);
         }else{
-            adapter.onMultiSelectModeItemClicked(i);
+            listview_adapter.onMultiSelectModeItemClicked(i);
             /*boolean ifHasSelectedItem=false;
-            boolean isSelected [] =adapter.getIsSelected();
+            boolean isSelected [] =listview_adapter.getIsSelected();
             for(int j=0;j<isSelected.length;j++){
                 if(isSelected[j]) ifHasSelectedItem=true;
             }
@@ -268,10 +236,8 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         }
     }
 
-    private void editTask(int position){
-        if(position<0||position>=TimeSwitchService.list.size()) return;
+    private void startEditTaskActivity(int position){
         Intent intent = new Intent();
-        //intent.putExtra(EditTask.TAG_EDITTASK_KEY, taskkey);
         intent.putExtra(EditTask.TAG_SELECTED_ITEM_POSITION,position);
         intent.setClass(this, EditTask.class);
         startActivityForResult(intent,REQUEST_CODE_ACTIVITY_EDIT);
@@ -287,10 +253,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     public void processMessage(Message msg) {
         switch (msg.what){
             case MESSAGE_REQUEST_UPDATE_LIST:{
-                if(adapter!=null) {
-                    adapter.onDataSetChanged(TimeSwitchService.list);
-                    refreshAttVisibility();
-                }
+                recyclerView.getAdapter().notifyDataSetChanged();
             }
             break;
             case MESSAGE_GETLIST_COMPLETE:{
@@ -299,36 +262,11 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                 GridLayoutManager gmanager=new GridLayoutManager(this,3);
                 manager.setOrientation(LinearLayoutManager.VERTICAL);
                recyclerView.setLayoutManager(manager);
+                ListAdapter adapter=new ListAdapter(TimeSwitchService.list);
+               recyclerView.setAdapter(adapter);
+                adapter.itemTouchHelper.attachToRecyclerView(recyclerView);
 
-               recyclerView.setAdapter(new ListAdapter());
-
-               helper.attachToRecyclerView(recyclerView);
-                if(adapter==null){
-                    adapter=new MainListAdapter(this,TimeSwitchService.list);
-                }
-                else{
-                    adapter.onDataSetChanged(TimeSwitchService.list);
-                }
-                this.listview.setAdapter(adapter);
                 this.swrlayout.setRefreshing(false);
-                adapter.setOnSwitchChangedListener(new MainListAdapter.SwitchChangedListener() {
-                    @Override
-                    public void onCheckedChanged(final int position,boolean b) {
-                        if(TimeSwitchService.list==null||position>=TimeSwitchService.list.size()||position<0) return;
-
-                    }
-                });
-                adapter.setOnFoldingStatusChangedListener(new MainListAdapter.FoldingStatusChangedListener() {
-                    @Override
-                    public void onFoldingStatusChanged(int position, boolean isFolded) {
-
-
-                    }
-                });
-                listview.setOnItemClickListener(this);
-                listview.setOnItemLongClickListener(this);
-                //setListViewScrollListener();
-                refreshAttVisibility();
             }
             break;
             case MESSAGE_DELETE_SELECTED_ITEMS_COMPLETE:{
@@ -350,7 +288,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                 try{
                     swrlayout.setRefreshing(false);
                     menu.getItem(MENU_FOLD).setEnabled(true);
-                    recyclerView.setAdapter(new ListAdapter());
+                    recyclerView.setAdapter(new ListAdapter(TimeSwitchService.list));
                 }catch (Exception e){e.printStackTrace();}
             }
             break;
@@ -364,26 +302,16 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         //isFabVisible=isVisible;
     }
 
-    private void refreshAttVisibility(){
-        RelativeLayout area=findViewById(R.id.main_no_task_att);
-        if(area==null) return;
-        if(TimeSwitchService.list==null) return;
-        area.setVisibility(TimeSwitchService.list.size()>0?View.GONE:View.VISIBLE);
-    }
-
     private void openMultiSelectMode(){
         this.isMultiSelectMode=true;
         this.swrlayout.setEnabled(false);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //adapter.openMultiSelecteMode(longclickposition);
-        //listview.setOnItemLongClickListener(null);
         this.menu.getItem(MENU_DELETE).setVisible(true);
         this.menu.getItem(MENU_DELETE).setEnabled(true);
         this.menu.getItem(MENU_SELECT_ALL).setVisible(true);
         this.menu.getItem(MENU_DESELCT_ALL).setVisible(true);
         this.menu.getItem(MENU_PROFILE).setVisible(false);
         this.menu.getItem(MENU_SETTINGS).setVisible(false);
-        //listview.setOnScrollListener(null);
         setFabVisibility(false);
     }
 
@@ -392,14 +320,11 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         this.swrlayout.setEnabled(true);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         ((ListAdapter)recyclerView.getAdapter()).closeMultiSelectMode();
-        //adapter.closeMultiSelectMode();
-        //listview.setOnItemLongClickListener(this);
         this.menu.getItem(MENU_DELETE).setVisible(false);
         this.menu.getItem(MENU_SELECT_ALL).setVisible(false);
         this.menu.getItem(MENU_DESELCT_ALL).setVisible(false);
         this.menu.getItem(MENU_PROFILE).setVisible(true);
         this.menu.getItem(MENU_SETTINGS).setVisible(true);
-        //setListViewScrollListener();
         setFabVisibility(true);
     }
 
@@ -492,6 +417,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     public void finish(){
         super.finish();
         this.ifRefresh=false;
+        ((ListAdapter)recyclerView.getAdapter()).removeTouchHelper();
         recyclerView.setAdapter(null);
         try{
             unregisterReceiver(batteryReceiver);
@@ -532,12 +458,12 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             }
             break;
             case R.id.action_selectall:{
-                adapter.selectAll();
+                //listview_adapter.selectAll();
                 menu.getItem(MENU_DELETE).setEnabled(true);
             }
             break;
             case R.id.action_deselectall:{
-                adapter.deselectAll();
+                //listview_adapter.deselectAll();
                 this.menu.getItem(MENU_DELETE).setEnabled(false);
             }
             break;
@@ -560,7 +486,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                     public void run() {
                         try{
                             SQLiteDatabase database=MySQLiteOpenHelper.getInstance(MainActivity.this).getWritableDatabase();
-                            boolean isSelected[]=MainActivity.this.adapter.getIsSelected();
+                            boolean isSelected[]=MainActivity.this.listview_adapter.getIsSelected();
                             for(int i=0;i<isSelected.length;i++){
                                 if(isSelected[i]){
                                     int key=TimeSwitchService.list.get(i).id;
@@ -637,16 +563,18 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     }
 
     /**
-     * 此类中的列表数据为TimeSwitchService.list
+     * 此类中的列表数据类型为TaskItem List
      */
    private class ListAdapter extends RecyclerView.Adapter<ViewHolder>{
-        private final int item_counts;
         private boolean [] isSelected;
         private boolean isMultiSelectMode=false;
+        private final List<TaskItem> list;
+        ListAdapter(@NonNull List<TaskItem> list){
+            this.list=list;
+            isSelected=new boolean[list.size()];
+            RelativeLayout area=findViewById(R.id.main_no_task_att);
+            if(area!=null) area.setVisibility(list.size()>0?View.GONE:View.VISIBLE);
 
-        ListAdapter(){
-            item_counts=TimeSwitchService.list.size();
-            isSelected=new boolean[item_counts];
         }
        @NonNull
        @Override
@@ -654,17 +582,18 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
            return new ViewHolder(LayoutInflater.from(MainActivity.this).inflate(R.layout.item_task,parent,false));
        }
 
-       @Override
+        @Override
        public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-           if(holder.getAdapterPosition()>=item_counts) {
+           if(holder.getAdapterPosition()>=list.size()) {
                holder.root.setVisibility(View.INVISIBLE);
+               return;
            }else {
                holder.root.setVisibility(View.VISIBLE);
            }
 
            TaskItem item=null;
            try{
-               item=TimeSwitchService.list.get(position);
+               item=list.get(position);
            }catch (Exception e){
                e.printStackTrace();
            }
@@ -745,19 +674,19 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                    @Override
                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                       if(b&&TimeSwitchService.list.get(holder.getAdapterPosition()).trigger_type == TriggerTypeConsts.TRIGGER_TYPE_SINGLE&&(TimeSwitchService.list.get(holder.getAdapterPosition()).time<System.currentTimeMillis())){
+                       if(b&&list.get(holder.getAdapterPosition()).trigger_type == TriggerTypeConsts.TRIGGER_TYPE_SINGLE&&(list.get(holder.getAdapterPosition()).time<System.currentTimeMillis())){
                            Snackbar.make(fab,getResources().getString(R.string.activity_main_toast_task_invalid),Snackbar.LENGTH_SHORT)
                                    .setAction(getResources().getString(R.string.activity_main_toast_task_invalid_action), new View.OnClickListener() {
                                        @Override
                                        public void onClick(View view) {
-                                           editTask(holder.getAdapterPosition());
+                                           startEditTaskActivity(holder.getAdapterPosition());
                                        }
                                    }).show();
 
                            return;
                        }
                        try{
-                           ProcessTaskItem.setTaskEnabled(TimeSwitchService.service,TimeSwitchService.list.get(holder.getAdapterPosition()).id,b);
+                           ProcessTaskItem.setTaskEnabled(TimeSwitchService.service,list.get(holder.getAdapterPosition()).id,b);
                        }catch (Exception e){
                            e.printStackTrace();
                        }
@@ -775,7 +704,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                holder.task_area.setOnClickListener(new View.OnClickListener() {
                    @Override
                    public void onClick(View v) {
-                       editTask(holder.getAdapterPosition());
+                       startEditTaskActivity(holder.getAdapterPosition());
                    }
                });
            }
@@ -783,27 +712,71 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
 
        @Override
        public int getItemCount() {
-           return item_counts+2;
+           return list.size()+2;
        }
 
-       private void openMultiSelectMode(int position){
+        private void openMultiSelectMode(int position){
             this.isMultiSelectMode=true;
-            isSelected=new boolean[item_counts];
+            isSelected=new boolean[list.size()];
             isSelected[position]=true;
-            helper.attachToRecyclerView(null);
+            itemTouchHelper.attachToRecyclerView(null);
             notifyDataSetChanged();
             MainActivity.this.openMultiSelectMode();
        }
 
        private void closeMultiSelectMode(){
             this.isMultiSelectMode=false;
-            helper.attachToRecyclerView(recyclerView);
+            itemTouchHelper.attachToRecyclerView(recyclerView);
             notifyDataSetChanged();
        }
 
        private boolean[] getIsSelected () {return isSelected;}
 
-   }
+       void removeTouchHelper(){itemTouchHelper.attachToRecyclerView(null);}
+
+        private final ItemTouchHelper itemTouchHelper =new ItemTouchHelper(new ItemTouchHelper.Callback(){
+            @Override
+            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                if (recyclerView.getLayoutManager() instanceof GridLayoutManager) {
+                    final int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN |
+                            ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
+                    final int swipeFlags = 0;
+                    return makeMovementFlags(dragFlags, swipeFlags);
+                } else {
+                    final int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+                    final int swipeFlags = 0;
+                    return makeMovementFlags(dragFlags, swipeFlags);
+                }
+            }
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                int fromPosition = viewHolder.getAdapterPosition();
+
+                int toPosition = target.getAdapterPosition();
+
+                if(toPosition>=list.size()) return false;
+
+                if (fromPosition < toPosition) {
+                    for (int i = fromPosition; i < toPosition; i++) {
+                        Collections.swap(list, i, i + 1);
+                    }
+                } else {
+                    for (int i = fromPosition; i > toPosition; i--) {
+                        Collections.swap(list, i, i - 1);
+                    }
+                }
+                recyclerView.getAdapter().notifyItemMoved(fromPosition, toPosition);
+                return true;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+            }
+        } );
+
+    }
 
    private static class ViewHolder extends RecyclerView.ViewHolder{
        View root;
@@ -834,9 +807,6 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
            root=view;
        }
 
-       public View getView(){
-          return root;
-       }
    }
 
 }
