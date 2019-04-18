@@ -60,7 +60,7 @@
         </activity>
 
         <activity
-            android:name=".activities.Actions"
+            android:name=".activities.ActionActivity"
             android:label="@string/activity_taskgui_actions_title"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait">

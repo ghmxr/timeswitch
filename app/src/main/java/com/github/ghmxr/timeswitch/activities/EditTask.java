@@ -13,7 +13,6 @@ import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.data.v2.SQLConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
-import com.github.ghmxr.timeswitch.ui.TaskGui;
 import com.github.ghmxr.timeswitch.data.v2.MySQLiteOpenHelper;
 
 /**

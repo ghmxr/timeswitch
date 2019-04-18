@@ -67,9 +67,6 @@ public class PublicConsts {
 	public static final int PREFERENCES_SERVICE_TYPE_BACKGROUND=0;
 	public static final int PREFERENCES_SERVICE_TYPE_DEFAULT=PREFERENCES_SERVICE_TYPE_BACKGROUND;
 
-	/**
-	 * 获取Json File 对应的应用的VersionCode
-	 */
-	public static final String JSON_HEAD_VERSION_CODE="version_code";
-
+	public static final String PREFERENCE_DISABLE_ANIMATION_EFFECTS="disable_animation_effects";
+	public static boolean PREFERENCE_DISABLE_ANIMATION_EFFECTS_DEFAULT=false;
 }

@@ -66,7 +66,7 @@ import java.util.List;
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
  */
 
-public class Actions extends BaseActivity implements View.OnClickListener{
+public class ActionActivity extends BaseActivity implements View.OnClickListener{
     public static final String EXTRA_TASK_ID="taskid";
     public static final String EXTRA_ACTIONS="actions";
     public static final String EXTRA_ACTION_URI_RING_NOTIFICATION="uri_ring_notification";
@@ -197,7 +197,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                                         startActivity(i);
                                     }catch (Exception e){
                                         e.printStackTrace();
-                                        Toast.makeText(Actions.this,e.toString(),Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(ActionActivity.this,e.toString(),Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }
@@ -222,7 +222,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(android.provider.Settings.ACTION_MANAGE_WRITE_SETTINGS));
-                Toast.makeText(Actions.this,getResources().getString(R.string.permission_request_write_settings_toast),Toast.LENGTH_SHORT).show();
+                Toast.makeText(ActionActivity.this,getResources().getString(R.string.permission_request_write_settings_toast),Toast.LENGTH_SHORT).show();
             }
         });
         snackbar.show();
@@ -235,7 +235,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS));
-                Toast.makeText(Actions.this,getResources().getString(R.string.permission_request_notification_policy_toast),Toast.LENGTH_SHORT).show();
+                Toast.makeText(ActionActivity.this,getResources().getString(R.string.permission_request_notification_policy_toast),Toast.LENGTH_SHORT).show();
             }
         });
         snackbar.show();
@@ -497,7 +497,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                         dialog.cancel();
                         startActivityForResult(new Intent(Intent.ACTION_PICK,
                                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI),REQUEST_CODE_WALLPAPER_CHANGED);
-                        Toast.makeText(Actions.this,getResources().getString(R.string.dialog_actions_wallpaper_att),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ActionActivity.this,getResources().getString(R.string.dialog_actions_wallpaper_att),Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -746,7 +746,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                     dialog.findViewById(R.id.dialog_toast_preview).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Toast toast=Toast.makeText(Actions.this,editText.getText().toString(),Toast.LENGTH_SHORT);
+                            Toast toast=Toast.makeText(ActionActivity.this,editText.getText().toString(),Toast.LENGTH_SHORT);
                             if(ra_location_custom.isChecked()) toast.setGravity(Gravity.TOP|Gravity.START, sb_x.getProgress(),sb_y.getProgress());
                             toast.show();
                         }
@@ -1276,8 +1276,8 @@ public class Actions extends BaseActivity implements View.OnClickListener{
                 .setAction(getResources().getString(R.string.activity_taskgui_root_required_action), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(Actions.this,getResources().getString(R.string.activity_taskgui_root_toast_attention),Toast.LENGTH_SHORT).show();
-                        Intent i=new Intent(Actions.this,com.github.ghmxr.timeswitch.activities.Settings.class);
+                        Toast.makeText(ActionActivity.this,getResources().getString(R.string.activity_taskgui_root_toast_attention),Toast.LENGTH_SHORT).show();
+                        Intent i=new Intent(ActionActivity.this,com.github.ghmxr.timeswitch.activities.Settings.class);
                         i.putExtra(EXTRA_TITLE_COLOR,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
                         startActivity(i);
                     }
@@ -1307,7 +1307,7 @@ public class Actions extends BaseActivity implements View.OnClickListener{
             if(TimeSwitchService.list==null) return null;
             if(i>=TimeSwitchService.list.size()) return null;
             if(view==null){
-                view=LayoutInflater.from(Actions.this).inflate(R.layout.item_dialog_task,viewGroup,false);
+                view=LayoutInflater.from(ActionActivity.this).inflate(R.layout.item_dialog_task,viewGroup,false);
             }
             int imgRes=R.drawable.ic_launcher;
             TaskItem item=TimeSwitchService.list.get(i);

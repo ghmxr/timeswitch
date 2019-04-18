@@ -14,7 +14,9 @@ import com.github.ghmxr.timeswitch.R;
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
  */
 public class BottomDialog extends Dialog{
-	public static final String BOTTOM_DIALOG_COLOR_WHITE="#ffffff";
+
+	DialogConfirmedCallBack callBack;
+
 	public BottomDialog(Context context) {
 		super(context);
 		// TODO Auto-generated constructor stub		
@@ -32,11 +34,14 @@ public class BottomDialog extends Dialog{
         params.width=LayoutParams.MATCH_PARENT;
         params.height=LayoutParams.WRAP_CONTENT;
         window.setAttributes(params);
-        window.setBackgroundDrawable(new ColorDrawable(Color.parseColor(BOTTOM_DIALOG_COLOR_WHITE)));
+        window.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ffffff")));
 	}
 
 	/*public void setBackgroundColor(String color){
 		this.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor(color)));
 	}  */
+	public void setOnDialogConfirmedListener(DialogConfirmedCallBack callBack){
+		this.callBack=callBack;
+	}
 				
 }

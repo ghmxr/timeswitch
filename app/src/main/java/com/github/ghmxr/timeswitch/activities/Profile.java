@@ -906,7 +906,7 @@ public class Profile extends BaseActivity {
             for(int i=0;i<table_names.size();i++){
                 try{
                     JSONObject head=new JSONObject();
-                    head.put(PublicConsts.JSON_HEAD_VERSION_CODE,getPackageManager().getPackageInfo(getApplicationInfo().packageName, PackageManager.COMPONENT_ENABLED_STATE_DEFAULT).versionCode);
+                    head.put(SQLConsts.JSON_HEAD_VERSION_CODE,getPackageManager().getPackageInfo(getApplicationInfo().packageName, PackageManager.COMPONENT_ENABLED_STATE_DEFAULT).versionCode);
                     JSONArray jsonArray=new JSONArray();
                     Cursor cursor=database.rawQuery("select * from "+table_names.get(i)+" ;",null);
                     while (cursor.moveToNext()){
@@ -1006,7 +1006,7 @@ public class Profile extends BaseActivity {
                     Object object=jsonTokener.nextValue();
 
                     if(object instanceof JSONObject){
-                        int version_code_read=((JSONObject) object).getInt(PublicConsts.JSON_HEAD_VERSION_CODE);
+                        int version_code_read=((JSONObject) object).getInt(SQLConsts.JSON_HEAD_VERSION_CODE);
                         int version_current=getApplication().getPackageManager().getPackageInfo(getApplication().getPackageName(),PackageManager.COMPONENT_ENABLED_STATE_DEFAULT).versionCode;
                         if(version_code_read>version_current){
                             exceptions.add("目标文件 "+files.get(i).getName()+" 为新版本应用生成:(当前应用版本:"+version_current+"， 目标文件版本:"+version_code_read+")");

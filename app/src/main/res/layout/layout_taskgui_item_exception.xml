@@ -42,16 +42,22 @@
 
     </LinearLayout>
 
-    <ImageView
+    <RelativeLayout
         android:id="@+id/layout_taskgui_exception_cancel"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="30dp"
+        android:layout_height="match_parent"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
         android:layout_marginRight="25dp"
         android:clickable="true"
-        android:focusable="false"
-        android:src="@drawable/icon_cancel" />
+        android:background="?attr/selectableItemBackground"
+        android:focusable="false">
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/icon_cancel" />
+    </RelativeLayout>
 
     <ImageView
         android:layout_width="match_parent"

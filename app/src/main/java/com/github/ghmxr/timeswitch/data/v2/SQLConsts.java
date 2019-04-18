@@ -88,4 +88,8 @@ public class SQLConsts {
 
 	public static final String SQL_TASK_COLUMN_TOAST						="toast";
 
+    /**
+     * 获取Json File 对应的应用的VersionCode
+     */
+    public static final String JSON_HEAD_VERSION_CODE="version_code";
 }

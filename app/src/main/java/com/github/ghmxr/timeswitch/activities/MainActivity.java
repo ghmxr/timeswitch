@@ -142,7 +142,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                TransitionManager.endTransitions(((ViewGroup)recyclerView));
+                stopTransitionAnimation();
             }
 
             @Override
@@ -617,14 +617,16 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                @Override
                public void onClick(View v) {
                    if(holder.task_area.getVisibility()!=View.VISIBLE){
-                       TransitionManager.beginDelayedTransition(((ViewGroup)recyclerView));
+                       //TransitionManager.beginDelayedTransition(((ViewGroup)recyclerView));
+                       checkAndPlayTransitionAnimation();
                        holder.task_area.setVisibility(View.VISIBLE);
                        holder.title_arrow.setRotation(90);
                        try{
                            ProcessTaskItem.setTaskFolded(MainActivity.this,TimeSwitchService.list.get(holder.getAdapterPosition()).id,false);
                        }catch (Exception e){e.printStackTrace();}
                    }else{
-                       TransitionManager.beginDelayedTransition(((ViewGroup)recyclerView));
+                       //TransitionManager.beginDelayedTransition(((ViewGroup)recyclerView));
+                       checkAndPlayTransitionAnimation();
                        holder.task_area.setVisibility(View.GONE);
                        holder.title_arrow.setRotation(0);
                        try{

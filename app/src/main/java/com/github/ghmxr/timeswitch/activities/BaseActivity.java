@@ -4,20 +4,24 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.transition.TransitionManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.github.ghmxr.timeswitch.R;
+import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 /**
@@ -96,6 +100,20 @@ public abstract class BaseActivity extends AppCompatActivity {
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void showTransitionAnimation(){
+		TransitionManager.beginDelayedTransition((ViewGroup)findViewById(android.R.id.content));
+	}
+
+	public void checkAndPlayTransitionAnimation(){
+		if(!getSharedPreferences(PublicConsts.PREFERENCES_NAME, Context.MODE_PRIVATE).getBoolean(PublicConsts.PREFERENCE_DISABLE_ANIMATION_EFFECTS,PublicConsts.PREFERENCE_DISABLE_ANIMATION_EFFECTS_DEFAULT)){
+			showTransitionAnimation();
+		}
+	}
+
+	public void stopTransitionAnimation(){
+		TransitionManager.endTransitions((ViewGroup)findViewById(android.R.id.content));
 	}
 
 	public abstract void processMessage(Message msg);

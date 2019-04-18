@@ -1,7 +1,6 @@
 package com.github.ghmxr.timeswitch.activities;
 
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
-import com.github.ghmxr.timeswitch.ui.TaskGui;
 import com.github.ghmxr.timeswitch.R;
 
 import android.os.Bundle;
