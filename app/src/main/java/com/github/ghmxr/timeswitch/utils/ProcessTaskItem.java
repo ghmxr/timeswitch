@@ -221,7 +221,7 @@ public class ProcessTaskItem {
                action_net=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE]);
                action_gps=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE]);
                action_airplanemode=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE]);
-               action_device_control=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICECONTROL_LOCALE]);
+               action_device_control=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]);
            }catch (NumberFormatException ne){
                ne.printStackTrace();
                Toast.makeText(context,ne.toString(),Toast.LENGTH_SHORT).show();
@@ -1459,7 +1459,7 @@ public class ProcessTaskItem {
     private void activateActionOfDeviceControl(int action_device_control){
         switch (action_device_control){
             default:break;
-            case ActionConsts.ActionValueConsts.ACTION_DEVICECONTROL_SHUTDOWN:{
+            case ActionConsts.ActionValueConsts.ACTION_DEVICE_CONTROL_SHUTDOWN:{
                 boolean result=RootUtils.executeCommand(RootUtils.COMMAND_SHUTDOWN)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
                 log_taskitem.append(context.getResources().getString(R.string.action_device_shutdown));
                 log_taskitem.append(":");
@@ -1467,7 +1467,7 @@ public class ProcessTaskItem {
                 log_taskitem.append(" ");
             }
             break;
-            case ActionConsts.ActionValueConsts.ACTION_DEVICECONTROL_REBOOT:{
+            case ActionConsts.ActionValueConsts.ACTION_DEVICE_CONTROL_REBOOT:{
                 boolean result=RootUtils.executeCommand(RootUtils.COMMAND_REBOOT)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
                 log_taskitem.append(context.getResources().getString(R.string.action_device_reboot));
                 log_taskitem.append(":");

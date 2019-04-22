@@ -22,7 +22,7 @@ public class BottomDialogWith3Selections extends BottomDialog implements View.On
      */
     public BottomDialogWith3Selections(Context context,int icon_open_res,int icon_close_res,int selection){
         super(context);
-        setContentView(R.layout.layout_dialog_actions_selection);
+        setContentView(R.layout.layout_dialog_actions_3selections);
         ((ImageView)findViewById(R.id.selection_area_open_icon)).setImageResource(icon_open_res);
         ((ImageView)findViewById(R.id.selection_area_close_icon)).setImageResource(icon_close_res);
         findViewById(R.id.selection_area_open).setOnClickListener(this);

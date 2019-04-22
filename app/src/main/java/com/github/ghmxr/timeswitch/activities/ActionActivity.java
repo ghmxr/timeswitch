@@ -53,7 +53,13 @@ import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.ui.ActionDisplayValue;
 import com.github.ghmxr.timeswitch.ui.BottomDialog;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForBrightness;
+import com.github.ghmxr.timeswitch.ui.BottomDialogForDeviceControl;
+import com.github.ghmxr.timeswitch.ui.BottomDialogForRingMode;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForVibrate;
+import com.github.ghmxr.timeswitch.ui.BottomDialogForVolume;
+import com.github.ghmxr.timeswitch.ui.BottomDialogWith2Selections;
+import com.github.ghmxr.timeswitch.ui.BottomDialogWith3Selections;
+import com.github.ghmxr.timeswitch.ui.DialogConfirmedCallBack;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
@@ -262,11 +268,33 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
                     snackbar.show();
                     return;
                 }*/
-                showNormalBottomDialog(view.getId());
+                //showNormalBottomDialog(view.getId());
+                BottomDialogWith3Selections dialog=new BottomDialogWith3Selections(this,R.drawable.icon_wifi_on
+                        ,R.drawable.icon_wifi_off
+                        ,Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_WIFI_LOCALE]));
+                dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+                    @Override
+                    public void onDialogConfirmed(String result) {
+                        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_WIFI_LOCALE]=result;
+                        refreshActionStatus();
+                    }
+                });
+                dialog.show();
             }
             break;
             case R.id.actions_bluetooth:{
-                showNormalBottomDialog(view.getId());
+                //showNormalBottomDialog(view.getId());
+                BottomDialogWith3Selections dialog=new BottomDialogWith3Selections(this,R.drawable.icon_bluetooth_on
+                        ,R.drawable.icon_bluetooth_off
+                        ,Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BLUETOOTH_LOCALE]));
+                dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+                    @Override
+                    public void onDialogConfirmed(String result) {
+                        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BLUETOOTH_LOCALE]=result;
+                        refreshActionStatus();
+                    }
+                });
+                dialog.show();
             }
             break;
             case R.id.actions_ring_mode: {
@@ -282,17 +310,72 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
                         return;
                     }
                 }
-                showNormalBottomDialog(view.getId());
+                //showNormalBottomDialog(view.getId());
+                BottomDialogForRingMode dialog=new BottomDialogForRingMode(this,Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_MODE_LOCALE]));
+                dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+                    @Override
+                    public void onDialogConfirmed(String result) {
+                        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_MODE_LOCALE]=result;
+                        refreshActionStatus();
+                    }
+                });
+                dialog.show();
             }
             break;
-            case R.id.actions_net: case R.id.actions_gps: case R.id.actions_airplane_mode:
+            case R.id.actions_net:{
+                BottomDialogWith3Selections dialog=new BottomDialogWith3Selections(this,R.drawable.icon_cellular_on,R.drawable.icon_cellular_off
+                ,Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE]));
+                dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+                    @Override
+                    public void onDialogConfirmed(String result) {
+                        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE]=result;
+                        refreshActionStatus();
+                    }
+                });
+                dialog.show();
+            }
+            break;
+            case R.id.actions_gps: {
+                BottomDialogWith3Selections dialog=new BottomDialogWith3Selections(this,R.drawable.icon_location_on,R.drawable.icon_location_off
+                        ,Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE]));
+                dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+                    @Override
+                    public void onDialogConfirmed(String result) {
+                        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE]=result;
+                        refreshActionStatus();
+                    }
+                });
+                dialog.show();
+            }
+            break;
+            case R.id.actions_airplane_mode:{
+                BottomDialogWith3Selections dialog=new BottomDialogWith3Selections(this,R.drawable.icon_airplanemode_on,R.drawable.icon_airplanemode_off
+                        ,Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE]));
+                dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+                    @Override
+                    public void onDialogConfirmed(String result) {
+                        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE]=result;
+                        refreshActionStatus();
+                    }
+                });
+                dialog.show();
+            }
+            break;
             case R.id.actions_devicecontrol:{
                 boolean isRoot=getSharedPreferences(PublicConsts.PREFERENCES_NAME, Activity.MODE_PRIVATE).getBoolean(PublicConsts.PREFERENCES_IS_SUPERUSER_MODE,PublicConsts.PREFERENCES_IS_SUPERUSER_MODE_DEFAULT);
                 if(!isRoot){
                     showSnackBarOfSuperuserRequest();
                     return;
                 }
-                showNormalBottomDialog(view.getId());
+                BottomDialogForDeviceControl dialog=new BottomDialogForDeviceControl(this,Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]));
+                dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+                    @Override
+                    public void onDialogConfirmed(String result) {
+                        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]=result;
+                        refreshActionStatus();
+                    }
+                });
+                dialog.show();
             }
             break;
             case R.id.actions_brightness:{
@@ -301,21 +384,15 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
                     showRequestWriteSettingsPermissionSnackbar();
                     return;
                 }
-                BottomDialogForBrightness dialog=new BottomDialogForBrightness(this);
-                try{
-                    dialog.setVariables(Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BRIGHTNESS_LOCALE]));
-                }catch (NumberFormatException ne){
-                    ne.printStackTrace();
-                    LogUtil.putExceptionLog(this,ne);
-                }
-                dialog.show();
-                dialog.setOnDialogConfirmedListener(new BottomDialogForBrightness.OnDialogConfirmedListener() {
+                BottomDialogForBrightness dialog=new BottomDialogForBrightness(this,Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BRIGHTNESS_LOCALE]));
+                dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
                     @Override
-                    public void onConfirmed(int value) {
-                        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BRIGHTNESS_LOCALE]=String.valueOf(value);
+                    public void onDialogConfirmed(String result) {
+                        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BRIGHTNESS_LOCALE]=String.valueOf(result);
                         refreshActionStatus();
                     }
                 });
+                dialog.show();
             }
             break;
             case R.id.actions_ring_volume:{
@@ -335,110 +412,16 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
                     Toast.makeText(this,"Can not get AudioManager instance",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                String volumeValues;
-                String[] volumeArray;
-                int volume_ring=-1;
-                int volume_media=-1;
-                int volume_notification=-1;
-                int volume_alarmclock=-1;
-
-                View dialogview= LayoutInflater.from(this).inflate(R.layout.layout_dialog_volume,null);
-                final BottomDialog dialog=new BottomDialog(this);
-                dialog.setContentView(dialogview);
-                final CheckBox cb_ring=dialogview.findViewById(R.id.dialog_volume_ring_cb);
-                final CheckBox cb_media=dialogview.findViewById(R.id.dialog_volume_media_cb);
-                final CheckBox cb_notification=dialogview.findViewById(R.id.dialog_volume_notification_cb);
-                final CheckBox cb_alarmclock=dialogview.findViewById(R.id.dialog_volume_alarmclock_cb);
-                final SeekBar sb_ring=dialogview.findViewById(R.id.dialog_volume_ring_seekbar);
-                final SeekBar sb_media= dialogview.findViewById(R.id.dialog_volume_media_seekbar);
-                final SeekBar sb_notification=dialogview.findViewById(R.id.dialog_volume_notification_seekbar);
-                final SeekBar sb_alarmclock=dialogview.findViewById(R.id.dialog_volume_alarmclock_seekbar);
-
-                try{
-                    volumeValues=actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE];
-                    volumeArray=volumeValues.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-                    sb_ring.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
-                    sb_media.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
-                    sb_notification.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION));
-                    sb_alarmclock.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM));
-                    volume_ring=Integer.parseInt(volumeArray[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_RING_LOCALE]);
-                    volume_media=Integer.parseInt(volumeArray[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_MEDIA_LOCALE]);
-                    volume_notification=Integer.parseInt(volumeArray[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_NOTIFICATION_LOCALE]);
-                    volume_alarmclock=Integer.parseInt(volumeArray[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_ALARM_LOCALE]);
-                    cb_ring.setChecked(volume_ring>=0);
-                    cb_media.setChecked(volume_media>=0);
-                    cb_notification.setChecked(volume_notification>=0);
-                    cb_alarmclock.setChecked(volume_alarmclock>=0);
-                    sb_ring.setProgress(cb_ring.isChecked()?(volume_ring>=0?volume_ring:0):audioManager.getStreamVolume(AudioManager.STREAM_RING));
-                    sb_media.setProgress(cb_media.isChecked()?(volume_media>=0?volume_media:0):audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
-                    sb_notification.setProgress(cb_notification.isChecked()?(volume_notification>=0?volume_notification:0):audioManager.getStreamVolume(AudioManager.STREAM_NOTIFICATION));
-                    sb_alarmclock.setProgress(cb_alarmclock.isChecked()?(volume_alarmclock>=0?volume_alarmclock:0):audioManager.getStreamVolume(AudioManager.STREAM_ALARM));
-                    sb_ring.setEnabled(cb_ring.isChecked());
-                    sb_media.setEnabled(cb_media.isChecked());
-                    sb_notification.setEnabled(cb_notification.isChecked());
-                    sb_alarmclock.setEnabled(cb_alarmclock.isChecked());
-                }catch (Exception e){
-                    e.printStackTrace();
-                    LogUtil.putExceptionLog(this,e);
-                }
-
-                cb_ring.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        sb_ring.setEnabled(b);
-                    }
-                });
-
-                cb_media.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        sb_media.setEnabled(b);
-                    }
-                });
-
-                cb_notification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        sb_notification.setEnabled(isChecked);
-                    }
-                });
-
-                cb_alarmclock.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        sb_alarmclock.setEnabled(b);
-                    }
-                });
-
+                BottomDialogForVolume dialog=new BottomDialogForVolume(this,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE]);
                 dialog.show();
-
-                dialogview.findViewById(R.id.dialog_volume_button_confirm).setOnClickListener(new View.OnClickListener() {
+                dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
                     @Override
-                    public void onClick(View view) {
-                        int volume_ring=-1;
-                        int volume_media=-1;
-                        int volume_notification=-1;
-                        int volume_alarmclock=-1;
-                        if(cb_ring.isChecked()) volume_ring=sb_ring.getProgress();
-                        if(cb_media.isChecked()) volume_media=sb_media.getProgress();
-                        if(cb_notification.isChecked()) volume_notification=sb_notification.getProgress();
-                        if(cb_alarmclock.isChecked()) volume_alarmclock=sb_alarmclock.getProgress();
-                        String volume_values=String.valueOf(volume_ring)+PublicConsts.SEPARATOR_SECOND_LEVEL
-                                +String.valueOf(volume_media)+PublicConsts.SEPARATOR_SECOND_LEVEL
-                                +String.valueOf(volume_notification)+PublicConsts.SEPARATOR_SECOND_LEVEL
-                                +String.valueOf(volume_alarmclock);
-                        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE]=volume_values;
-                        dialog.cancel();
+                    public void onDialogConfirmed(String result) {
+                        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE]=result;
                         refreshActionStatus();
                     }
                 });
 
-                dialogview.findViewById(R.id.dialog_volume_button_cancel).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.cancel();
-                    }
-                });
             }
             break;
             case R.id.actions_ring_selection:{
@@ -472,63 +455,38 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
                     snackbar.show();
                     return;
                 }
-                final BottomDialog dialog=new BottomDialog(this);
-                dialog.setContentView(R.layout.layout_dialog_actions_selection_wallpaper);
-                try{
-                    //String[] wallpaper_values=taskitem.actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-                    ((RadioButton)dialog.findViewById(R.id.dialog_wallpaper_unselected_rb)).setChecked(Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE])== ActionConsts.ActionValueConsts.ACTION_UNSELECTED);
-                    ((RadioButton)dialog.findViewById(R.id.dialog_wallpaper_select_rb)).setChecked(Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE])>=0);
-                }catch (Exception e){
-                    e.printStackTrace();
-                    LogUtil.putExceptionLog(this,e);
-                }
-                dialog.show();
-                dialog.findViewById(R.id.dialog_wallpaper_unselected).setOnClickListener(new View.OnClickListener() {
+
+                BottomDialogWith2Selections dialog=new BottomDialogWith2Selections(this,R.drawable.icon_wallpaper
+                        ,getResources().getString(R.string.dialog_actions_wallpaper_select)
+                        ,Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE]));
+                dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
                     @Override
-                    public void onClick(View view) {
-                        dialog.cancel();
-                        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE]=String.valueOf(-1);//+PublicConsts.SEPARATOR_SECOND_LEVEL+String.valueOf(" ");
+                    public void onDialogConfirmed(String result) {
+                        if(result.equals("0")){
+                            startActivityForResult(new Intent(Intent.ACTION_PICK,
+                                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI),REQUEST_CODE_WALLPAPER_CHANGED);
+                            //Toast.makeText(ActionActivity.this,getResources().getString(R.string.dialog_actions_wallpaper_att),Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE]=String.valueOf(-1);
+                            refreshActionStatus();
+                        }
+                    }
+                });
+                dialog.show();
+            }
+            break;
+
+            case R.id.actions_vibrate:{
+                BottomDialogForVibrate dialog=new BottomDialogForVibrate(this,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE]);
+                dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+                    @Override
+                    public void onDialogConfirmed(String result) {
+                        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE]=result;
                         refreshActionStatus();
                     }
                 });
-                dialog.findViewById(R.id.dialog_wallpaper_select).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.cancel();
-                        startActivityForResult(new Intent(Intent.ACTION_PICK,
-                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI),REQUEST_CODE_WALLPAPER_CHANGED);
-                        Toast.makeText(ActionActivity.this,getResources().getString(R.string.dialog_actions_wallpaper_att),Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-            break;
-            case R.id.actions_vibrate:{
-                try{
-                    final BottomDialogForVibrate dialog=new BottomDialogForVibrate(this);
-                    String[] vibrate_values=actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-                    dialog.setVariables(Integer.parseInt(vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_FREQUENCY_LOCALE])>0,
-                            Integer.parseInt(vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_FREQUENCY_LOCALE]),
-                            Integer.parseInt(vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_DURATION_LOCALE]),
-                            Integer.parseInt(vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_INTERVAL_LOCALE]));
-                    dialog.show();
-                    dialog.setOnBottomDialogForVibrateConfirmedListener(new BottomDialogForVibrate.BottomDialogForVibrateConfirmedListener() {
-                        @Override
-                        public void onBottomDialogForVibrateConfirmed(boolean isEnabled, int frequency, int duration, int interval) {
-                            if(isEnabled){
-                                actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE]=String.valueOf(frequency)+PublicConsts.SEPARATOR_SECOND_LEVEL
-                                        +String.valueOf(duration)+PublicConsts.SEPARATOR_SECOND_LEVEL
-                                        +String.valueOf(interval);
-                            }
-                            else actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL
-                                    +String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL
-                                    +String.valueOf(-1);
-                            refreshActionStatus();
-                        }
-                    });
-                }catch (Exception e){
-                    e.printStackTrace();
-                    LogUtil.putExceptionLog(this,e);
-                }
+                dialog.show();
             }
             break;
             case R.id.actions_notification:{
@@ -854,7 +812,17 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             }
             break;
             case R.id.actions_autorotation:{
-
+                BottomDialogWith3Selections dialog =new BottomDialogWith3Selections(this,R.drawable.icon_autorotation
+                        ,R.drawable.icon_autorotation_off
+                        ,Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AUTOROTATION]));
+                dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+                    @Override
+                    public void onDialogConfirmed(String result) {
+                        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AUTOROTATION]=result;
+                        refreshActionStatus();
+                    }
+                });
+                dialog.show();
             }
             break;
         }
@@ -1061,214 +1029,12 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
         ((TextView)findViewById(R.id.actions_net_status)).setText(ActionDisplayValue.getGeneralDisplayValue(this,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE]));
         ((TextView)findViewById(R.id.actions_gps_status)).setText(ActionDisplayValue.getGeneralDisplayValue(this,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE]));
         ((TextView)findViewById(R.id.actions_airplane_mode_status)).setText(ActionDisplayValue.getGeneralDisplayValue(this,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE]));
-        ((TextView)findViewById(R.id.actions_devicecontrol_status)).setText(ActionDisplayValue.getDeviceControlDisplayValue(this,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICECONTROL_LOCALE]));
+        ((TextView)findViewById(R.id.actions_devicecontrol_status)).setText(ActionDisplayValue.getDeviceControlDisplayValue(this,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]));
         ((TextView)findViewById(R.id.actions_toast_status)).setText(ActionDisplayValue.getToastDisplayValue(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE],toast));
         ((TextView)findViewById(R.id.actions_enable_status)).setText(ActionDisplayValue.getTaskSwitchDisplayValue(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE]));
         ((TextView)findViewById(R.id.actions_disable_status)).setText(ActionDisplayValue.getTaskSwitchDisplayValue(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE]));
         ((TextView)findViewById(R.id.actions_app_open_status)).setText(ActionDisplayValue.getAppNameDisplayValue(this,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES]));
         ((TextView)findViewById(R.id.actions_app_close_status)).setText(ActionDisplayValue.getAppNameDisplayValue(this,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES]));
-    }
-
-    public void showNormalBottomDialog(int id) {
-        final BottomDialog bdialog=new BottomDialog(this);
-        bdialog.setContentView(R.layout.layout_dialog_actions_selection);
-        if(id==R.id.actions_ring_mode){
-            bdialog.setContentView(R.layout.layout_dialog_actions_selection_ring_mode);
-        }
-        if(id==R.id.actions_devicecontrol){
-            bdialog.setContentView(R.layout.layout_dialog_actions_selection_devicecontrol);
-        }
-
-        ImageView icon_on=bdialog.findViewById(R.id.selection_area_open_icon);
-        ImageView icon_off=bdialog.findViewById(R.id.selection_area_close_icon);
-        RelativeLayout rl_open=bdialog.findViewById(R.id.selection_area_open);
-        RelativeLayout rl_close=bdialog.findViewById(R.id.selection_area_close);
-        RelativeLayout rl_unselected=bdialog.findViewById(R.id.selection_area_unselected);
-        RadioButton rb_open=bdialog.findViewById(R.id.selection_area_open_rb);
-        RadioButton rb_close=bdialog.findViewById(R.id.selection_area_close_rb);
-        RadioButton rb_unselected=bdialog.findViewById(R.id.selection_area_unselected_rb);
-
-
-        RelativeLayout rl_ring_vibrate=bdialog.findViewById(R.id.selection_ring_area_vibrate);
-        RelativeLayout rl_ring_off=bdialog.findViewById(R.id.selection_ring_area_off);
-        RelativeLayout rl_ring_normal=bdialog.findViewById(R.id.selection_ring_area_normal);
-        RelativeLayout rl_ring_unselected=bdialog.findViewById(R.id.selection_ring_area_unselected);
-        RadioButton rb_ring_normal=bdialog.findViewById(R.id.selection_ring_area_normal_rb);
-        RadioButton rb_ring_off=bdialog.findViewById(R.id.selection_ring_area_off_rb);
-        RadioButton rb_ring_vibrate=bdialog.findViewById(R.id.selection_ring_area_vibrate_rb);
-        RadioButton rb_ring_unselected=bdialog.findViewById(R.id.selection_ring_area_unselected_rb);
-
-        RelativeLayout rl_reboot=bdialog.findViewById(R.id.selection_area_reboot);
-        RelativeLayout rl_shutdown=bdialog.findViewById(R.id.selection_area_shutdown);
-        RelativeLayout rl_unselected_devicecontrol=bdialog.findViewById(R.id.selection_area_unselected_devicecontrol);
-
-        RadioButton rb_devicecontrol_reboot=bdialog.findViewById(R.id.selection_area_reboot_rb);
-        RadioButton rb_devicecontrol_shutdown=bdialog.findViewById(R.id.selection_area_shutdown_rb);
-        RadioButton rb_devicecontrol_unselected=bdialog.findViewById(R.id.selection_area_unselected_devicecontrol_rb);
-
-        int locale=-1;
-        switch(id){
-            default:break;
-            case R.id.actions_wifi:icon_on.setImageResource(R.drawable.icon_wifi_on);icon_off.setImageResource(R.drawable.icon_wifi_off);locale= ActionConsts.ActionFirstLevelLocaleConsts.ACTION_WIFI_LOCALE;break;
-            case R.id.actions_bluetooth:icon_on.setImageResource(R.drawable.icon_bluetooth_on);icon_off.setImageResource(R.drawable.icon_bluetooth_off);locale= ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BLUETOOTH_LOCALE;break;
-            case R.id.actions_net:icon_on.setImageResource(R.drawable.icon_cellular_on);icon_off.setImageResource(R.drawable.icon_cellular_off);locale= ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE;break;
-            case R.id.actions_ring_mode:locale= ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_MODE_LOCALE;break;
-            case R.id.actions_devicecontrol:locale= ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICECONTROL_LOCALE;break;
-            case R.id.actions_gps:icon_on.setImageResource(R.drawable.icon_location_on);icon_off.setImageResource(R.drawable.icon_location_off);locale= ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE;break;
-            case R.id.actions_airplane_mode:icon_on.setImageResource(R.drawable.icon_airplanemode_on);icon_off.setImageResource(R.drawable.icon_airplanemode_off);locale= ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE;break;
-        }
-
-        if(id==R.id.actions_ring_mode){
-            int action_ring=-1;
-            try{
-                action_ring=Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_MODE_LOCALE]);
-            }catch (NumberFormatException ne){
-                ne.printStackTrace();
-                LogUtil.putExceptionLog(this,ne);
-            }
-
-            if(action_ring== ActionConsts.ActionValueConsts.ACTION_RING_NORMAL) rb_ring_normal.setChecked(true);
-            if(action_ring== ActionConsts.ActionValueConsts.ACTION_RING_VIBRATE) rb_ring_vibrate.setChecked(true);
-            if(action_ring== ActionConsts.ActionValueConsts.ACTION_RING_OFF) rb_ring_off.setChecked(true);
-            if(action_ring== ActionConsts.ActionValueConsts.ACTION_RING_UNSELECTED) rb_ring_unselected.setChecked(true);
-
-            rl_ring_vibrate.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_MODE_LOCALE]=String.valueOf(ActionConsts.ActionValueConsts.ACTION_RING_VIBRATE);//TaskGui.this.actions[PublicConsts.ACTION_RING_MODE_LOCALE]=PublicConsts.ACTION_RING_VIBRATE;
-                    bdialog.cancel();
-                    refreshActionStatus();
-                }
-            });
-
-            rl_ring_off.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_MODE_LOCALE]=String.valueOf(ActionConsts.ActionValueConsts.ACTION_RING_OFF);//TaskGui.this.actions[PublicConsts.ACTION_RING_MODE_LOCALE]=PublicConsts.ACTION_RING_OFF;
-                    bdialog.cancel();
-                    refreshActionStatus();
-                }
-            });
-
-            rl_ring_normal.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_MODE_LOCALE]=String.valueOf(ActionConsts.ActionValueConsts.ACTION_RING_NORMAL);//TaskGui.this.actions[PublicConsts.ACTION_RING_MODE_LOCALE]=PublicConsts.ACTION_RING_NORMAL;
-                    bdialog.cancel();
-                    refreshActionStatus();
-                }
-            });
-
-            rl_ring_unselected.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_MODE_LOCALE]=String.valueOf(ActionConsts.ActionValueConsts.ACTION_RING_UNSELECTED);//TaskGui.this.actions[PublicConsts.ACTION_RING_MODE_LOCALE]=PublicConsts.ACTION_RING_UNSELECTED;
-                    bdialog.cancel();
-                    refreshActionStatus();
-                }
-            });
-
-        }else if(id==R.id.actions_devicecontrol){
-            int action_device=-1;
-            try{
-                action_device=Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICECONTROL_LOCALE]);
-            }catch (NumberFormatException ne){
-                ne.printStackTrace();
-                LogUtil.putExceptionLog(this,ne);
-            }
-            if(action_device== ActionConsts.ActionValueConsts.ACTION_DEVICECONTROL_REBOOT) rb_devicecontrol_reboot.setChecked(true);//if(actions[PublicConsts.ACTION_DEVICECONTROL_LOCALE]==PublicConsts.ACTION_DEVICECONTROL_REBOOT) rb_devicecontrol_reboot.setChecked(true);
-            if(action_device== ActionConsts.ActionValueConsts.ACTION_DEVICECONTROL_SHUTDOWN) rb_devicecontrol_shutdown.setChecked(true);//if(actions[PublicConsts.ACTION_DEVICECONTROL_LOCALE]==PublicConsts.ACTION_DEVICECONTROL_SHUTDOWN) rb_devicecontrol_shutdown.setChecked(true);
-            if(action_device== ActionConsts.ActionValueConsts.ACTION_DEVICECONSTROL_NONE) rb_devicecontrol_unselected.setChecked(true);//if(actions[PublicConsts.ACTION_DEVICECONTROL_LOCALE]==PublicConsts.ACTION_DEVICECONSTROL_NONE) rb_devicecontrol_unselected.setChecked(true);
-
-            rl_reboot.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICECONTROL_LOCALE]=String.valueOf(ActionConsts.ActionValueConsts.ACTION_DEVICECONTROL_REBOOT);//TaskGui.this.actions[PublicConsts.ACTION_DEVICECONTROL_LOCALE]=PublicConsts.ACTION_DEVICECONTROL_REBOOT;
-                    bdialog.cancel();
-                    refreshActionStatus();
-                }
-            });
-
-            rl_shutdown.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICECONTROL_LOCALE]=String.valueOf(ActionConsts.ActionValueConsts.ACTION_DEVICECONTROL_SHUTDOWN);//TaskGui.this.actions[PublicConsts.ACTION_DEVICECONTROL_LOCALE]=PublicConsts.ACTION_DEVICECONTROL_SHUTDOWN;
-                    bdialog.cancel();
-                    refreshActionStatus();
-                }
-            });
-
-            rl_unselected_devicecontrol.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICECONTROL_LOCALE]=String.valueOf(ActionConsts.ActionValueConsts.ACTION_DEVICECONSTROL_NONE);//TaskGui.this.actions[PublicConsts.ACTION_DEVICECONTROL_LOCALE]=PublicConsts.ACTION_DEVICECONSTROL_NONE;
-                    bdialog.cancel();
-                    refreshActionStatus();
-                }
-            });
-        }else{
-
-            int action_value=-1;
-            try{
-                action_value=Integer.parseInt(actions[locale]);
-            }catch (NumberFormatException ne){
-                ne.printStackTrace();
-                LogUtil.putExceptionLog(this,ne);
-            }
-
-            if(action_value== ActionConsts.ActionValueConsts.ACTION_OPEN) rb_open.setChecked(true);//if(actions[locale]==PublicConsts.ACTION_OPEN) rb_open.setChecked(true);
-            if(action_value== ActionConsts.ActionValueConsts.ACTION_CLOSE) rb_close.setChecked(true);//if(actions[locale]==PublicConsts.ACTION_CLOSE) rb_close.setChecked(true);
-            if(action_value== ActionConsts.ActionValueConsts.ACTION_UNSELECTED) rb_unselected.setChecked(true);//if(actions[locale]==PublicConsts.ACTION_UNSELECTED) rb_unselected.setChecked(true);
-            final int locale_listener=locale;
-            rl_open.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    actions[locale_listener]=String.valueOf(ActionConsts.ActionValueConsts.ACTION_OPEN);//TaskGui.this.actions[locale_listener]=PublicConsts.ACTION_OPEN;
-                    bdialog.cancel();
-                    refreshActionStatus();
-                }
-            });
-
-            rl_close.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    actions[locale_listener]=String.valueOf(ActionConsts.ActionValueConsts.ACTION_CLOSE);//TaskGui.this.actions[locale_listener]=PublicConsts.ACTION_CLOSE;
-                    bdialog.cancel();
-                    refreshActionStatus();
-                }
-            });
-
-            rl_unselected.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    actions[locale_listener]=String.valueOf(ActionConsts.ActionValueConsts.ACTION_UNSELECTED);//TaskGui.this.actions[locale_listener]=PublicConsts.ACTION_UNSELECTED;
-                    bdialog.cancel();
-                    refreshActionStatus();
-                }
-            });
-        }
-
-        bdialog.show();
     }
 
     private void showSnackBarOfSuperuserRequest(){

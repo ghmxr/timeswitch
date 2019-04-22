@@ -8,6 +8,7 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -52,6 +53,7 @@ public class ActionOfChangingRingtones extends BaseActivity implements View.OnCl
         Toolbar toolbar=findViewById(R.id.ring_selection_toolbar);
         setSupportActionBar(toolbar);
         setToolBarAndStatusBarColor(toolbar,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
+        Log.d("title",getIntent().getStringExtra(EXTRA_TITLE_COLOR));
         try{getSupportActionBar().setDisplayHomeAsUpEnabled(true);}catch (Exception e){e.printStackTrace();}
         try{
             String ring_values[]=getIntent().getStringExtra(EXTRA_RING_VALUES).split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);

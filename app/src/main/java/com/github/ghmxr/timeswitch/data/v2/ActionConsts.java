@@ -37,7 +37,7 @@ public class ActionConsts {
         public static final int ACTION_NET_LOCALE											=		11;
         public static final int ACTION_GPS_LOCALE											=		12;
         public static final int ACTION_AIRPLANE_MODE_LOCALE									=		13;
-        public static final int ACTION_DEVICECONTROL_LOCALE									=		14;
+        public static final int ACTION_DEVICE_CONTROL_LOCALE                                =		14;
         public static final int ACTION_ENABLE_TASKS_LOCALE									=		15;
         public static final int ACTION_DISABLE_TASKS_LOCALE									=		16;
         public static final int ACTION_LAUNCH_APP_PACKAGES									=		17;
@@ -48,23 +48,23 @@ public class ActionConsts {
 
     public static class ActionSecondLevelLocaleConsts{
 
-        public static final int VOLUME_RING_LOCALE=0;
-        public static final int VOLUME_MEDIA_LOCALE=1;
-        public static final int VOLUME_NOTIFICATION_LOCALE=2;
-        public static final int VOLUME_ALARM_LOCALE=3;
-        public static final int RING_SELECTION_NOTIFICATION_TYPE_LOCALE=0;
-        public static final int RING_SELECTION_CALL_TYPE_LOCALE =1;
-        public static final int VIBRATE_FREQUENCY_LOCALE =0;
-        public static final int VIBRATE_DURATION_LOCALE =1;
-        public static final int VIBRATE_INTERVAL_LOCALE =2;
-        public static final int NOTIFICATION_TYPE_LOCALE =0;
-        public static final int NOTIFICATION_TYPE_IF_CUSTOM_LOCALE =1;
-        public static final int SMS_ENABLED_LOCALE=0;
-        public static final int SMS_SUBINFO_LOCALE=1;
-        public static final int SMS_RESULT_TOAST_LOCALE=2;
-        public static final int TOAST_TYPE_LOCALE=0;
-        public static final int TOAST_LOCATION_X_OFFSET_LOCALE=1;
-        public static final int TOAST_LOCATION_Y_OFFSET_LOCALE=2;
+        public static final int VOLUME_RING_LOCALE                                          =0;
+        public static final int VOLUME_MEDIA_LOCALE                                         =1;
+        public static final int VOLUME_NOTIFICATION_LOCALE                                  =2;
+        public static final int VOLUME_ALARM_LOCALE                                         =3;
+        public static final int RING_SELECTION_NOTIFICATION_TYPE_LOCALE                     =0;
+        public static final int RING_SELECTION_CALL_TYPE_LOCALE                             =1;
+        public static final int VIBRATE_FREQUENCY_LOCALE                                    =0;
+        public static final int VIBRATE_DURATION_LOCALE                                     =1;
+        public static final int VIBRATE_INTERVAL_LOCALE                                     =2;
+        public static final int NOTIFICATION_TYPE_LOCALE                                    =0;
+        public static final int NOTIFICATION_TYPE_IF_CUSTOM_LOCALE                          =1;
+        public static final int SMS_ENABLED_LOCALE                                          =0;
+        public static final int SMS_SUBINFO_LOCALE                                          =1;
+        public static final int SMS_RESULT_TOAST_LOCALE                                     =2;
+        public static final int TOAST_TYPE_LOCALE                                           =0;
+        public static final int TOAST_LOCATION_X_OFFSET_LOCALE                              =1;
+        public static final int TOAST_LOCATION_Y_OFFSET_LOCALE                              =2;
     }
 
     public static class ActionValueConsts{
@@ -87,9 +87,9 @@ public class ActionConsts {
         public static final int ACTION_RING_OFF			=	2;
         public static final int ACTION_RING_NORMAL		=	0;
         public static final int ACTION_RING_UNSELECTED	=	-1;
-        public static final int ACTION_DEVICECONTROL_REBOOT		=0;
-        public static final int ACTION_DEVICECONTROL_SHUTDOWN	=1;
-        public static final int ACTION_DEVICECONSTROL_NONE		=-1;
+        public static final int ACTION_DEVICE_CONTROL_REBOOT =0;
+        public static final int ACTION_DEVICE_CONTROL_SHUTDOWN =1;
+        public static final int ACTION_DEVICE_CONTROL_NONE =-1;
         public static final int ACTION_BRIGHTNESS_UNSELECTED	=-1;
         public static final int ACTION_BRIGHTNESS_AUTO			=256;
     }

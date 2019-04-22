@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Message;
@@ -37,8 +38,11 @@ import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.ui.ActionDisplayValue;
-import com.github.ghmxr.timeswitch.ui.BottomDialogForRingSelection;
+import com.github.ghmxr.timeswitch.ui.BottomDialogForBrightness;
+import com.github.ghmxr.timeswitch.ui.BottomDialogForRingMode;
+import com.github.ghmxr.timeswitch.ui.BottomDialogForVibrate;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForVolume;
+import com.github.ghmxr.timeswitch.ui.BottomDialogWith2Selections;
 import com.github.ghmxr.timeswitch.ui.BottomDialogWith3Selections;
 import com.github.ghmxr.timeswitch.ui.DialogConfirmedCallBack;
 import com.github.ghmxr.timeswitch.ui.DialogForColor;
@@ -56,6 +60,8 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 	private static final int REQUEST_CODE_TRIGGERS=0;
 	private static final int REQUEST_CODE_EXCEPTIONS=1;
 	private static final int REQUEST_CODE_ACTIONS=2;
+	private static final int REQUEST_CODE_ACTION_RINGTONE=3;
+	private static final int REQUEST_CODE_SET_WALLPAPER=4;
 
 	public String checkString="";
 
@@ -166,7 +172,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 
 		((TextView)findViewById(R.id.taskgui_operations_area_net_status)).setText(ActionDisplayValue.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE]));
 
-		((TextView)findViewById(R.id.taskgui_operations_area_devicecontrol_status)).setText(ActionDisplayValue.getDeviceControlDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICECONTROL_LOCALE]));
+		((TextView)findViewById(R.id.taskgui_operations_area_devicecontrol_status)).setText(ActionDisplayValue.getDeviceControlDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]));
 
 		((TextView)findViewById(R.id.taskgui_operations_area_ring_mode_status)).setText(ActionDisplayValue.getRingModeDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_MODE_LOCALE]));
 
@@ -218,7 +224,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			findViewById(R.id.taskgui_operations_area_airplane_mode).setVisibility(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE])>=0?View.VISIBLE:View.GONE);
 			findViewById(R.id.taskgui_operations_area_net).setVisibility(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE])>=0?View.VISIBLE:View.GONE);
 			findViewById(R.id.taskgui_operations_area_gps).setVisibility(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE])>=0?View.VISIBLE:View.GONE);
-			findViewById(R.id.taskgui_operations_area_devicecontrol).setVisibility(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICECONTROL_LOCALE])>=0?View.VISIBLE:View.GONE);
+			findViewById(R.id.taskgui_operations_area_devicecontrol).setVisibility(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE])>=0?View.VISIBLE:View.GONE);
 			findViewById(R.id.taskgui_operations_area_enable).setVisibility(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[0])>=0?View.VISIBLE:View.GONE);
 			findViewById(R.id.taskgui_operations_area_disable).setVisibility(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[0])>=0?View.VISIBLE:View.GONE);
 			findViewById(R.id.taskgui_operations_area_app_launch).setVisibility(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES].equals(String.valueOf(-1))?View.GONE:View.VISIBLE);
@@ -227,7 +233,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			e.printStackTrace();
 			LogUtil.putExceptionLog(this,e);
 		}*/
-		Resources resources=getResources();
+		final Resources resources=getResources();
 		ViewGroup group=findViewById(R.id.layout_taskgui_area_action);
 		group.removeAllViews();
 		//checkAndPlayTransitionAnimation();
@@ -286,7 +292,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
                 @Override
                 public void onClick(View v) {
                     //Toast.makeText(TaskGui.this,"clicked",Toast.LENGTH_SHORT).show();
-                    BottomDialogForRingSelection dialog=new BottomDialogForRingSelection(TaskGui.this,action_ring_mode);
+                    BottomDialogForRingMode dialog=new BottomDialogForRingMode(TaskGui.this,action_ring_mode);
                     dialog.show();
                     dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
                         @Override
@@ -323,9 +329,115 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		}
 
 		if(!taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE].equals("-1:-1")){
-
+			View view=getActionItemViewForViewGroup(group,R.drawable.icon_music
+			,resources.getString(R.string.activity_taskgui_actions_ring_selection),
+					ActionDisplayValue.getRingSelectionDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE]));
+			view.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent i=new Intent();
+					i.setClass(TaskGui.this,ActionOfChangingRingtones.class);
+					i.putExtra(EXTRA_TITLE_COLOR,taskitem.addition_title_color);
+					i.putExtra(ActionOfChangingRingtones.EXTRA_RING_VALUES,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE]);
+					i.putExtra(ActionOfChangingRingtones.EXTRA_RING_URI_CALL,taskitem.uri_ring_call);
+					i.putExtra(ActionOfChangingRingtones.EXTRA_RING_URI_NOTIFICATION,taskitem.uri_ring_notification);
+					startActivityForResult(i,REQUEST_CODE_ACTION_RINGTONE);
+				}
+			});
+			group.addView(view);
 		}
 
+		final int action_brightness=Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BRIGHTNESS_LOCALE]);
+		if(action_brightness>=0){
+			View view=getActionItemViewForViewGroup(group,R.drawable.icon_brightness
+			,resources.getString(R.string.activity_taskgui_actions_brightness)
+			,ActionDisplayValue.getBrightnessDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BRIGHTNESS_LOCALE]));
+			view.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					BottomDialogForBrightness dialog=new BottomDialogForBrightness(TaskGui.this,action_brightness);
+					dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+						@Override
+						public void onDialogConfirmed(String result) {
+							taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BRIGHTNESS_LOCALE]=result;
+							refreshActionStatus();
+						}
+					});
+					dialog.show();
+				}
+			});
+			group.addView(view);
+		}
+
+		if(!"-1:-1:-1".equals(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE])){
+			View view=getActionItemViewForViewGroup(group,R.drawable.icon_ring_vibrate,resources.getString(R.string.activity_taskgui_actions_vibrate)
+			,ActionDisplayValue.getVibrateDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE]));
+			view.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					BottomDialogForVibrate dialog=new BottomDialogForVibrate(TaskGui.this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE]);
+					dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+						@Override
+						public void onDialogConfirmed(String result) {
+							taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE]=result;
+							refreshActionStatus();
+						}
+					});
+					dialog.show();
+				}
+			});
+			group.addView(view);
+		}
+
+		final int action_autorotation=Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AUTOROTATION]);
+		if(action_autorotation>=0){
+		    View view=getActionItemViewForViewGroup(group,R.drawable.icon_autorotation,resources.getString(R.string.activity_taskgui_actions_autorotation)
+            ,ActionDisplayValue.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AUTOROTATION]));
+		    view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    BottomDialogWith3Selections dialog=new BottomDialogWith3Selections(TaskGui.this,R.drawable.icon_autorotation,R.drawable.icon_autorotation_off,action_autorotation);
+                    dialog.show();
+                    dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+                        @Override
+                        public void onDialogConfirmed(String result) {
+                            taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AUTOROTATION]=String.valueOf(result);
+                            refreshActionStatus();
+                        }
+                    });
+                }
+            });
+		    group.addView(view);
+        }
+
+        final int action_wallpaper=Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE]);
+		if(action_wallpaper>=0){
+		    View view =getActionItemViewForViewGroup(group,R.drawable.icon_wallpaper
+                    ,resources.getString(R.string.action_set_wallpaper)
+            ,ActionDisplayValue.getWallpaperDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE],taskitem.uri_wallpaper_desktop));
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    BottomDialogWith2Selections dialog=new BottomDialogWith2Selections(TaskGui.this,R.drawable.icon_wallpaper,resources.getString(R.string.dialog_actions_wallpaper_select),action_wallpaper);
+                    dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+                        @Override
+                        public void onDialogConfirmed(String result) {
+                            if(result.equals("0")){
+                                startActivityForResult(new Intent(Intent.ACTION_PICK,
+                                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI),REQUEST_CODE_SET_WALLPAPER);
+                                //Toast.makeText(ActionActivity.this,getResources().getString(R.string.dialog_actions_wallpaper_att),Toast.LENGTH_SHORT).show();
+                            }
+                            else {
+                                taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE]=String.valueOf(-1);
+                                refreshActionStatus();
+                            }
+                        }
+                    });
+                    dialog.show();
+                }
+            });
+            group.addView(view);
+        }
 
     }
 
@@ -1174,6 +1286,27 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 					taskitem.notification_title=data.getStringExtra(ActionActivity.EXTRA_ACTION_NOTIFICATION_TITLE);
 					taskitem.notification_message=data.getStringExtra(ActionActivity.EXTRA_ACTION_NOTIFICATION_MESSAGE);
 					taskitem.toast=data.getStringExtra(ActionActivity.EXTRA_ACTION_TOAST);
+					refreshActionStatus();
+				}
+			}
+			break;
+			case REQUEST_CODE_ACTION_RINGTONE:{
+				if(resultCode==RESULT_OK){
+					String ring_selection_values=data.getStringExtra(ActionOfChangingRingtones.EXTRA_RING_VALUES);
+					if(ring_selection_values==null) return;
+					taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE]=ring_selection_values;
+					taskitem.uri_ring_notification=data.getStringExtra(ActionOfChangingRingtones.EXTRA_RING_URI_NOTIFICATION);
+					taskitem.uri_ring_call=data.getStringExtra(ActionOfChangingRingtones.EXTRA_RING_URI_CALL);
+					refreshActionStatus();
+				}
+			}
+			break;
+			case REQUEST_CODE_SET_WALLPAPER:{
+				if(resultCode==RESULT_OK){
+					if(data==null||data.getData()==null) return;
+					Uri uri=data.getData();
+					taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE]=String.valueOf(0);
+					taskitem.uri_wallpaper_desktop= ValueUtils.getRealPathFromUri(this,uri);//uri.toString();
 					refreshActionStatus();
 				}
 			}

@@ -677,7 +677,7 @@ public class MainListAdapter extends BaseAdapter {
                 builder.append(value_airplanemode);
             }
 
-            String value_device= ActionDisplayValue.ActionDisplayValueOfAdapter.getDeviceControlDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICECONTROL_LOCALE]);
+            String value_device= ActionDisplayValue.ActionDisplayValueOfAdapter.getDeviceControlDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]);
             if(value_device.length()>0){
                 if(builder.toString().length()>0) builder.append(",");
                 builder.append(value_device);

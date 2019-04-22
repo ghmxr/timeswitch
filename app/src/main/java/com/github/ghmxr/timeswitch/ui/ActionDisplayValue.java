@@ -49,9 +49,9 @@ public class ActionDisplayValue {
     public static String getDeviceControlDisplayValue(@NonNull Context context,String value){
         try{
             int action_device=Integer.parseInt(value);
-            if(action_device== ActionConsts.ActionValueConsts.ACTION_DEVICECONTROL_REBOOT)  return context.getResources().getString(R.string.reboot);
-            else if(action_device== ActionConsts.ActionValueConsts.ACTION_DEVICECONTROL_SHUTDOWN) return context.getResources().getString(R.string.shut_down);
-            else if(action_device== ActionConsts.ActionValueConsts.ACTION_DEVICECONSTROL_NONE) return "";
+            if(action_device== ActionConsts.ActionValueConsts.ACTION_DEVICE_CONTROL_REBOOT)  return context.getResources().getString(R.string.reboot);
+            else if(action_device== ActionConsts.ActionValueConsts.ACTION_DEVICE_CONTROL_SHUTDOWN) return context.getResources().getString(R.string.shut_down);
+            else if(action_device== ActionConsts.ActionValueConsts.ACTION_DEVICE_CONTROL_NONE) return "";
         }catch (Exception e){
             e.printStackTrace();
             LogUtil.putExceptionLog(context,e);
@@ -593,8 +593,8 @@ public class ActionDisplayValue {
         public static String getDeviceControlDisplayValue(Context context,String value){
             try {
                 int action_device=Integer.parseInt(value);
-                if(action_device== ActionConsts.ActionValueConsts.ACTION_DEVICECONTROL_SHUTDOWN) return context.getResources().getString(R.string.action_device_shutdown);
-                if(action_device== ActionConsts.ActionValueConsts.ACTION_DEVICECONTROL_REBOOT) return context.getResources().getString(R.string.action_device_reboot);
+                if(action_device== ActionConsts.ActionValueConsts.ACTION_DEVICE_CONTROL_SHUTDOWN) return context.getResources().getString(R.string.action_device_shutdown);
+                if(action_device== ActionConsts.ActionValueConsts.ACTION_DEVICE_CONTROL_REBOOT) return context.getResources().getString(R.string.action_device_reboot);
             }catch (Exception e){
                 e.printStackTrace();
             }

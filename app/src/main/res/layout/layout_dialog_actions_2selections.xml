@@ -12,13 +12,13 @@
         android:background="#ffffff">
 
         <RelativeLayout
-            android:id="@+id/dialog_wallpaper_unselected"
+            android:id="@+id/dialog_2selections_unselected"
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:clickable="true"
             android:background="?android:attr/selectableItemBackground">
             <ImageView
-                android:id="@+id/dialog_wallpaper_unselected_icon"
+                android:id="@+id/dialog_2selections_unselected_icon"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_alignParentLeft="true"
@@ -26,16 +26,16 @@
                 android:layout_marginLeft="25dp"
                 android:src="@drawable/icon_unselected"/>
             <TextView
-                android:id="@+id/dialog_wallpaper_unselected_att"
+                android:id="@+id/dialog_2selections_unselected_att"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/dialog_wallpaper_unselected_icon"
+                android:layout_toRightOf="@+id/dialog_2selections_unselected_icon"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:textSize="14sp"
                 android:text="@string/unselected"/>
             <RadioButton
-                android:id="@+id/dialog_wallpaper_unselected_rb"
+                android:id="@+id/dialog_2selections_unselected_rb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -53,30 +53,30 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/dialog_wallpaper_select"
+            android:id="@+id/dialog_2selections_select"
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:clickable="true"
             android:background="?android:attr/selectableItemBackground">
             <ImageView
-                android:id="@+id/dialog_wallpaper_select_icon"
+                android:id="@+id/dialog_2selections_select_icon"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="25dp"
-                android:src="@drawable/icon_wallpaper"/>
+                android:src="#000000"/>
             <TextView
-                android:id="@+id/dialog_wallpaper_select_att"
+                android:id="@+id/dialog_2selections_select_att"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/dialog_wallpaper_select_icon"
+                android:layout_toRightOf="@+id/dialog_2selections_select_icon"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:textSize="14sp"
                 android:text="@string/dialog_actions_wallpaper_select"/>
             <RadioButton
-                android:id="@+id/dialog_wallpaper_select_rb"
+                android:id="@+id/dialog_2selections_select_rb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"

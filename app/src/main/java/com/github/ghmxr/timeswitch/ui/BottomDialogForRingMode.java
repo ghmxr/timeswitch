@@ -7,14 +7,14 @@ import android.widget.RadioButton;
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
 
-public class BottomDialogForRingSelection extends BottomDialog implements View.OnClickListener{
+public class BottomDialogForRingMode extends BottomDialog implements View.OnClickListener{
 
     /**
      * 铃声模式选项dialog
      * @param context 打开此dialog的activity
      * @param selection 初选项
      */
-    public BottomDialogForRingSelection(Context context,  int selection){
+    public BottomDialogForRingMode(Context context, int selection){
         super(context);
         setContentView(R.layout.layout_dialog_actions_selection_ring_mode);
         findViewById(R.id.selection_ring_area_vibrate).setOnClickListener(this);
