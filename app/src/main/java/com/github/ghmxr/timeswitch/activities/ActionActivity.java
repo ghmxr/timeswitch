@@ -54,7 +54,9 @@ import com.github.ghmxr.timeswitch.ui.ActionDisplayValue;
 import com.github.ghmxr.timeswitch.ui.BottomDialog;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForBrightness;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForDeviceControl;
+import com.github.ghmxr.timeswitch.ui.BottomDialogForNotification;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForRingMode;
+import com.github.ghmxr.timeswitch.ui.BottomDialogForToast;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForVibrate;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForVolume;
 import com.github.ghmxr.timeswitch.ui.BottomDialogWith2Selections;
@@ -490,247 +492,30 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             }
             break;
             case R.id.actions_notification:{
-                final BottomDialog dialog=new BottomDialog(this);
-                dialog.setContentView(R.layout.layout_dialog_notification);
+                BottomDialogForNotification dialog=new BottomDialogForNotification(this,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE],notification_title,notification_message);
                 dialog.show();
-                try{
-                    String[] notification_values=actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-                    int type=Integer.parseInt(notification_values[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_LOCALE]);
-                    int type_custom=Integer.parseInt(notification_values[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE]);
-                    final String title=notification_title;//notification_values[PublicConsts.NOTIFICATION_TITLE_LOCALE];
-                    final String message=notification_message;//notification_values[PublicConsts.NOTIFICATION_MESSAGE_LOCALE];
-                    final RadioButton ra_unselected=dialog.findViewById(R.id.dialog_notification_selection_unselected_ra);
-                    final RadioButton ra_not_override=dialog.findViewById(R.id.dialog_notification_selection_not_override_ra);
-                    final RadioButton ra_override_last=dialog.findViewById(R.id.dialog_notification_selection_override_last_ra);
-                    final RadioButton ra_default=dialog.findViewById(R.id.dialog_notification_operation_default_ra);
-                    final RadioButton ra_custom=dialog.findViewById(R.id.dialog_notification_operation_custom_ra);
-                    final RelativeLayout operation_area=dialog.findViewById(R.id.dialog_notification_operation_area);
-                    final EditText edit_title=dialog.findViewById(R.id.dialog_notification_operation_custom_edit_title);
-                    final EditText edit_message=dialog.findViewById(R.id.dialog_notification_operation_custom_edit_message);
-                    edit_title.setText(title.trim());
-                    edit_message.setText(message.trim());
-                    (ra_unselected).setChecked(type== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_UNSELECTED);
-                    (ra_not_override).setChecked(type== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_NOT_OVERRIDE);
-                    (ra_override_last).setChecked(type== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_OVERRIDE_LAST);
-                    (operation_area).setVisibility(type== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_UNSELECTED?View.GONE:View.VISIBLE);
-                    (dialog.findViewById(R.id.dialog_notification_selection_unselected)).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            (ra_unselected).setChecked(true);
-                            ra_not_override.setChecked(false);
-                            ra_override_last.setChecked(false);
-                            (operation_area).setVisibility(View.GONE);
-                        }
-                    });
-
-                    (dialog.findViewById(R.id.dialog_notification_selection_override_last)).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            (ra_unselected).setChecked(false);
-                            ra_not_override.setChecked(false);
-                            ra_override_last.setChecked(true);
-                            (operation_area).setVisibility(View.VISIBLE);
-
-                        }
-                    });
-
-                    dialog.findViewById(R.id.dialog_notification_selection_not_override).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            (ra_unselected).setChecked(false);
-                            ra_not_override.setChecked(true);
-                            ra_override_last.setChecked(false);
-                            (operation_area).setVisibility(View.VISIBLE);
-                        }
-                    });
-
-                    ra_default.setChecked(type_custom== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_CONTENT_DEFAULT);
-                    ra_custom.setChecked(type_custom== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_CONTENT_CUSTOM);
-                    edit_title.setEnabled(ra_custom.isChecked());
-                    edit_message.setEnabled(ra_custom.isChecked());
-                    ra_custom.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                            edit_title.setEnabled(b);
-                            edit_message.setEnabled(b);
-                        }
-                    });
-                    (dialog.findViewById(R.id.dialog_notification_button_confirm)).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            dialog.cancel();
-                            int type=-1;
-                            if(ra_unselected.isChecked()) type= ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_UNSELECTED;
-                            if(ra_override_last.isChecked()) type= ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_OVERRIDE_LAST;
-                            if(ra_not_override.isChecked()) type= ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_NOT_OVERRIDE;
-                            int type_if_custom=ra_custom.isChecked()? ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_CONTENT_CUSTOM : ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_CONTENT_DEFAULT;
-                            String custom_title=edit_title.getText().toString();
-                            String custom_message=edit_message.getText().toString();
-                            actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE]=String.valueOf(type)+PublicConsts.SEPARATOR_SECOND_LEVEL
-                                    +String.valueOf(type_if_custom);
-                            notification_title=custom_title;
-                            notification_message=custom_message;
-                            refreshActionStatus();
-                        }
-                    });
-                    (dialog.findViewById(R.id.dialog_notification_button_cancel)).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            dialog.cancel();
-                        }
-                    });
-                }catch (Exception e){
-                    e.printStackTrace();
-                    LogUtil.putExceptionLog(this,e);
-                }
+                dialog.setOnDialogConfirmedCallback(new BottomDialogForNotification.DialogConfirmedCallback() {
+                    @Override
+                    public void onDialogConfirmed(String[] result) {
+                        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE]=result[0];
+                        notification_title=result[1];
+                        notification_message=result[2];
+                        refreshActionStatus();
+                    }
+                });
             }
             break;
             case R.id.actions_toast:{
-                /*final ImageView preview=new ImageView(this);
-                final ViewGroup.LayoutParams layoutParams=new ViewGroup.LayoutParams(DisplayDensity.dip2px(this,25),DisplayDensity.dip2px(this,25));
-                preview.setLayoutParams(layoutParams);
-                preview.setVisibility(View.GONE);
-                preview.setBackgroundColor(getResources().getColor(R.color.colorAccent));  */
-
-                final BottomDialog dialog=new BottomDialog(this);
-                dialog.setContentView(R.layout.layout_dialog_toast);
+                BottomDialogForToast dialog=new BottomDialogForToast(this,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE],toast);
+                dialog.setOnDialogConfirmedCallback(new BottomDialogForToast.DialogConfirmedCallback() {
+                    @Override
+                    public void onDialogConfirmed(String[] result) {
+                        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE]=result[0];
+                        toast=result[1];
+                        refreshActionStatus();
+                    }
+                });
                 dialog.show();
-                final CheckBox cb_enabled=dialog.findViewById(R.id.dialog_toast_cb);
-                final RadioGroup rg=dialog.findViewById(R.id.dialog_toast_rg);
-                final RadioButton ra_location_default=dialog.findViewById(R.id.dialog_toast_default_ra);
-                final RadioButton ra_location_custom=dialog.findViewById(R.id.dialog_toast_custom_ra);
-                final SeekBar sb_x=dialog.findViewById(R.id.dialog_toast_x_sb);
-                final SeekBar sb_y=dialog.findViewById(R.id.dialog_toast_y_sb);
-                TextView tv_x_center=dialog.findViewById(R.id.dialog_toast_x_center);
-                TextView tv_y_center=dialog.findViewById(R.id.dialog_toast_y_center);
-                final EditText editText=dialog.findViewById(R.id.dialog_toast_edittext);
-                final LinearLayout location_selection_area=dialog.findViewById(R.id.dialog_toast_location);
-                final Button button=dialog.findViewById(R.id.dialog_toast_preview);
-                try{
-                    String toast_values[]=actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-                    boolean isenabled=Integer.parseInt(toast_values[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_TYPE_LOCALE])>=0;
-                    int type=Integer.parseInt(toast_values[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_TYPE_LOCALE]);
-                    cb_enabled.setChecked(isenabled);
-                    rg.setVisibility(isenabled?View.VISIBLE:View.GONE);
-                    editText.setText(toast);
-                    editText.setEnabled(isenabled);
-                    button.setEnabled(isenabled);
-                    ra_location_custom.setChecked(type== ActionConsts.ActionValueConsts.TOAST_TYPE_CUSTOM);
-                    location_selection_area.setVisibility(isenabled?(type== ActionConsts.ActionValueConsts.TOAST_TYPE_CUSTOM?View.VISIBLE:View.GONE):View.GONE);
-                    cb_enabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                            rg.setVisibility(b?View.VISIBLE:View.GONE);
-                            editText.setEnabled(b);
-                            button.setEnabled(b);
-                            location_selection_area.setVisibility(b?(ra_location_custom.isChecked()?View.VISIBLE:View.GONE):View.GONE);
-                        }
-                    });
-
-                    ra_location_custom.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                            ra_location_default.setChecked(!b);
-                            location_selection_area.setVisibility(b?View.VISIBLE:View.GONE);
-                            sb_x.setEnabled(b);
-                            sb_y.setEnabled(b);
-                        }
-                    });
-
-                    final int x_max=getWindowManager().getDefaultDisplay().getWidth();
-                    final int y_max=getWindowManager().getDefaultDisplay().getHeight();
-                    sb_x.setMax(x_max);
-                    sb_y.setMax(y_max);
-                    int progress_x=Integer.parseInt(toast_values[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_LOCATION_X_OFFSET_LOCALE]);
-                    if(progress_x>=0&&progress_x<=x_max) sb_x.setProgress(progress_x);
-                    int progress_y=Integer.parseInt(toast_values[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_LOCATION_Y_OFFSET_LOCALE]);
-                    if(progress_y>=0&&progress_y<=y_max) sb_y.setProgress(progress_y);
-                    /*sb_x.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                        @Override
-                        public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                            preview.setX(i);
-                        }
-
-                        @Override
-                        public void onStartTrackingTouch(SeekBar seekBar) {
-                            dialog.setBackgroundColor("#00ffffff");
-                            ((android.support.constraint.ConstraintLayout)findViewById(R.id.layout_actions_root)).addView(preview);
-                            preview.setVisibility(View.VISIBLE);
-                            preview.setX(seekBar.getProgress());
-                        }
-
-                        @Override
-                        public void onStopTrackingTouch(SeekBar seekBar) {
-                            dialog.setBackgroundColor(BottomDialog.BOTTOM_DIALOG_COLOR_WHITE);
-                            preview.setVisibility(View.GONE);
-                            ((android.support.constraint.ConstraintLayout)findViewById(R.id.layout_actions_root)).removeView(preview);
-                        }
-                    });  */
-
-                    /*sb_y.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                        @Override
-                        public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                            preview.setY(i);
-                        }
-
-                        @Override
-                        public void onStartTrackingTouch(SeekBar seekBar) {
-                            dialog.setBackgroundColor("#00ffffff");
-                            ((android.support.constraint.ConstraintLayout)findViewById(R.id.layout_actions_root)).addView(preview);
-                            preview.setVisibility(View.VISIBLE);
-                            preview.setY(seekBar.getProgress());
-                        }
-
-                        @Override
-                        public void onStopTrackingTouch(SeekBar seekBar) {
-                            dialog.setBackgroundColor(BottomDialog.BOTTOM_DIALOG_COLOR_WHITE);
-                            preview.setVisibility(View.GONE);
-                            ((android.support.constraint.ConstraintLayout)findViewById(R.id.layout_actions_root)).removeView(preview);
-                        }
-                    });  */
-                    tv_x_center.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            sb_x.setProgress(x_max/2);
-                        }
-                    });
-                    tv_y_center.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            sb_y.setProgress(y_max/2);
-                        }
-                    });
-                    editText.setText(toast);
-                    dialog.findViewById(R.id.dialog_toast_preview).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Toast toast=Toast.makeText(ActionActivity.this,editText.getText().toString(),Toast.LENGTH_SHORT);
-                            if(ra_location_custom.isChecked()) toast.setGravity(Gravity.TOP|Gravity.START, sb_x.getProgress(),sb_y.getProgress());
-                            toast.show();
-                        }
-                    });
-                    dialog.findViewById(R.id.dialog_toast_confirm).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            dialog.cancel();
-                            actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE]=String.valueOf(!cb_enabled.isChecked()?-1:
-                                    (ra_location_custom.isChecked()?1:0))+PublicConsts.SEPARATOR_SECOND_LEVEL
-                                    +String.valueOf(sb_x.getProgress())+PublicConsts.SEPARATOR_SECOND_LEVEL
-                                    +String.valueOf(sb_y.getProgress());
-                            toast=editText.getText().toString();
-                            refreshActionStatus();
-                        }
-                    });
-                    dialog.findViewById(R.id.dialog_toast_cancel).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            dialog.cancel();
-                        }
-                    });
-                }catch (Exception e){
-                    e.printStackTrace();
-                    LogUtil.putExceptionLog(this,e);
-                }
             }
             break;
             case R.id.actions_sms:{

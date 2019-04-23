@@ -39,7 +39,10 @@ import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.ui.ActionDisplayValue;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForBrightness;
+import com.github.ghmxr.timeswitch.ui.BottomDialogForDeviceControl;
+import com.github.ghmxr.timeswitch.ui.BottomDialogForNotification;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForRingMode;
+import com.github.ghmxr.timeswitch.ui.BottomDialogForToast;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForVibrate;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForVolume;
 import com.github.ghmxr.timeswitch.ui.BottomDialogWith2Selections;
@@ -62,6 +65,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 	private static final int REQUEST_CODE_ACTIONS=2;
 	private static final int REQUEST_CODE_ACTION_RINGTONE=3;
 	private static final int REQUEST_CODE_SET_WALLPAPER=4;
+	private static final int REQUEST_CODE_SMS=5;
 
 	public String checkString="";
 
@@ -438,6 +442,155 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
             });
             group.addView(view);
         }
+
+        if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[ActionConsts.ActionSecondLevelLocaleConsts.SMS_ENABLED_LOCALE])>=0){
+			View view=getActionItemViewForViewGroup(group,R.drawable.icon_sms,resources.getString(R.string.activity_taskgui_actions_sms)
+					,ActionDisplayValue.getSMSDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE]));
+			view.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent i=new Intent(TaskGui.this,SmsActivity.class);
+					i.putExtra(SmsActivity.EXTRA_SMS_VALUES,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE]);
+					i.putExtra(SmsActivity.EXTRA_SMS_ADDRESS,taskitem.sms_address);
+					i.putExtra(SmsActivity.EXTRA_SMS_MESSAGE,taskitem.sms_message);
+					i.putExtra(EXTRA_TITLE_COLOR,taskitem.addition_title_color);
+					startActivityForResult(i,REQUEST_CODE_SMS);
+				}
+			});
+			group.addView(view);
+		}
+
+		if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[0])>=0){
+			View view=getActionItemViewForViewGroup(group,R.drawable.icon_notification,resources.getString(R.string.activity_taskgui_actions_notification)
+			,ActionDisplayValue.getNotificationDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE]));
+			view.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					BottomDialogForNotification dialog=new BottomDialogForNotification(TaskGui.this
+							,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE]
+							,taskitem.notification_title,taskitem.notification_message);
+					dialog.setOnDialogConfirmedCallback(new BottomDialogForNotification.DialogConfirmedCallback() {
+						@Override
+						public void onDialogConfirmed(String[] result) {
+							taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE]=result[0];
+							taskitem.notification_title=result[1];
+							taskitem.notification_message=result[2];
+							refreshActionStatus();
+						}
+					});
+					dialog.show();
+				}
+			});
+			group.addView(view);
+		}
+
+		if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[0])>=0){
+		    View view=getActionItemViewForViewGroup(group,R.drawable.icon_toast,resources.getString(R.string.activity_taskgui_actions_toast)
+                    ,ActionDisplayValue.getToastDisplayValue(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE],taskitem.toast));
+		    view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    BottomDialogForToast dialog=new BottomDialogForToast(TaskGui.this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE],taskitem.toast);
+                    dialog.setOnDialogConfirmedCallback(new BottomDialogForToast.DialogConfirmedCallback() {
+                        @Override
+                        public void onDialogConfirmed(String[] result) {
+                            taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE]=result[0];
+                            taskitem.toast=result[1];
+                            refreshActionStatus();
+                        }
+                    });
+                    dialog.show();
+                }
+            });
+		    group.addView(view);
+        }
+
+        int action_net=Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE]);
+		if(action_net>=0){
+			View view=getActionItemViewForViewGroup(group,R.drawable.icon_cellular_on,resources.getString(R.string.activity_taskgui_actions_net)
+			,ActionDisplayValue.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE]));
+			view.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					BottomDialogWith3Selections dialog=new BottomDialogWith3Selections(TaskGui.this,R.drawable.icon_cellular_on,R.drawable.icon_cellular_off
+							,Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE]));
+					dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+						@Override
+						public void onDialogConfirmed(String result) {
+							taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE]=result;
+							refreshActionStatus();
+						}
+					});
+					dialog.show();
+				}
+			});
+			group.addView(view);
+		}
+
+		int action_gps=Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE]);
+		if(action_gps>=0){
+			View view=getActionItemViewForViewGroup(group,R.drawable.icon_location_on,resources.getString(R.string.activity_taskgui_actions_gps)
+			,ActionDisplayValue.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE]));
+			view.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					BottomDialogWith3Selections dialog=new BottomDialogWith3Selections(TaskGui.this,R.drawable.icon_location_on,R.drawable.icon_location_off
+							,Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE]));
+					dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+						@Override
+						public void onDialogConfirmed(String result) {
+							taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE]=result;
+							refreshActionStatus();
+						}
+					});
+					dialog.show();
+				}
+			});
+			group.addView(view);
+		}
+
+		int action_airplane_mode=Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE]);
+		if(action_airplane_mode>=0){
+			View view=getActionItemViewForViewGroup(group,R.drawable.icon_airplanemode_on,resources.getString(R.string.activity_taskgui_actions_airplane_mode)
+			,ActionDisplayValue.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE]));
+			view.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					BottomDialogWith3Selections dialog=new BottomDialogWith3Selections(TaskGui.this,R.drawable.icon_airplanemode_on,R.drawable.icon_airplanemode_off
+							,Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE]));
+					dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+						@Override
+						public void onDialogConfirmed(String result) {
+							taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE]=result;
+							refreshActionStatus();
+						}
+					});
+					dialog.show();
+				}
+			});
+			group.addView(view);
+		}
+
+		int action_device_control=Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]);
+		if(action_device_control>=0){
+			View view=getActionItemViewForViewGroup(group,R.drawable.icon_screen_on,resources.getString(R.string.activity_taskgui_actions_device_control)
+			,ActionDisplayValue.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]));
+			view.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					BottomDialogForDeviceControl dialog=new BottomDialogForDeviceControl(TaskGui.this,Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]));
+					dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+						@Override
+						public void onDialogConfirmed(String result) {
+							taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]=result;
+							refreshActionStatus();
+						}
+					});
+					dialog.show();
+				}
+			});
+			group.addView(view);
+		}
 
     }
 
@@ -1265,9 +1418,8 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			break;
 			case REQUEST_CODE_EXCEPTIONS:{
 				if(resultCode==RESULT_OK) {
-					String[] result =null;
 					if(data==null) return;
-					result=data.getStringArrayExtra(Exceptions.INTENT_EXTRA_EXCEPTIONS);
+					String[] result=data.getStringArrayExtra(Exceptions.INTENT_EXTRA_EXCEPTIONS);
 					if (result != null) taskitem.exceptions = result;
 					taskitem.addition_exception_connector=String.valueOf(data.getIntExtra(Exceptions.EXTRA_EXCEPTION_CONNECTOR,-1));
 					refreshExceptionViews();
@@ -1307,6 +1459,18 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 					Uri uri=data.getData();
 					taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE]=String.valueOf(0);
 					taskitem.uri_wallpaper_desktop= ValueUtils.getRealPathFromUri(this,uri);//uri.toString();
+					refreshActionStatus();
+				}
+			}
+			break;
+			case REQUEST_CODE_SMS:{
+				if(resultCode==RESULT_OK){
+					if(data==null) return;
+					String values=data.getStringExtra(SmsActivity.EXTRA_SMS_VALUES);
+					if(values==null) return;
+					taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE]=values;
+					taskitem.sms_address=data.getStringExtra(SmsActivity.EXTRA_SMS_ADDRESS);
+					taskitem.sms_message=data.getStringExtra(SmsActivity.EXTRA_SMS_MESSAGE);
 					refreshActionStatus();
 				}
 			}

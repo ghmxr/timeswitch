@@ -130,7 +130,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 	public void finish(){
 		super.finish();
 		if(queue.contains(this)) queue.remove(this);
-		if(queue.size()<=0) myHandler=null;
+		if(queue.size()<=0) {
+			myHandler=null;
+			System.gc();
+		}
 	}
 
 	public static class MyHandler extends Handler{
