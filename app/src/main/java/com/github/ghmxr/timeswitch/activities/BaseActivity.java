@@ -130,9 +130,19 @@ public abstract class BaseActivity extends AppCompatActivity {
 	public void finish(){
 		super.finish();
 		if(queue.contains(this)) queue.remove(this);
-		if(queue.size()<=0) {
-			myHandler=null;
-			System.gc();
+		if(queue.size()<=0) myHandler=null;
+	}
+
+	@Override
+	public void onDestroy(){
+		super.onDestroy();
+		if(queue.size()==0) {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					System.gc();
+				}
+			}).start();
 		}
 	}
 

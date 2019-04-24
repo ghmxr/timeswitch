@@ -18,9 +18,10 @@ import android.os.Bundle;
 import android.os.Message;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.PermissionChecker;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,17 +30,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +44,6 @@ import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.ui.ActionDisplayValue;
-import com.github.ghmxr.timeswitch.ui.BottomDialog;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForBrightness;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForDeviceControl;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForNotification;
@@ -62,7 +54,8 @@ import com.github.ghmxr.timeswitch.ui.BottomDialogForVolume;
 import com.github.ghmxr.timeswitch.ui.BottomDialogWith2Selections;
 import com.github.ghmxr.timeswitch.ui.BottomDialogWith3Selections;
 import com.github.ghmxr.timeswitch.ui.DialogConfirmedCallBack;
-import com.github.ghmxr.timeswitch.utils.LogUtil;
+import com.github.ghmxr.timeswitch.ui.DialogForAppSelection;
+import com.github.ghmxr.timeswitch.ui.DialogForTaskSelection;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
@@ -549,7 +542,18 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
                     Snackbar.make(findViewById(R.id.layout_actions_root),getResources().getString(R.string.activity_action_switch_task_null),Snackbar.LENGTH_SHORT).show();
                     return;
                 }
-               showTaskSelectionDialog(TASK_ENABLE);
+
+                DialogForTaskSelection dialog=new DialogForTaskSelection(this
+                        ,getResources().getString(R.string.activity_taskgui_actions_enable)
+                        ,TimeSwitchService.list,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE],null);
+                dialog.setOnDialogConfirmedCallback(new DialogConfirmedCallBack() {
+                    @Override
+                    public void onDialogConfirmed(String result) {
+                        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE]=result;
+                        refreshActionStatus();
+                    }
+                });
+                dialog.show();
             }
             break;
             case R.id.actions_disable:{
@@ -557,11 +561,21 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
                     Snackbar.make(findViewById(R.id.layout_actions_root),getResources().getString(R.string.activity_action_switch_task_null),Snackbar.LENGTH_SHORT).show();
                     return;
                 }
-                showTaskSelectionDialog(TASK_DISABLE);
+                DialogForTaskSelection dialog=new DialogForTaskSelection(this
+                        ,getResources().getString(R.string.activity_taskgui_actions_disable)
+                        ,TimeSwitchService.list,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE],"#55e74c3c");
+                dialog.setOnDialogConfirmedCallback(new DialogConfirmedCallBack() {
+                    @Override
+                    public void onDialogConfirmed(String result) {
+                        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE]=result;
+                        refreshActionStatus();
+                    }
+                });
+                dialog.show();
             }
             break;
             case R.id.actions_app_open: case R.id.actions_app_close:{
-                final int id=view.getId();
+                /*final int id=view.getId();
                 AlertDialog.Builder builder=new AlertDialog.Builder(this)
                         .setTitle(id==R.id.actions_app_open?getResources().getString(R.string.activity_action_app_open_title):getResources().getString(R.string.activity_action_app_close_title))
                         .setView(LayoutInflater.from(this).inflate(R.layout.layout_dialog_app_select,null))
@@ -589,7 +603,10 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
                         msg.what=id==R.id.actions_app_open?MESSAGE_GET_LIST_OPEN_COMPLETE:MESSAGE_GET_LIST_CLOSE_COMPLETE;
                         sendMessage(msg);
                     }
-                }).start();
+                }).start();*/
+                DialogForAppSelection dialog=new DialogForAppSelection(this,getResources().getString(R.string.activity_action_app_open_title)
+                        ,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES]);
+                dialog.show();
             }
             break;
             case R.id.actions_app_force_close:{
@@ -611,69 +628,6 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             }
             break;
         }
-    }
-
-    private void showTaskSelectionDialog(final int enableOrDisable){
-        View dialogView=LayoutInflater.from(this).inflate(R.layout.layout_dialog_with_listview,null);
-        final AlertDialog dialog=new AlertDialog.Builder(this)
-                .setTitle(enableOrDisable==TASK_ENABLE?getResources().getString(R.string.activity_taskgui_actions_enable):getResources().getString(R.string.activity_taskgui_actions_disable))
-                .setView(dialogView)
-                .setPositiveButton(getResources().getString(R.string.dialog_button_positive),null)
-                .setNegativeButton(getResources().getString(R.string.dialog_button_negative), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                })
-                .show();
-        final TaskAdapter adapter=new TaskAdapter();
-        try{
-            String [] values=actions[enableOrDisable==TASK_ENABLE? ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE: ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
-            if(Integer.parseInt(values[0])>=0) adapter.setSelectedItems(values);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        ListView listView=dialogView.findViewById(R.id.layout_dialog_listview);
-        (listView).setAdapter(adapter);
-        (listView).setDivider(null);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(TimeSwitchService.list==null||TimeSwitchService.list.size()<=i) return;
-                if(TimeSwitchService.list.get(i).id==taskid) {
-                    Snackbar.make(view,getResources().getString(R.string.activity_actions_switch_can_not_operate_self),Snackbar.LENGTH_SHORT).show();
-                    return;
-                }
-                if(TimeSwitchService.list.get(i).trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE&&TimeSwitchService.list.get(i).time<=System.currentTimeMillis()){
-                    Snackbar.make(view,getResources().getString(R.string.activity_actions_switch_outofdate),Snackbar.LENGTH_SHORT).show();
-                    return;
-                }
-                adapter.onItemClicked(i);
-            }
-        });
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                StringBuilder actionValue=new StringBuilder("");
-                boolean isSelected[]=adapter.getIsSelected();
-                boolean allUnchecked=true;
-                int selectedCount=0;
-                for(int j=0;j<isSelected.length;j++){
-                    if(isSelected[j]&&TimeSwitchService.list!=null){
-                        allUnchecked=false;
-                        actionValue.append(TimeSwitchService.list.get(j).id);
-                        selectedCount++;
-                        if(selectedCount<adapter.getSelectedCount()&&adapter.getSelectedCount()>1)
-                            actionValue.append(PublicConsts.SEPARATOR_SECOND_LEVEL);
-                    }
-                }
-                if(allUnchecked) actionValue=new StringBuilder(String.valueOf(-1));
-                if(enableOrDisable==TASK_ENABLE)actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE]=actionValue.toString();
-                if(enableOrDisable==TASK_DISABLE)actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE]=actionValue.toString();
-                refreshActionStatus();
-                dialog.cancel();
-            }
-        });
     }
 
     @Override
@@ -835,7 +789,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
                 }).show();
     }
 
-    private class TaskAdapter extends BaseAdapter{
+    /*private class TaskAdapter extends BaseAdapter{
         boolean isSelected[];
         private TaskAdapter(){isSelected=new boolean[TimeSwitchService.list!=null?TimeSwitchService.list.size():1];}
         @Override
@@ -941,6 +895,6 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
                 }
             }
         }
-    }
+    }  */
 
 }

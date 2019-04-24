@@ -37,6 +37,7 @@ import com.github.ghmxr.timeswitch.data.v2.ExceptionConsts;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
+import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.ui.ActionDisplayValue;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForBrightness;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForDeviceControl;
@@ -49,6 +50,7 @@ import com.github.ghmxr.timeswitch.ui.BottomDialogWith2Selections;
 import com.github.ghmxr.timeswitch.ui.BottomDialogWith3Selections;
 import com.github.ghmxr.timeswitch.ui.DialogConfirmedCallBack;
 import com.github.ghmxr.timeswitch.ui.DialogForColor;
+import com.github.ghmxr.timeswitch.ui.DialogForTaskSelection;
 import com.github.ghmxr.timeswitch.utils.DisplayDensity;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.data.v2.MySQLiteOpenHelper;
@@ -592,6 +594,48 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			group.addView(view);
 		}
 
+		if(!taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE].equals("-1")){
+			View view=getActionItemViewForViewGroup(group,R.drawable.icon_mark,resources.getString(R.string.adapter_action_task_enable)
+			,ActionDisplayValue.getTaskSwitchDisplayValue(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE]));
+			view.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					DialogForTaskSelection dialog=new DialogForTaskSelection(TaskGui.this
+							,getResources().getString(R.string.activity_taskgui_actions_enable)
+							, TimeSwitchService.list,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE],null);
+					dialog.setOnDialogConfirmedCallback(new DialogConfirmedCallBack() {
+						@Override
+						public void onDialogConfirmed(String result) {
+							taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE]=result;
+							refreshActionStatus();
+						}
+					});
+					dialog.show();
+				}
+			});
+			group.addView(view);
+		}
+
+		if(!taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE].equals("-1")){
+			View view=getActionItemViewForViewGroup(group,R.drawable.icon_cross,resources.getString(R.string.adapter_action_task_disable)
+			,ActionDisplayValue.getTaskSwitchDisplayValue(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE]));
+			view.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					DialogForTaskSelection dialog=new DialogForTaskSelection(TaskGui.this,getResources().getString(R.string.activity_taskgui_actions_disable)
+					,TimeSwitchService.list,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE],"#55e74c3c");
+					dialog.setOnDialogConfirmedCallback(new DialogConfirmedCallBack() {
+						@Override
+						public void onDialogConfirmed(String result) {
+							taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE]=result;
+							refreshActionStatus();
+						}
+					});
+					dialog.show();
+				}
+			});
+			group.addView(view);
+		}
     }
 
     private void refreshTriggerDisplayValue(){
