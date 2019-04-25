@@ -574,39 +574,31 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
                 dialog.show();
             }
             break;
-            case R.id.actions_app_open: case R.id.actions_app_close:{
-                /*final int id=view.getId();
-                AlertDialog.Builder builder=new AlertDialog.Builder(this)
-                        .setTitle(id==R.id.actions_app_open?getResources().getString(R.string.activity_action_app_open_title):getResources().getString(R.string.activity_action_app_close_title))
-                        .setView(LayoutInflater.from(this).inflate(R.layout.layout_dialog_app_select,null))
-                        .setPositiveButton(getResources().getString(R.string.dialog_button_positive),null)
-                        .setNegativeButton(getResources().getString(R.string.action_deselectall),null);
-                if(id==R.id.actions_app_open){
-                    builder.setNeutralButton(getResources().getString(R.string.action_test),null);
-                }
-                dialog_app_oc=builder.show();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        List<AppListAdapter.AppItemInfo> list=new ArrayList<>();
-                        PackageManager manager=getPackageManager();
-                        List<PackageInfo> list_get=manager.getInstalledPackages(PackageManager.COMPONENT_ENABLED_STATE_DEFAULT);
-                        for(PackageInfo info:list_get){
-                            AppListAdapter.AppItemInfo itemInfo=new AppListAdapter.AppItemInfo();
-                            itemInfo.icon=manager.getApplicationIcon(info.applicationInfo);
-                            itemInfo.appname=manager.getApplicationLabel(info.applicationInfo).toString();
-                            itemInfo.package_name=info.applicationInfo.packageName;
-                            list.add(itemInfo);
-                        }
-                        Message msg=new Message();
-                        msg.obj=list;
-                        msg.what=id==R.id.actions_app_open?MESSAGE_GET_LIST_OPEN_COMPLETE:MESSAGE_GET_LIST_CLOSE_COMPLETE;
-                        sendMessage(msg);
-                    }
-                }).start();*/
+            case R.id.actions_app_open: {
                 DialogForAppSelection dialog=new DialogForAppSelection(this,getResources().getString(R.string.activity_action_app_open_title)
-                        ,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES]);
+                        ,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES],null,getResources().getString(R.string.dialog_app_select_long_press_test));
                 dialog.show();
+                dialog.setOnDialogConfirmedCallBack(new DialogConfirmedCallBack() {
+                    @Override
+                    public void onDialogConfirmed(String result) {
+                        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES]=result;
+                        refreshActionStatus();
+                    }
+                });
+            }
+            break;
+
+            case R.id.actions_app_close:{
+                DialogForAppSelection dialog=new DialogForAppSelection(this,getResources().getString(R.string.activity_action_app_close_title)
+                        ,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES],"#55e74c3c",getResources().getString(R.string.dialog_app_close_att));
+                dialog.show();
+                dialog.setOnDialogConfirmedCallBack(new DialogConfirmedCallBack() {
+                    @Override
+                    public void onDialogConfirmed(String result) {
+                        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES]=result;
+                        refreshActionStatus();
+                    }
+                });
             }
             break;
             case R.id.actions_app_force_close:{
@@ -774,6 +766,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
         ((TextView)findViewById(R.id.actions_disable_status)).setText(ActionDisplayValue.getTaskSwitchDisplayValue(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE]));
         ((TextView)findViewById(R.id.actions_app_open_status)).setText(ActionDisplayValue.getAppNameDisplayValue(this,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES]));
         ((TextView)findViewById(R.id.actions_app_close_status)).setText(ActionDisplayValue.getAppNameDisplayValue(this,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES]));
+        ((TextView)findViewById(R.id.actions_autorotation_status)).setText(ActionDisplayValue.getGeneralDisplayValue(this,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AUTOROTATION]));
     }
 
     private void showSnackBarOfSuperuserRequest(){

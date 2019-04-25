@@ -154,13 +154,13 @@ public class ActionDisplayValue {
         try{
             if(Integer.parseInt(value)==-1) return "";
             else {
-                String filename=new File(ValueUtils.getRealPathFromUri(context, Uri.parse(uri))).getName();//wallpaper_values[1]
-                if(filename.length()>25) filename=filename.substring(0,25)+"...";
-                return filename;
+                //String filename=new File(ValueUtils.getRealPathFromUri(context, Uri.parse(uri))).getName();//wallpaper_values[1]
+                //if(filename.length()>25) filename=filename.substring(0,25)+"...";
+                return new File(ValueUtils.getRealPathFromUri(context, Uri.parse(uri))).getName();
             }
         }catch (Exception e){
             e.printStackTrace();
-            LogUtil.putExceptionLog(context,e);
+            //LogUtil.putExceptionLog(context,e);
         }
         return "";
     }
@@ -250,7 +250,7 @@ public class ActionDisplayValue {
         try{
             String toast_values[]=value.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
             if(Integer.parseInt(toast_values[0])>=0) {
-                if(toast.length()>15) toast=toast.substring(0,15)+"...";
+                //if(toast.length()>15) toast=toast.substring(0,15)+"...";
                 return toast;
             }
         }catch (Exception e){
@@ -271,9 +271,9 @@ public class ActionDisplayValue {
                         builder.append(" ");
                     }
                 }
-                String displayValue=builder.toString();
-                if(displayValue.length()>15) displayValue=displayValue.substring(0,15)+"...";
-                return displayValue;
+                //String displayValue=builder.toString();
+                //if(displayValue.length()>15) displayValue=displayValue.substring(0,15)+"...";
+                return builder.toString();
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -306,9 +306,9 @@ public class ActionDisplayValue {
         }catch (Exception e){
             e.printStackTrace();
         }
-        String return_value=builder.toString();
-        if(return_value.length()>15) return_value=return_value.substring(0,15)+"...";
-        return return_value;
+        //String return_value=builder.toString();
+        //if(return_value.length()>15) return_value=return_value.substring(0,15)+"...";
+        return builder.toString();
     }
     public static boolean isGeneralItemVisible(String value){
         try{

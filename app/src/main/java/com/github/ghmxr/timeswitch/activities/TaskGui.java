@@ -49,6 +49,7 @@ import com.github.ghmxr.timeswitch.ui.BottomDialogForVolume;
 import com.github.ghmxr.timeswitch.ui.BottomDialogWith2Selections;
 import com.github.ghmxr.timeswitch.ui.BottomDialogWith3Selections;
 import com.github.ghmxr.timeswitch.ui.DialogConfirmedCallBack;
+import com.github.ghmxr.timeswitch.ui.DialogForAppSelection;
 import com.github.ghmxr.timeswitch.ui.DialogForColor;
 import com.github.ghmxr.timeswitch.ui.DialogForTaskSelection;
 import com.github.ghmxr.timeswitch.utils.DisplayDensity;
@@ -100,28 +101,6 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 
 		findViewById(R.id.layout_taskgui_trigger).setOnClickListener(this);
 
-		findViewById(R.id.taskgui_operations_area_wifi).setOnClickListener(this);
-		findViewById(R.id.taskgui_operations_area_bluetooth).setOnClickListener(this);
-		findViewById(R.id.taskgui_operations_area_net).setOnClickListener(this);
-		findViewById(R.id.taskgui_operations_area_ring_mode).setOnClickListener(this);
-		findViewById(R.id.taskgui_operations_area_devicecontrol).setOnClickListener(this);
-		findViewById(R.id.taskgui_operations_area_brightness).setOnClickListener(this);
-		findViewById(R.id.taskgui_operations_area_gps).setOnClickListener(this);
-		findViewById(R.id.taskgui_operations_area_airplane_mode).setOnClickListener(this);
-		findViewById(R.id.taskgui_operations_area_ring_volume).setOnClickListener(this);
-		findViewById(R.id.taskgui_operations_area_ring_selection).setOnClickListener(this);
-		findViewById(R.id.taskgui_operations_area_wallpaper).setOnClickListener(this);
-		findViewById(R.id.taskgui_operations_area_vibrate).setOnClickListener(this);
-		findViewById(R.id.taskgui_operations_area_notification).setOnClickListener(this);
-		findViewById(R.id.taskgui_operations_area_toast).setOnClickListener(this);
-		findViewById(R.id.taskgui_operations_area_sms).setOnClickListener(this);
-		findViewById(R.id.taskgui_operations_area_enable).setOnClickListener(this);
-		findViewById(R.id.taskgui_operations_area_disable).setOnClickListener(this);
-		findViewById(R.id.taskgui_operations_area_app_launch).setOnClickListener(this);
-		findViewById(R.id.taskgui_operations_area_app_close).setOnClickListener(this);
-		findViewById(R.id.taskgui_operations_area_autorotation).setOnClickListener(this);
-		findViewById(R.id.taskgui_operations_area_app_force_close).setOnClickListener(this);
-
 		findViewById(R.id.layout_taskgui_area_additional_notify).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_area_additional_autodelete).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_area_additional_autoclose).setOnClickListener(this);
@@ -172,73 +151,6 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 	public void processMessage(Message msg){}
 
 	private void refreshActionStatus(){
-		/*((TextView)findViewById(R.id.taskgui_operations_area_wifi_status)).setText(ActionDisplayValue.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_WIFI_LOCALE]));
-
-		((TextView)findViewById(R.id.taskgui_operations_area_bluetooth_status)).setText(ActionDisplayValue.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BLUETOOTH_LOCALE]));
-
-		((TextView)findViewById(R.id.taskgui_operations_area_net_status)).setText(ActionDisplayValue.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE]));
-
-		((TextView)findViewById(R.id.taskgui_operations_area_devicecontrol_status)).setText(ActionDisplayValue.getDeviceControlDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]));
-
-		((TextView)findViewById(R.id.taskgui_operations_area_ring_mode_status)).setText(ActionDisplayValue.getRingModeDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_MODE_LOCALE]));
-
-		((TextView)findViewById(R.id.taskgui_operations_area_ring_volume_status)).setText(ActionDisplayValue.getRingVolumeDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE]));
-
-		((TextView)findViewById(R.id.taskgui_operations_area_brightness_status)).setText(ActionDisplayValue.getBrightnessDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BRIGHTNESS_LOCALE]));
-
-		((TextView)findViewById(R.id.taskgui_operations_area_gps_status)).setText(ActionDisplayValue.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE]));
-
-		((TextView)findViewById(R.id.taskgui_operations_area_airplane_mode_status)).setText(ActionDisplayValue.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE]));
-
-		((TextView)findViewById(R.id.taskgui_operations_area_ring_selection_status)).setText(ActionDisplayValue.getRingSelectionDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE]));
-
-		((TextView)findViewById(R.id.taskgui_operations_area_wallpaper_status)).setText(ActionDisplayValue.getWallpaperDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE],taskitem.uri_wallpaper_desktop));
-
-		((TextView)findViewById(R.id.taskgui_operations_area_vibrate_status)).setText(ActionDisplayValue.getVibrateDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE]));
-
-		((TextView)findViewById(R.id.taskgui_operations_area_notification_status)).setText(ActionDisplayValue.getNotificationDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE]));
-		((TextView)findViewById(R.id.taskgui_operations_area_toast_status)).setText(ActionDisplayValue.getToastDisplayValue(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE],taskitem.toast));
-		((TextView)findViewById(R.id.taskgui_operations_area_sms_status)).setText(ActionDisplayValue.getSMSDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE]));
-		((TextView)findViewById(R.id.taskgui_operations_area_enable_status)).setText(ActionDisplayValue.getTaskSwitchDisplayValue(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE]));
-		((TextView)findViewById(R.id.taskgui_operations_area_disable_status)).setText(ActionDisplayValue.getTaskSwitchDisplayValue(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE]));
-		((TextView)findViewById(R.id.taskgui_operations_area_app_launch_status)).setText(ActionDisplayValue.getAppNameDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES]));
-		((TextView)findViewById(R.id.taskgui_operations_area_app_close_status)).setText(ActionDisplayValue.getAppNameDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES]));
-		try{
-			findViewById(R.id.taskgui_operations_area_wifi).setVisibility(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_WIFI_LOCALE])>=0?View.VISIBLE:View.GONE);
-			findViewById(R.id.taskgui_operations_area_bluetooth).setVisibility(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BLUETOOTH_LOCALE])>=0?View.VISIBLE:View.GONE);
-			findViewById(R.id.taskgui_operations_area_ring_mode).setVisibility(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_MODE_LOCALE])>=0?View.VISIBLE:View.GONE);
-			String ring_volume_values[]=taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-			findViewById(R.id.taskgui_operations_area_ring_volume).setVisibility(
-					(Integer.parseInt(ring_volume_values[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_RING_LOCALE])>=0||Integer.parseInt(ring_volume_values[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_MEDIA_LOCALE])>=0
-							||Integer.parseInt(ring_volume_values[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_NOTIFICATION_LOCALE])>=0||Integer.parseInt(ring_volume_values[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_ALARM_LOCALE])>=0)
-							?View.VISIBLE:View.GONE);
-			String[] ring_selection_values=taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-			findViewById(R.id.taskgui_operations_area_ring_selection).setVisibility((Integer.parseInt(ring_selection_values[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE])>=0||
-					Integer.parseInt(ring_selection_values[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_CALL_TYPE_LOCALE])>=0
-					)?View.VISIBLE:View.GONE);
-			findViewById(R.id.taskgui_operations_area_brightness).setVisibility(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BRIGHTNESS_LOCALE])>=0?View.VISIBLE:View.GONE);
-			findViewById(R.id.taskgui_operations_area_vibrate).setVisibility(
-					Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_FREQUENCY_LOCALE])>=0?
-					View.VISIBLE:View.GONE);
-			findViewById(R.id.taskgui_operations_area_wallpaper).setVisibility(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE])>=0?View.VISIBLE:View.GONE);
-			findViewById(R.id.taskgui_operations_area_sms).setVisibility(
-					Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[ActionConsts.ActionSecondLevelLocaleConsts.SMS_ENABLED_LOCALE])>=0?View.VISIBLE:View.GONE);
-			findViewById(R.id.taskgui_operations_area_notification).setVisibility(
-					Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_LOCALE])>=0?
-							View.VISIBLE:View.GONE);
-			findViewById(R.id.taskgui_operations_area_toast).setVisibility(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_TYPE_LOCALE])>=0?View.VISIBLE:View.GONE);
-			findViewById(R.id.taskgui_operations_area_airplane_mode).setVisibility(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE])>=0?View.VISIBLE:View.GONE);
-			findViewById(R.id.taskgui_operations_area_net).setVisibility(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE])>=0?View.VISIBLE:View.GONE);
-			findViewById(R.id.taskgui_operations_area_gps).setVisibility(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE])>=0?View.VISIBLE:View.GONE);
-			findViewById(R.id.taskgui_operations_area_devicecontrol).setVisibility(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE])>=0?View.VISIBLE:View.GONE);
-			findViewById(R.id.taskgui_operations_area_enable).setVisibility(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[0])>=0?View.VISIBLE:View.GONE);
-			findViewById(R.id.taskgui_operations_area_disable).setVisibility(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL)[0])>=0?View.VISIBLE:View.GONE);
-			findViewById(R.id.taskgui_operations_area_app_launch).setVisibility(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES].equals(String.valueOf(-1))?View.GONE:View.VISIBLE);
-			findViewById(R.id.taskgui_operations_area_app_close).setVisibility(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES].equals(String.valueOf(-1))?View.GONE:View.VISIBLE);
-		}catch (Exception e){
-			e.printStackTrace();
-			LogUtil.putExceptionLog(this,e);
-		}*/
 		final Resources resources=getResources();
 		ViewGroup group=findViewById(R.id.layout_taskgui_area_action);
 		group.removeAllViews();
@@ -636,6 +548,47 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			});
 			group.addView(view);
 		}
+
+		if(!taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES].equals("-1")){
+			View view=getActionItemViewForViewGroup(group,R.drawable.icon_app_launch,resources.getString(R.string.activity_action_app_open_title),
+					ActionDisplayValue.getAppNameDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES]));
+			view.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					DialogForAppSelection dialog=new DialogForAppSelection(TaskGui.this,resources.getString(R.string.activity_action_app_open_title)
+					,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES],null,resources.getString(R.string.dialog_app_select_long_press_test));
+					dialog.setOnDialogConfirmedCallBack(new DialogConfirmedCallBack() {
+						@Override
+						public void onDialogConfirmed(String result) {
+							taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES]=result;
+							refreshActionStatus();
+						}
+					});
+					dialog.show();
+				}
+			});
+			group.addView(view);
+		}
+		if(!taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES].equals("-1")){
+			View view=getActionItemViewForViewGroup(group,R.drawable.icon_app_stop,resources.getString(R.string.activity_action_app_close_title),
+					ActionDisplayValue.getAppNameDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES]));
+			view.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					DialogForAppSelection dialog=new DialogForAppSelection(TaskGui.this,resources.getString(R.string.activity_action_app_close_title)
+							,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES],"#55e74c3c",resources.getString(R.string.dialog_app_close_att));
+					dialog.setOnDialogConfirmedCallBack(new DialogConfirmedCallBack() {
+						@Override
+						public void onDialogConfirmed(String result) {
+							taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES]=result;
+							refreshActionStatus();
+						}
+					});
+					dialog.show();
+				}
+			});
+			group.addView(view);
+		}
     }
 
     private void refreshTriggerDisplayValue(){
@@ -860,9 +813,9 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 						else{
 							taskitem.name=name;//TaskGui.this.taskname=name;
 							dialog.cancel();
-							String taskname=taskitem.name;
-							if(taskname.length()>24) taskname=taskname.substring(0,24)+"...";
-							((TextView)findViewById(R.id.layout_taskgui_area_name_text)).setText(taskname);//TaskGui.this.clickarea_name_text.setText(TaskGui.this.taskname);
+							//String taskname=taskitem.name;
+							//if(taskname.length()>24) taskname=taskname.substring(0,24)+"...";
+							((TextView)findViewById(R.id.layout_taskgui_area_name_text)).setText(taskitem.name);
 						}
 					}
 				});
@@ -931,14 +884,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				startActivityForResult(i,REQUEST_CODE_TRIGGERS);
 			}
 			break;
-			case R.id.layout_taskgui_area_action_additem:
-			case R.id.taskgui_operations_area_wifi: case R.id.taskgui_operations_area_bluetooth: case R.id.taskgui_operations_area_ring_mode:
-			case R.id.taskgui_operations_area_ring_volume: case R.id.taskgui_operations_area_ring_selection: case R.id.taskgui_operations_area_brightness:
-			case R.id.taskgui_operations_area_vibrate: case R.id.taskgui_operations_area_wallpaper: case R.id.taskgui_operations_area_sms:
-			case R.id.taskgui_operations_area_notification: case R.id.taskgui_operations_area_net: case R.id.taskgui_operations_area_gps:
-			case R.id.taskgui_operations_area_airplane_mode: case R.id.taskgui_operations_area_devicecontrol: case R.id.taskgui_operations_area_toast:
-			case R.id.taskgui_operations_area_enable: case R.id.taskgui_operations_area_disable: case R.id.taskgui_operations_area_app_launch:
-			case R.id.taskgui_operations_area_app_close: case R.id.taskgui_operations_area_app_force_close: case R.id.taskgui_operations_area_autorotation: {
+			case R.id.layout_taskgui_area_action_additem:{
 				Intent i=new Intent(this,ActionActivity.class);
 				i.putExtra(ActionActivity.EXTRA_TASK_ID,taskitem.id);
 				i.putExtra(ActionActivity.EXTRA_ACTIONS,taskitem.actions);

@@ -168,11 +168,11 @@ public class DialogForTaskSelection implements DialogInterface.OnClickListener{
             for(int i=0;i<isSelected.length;i++){
                 if(isSelected[i]) {
                     builder.append(list.get(i).id);
-                    if(builder.toString().length()>0)builder.append(PublicConsts.SEPARATOR_SECOND_LEVEL);
+                    builder.append(PublicConsts.SEPARATOR_SECOND_LEVEL);
                 }
             }
-            if(builder.toString().endsWith(PublicConsts.SEPARATOR_SECOND_LEVEL)) builder.deleteCharAt(builder.lastIndexOf(PublicConsts.SEPARATOR_SECOND_LEVEL));
             if(builder.toString().equals("")) return String.valueOf(-1);
+            if(builder.toString().endsWith(PublicConsts.SEPARATOR_SECOND_LEVEL)) builder.deleteCharAt(builder.lastIndexOf(PublicConsts.SEPARATOR_SECOND_LEVEL));
             return builder.toString();
         }
 
