@@ -552,6 +552,7 @@
                         android:text="未选择"
                         android:textColor="@color/color_activity_taskgui_value"
                         android:textSize="12sp"
+                        android:singleLine="true"
                         android:layout_marginRight="50dp"/>
 
                 </LinearLayout>
@@ -612,6 +613,7 @@
                         android:text="未选择"
                         android:textColor="@color/color_activity_taskgui_value"
                         android:textSize="12sp"
+                        android:singleLine="true"
                         android:layout_marginRight="50dp"/>
 
                 </LinearLayout>

@@ -63,6 +63,8 @@ public class TimeSwitchService extends Service {
     static boolean flag_refresh_foreground_notification=false;
 
     private final BatteryReceiver batteryReceiver=new BatteryReceiver();
+    private final Global.NetworkReceiver networkReceiver=new Global.NetworkReceiver();
+    private final Global.HeadsetPlugReceiver headsetPlugReceiver=new Global.HeadsetPlugReceiver();
 
     @Override
     public void onCreate(){
@@ -79,6 +81,15 @@ public class TimeSwitchService extends Service {
         }
         try{
             registerReceiver(batteryReceiver,new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        }catch (Exception e){e.printStackTrace();}
+        try{
+            IntentFilter filter=new IntentFilter();
+            filter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+            filter.addAction("android.net.wifi.STATE_CHANGE");
+            registerReceiver(networkReceiver,filter);
+        }catch (Exception e){e.printStackTrace();}
+        try{
+            registerReceiver(headsetPlugReceiver,new IntentFilter("android.intent.action.HEADSET_PLUG"));
         }catch (Exception e){e.printStackTrace();}
     }
 
@@ -196,6 +207,14 @@ public class TimeSwitchService extends Service {
 
         try{
             unregisterReceiver(batteryReceiver);
+        }catch (Exception e){e.printStackTrace();}
+
+        try{
+            unregisterReceiver(networkReceiver);
+        }catch (Exception e){e.printStackTrace();}
+
+        try{
+            unregisterReceiver(headsetPlugReceiver);
         }catch (Exception e){e.printStackTrace();}
 
         service=null;

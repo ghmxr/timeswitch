@@ -12,7 +12,6 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
@@ -43,41 +42,32 @@ import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.Global;
 import com.github.ghmxr.timeswitch.R;
-import com.github.ghmxr.timeswitch.adapters.AppListAdapter;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
+import com.github.ghmxr.timeswitch.ui.ActionDisplayValue;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForBattery;
 import com.github.ghmxr.timeswitch.ui.BottomDialogForInterval;
-import com.github.ghmxr.timeswitch.ui.CustomTimePicker;
+import com.github.ghmxr.timeswitch.ui.DialogConfirmedCallBack;
+import com.github.ghmxr.timeswitch.ui.DialogForAppSelection;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
-public class Triggers extends BaseActivity implements View.OnClickListener,TimePicker.OnTimeChangedListener{
+public class TriggerActivity extends BaseActivity implements View.OnClickListener{
     public static final String EXTRA_TRIGGER_TYPE="trigger_type";
     public static final String EXTRA_TRIGGER_VALUES="trigger_values";
 
-    private static final int MESSAGE_GET_SSID_COMPLETE=0x00001;
-    private static final int MESSAGE_GET_APPLIST_COMPLETE_OPEN =0x00002;
-    private static final int MESSAGE_GET_APPLIST_COMPLETE_CLOSE=0x00003;
-
     private int trigger_type=0;
-   // private long time=0;
     private boolean[] week_repeat=new boolean[]{true,true,true,true,true,true,true};
     private long interval=60*60*1000;
     private int battery_percentage=50,battery_temperature=35;
     private String wifi_ssidinfo ="";
     private String [] package_names=new String[0];
     private String broadcast_intent_action="android.intent.ANSWER";
-    /**
-     * @deprecated
-     */
-    CustomTimePicker timePicker;
+
     Calendar calendar;
 
     private String checkString="";
     private long first_clicked=0;
-
-    private AlertDialog dialog_appinfo;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -88,8 +78,6 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
 
         try{getSupportActionBar().setDisplayHomeAsUpEnabled(true);}catch (Exception e){e.printStackTrace();}
         setToolBarAndStatusBarColor(toolbar,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
-        timePicker=findViewById(R.id.trigger_timepicker);
-        timePicker.setIs24HourView(true);
 
         calendar= Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis()+10*60*1000);
@@ -181,14 +169,6 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         checkString=toCheckString();
 
         //set the views
-        if(Build.VERSION.SDK_INT<23){
-            timePicker.setCurrentHour(calendar.get(Calendar.HOUR_OF_DAY));
-            timePicker.setCurrentMinute(calendar.get(Calendar.MINUTE));
-        }else{
-            timePicker.setHour(calendar.get(Calendar.HOUR_OF_DAY));
-            timePicker.setMinute(calendar.get(Calendar.MINUTE));
-        }
-        timePicker.setOnTimeChangedListener(this);
 
         activateTriggerType(trigger_type);
     }
@@ -309,76 +289,6 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
     public void processMessage(Message msg) {
         switch (msg.what){
             default:break;
-            /*case MESSAGE_GET_SSID_COMPLETE:{
-                if(dialog_wait!=null) dialog_wait.cancel();
-                View dialogview=LayoutInflater.from(this).inflate(R.layout.layout_dialog_with_listview,null);
-                ListView wifi_list=dialogview.findViewById(R.id.layout_dialog_listview);
-                final WifiInfoListAdapter adapter=new WifiInfoListAdapter((List<WifiConfiguration>)msg.obj, wifi_ssidinfo);
-                //Log.d("wifi ssids ",wifi_ssidinfo);
-                wifi_list.setAdapter(adapter);
-                wifi_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        adapter.onItemClicked(i);
-                    }
-                });
-               new AlertDialog.Builder(this)
-                        .setTitle(getResources().getString(R.string.activity_trigger_wifi_dialog_att))
-                        .setView(dialogview)
-                        .setPositiveButton(getResources().getString(R.string.dialog_button_positive), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                activateTriggerType(PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED);
-                                wifi_ssidinfo =adapter.getSelectedIDs();
-                                ((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText(getWifiConnectionDisplayValue(Triggers.this,wifi_ssidinfo));
-                            }
-                        })
-                        .setNegativeButton(getResources().getString(R.string.dialog_button_negative), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-                        })
-                        .show();
-            }
-            break; */
-            case MESSAGE_GET_APPLIST_COMPLETE_OPEN: case MESSAGE_GET_APPLIST_COMPLETE_CLOSE:{
-                if(dialog_appinfo==null) break;
-                final int msg_what=msg.what;
-                dialog_appinfo.findViewById(R.id.dialog_app_wait).setVisibility(View.GONE);
-                ListView listview=dialog_appinfo.findViewById(R.id.dialog_app_list);
-                final AppListAdapter adapter=new AppListAdapter(this,(List<AppListAdapter.AppItemInfo>)msg.obj,package_names);
-                listview.setAdapter(adapter);
-                dialog_appinfo.findViewById(R.id.dialog_app_list_area).setVisibility(View.VISIBLE);
-                ((TextView)dialog_appinfo.findViewById(R.id.dialog_app_att)).setText(getResources().getString(R.string.activity_trigger_app_att));
-                listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        adapter.onItemClicked(position);
-                    }
-                });
-                dialog_appinfo.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String[] package_names=adapter.getSelectedPackageNames();
-                        if(package_names.length==0) {
-                            Snackbar.make(v,getResources().getString(R.string.dialog_app_select_z_att),Snackbar.LENGTH_SHORT).show();
-                            return;
-                        }
-                        Triggers.this.package_names=package_names;
-                        int type=msg_what==MESSAGE_GET_APPLIST_COMPLETE_OPEN? TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED: TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED;
-                        activateTriggerType(type);
-                        dialog_appinfo.cancel();
-                    }
-                });
-                dialog_appinfo.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        adapter.deselectAll();
-                    }
-                });
-            }
-            break;
         }
     }
 
@@ -393,7 +303,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                     @Override
                     public void onDateSet(DatePicker datePicker, final int year, final int month, final int dayOfMonth) {
 
-                        new TimePickerDialog(Triggers.this, new TimePickerDialog.OnTimeSetListener() {
+                        new TimePickerDialog(TriggerActivity.this, new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                                 calendar.set(Calendar.YEAR,year);
@@ -423,7 +333,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                     @Override
                     public void onDialogConfirmed(long millis) {
                         interval=millis;
-                        ((TextView)findViewById(R.id.trigger_percertaintime_value)).setText(getCertainLoopTimeDisplayValue(Triggers.this,millis));
+                        ((TextView)findViewById(R.id.trigger_percertaintime_value)).setText(getCertainLoopTimeDisplayValue(TriggerActivity.this,millis));
                         activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME);
                     }
                 });
@@ -471,7 +381,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                         // TODO Auto-generated method stub
                         dialog_weekloop.cancel();
 
-                        new TimePickerDialog(Triggers.this, new TimePickerDialog.OnTimeSetListener() {
+                        new TimePickerDialog(TriggerActivity.this, new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                                 boolean week_repeat[]=new boolean[7];
@@ -499,7 +409,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                                     return;
                                 }
                                 //dialog_weekloop.cancel();
-                                Triggers.this.week_repeat=week_repeat;
+                                TriggerActivity.this.week_repeat=week_repeat;
                                 calendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
                                 calendar.set(Calendar.MINUTE,minute);
                                 calendar.set(Calendar.SECOND,0);
@@ -555,7 +465,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                         battery_percentage=Integer.parseInt(dialog.wheelview_second.getSeletedItem());
                         dialog.cancel();
                         activateTriggerType(trigger_type);
-                        ((TextView)findViewById(R.id.trigger_battery_percentage_value)).setText(getBatteryPercentageDisplayValue(Triggers.this,trigger_type,battery_percentage));
+                        ((TextView)findViewById(R.id.trigger_battery_percentage_value)).setText(getBatteryPercentageDisplayValue(TriggerActivity.this,trigger_type,battery_percentage));
                     }
                 });
                 dialog.show();
@@ -589,7 +499,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                         battery_temperature=Integer.parseInt(dialog.wheelview_second.getSeletedItem());
                         dialog.cancel();
                         activateTriggerType(trigger_type);
-                        ((TextView)findViewById(R.id.trigger_battery_temperature_value)).setText(getBatteryTemperatureDisplayValue(Triggers.this,trigger_type,battery_temperature));
+                        ((TextView)findViewById(R.id.trigger_battery_temperature_value)).setText(getBatteryTemperatureDisplayValue(TriggerActivity.this,trigger_type,battery_temperature));
                     }
                 });
                 dialog.show();
@@ -634,43 +544,18 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 //trigger_type=PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED;
                 if(v_id==R.id.trigger_wifi_connected) activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_WIFI_CONNECTED);
                 else if(v_id==R.id.trigger_wifi_disconnected) activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_WIFI_DISCONNECTED);
-                /*dialog_wait=new AlertDialog.Builder(this)
-                        .setTitle(getResources().getString(R.string.dialog_wait_att))
-                        .setView(LayoutInflater.from(this).inflate(R.layout.layout_dialog_wait,null))
-                        .setCancelable(false)
-                        .show(); */
-               /* new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Message msg=new Message();
-                        msg.what=MESSAGE_GET_SSID_COMPLETE;
-
-                        WifiManager wifiManager=(WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
-                        if(wifiManager==null){
-                            Log.e("Triggers","WifiManager is null !!");
-                            msg.obj=new ArrayList<WifiConfiguration>();
-                            sendMessage(msg);
-                            return;
-                        }
-
-                        msg.obj=wifiManager.getConfiguredNetworks();
-
-                        sendMessage(msg);
-                    }
-                }).start(); */
 
                 final WifiManager wifiManager=(WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
                 if(wifiManager==null){
                     Log.e("Triggers","WifiManager is null !!");
-                    ((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText(getWifiConnectionDisplayValue(Triggers.this,wifi_ssidinfo));
+                    ((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText(getWifiConnectionDisplayValue(TriggerActivity.this,wifi_ssidinfo));
                     return;
                 }
 
                 if(Global.NetworkReceiver.wifiList==null){
                     Snackbar snackbar=Snackbar.make(findViewById(R.id.trigger_root),getResources().getString(R.string.activity_trigger_wifi_open_att),Snackbar.LENGTH_SHORT);
-                    if(v_id==R.id.trigger_wifi_connected)((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText(getWifiConnectionDisplayValue(Triggers.this,wifi_ssidinfo));
-                    else if(v_id==R.id.trigger_wifi_disconnected)((TextView)findViewById(R.id.trigger_wifi_disconnected_value)).setText(getWifiConnectionDisplayValue(Triggers.this,wifi_ssidinfo));
+                    if(v_id==R.id.trigger_wifi_connected)((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText(getWifiConnectionDisplayValue(TriggerActivity.this,wifi_ssidinfo));
+                    else if(v_id==R.id.trigger_wifi_disconnected)((TextView)findViewById(R.id.trigger_wifi_disconnected_value)).setText(getWifiConnectionDisplayValue(TriggerActivity.this,wifi_ssidinfo));
                     snackbar.setAction(getResources().getString(R.string.snackbar_action_open_wifi), new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -703,11 +588,11 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                                 wifi_ssidinfo =adapter.getSelectedIDs();
                                 if(v_id==R.id.trigger_wifi_connected) {
                                     activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_WIFI_CONNECTED);
-                                    ((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText(getWifiConnectionDisplayValue(Triggers.this,wifi_ssidinfo));
+                                    ((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText(getWifiConnectionDisplayValue(TriggerActivity.this,wifi_ssidinfo));
                                 }
                                 else if(v_id==R.id.trigger_wifi_disconnected) {
                                     activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_WIFI_DISCONNECTED);
-                                    ((TextView)findViewById(R.id.trigger_wifi_disconnected_value)).setText(getWifiConnectionDisplayValue(Triggers.this,wifi_ssidinfo));
+                                    ((TextView)findViewById(R.id.trigger_wifi_disconnected_value)).setText(getWifiConnectionDisplayValue(TriggerActivity.this,wifi_ssidinfo));
                                 }
                             }
                         })
@@ -740,33 +625,25 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                         return;
                     }
                 }
-                final int trigger_type=(v_id==R.id.trigger_app_opened? TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED: TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED);
-                  this.dialog_appinfo=new AlertDialog.Builder(this)
-                          .setTitle(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED?getResources().getString(R.string.dialog_app_open_select_title)
-                          :getResources().getString(R.string.dialog_app_close_select_title))
-                          .setView(LayoutInflater.from(this).inflate(R.layout.layout_dialog_app_select,null))
-                          .setPositiveButton(getResources().getString(R.string.dialog_button_positive),null)
-                          .setNegativeButton(getResources().getString(R.string.action_deselectall),null)
-                          .show();
-                  new Thread(new Runnable() {
-                      @Override
-                      public void run() {
-                          List<AppListAdapter.AppItemInfo> list=new ArrayList<>();
-                          PackageManager manager=getPackageManager();
-                          List<PackageInfo> list_get=manager.getInstalledPackages(PackageManager.COMPONENT_ENABLED_STATE_DEFAULT);
-                          for(PackageInfo info:list_get){
-                              AppListAdapter.AppItemInfo itemInfo=new AppListAdapter.AppItemInfo();
-                              itemInfo.icon=manager.getApplicationIcon(info.applicationInfo);
-                              itemInfo.appname=manager.getApplicationLabel(info.applicationInfo).toString();
-                              itemInfo.package_name=info.applicationInfo.packageName;
-                              list.add(itemInfo);
-                          }
-                          Message msg=new Message();
-                          msg.obj=list;
-                          msg.what= trigger_type== TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED?MESSAGE_GET_APPLIST_COMPLETE_OPEN:MESSAGE_GET_APPLIST_COMPLETE_CLOSE;
-                          sendMessage(msg);
-                      }
-                  }).start();
+
+
+                DialogForAppSelection dialog=new DialogForAppSelection(this,v_id==R.id.trigger_app_opened?getResources().getString(R.string.activity_trigger_app_opened)
+                        :getResources().getString(R.string.activity_trigger_app_closed),package_names,v_id==R.id.trigger_app_opened?null:"#55e74c3c","");
+                dialog.setOnDialogConfirmedCallBack(new DialogConfirmedCallBack() {
+                    @Override
+                    public void onDialogConfirmed(String result) {
+                        try{
+                            if(result.equals("-1")) return;
+                            package_names=result.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+                            refreshTriggerDisplayValues(v_id==R.id.trigger_app_opened?TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED:TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED);
+                            //if(v_id==R.id.trigger_app_opened){
+                            ((TextView)findViewById(v_id==R.id.trigger_app_opened?R.id.trigger_app_opened_value:R.id.trigger_app_closed_value)).setText(ActionDisplayValue.getAppNameDisplayValue(TriggerActivity.this,result));
+                            //}
+                        }catch (Exception e){package_names=new String[0];}
+
+                    }
+                });
+                dialog.show();
             }
             break;
             case R.id.trigger_headset:{
@@ -974,16 +851,6 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         }
     }
 
-    @Override
-    public void onTimeChanged(TimePicker timePicker, int hour, int minute) {
-        calendar.set(Calendar.HOUR_OF_DAY,hour);
-        calendar.set(Calendar.MINUTE,minute);
-        calendar.set(Calendar.SECOND,0);
-        if(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE) ((TextView)findViewById(R.id.trigger_single_value)).setText(getSingleTimeDisplayValue(this,calendar.getTimeInMillis()));
-        if(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK){
-            ((TextView)findViewById(R.id.trigger_weekloop_value)).setText(getWeekLoopDisplayValue(this,week_repeat,calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE)));
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -1325,7 +1192,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
             if(view==null){
-                view=LayoutInflater.from(Triggers.this).inflate(R.layout.item_broadcast_intent,viewGroup,false);
+                view=LayoutInflater.from(TriggerActivity.this).inflate(R.layout.item_broadcast_intent,viewGroup,false);
             }
             ((RadioButton)view.findViewById(R.id.item_broadcast_ra)).setText(intent_list.get(i));
             ((RadioButton)view.findViewById(R.id.item_broadcast_ra)).setChecked(i==selectedPosition);
@@ -1362,7 +1229,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
                 }
             }catch (Exception e){
                 e.printStackTrace();
-                LogUtil.putExceptionLog(Triggers.this,e);
+                LogUtil.putExceptionLog(TriggerActivity.this,e);
             }
 
         }
@@ -1386,7 +1253,7 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         public View getView(int i, View view, ViewGroup viewGroup) {
             if(list==null) return null;
             if(view==null){
-                view=LayoutInflater.from(Triggers.this).inflate(R.layout.item_wifiinfo,viewGroup,false);
+                view=LayoutInflater.from(TriggerActivity.this).inflate(R.layout.item_wifiinfo,viewGroup,false);
             }
 
             ((TextView)view.findViewById(R.id.item_wifiinfo_ssid)).setText(list.get(i).SSID);
@@ -1412,97 +1279,5 @@ public class Triggers extends BaseActivity implements View.OnClickListener,TimeP
         }
 
     }
-
-    /*private class AppListAdapter extends BaseAdapter{
-        List<AppItemInfo> list;
-        boolean[] isSelected;
-        AppListAdapter(List<AppItemInfo> list,String[] selectedPackageNames){
-            this.list=list;
-            isSelected=new boolean[list.size()];
-            if(selectedPackageNames==null||selectedPackageNames.length==0) return;
-            for(String name:selectedPackageNames){
-                for(int i=0;i<list.size();i++){
-                    if(name.equals(list.get(i).package_name)){
-                        isSelected[i]=true;
-                    }
-                }
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return list.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder;
-            if(convertView==null){
-                convertView=LayoutInflater.from(Triggers.this).inflate(R.layout.item_app_info,parent,false);
-                holder=new ViewHolder();
-                holder.icon=convertView.findViewById(R.id.item_app_icon);
-                holder.tv_name=convertView.findViewById(R.id.item_app_name);
-                holder.cb=convertView.findViewById(R.id.item_app_cb);
-                convertView.setTag(holder);
-            }else{
-                holder=(ViewHolder) convertView.getTag();
-            }
-            holder.icon.setImageDrawable(list.get(position).icon);
-            holder.tv_name.setText(list.get(position).appname);
-            holder.cb.setChecked(isSelected[position]);
-            return convertView;
-        }
-
-        public void onItemClicked(int position){
-            if(position<0||position>=isSelected.length) return;
-            isSelected[position]=!isSelected[position];
-            notifyDataSetChanged();
-        }
-
-        public void deselectAll(){
-            for(int i=0;i<isSelected.length;i++){
-                isSelected[i]=false;
-            }
-            notifyDataSetChanged();
-        }
-
-        public String[] getSelectedPackageNames(){
-            int selectedNum=0;
-            for(int i=0;i<isSelected.length;i++){
-                if(isSelected[i]) selectedNum++;
-            }
-            String[] names=new String[selectedNum];
-            int j=0;
-            for(int i=0;i<isSelected.length;i++){
-                if(isSelected[i]) {
-                    names[j]=list.get(i).package_name;
-                    j++;
-                }
-            }
-            return names;
-        }
-
-        private class ViewHolder{
-            ImageView icon;
-            TextView tv_name;
-            CheckBox cb;
-        }
-    }
-
-    private class AppItemInfo{
-        public Drawable icon;
-        public String appname="";
-        public String package_name="";
-    }  */
 
 }

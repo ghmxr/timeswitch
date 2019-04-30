@@ -600,13 +600,13 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			case TriggerTypeConsts.TRIGGER_TYPE_SINGLE:{
 				icon.setImageResource(R.drawable.icon_repeat_single);
 				att.setText(getResources().getString(R.string.activity_taskgui_condition_single_att));
-				value.setText(Triggers.getSingleTimeDisplayValue(this,taskitem.time));
+				value.setText(TriggerActivity.getSingleTimeDisplayValue(this,taskitem.time));
 			}
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME:{
 				icon.setImageResource(R.drawable.icon_repeat_percertaintime);
 				att.setText(getResources().getString(R.string.activity_taskgui_condition_percertaintime_att));
-				value.setText(Triggers.getCertainLoopTimeDisplayValue(this,taskitem.interval_milliseconds));
+				value.setText(TriggerActivity.getCertainLoopTimeDisplayValue(this,taskitem.interval_milliseconds));
 			}
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK:{
@@ -614,49 +614,49 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				att.setText(getResources().getString(R.string.activity_taskgui_condition_weekloop_att));
 				Calendar c=Calendar.getInstance();
 				c.setTimeInMillis(taskitem.time);
-				value.setText(Triggers.getWeekLoopDisplayValue(this,taskitem.week_repeat,c.get(Calendar.HOUR_OF_DAY),c.get(Calendar.MINUTE)));
+				value.setText(TriggerActivity.getWeekLoopDisplayValue(this,taskitem.week_repeat,c.get(Calendar.HOUR_OF_DAY),c.get(Calendar.MINUTE)));
 			}
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE:{
 				icon.setImageResource(R.drawable.icon_temperature);
 				att.setText(getResources().getString(R.string.activity_taskgui_condition_battery_temperature_att));
-				value.setText(Triggers.getBatteryTemperatureDisplayValue(this,taskitem.trigger_type,taskitem.battery_temperature));
+				value.setText(TriggerActivity.getBatteryTemperatureDisplayValue(this,taskitem.trigger_type,taskitem.battery_temperature));
 			}
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE:{
 				icon.setImageResource(R.drawable.icon_temperature);
 				att.setText(getResources().getString(R.string.activity_taskgui_condition_battery_temperature_att));
-				value.setText(Triggers.getBatteryTemperatureDisplayValue(this,taskitem.trigger_type,taskitem.battery_temperature));
+				value.setText(TriggerActivity.getBatteryTemperatureDisplayValue(this,taskitem.trigger_type,taskitem.battery_temperature));
 			}
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE:{
 				icon.setImageResource(R.drawable.icon_battery_high);
 				att.setText(getResources().getString(R.string.activity_taskgui_condition_battery_percentage_att));
-				value.setText(Triggers.getBatteryPercentageDisplayValue(this,taskitem.trigger_type,taskitem.battery_percentage));
+				value.setText(TriggerActivity.getBatteryPercentageDisplayValue(this,taskitem.trigger_type,taskitem.battery_percentage));
 			}
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE:{
 				icon.setImageResource(R.drawable.icon_battery_low);
 				att.setText(getResources().getString(R.string.activity_taskgui_condition_battery_percentage_att));
-				value.setText(Triggers.getBatteryPercentageDisplayValue(this,taskitem.trigger_type,taskitem.battery_percentage));
+				value.setText(TriggerActivity.getBatteryPercentageDisplayValue(this,taskitem.trigger_type,taskitem.battery_percentage));
 			}
 			break;
             case TriggerTypeConsts.TRIGGER_TYPE_RECEIVED_BROADCAST:{
                 icon.setImageResource(R.drawable.icon_broadcast);
                 att.setText(getResources().getString(R.string.activity_taskgui_condition_received_broadcast_att));
-                value.setText(Triggers.getBroadcastDisplayValue(taskitem.selectedAction));
+                value.setText(TriggerActivity.getBroadcastDisplayValue(taskitem.selectedAction));
             }
             break;
 			case TriggerTypeConsts.TRIGGER_TYPE_WIFI_CONNECTED:{
 				icon.setImageResource(R.drawable.icon_wifi_connected);
 				att.setText(getResources().getString(R.string.activity_taskgui_condition_wifi_connected));
-				value.setText(Triggers.getWifiConnectionDisplayValue(this,taskitem.wifiIds));
+				value.setText(TriggerActivity.getWifiConnectionDisplayValue(this,taskitem.wifiIds));
 			}
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:{
 				icon.setImageResource(R.drawable.icon_wifi_disconnected);
 				att.setText(getResources().getString(R.string.activity_taskgui_condition_wifi_disconnected));
-				value.setText(Triggers.getWifiConnectionDisplayValue(this,taskitem.wifiIds));
+				value.setText(TriggerActivity.getWifiConnectionDisplayValue(this,taskitem.wifiIds));
 			}
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_SCREEN_ON:{
@@ -685,92 +685,92 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_WIFI_ON:{
 				icon.setImageResource(R.drawable.icon_wifi_on);
-				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				att.setText(TriggerActivity.getWidgetDisplayValue(this,taskitem.trigger_type));
 				value.setText("");
 			}
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF:{
 				icon.setImageResource(R.drawable.icon_wifi_off);
-				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				att.setText(TriggerActivity.getWidgetDisplayValue(this,taskitem.trigger_type));
 				value.setText("");
 			}
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON:{
 				icon.setImageResource(R.drawable.icon_bluetooth_on);
-				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				att.setText(TriggerActivity.getWidgetDisplayValue(this,taskitem.trigger_type));
 				value.setText("");
 			}
 			break;
             case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF:{
                 icon.setImageResource(R.drawable.icon_bluetooth_off);
-                att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+                att.setText(TriggerActivity.getWidgetDisplayValue(this,taskitem.trigger_type));
                 value.setText("");
             }
             break;
 			case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF:{
 				icon.setImageResource(R.drawable.icon_ring_off);
-				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				att.setText(TriggerActivity.getWidgetDisplayValue(this,taskitem.trigger_type));
 				value.setText("");
 			}
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE:{
 				icon.setImageResource(R.drawable.icon_ring_vibrate);
-				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				att.setText(TriggerActivity.getWidgetDisplayValue(this,taskitem.trigger_type));
 				value.setText("");
 			}
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL:{
 				icon.setImageResource(R.drawable.icon_ring_normal);
-				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				att.setText(TriggerActivity.getWidgetDisplayValue(this,taskitem.trigger_type));
 				value.setText("");
 			}
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF:{
 				icon.setImageResource(R.drawable.icon_airplanemode_off);
-				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				att.setText(TriggerActivity.getWidgetDisplayValue(this,taskitem.trigger_type));
 				value.setText("");
 			}
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON:{
 				icon.setImageResource(R.drawable.icon_airplanemode_on);
-				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				att.setText(TriggerActivity.getWidgetDisplayValue(this,taskitem.trigger_type));
 				value.setText("");
 			}
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED:{
 				icon.setImageResource(R.drawable.icon_ap_on);
-				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				att.setText(TriggerActivity.getWidgetDisplayValue(this,taskitem.trigger_type));
 				value.setText("");
 			}
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED:{
 				icon.setImageResource(R.drawable.icon_ap_off);
-				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				att.setText(TriggerActivity.getWidgetDisplayValue(this,taskitem.trigger_type));
 				value.setText("");
 			}
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_NET_ON:{
 				icon.setImageResource(R.drawable.icon_cellular_on);
-				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				att.setText(TriggerActivity.getWidgetDisplayValue(this,taskitem.trigger_type));
 				value.setText("");
 			}
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_NET_OFF:{
 				icon.setImageResource(R.drawable.icon_cellular_off);
-				att.setText(Triggers.getWidgetDisplayValue(this,taskitem.trigger_type));
+				att.setText(TriggerActivity.getWidgetDisplayValue(this,taskitem.trigger_type));
 				value.setText("");
 			}
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED:{
 				icon.setImageResource(R.drawable.icon_app_launch);
 				att.setText(getResources().getString(R.string.activity_trigger_app_opened));
-				value.setText(Triggers.getAppNameDisplayValue(this,taskitem.package_names));
+				value.setText(TriggerActivity.getAppNameDisplayValue(this,taskitem.package_names));
 			}
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED:{
 				icon.setImageResource(R.drawable.icon_app_stop);
 				att.setText(getResources().getString(R.string.activity_trigger_app_closed));
-				value.setText(Triggers.getAppNameDisplayValue(this,taskitem.package_names));
+				value.setText(TriggerActivity.getAppNameDisplayValue(this,taskitem.package_names));
 			}
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_IN:{
@@ -829,8 +829,8 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			break;
 			case R.id.layout_taskgui_trigger:{
 				Intent i=new Intent();
-				i.setClass(this,Triggers.class);
-				i.putExtra(Triggers.EXTRA_TRIGGER_TYPE,taskitem.trigger_type);
+				i.setClass(this,TriggerActivity.class);
+				i.putExtra(TriggerActivity.EXTRA_TRIGGER_TYPE,taskitem.trigger_type);
 				i.putExtra(EXTRA_TITLE_COLOR,taskitem.addition_title_color);
 				String trigger_values[]=new String[1];
 				switch (taskitem.trigger_type){
@@ -880,7 +880,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 					break;
 				}
 				//if(trigger_values==null) break;
-				i.putExtra(Triggers.EXTRA_TRIGGER_VALUES,trigger_values);
+				i.putExtra(TriggerActivity.EXTRA_TRIGGER_VALUES,trigger_values);
 				startActivityForResult(i,REQUEST_CODE_TRIGGERS);
 			}
 			break;
@@ -1323,12 +1323,12 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			case REQUEST_CODE_TRIGGERS:{
 				if(resultCode==RESULT_OK){
 					if(data==null) return;
-					taskitem.trigger_type=data.getIntExtra(Triggers.EXTRA_TRIGGER_TYPE,0);
+					taskitem.trigger_type=data.getIntExtra(TriggerActivity.EXTRA_TRIGGER_TYPE,0);
 					switch (taskitem.trigger_type){
 						default:break;
 						case TriggerTypeConsts.TRIGGER_TYPE_SINGLE:{
 							try{
-								taskitem.time=Long.parseLong(data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[0]);
+								taskitem.time=Long.parseLong(data.getStringArrayExtra(TriggerActivity.EXTRA_TRIGGER_VALUES)[0]);
 							}catch (Exception e){
 								e.printStackTrace();
 								LogUtil.putExceptionLog(this,e);
@@ -1338,7 +1338,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 						break;
 						case TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME:{
 							try {
-								taskitem.interval_milliseconds=Long.parseLong(data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[0]);
+								taskitem.interval_milliseconds=Long.parseLong(data.getStringArrayExtra(TriggerActivity.EXTRA_TRIGGER_VALUES)[0]);
 							}catch (Exception e){
 								e.printStackTrace();
 								LogUtil.putExceptionLog(this,e);
@@ -1347,9 +1347,9 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 						break;
 						case TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK:{
 							try{
-								taskitem.time=Long.parseLong(data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[0]);
-								for(int i=1;i<data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES).length;i++){
-									taskitem.week_repeat[i-1]=Integer.parseInt(data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[i])==1;
+								taskitem.time=Long.parseLong(data.getStringArrayExtra(TriggerActivity.EXTRA_TRIGGER_VALUES)[0]);
+								for(int i = 1; i<data.getStringArrayExtra(TriggerActivity.EXTRA_TRIGGER_VALUES).length; i++){
+									taskitem.week_repeat[i-1]=Integer.parseInt(data.getStringArrayExtra(TriggerActivity.EXTRA_TRIGGER_VALUES)[i])==1;
 								}
 							}catch (Exception e){
 								e.printStackTrace();
@@ -1360,7 +1360,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 						break;
 						case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE: case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE:{
 							try{
-								taskitem.battery_percentage=Integer.parseInt(data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[0]);
+								taskitem.battery_percentage=Integer.parseInt(data.getStringArrayExtra(TriggerActivity.EXTRA_TRIGGER_VALUES)[0]);
 							}catch (Exception e){
 								e.printStackTrace();
 								LogUtil.putExceptionLog(this,e);
@@ -1370,7 +1370,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 						break;
 						case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE: case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE:{
 							try{
-								taskitem.battery_temperature=Integer.parseInt(data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[0]);
+								taskitem.battery_temperature=Integer.parseInt(data.getStringArrayExtra(TriggerActivity.EXTRA_TRIGGER_VALUES)[0]);
 							}catch (Exception e){
 								e.printStackTrace();
 								LogUtil.putExceptionLog(this,e);
@@ -1380,7 +1380,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 						break;
 						case TriggerTypeConsts.TRIGGER_TYPE_RECEIVED_BROADCAST:{
 							try{
-								taskitem.selectedAction=String.valueOf(data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[0]);
+								taskitem.selectedAction=String.valueOf(data.getStringArrayExtra(TriggerActivity.EXTRA_TRIGGER_VALUES)[0]);
 							}catch (Exception e){
 								e.printStackTrace();
 								LogUtil.putExceptionLog(this,e);
@@ -1389,11 +1389,11 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 						break;
 						case TriggerTypeConsts.TRIGGER_TYPE_WIFI_CONNECTED: case TriggerTypeConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:{
 							//Log.d("wifi ssids ",data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[0]);
-							taskitem.wifiIds=data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES)[0];
+							taskitem.wifiIds=data.getStringArrayExtra(TriggerActivity.EXTRA_TRIGGER_VALUES)[0];
 						}
 						break;
 						case TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED: case TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED:{
-							taskitem.package_names=data.getStringArrayExtra(Triggers.EXTRA_TRIGGER_VALUES);
+							taskitem.package_names=data.getStringArrayExtra(TriggerActivity.EXTRA_TRIGGER_VALUES);
 						}
 						break;
 					}

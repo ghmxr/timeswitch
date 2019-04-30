@@ -16,7 +16,7 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.github.ghmxr.timeswitch.activities.Triggers;
+import com.github.ghmxr.timeswitch.activities.TriggerActivity;
 import com.github.ghmxr.timeswitch.adapters.MainListAdapter;
 import com.github.ghmxr.timeswitch.data.v2.AdditionConsts;
 import com.github.ghmxr.timeswitch.data.v2.SQLConsts;
@@ -27,7 +27,7 @@ import com.github.ghmxr.timeswitch.utils.ValueUtils;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import static com.github.ghmxr.timeswitch.activities.Triggers.getWeekLoopDisplayValue;
+import static com.github.ghmxr.timeswitch.activities.TriggerActivity.getWeekLoopDisplayValue;
 
 public class Global {
     public static Handler handler=new Handler(Looper.getMainLooper());
@@ -170,7 +170,7 @@ public class Global {
                         case TriggerTypeConsts.TRIGGER_TYPE_WIFI_CONNECTED: {
                             item.display_trigger_icon_res=R.drawable.icon_wifi_connected;
                             //holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,10);
-                            String ssidinfo = Triggers.getWifiConnectionDisplayValue(context, item.wifiIds);
+                            String ssidinfo = TriggerActivity.getWifiConnectionDisplayValue(context, item.wifiIds);
                             //if(ssidinfo.length()>16) ssidinfo=ssidinfo.substring(0,16)+"...";
                             item.display_trigger=ssidinfo;
                         }
@@ -178,21 +178,21 @@ public class Global {
                         case TriggerTypeConsts.TRIGGER_TYPE_WIFI_DISCONNECTED: {
                             item.display_trigger_icon_res=R.drawable.icon_wifi_disconnected;
                             //holder.trigger_value.setTextSize(TypedValue.COMPLEX_UNIT_SP,10);
-                            String ssidinfo = Triggers.getWifiConnectionDisplayValue(context, item.wifiIds);
+                            String ssidinfo = TriggerActivity.getWifiConnectionDisplayValue(context, item.wifiIds);
                             //if(ssidinfo.length()>16) ssidinfo=ssidinfo.substring(0,16)+"...";
                             item.display_trigger=ssidinfo;
                         }
                         break;
                         case TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED: {
                             item.display_trigger_icon_res=R.drawable.icon_app_launch;
-                            String names = Triggers.getAppNameDisplayValue(context, item.package_names);
+                            String names = TriggerActivity.getAppNameDisplayValue(context, item.package_names);
                             //if(names.length()>16) names=names.substring(0,16);
                             item.display_trigger=names;
                         }
                         break;
                         case TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED: {
                             item.display_trigger_icon_res=R.drawable.icon_app_stop;
-                            String names = Triggers.getAppNameDisplayValue(context, item.package_names);
+                            String names = TriggerActivity.getAppNameDisplayValue(context, item.package_names);
                             //if(names.length()>16) names=names.substring(0,16);
                             item.display_trigger=names;
                         }
@@ -219,67 +219,67 @@ public class Global {
                         break;
                         case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_WIFI_ON: {
                             item.display_trigger_icon_res=R.drawable.icon_wifi_on;
-                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                            item.display_trigger= TriggerActivity.getWidgetDisplayValue(context, item.trigger_type);
                         }
                         break;
                         case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF: {
                             item.display_trigger_icon_res=R.drawable.icon_wifi_off;
-                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                            item.display_trigger= TriggerActivity.getWidgetDisplayValue(context, item.trigger_type);
                         }
                         break;
                         case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON: {
                             item.display_trigger_icon_res=R.drawable.icon_bluetooth_on;
-                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                            item.display_trigger= TriggerActivity.getWidgetDisplayValue(context, item.trigger_type);
                         }
                         break;
                         case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF: {
                             item.display_trigger_icon_res=R.drawable.icon_bluetooth_off;
-                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                            item.display_trigger= TriggerActivity.getWidgetDisplayValue(context, item.trigger_type);
                         }
                         break;
                         case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF: {
                             item.display_trigger_icon_res=R.drawable.icon_ring_off;
-                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                            item.display_trigger= TriggerActivity.getWidgetDisplayValue(context, item.trigger_type);
                         }
                         break;
                         case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE: {
                             item.display_trigger_icon_res=R.drawable.icon_ring_vibrate;
-                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                            item.display_trigger= TriggerActivity.getWidgetDisplayValue(context, item.trigger_type);
                         }
                         break;
                         case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL: {
                             item.display_trigger_icon_res=R.drawable.icon_ring_normal;
-                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                            item.display_trigger= TriggerActivity.getWidgetDisplayValue(context, item.trigger_type);
                         }
                         break;
                         case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON: {
                             item.display_trigger_icon_res=R.drawable.icon_airplanemode_on;
-                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                            item.display_trigger= TriggerActivity.getWidgetDisplayValue(context, item.trigger_type);
                         }
                         break;
                         case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF: {
                             item.display_trigger_icon_res=R.drawable.icon_airplanemode_off;
-                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                            item.display_trigger= TriggerActivity.getWidgetDisplayValue(context, item.trigger_type);
                         }
                         break;
                         case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED: {
                             item.display_trigger_icon_res=R.drawable.icon_ap_on;
-                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                            item.display_trigger= TriggerActivity.getWidgetDisplayValue(context, item.trigger_type);
                         }
                         break;
                         case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED: {
                             item.display_trigger_icon_res=R.drawable.icon_ap_off;
-                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                            item.display_trigger= TriggerActivity.getWidgetDisplayValue(context, item.trigger_type);
                         }
                         break;
                         case TriggerTypeConsts.TRIGGER_TYPE_NET_ON: {
                             item.display_trigger_icon_res=R.drawable.icon_cellular_on;
-                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                            item.display_trigger= TriggerActivity.getWidgetDisplayValue(context, item.trigger_type);
                         }
                         break;
                         case TriggerTypeConsts.TRIGGER_TYPE_NET_OFF: {
                             item.display_trigger_icon_res=R.drawable.icon_cellular_off;
-                            item.display_trigger=Triggers.getWidgetDisplayValue(context, item.trigger_type);
+                            item.display_trigger= TriggerActivity.getWidgetDisplayValue(context, item.trigger_type);
                         }
                         break;
                         case TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_IN: {
@@ -334,6 +334,9 @@ public class Global {
         }
     }
 
+    /**
+     * this receiver is registered by TimeSwitchService
+     */
     public static class NetworkReceiver extends BroadcastReceiver{
 
         public static final ArrayList<WifiConfigInfo> wifiList=new ArrayList<>();

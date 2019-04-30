@@ -46,7 +46,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.Triggers"
+        <activity android:name=".activities.TriggerActivity"
             android:label="@string/activity_triggers"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait">
@@ -126,22 +126,10 @@
 
         <service android:name=".services.AppLaunchingDetectionService"/>
 
-        <receiver android:name=".triggers.timers.CustomAlarmReceiver$AlarmReceiver">
+        <receiver android:name=".triggers.timers.CustomAlarmReceiver$AlarmReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.github.ghmxr.timeswitch.alarm"/>
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name=".Global$HeadsetPlugReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.HEADSET_PLUG"/>
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name=".Global$NetworkReceiver">
-            <intent-filter>
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
-                <action android:name="android.net.wifi.STATE_CHANGE"/>
             </intent-filter>
         </receiver>
 
@@ -151,7 +139,8 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".receivers.SMSReceiver">
+        <receiver android:name=".receivers.SMSReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.github.ghmxr.timeswitch.action.sms_delivered"/>
             </intent-filter>

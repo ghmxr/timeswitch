@@ -41,6 +41,10 @@ public class DialogForAppSelection implements DialogInterface.OnClickListener{
      * @param selected_package_names package:package:package or -1
      */
     public DialogForAppSelection(final Context context,String title, String selected_package_names,String selectable_color,String att){
+        this(context,title,selected_package_names.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL),selectable_color,att);
+    }
+
+    public DialogForAppSelection(final Context context,String title,String[] selected_package_names,String selectable_color,String att){
         dialog=new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setView(LayoutInflater.from(context).inflate(R.layout.layout_dialog_app_select,null))
@@ -49,7 +53,7 @@ public class DialogForAppSelection implements DialogInterface.OnClickListener{
                 .setNeutralButton(context.getResources().getString(R.string.action_deselectall),null)
                 .create();
         this.context=context;
-        this.selected_package_names=selected_package_names.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+        this.selected_package_names=selected_package_names;
         this.selectable_color=selectable_color;
         this.att=att;
     }
@@ -90,6 +94,7 @@ public class DialogForAppSelection implements DialogInterface.OnClickListener{
                                     AppListAdapter adapter=(AppListAdapter)((RecyclerView)dialog.findViewById(R.id.dialog_app_recyclerview)).getAdapter();
                                     if(adapter==null) return;
                                     callBack.onDialogConfirmed(adapter.getSelectedPackageNames());
+                                    dialog.cancel();
                                 }
                             }
                         });

@@ -163,15 +163,15 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 				}
 				cursor.close();
 			}
-			case 2:{
-				/*String sql_lookup_table_names="select name from "+ "sqlite_master"+" where type='table' order by name";
+			/*case 2:{
+				String sql_lookup_table_names="select name from "+ "sqlite_master"+" where type='table' order by name";
 				Cursor cursor=db.rawQuery(sql_lookup_table_names,null);
 				while (cursor.moveToNext()){
 					String table_name=cursor.getString(0);
-					db.execSQL("alter table "+table_name +"");
+					db.execSQL("alter table "+table_name +"alter column "+SQLConsts.SQL_TASK_COLUMN_ID+" integer primary key not null	");
 				}
-				cursor.close();*/
-			}
+				cursor.close();
+			}*/
 
 		}
 	}
