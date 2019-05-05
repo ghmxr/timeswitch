@@ -1,6 +1,7 @@
 package com.github.ghmxr.timeswitch;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
 import com.github.ghmxr.timeswitch.data.v2.ExceptionConsts;
@@ -17,9 +18,9 @@ import java.util.Arrays;
 public class TaskItem implements Comparable<TaskItem>{
 	
 	/**
-	 * 控制排序的静态变量值。
+	 * 控制排序的变量值。
 	 */
-	public static int SortConfig=0;
+	public int order=0;
 
 	/**
 	 * 任务id
@@ -274,9 +275,9 @@ public class TaskItem implements Comparable<TaskItem>{
 	}
 
 	@Override
-	public int compareTo(TaskItem o) {
+	public int compareTo(@NonNull TaskItem o) {
 		// TODO Auto-generated method stub
-		return 0;
+		return this.order<o.order?-1:1;
 	}
 
 }

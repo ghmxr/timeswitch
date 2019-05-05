@@ -5,9 +5,11 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Handler;
@@ -65,6 +67,14 @@ public class TimeSwitchService extends Service {
     private final BatteryReceiver batteryReceiver=new BatteryReceiver();
     private final Global.NetworkReceiver networkReceiver=new Global.NetworkReceiver();
     private final Global.HeadsetPlugReceiver headsetPlugReceiver=new Global.HeadsetPlugReceiver();
+
+    private final BroadcastReceiver log_wifi_receiver=new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent==null||intent.getAction()==null||!intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) return;
+
+        }
+    };
 
     @Override
     public void onCreate(){

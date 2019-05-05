@@ -1,4 +1,4 @@
-package com.github.ghmxr.timeswitch.ui;
+package com.github.ghmxr.timeswitch.ui.bottomdialogs;
 
 import android.content.Context;
 import android.os.Build;
@@ -8,13 +8,16 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.github.ghmxr.timeswitch.R;
+import com.github.ghmxr.timeswitch.ui.CustomTimePicker;
+import com.github.ghmxr.timeswitch.ui.WheelView;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialog;
 
 import java.util.Arrays;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
  */
-public class BottomDialogForInterval implements CustomTimePicker.OnTimeChangedListener, View.OnClickListener,WheelView.OnWheelViewListener{
+public class BottomDialogForInterval implements TimePicker.OnTimeChangedListener, View.OnClickListener,WheelView.OnWheelViewListener {
     private Context context;
     private BottomDialog bottomDialog;
     private CustomTimePicker timePicker;

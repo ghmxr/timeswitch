@@ -1,4 +1,4 @@
-package com.github.ghmxr.timeswitch.ui;
+package com.github.ghmxr.timeswitch.ui.bottomdialogs;
 
 import android.content.Context;
 import android.media.AudioManager;
@@ -88,6 +88,7 @@ public class BottomDialogForVolume extends BottomDialog implements View.OnClickL
                 }
             }
             break;
+            case R.id.dialog_volume_button_cancel:cancel();break;
         }
     }
 

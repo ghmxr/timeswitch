@@ -1,8 +1,7 @@
-package com.github.ghmxr.timeswitch.ui;
+package com.github.ghmxr.timeswitch.ui.bottomdialogs;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;

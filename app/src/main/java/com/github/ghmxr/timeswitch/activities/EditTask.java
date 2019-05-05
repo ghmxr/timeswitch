@@ -100,14 +100,23 @@ public class EditTask extends TaskGui {
                 return false;
             }
             SQLiteDatabase database= MySQLiteOpenHelper.getInstance(this).getWritableDatabase();
-            if(database.delete(MySQLiteOpenHelper.getCurrentTableName(this),SQLConsts.SQL_TASK_COLUMN_ID +"="+taskitem.id,null)==1) {
+            /*if(database.delete(MySQLiteOpenHelper.getCurrentTableName(this),SQLConsts.SQL_TASK_COLUMN_ID +"="+taskitem.id,null)==1) {
                 setResult(RESULT_OK);
                 this.finish();
             }
             else {
                 Toast.makeText(this, "Task does not exist", Toast.LENGTH_SHORT).show();
             }
-            database.close();
+            database.close();*/
+
+
+            try{
+                MySQLiteOpenHelper.deleteRow(database,MySQLiteOpenHelper.getCurrentTableName(this),taskitem.id);
+                setResult(RESULT_OK);
+                finish();
+            }catch (Exception e){
+                Toast.makeText(this,e.toString(),Toast.LENGTH_SHORT).show();
+            }
         }
 
         return super.onOptionsItemSelected(item);

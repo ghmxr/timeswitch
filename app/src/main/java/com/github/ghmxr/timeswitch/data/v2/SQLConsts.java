@@ -13,7 +13,7 @@ public class SQLConsts {
 	/**
 	 * 数据库版本
 	 */
-	public static final int SQL_DATABASE_VERSION							= 2;
+	public static final int SQL_DATABASE_VERSION							= 3;
 	
 	/**
 	 * 数据库默认任务列表的table名称
@@ -87,6 +87,8 @@ public class SQLConsts {
 	public static final String SQL_TASK_COLUMN_NOTIFICATION_MESSAGE			="notification_message";
 
 	public static final String SQL_TASK_COLUMN_TOAST						="toast";
+
+	public static final String SQL_TASK_COLUMN_ORDER						="task_order";
 
     /**
      * 获取Json File 对应的应用的VersionCode

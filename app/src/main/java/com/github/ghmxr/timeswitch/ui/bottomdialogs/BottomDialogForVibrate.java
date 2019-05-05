@@ -1,4 +1,4 @@
-package com.github.ghmxr.timeswitch.ui;
+package com.github.ghmxr.timeswitch.ui.bottomdialogs;
 
 import android.content.Context;
 import android.view.View;
@@ -7,8 +7,8 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.github.ghmxr.timeswitch.R;
-import com.github.ghmxr.timeswitch.data.v2.ExceptionConsts;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
+import com.github.ghmxr.timeswitch.ui.WheelView;
 
 import java.util.Arrays;
 

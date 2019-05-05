@@ -10,6 +10,7 @@ import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 
 /**
+ * @deprecated
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
  */
 public class LogUtil {

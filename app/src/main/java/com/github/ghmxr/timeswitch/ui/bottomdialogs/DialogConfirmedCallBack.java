@@ -1,4 +1,4 @@
-package com.github.ghmxr.timeswitch.ui;
+package com.github.ghmxr.timeswitch.ui.bottomdialogs;
 
 public interface DialogConfirmedCallBack {
     /**

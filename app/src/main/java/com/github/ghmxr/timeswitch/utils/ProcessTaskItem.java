@@ -1696,7 +1696,7 @@ public class ProcessTaskItem {
      * @param id ÈÎÎñid
      */
     public static void setTaskEnabled(Context context,int id,boolean enabled){
-        if(TimeSwitchService.list==null) return;
+        if(context==null||!(context instanceof TimeSwitchService)) return;
         int position=getPosition(id);
         if(position<0||position>=TimeSwitchService.list.size()) return;
         try{

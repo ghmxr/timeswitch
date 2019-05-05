@@ -45,10 +45,10 @@ import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.ui.ActionDisplayValue;
-import com.github.ghmxr.timeswitch.ui.BottomDialogForBattery;
-import com.github.ghmxr.timeswitch.ui.BottomDialogForInterval;
-import com.github.ghmxr.timeswitch.ui.DialogConfirmedCallBack;
-import com.github.ghmxr.timeswitch.ui.DialogForAppSelection;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBattery;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForInterval;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.DialogConfirmedCallBack;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.DialogForAppSelection;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 

@@ -2,7 +2,6 @@ package com.github.ghmxr.timeswitch.data.v2;
 
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.TaskItem;
-import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import android.app.Activity;
@@ -12,7 +11,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -41,6 +39,7 @@ import java.util.List;
 public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 
 	private Context context;
+	//private static MySQLiteOpenHelper helper;
 	
 	private MySQLiteOpenHelper(Context context){
 		super(context, SQLConsts.SQL_DATABASE_NAME,null, SQLConsts.SQL_DATABASE_VERSION);
@@ -51,6 +50,13 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 	 * get an instance
 	 */
 	public static MySQLiteOpenHelper getInstance(Context context){
+		/*if(helper==null){
+			synchronized (MySQLiteOpenHelper.class){
+				if(helper==null){
+					helper=new MySQLiteOpenHelper(context.getApplicationContext());
+				}
+			}
+		}*/
 		return new MySQLiteOpenHelper(context.getApplicationContext());
 	}
 
@@ -87,7 +93,8 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 				+SQLConsts.SQL_TASK_COLUMN_NOTIFICATION_MESSAGE+" text ,"
 				+SQLConsts.SQL_TASK_COLUMN_TOAST+" text ,"
 				+SQLConsts.SQL_TASK_COLUMN_SMS_SEND_PHONE_NUMBERS+" text ,"
-				+SQLConsts.SQL_TASK_COLUMN_SMS_SEND_MESSAGE+" text);";
+				+SQLConsts.SQL_TASK_COLUMN_SMS_SEND_MESSAGE+" text ,"
+				+ SQLConsts.SQL_TASK_COLUMN_ORDER+" integer not null default 0);";
 	}
 
 	@Override
@@ -97,81 +104,27 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 		if(newVersion==oldVersion) return;
 		switch (oldVersion){
 			default:break;
-			case 0: case 1:{
-				String sql_lookup_table_names="select name from "+ "sqlite_master"+" where type='table' order by name";
-				Cursor cursor=db.rawQuery(sql_lookup_table_names,null);
-				while (cursor.moveToNext()){
-					String tablename=cursor.getString(0);
-					if(tablename.contains(SQLConsts.SQL_DATABASE_TABLE_NAME_FONT)){
-						try{
-							db.execSQL("alter table "+tablename+" add column "+SQLConsts.SQL_TASK_COLUMN_URI_RING_NOTIFICATION+" text;");
-						}catch (SQLiteException se){
-							se.printStackTrace();
-							LogUtil.putExceptionLog(context,se);
-						}
-
-						try{
-							db.execSQL("alter table "+tablename+" add column "+SQLConsts.SQL_TASK_COLUMN_URI_RING_CALL +" text;");
-						}catch (SQLiteException se){
-							se.printStackTrace();
-							LogUtil.putExceptionLog(context,se);
-						}
-
-						try{
-							db.execSQL("alter table "+tablename+" add column "+SQLConsts.SQL_TASK_COLUMN_URI_WALLPAPER_DESKTOP+" text;");
-						}catch (SQLiteException se){
-							se.printStackTrace();
-							LogUtil.putExceptionLog(context,se);
-						}
-
-						try{
-							db.execSQL("alter table "+tablename+" add column "+SQLConsts.SQL_TASK_COLUMN_NOTIFICATION_TITLE+" text;");
-						}catch (SQLiteException se){
-							se.printStackTrace();
-							LogUtil.putExceptionLog(context,se);
-						}
-
-						try{
-							db.execSQL("alter table "+tablename+" add column "+SQLConsts.SQL_TASK_COLUMN_NOTIFICATION_MESSAGE+" text;");
-						}catch (SQLiteException se){
-							se.printStackTrace();
-							LogUtil.putExceptionLog(context,se);
-						}
-
-						try{
-							db.execSQL("alter table "+tablename+" add column "+SQLConsts.SQL_TASK_COLUMN_TOAST+" text;");
-						}catch (SQLiteException se){
-							se.printStackTrace();
-							LogUtil.putExceptionLog(context,se);
-						}
-
-						try{
-							db.execSQL("alter table "+tablename+" add column "+SQLConsts.SQL_TASK_COLUMN_SMS_SEND_PHONE_NUMBERS+" text;");
-						}catch (SQLiteException se){
-							se.printStackTrace();
-							LogUtil.putExceptionLog(context,se);
-						}
-
-						try{
-							db.execSQL("alter table "+tablename+" add column "+SQLConsts.SQL_TASK_COLUMN_SMS_SEND_MESSAGE+" text;");
-						}catch (SQLiteException se){
-							se.printStackTrace();
-							LogUtil.putExceptionLog(context,se);
-						}
-
-					}
-				}
-				cursor.close();
-			}
-			/*case 2:{
+			case 2:{   //添加order字段，并将关键字id值从0开始排列，id值初始等于order
 				String sql_lookup_table_names="select name from "+ "sqlite_master"+" where type='table' order by name";
 				Cursor cursor=db.rawQuery(sql_lookup_table_names,null);
 				while (cursor.moveToNext()){
 					String table_name=cursor.getString(0);
-					db.execSQL("alter table "+table_name +"alter column "+SQLConsts.SQL_TASK_COLUMN_ID+" integer primary key not null	");
+					if(table_name.contains(SQLConsts.SQL_DATABASE_TABLE_NAME_FONT)) {
+						db.execSQL("alter table "+table_name +" add column "+SQLConsts.SQL_TASK_COLUMN_ORDER+" integer not null default 0");
+						Cursor cursor1=db.rawQuery("select * from "+table_name,null);
+						int order=0;
+						while (cursor1.moveToNext()){
+							final int id_this_row=cursor1.getInt(cursor1.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ID));
+							ContentValues values=new ContentValues();
+							if(id_this_row!=order)values.put(SQLConsts.SQL_TASK_COLUMN_ID,order);
+							values.put(SQLConsts.SQL_TASK_COLUMN_ORDER,order++);
+							db.update(table_name,values,SQLConsts.SQL_TASK_COLUMN_ID+"="+id_this_row,null);
+						}
+						cursor1.close();
+					}
 				}
 				cursor.close();
-			}*/
+			}
 
 		}
 	}
@@ -297,7 +250,18 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 		additions[AdditionConsts.ADDITION_TITLE_FOLDED_VALUE_LOCALE]=taskitem.addition_isFolded?String.valueOf(0):String.valueOf(-1);
 		values.put(SQLConsts.SQL_TASK_COLUMN_ADDITIONS,ValueUtils.stringArray2String(additions));
 		long result;
-		if(id==null) result= db.insert(MySQLiteOpenHelper.getCurrentTableName(activity),null,values);
+		if(id==null) {
+			try{
+				int id_insert=getInsertId(db,getCurrentTableName(activity));
+				values.put(SQLConsts.SQL_TASK_COLUMN_ID,id_insert);
+				values.put(SQLConsts.SQL_TASK_COLUMN_ORDER,id_insert);
+			}catch (Exception e){
+				e.printStackTrace();
+				Snackbar.make(activity.findViewById(android.R.id.content),e.toString(),Snackbar.LENGTH_SHORT).show();
+				return -1;
+			}
+			result= db.insert(MySQLiteOpenHelper.getCurrentTableName(activity),null,values);
+		}
 		else{
 			Log.d("UPDATE","id is "+id);
 			result= db.update(MySQLiteOpenHelper.getCurrentTableName(activity),values,SQLConsts.SQL_TASK_COLUMN_ID +"="+id,null);
@@ -306,6 +270,33 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 		return result;
 	}
 
+	public static int getInsertId(SQLiteDatabase db,String table_name) throws Exception{
+		Cursor cursor=db.rawQuery("select * from "+table_name,null);
+		int task_count=cursor.getCount();
+		cursor.close();
+		if(task_count>=Integer.MAX_VALUE) throw new Exception("The task num has reached the integer max value");
+		return task_count;
+	}
+
+	/**
+	 * 删除指定表的指定行
+	 * @param db 数据库实例
+	 * @param table_name 要操作的数据表
+	 * @param id 要删除的行
+	 */
+	public static void deleteRow(final SQLiteDatabase db,final String table_name,final int id) {
+		db.delete(table_name,SQLConsts.SQL_TASK_COLUMN_ID+" = "+id,null);
+		Cursor cursor=db.rawQuery("select * from "+table_name+" where "+SQLConsts.SQL_TASK_COLUMN_ID+" >= "+id,null);
+
+		while (cursor.moveToNext()){
+			int id_this_row=cursor.getInt(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ID));
+			ContentValues contentValues=new ContentValues();
+			contentValues.put(SQLConsts.SQL_TASK_COLUMN_ID,id_this_row-1);
+			db.update(table_name,contentValues,SQLConsts.SQL_TASK_COLUMN_ID+" = "+id_this_row,null);
+
+		}
+		cursor.close();
+	}
 	public static class SqlTableItem{
 		public String table_name="";
 		public String table_display_name="";
@@ -342,6 +333,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 			jsonObject.put(SQLConsts.SQL_TASK_COLUMN_SMS_SEND_PHONE_NUMBERS,cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_SMS_SEND_PHONE_NUMBERS)));
 			jsonObject.put(SQLConsts.SQL_TASK_COLUMN_SMS_SEND_MESSAGE,cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_SMS_SEND_MESSAGE)));
 			jsonObject.put(SQLConsts.SQL_TASK_COLUMN_ADDITIONS,cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ADDITIONS)));
+			jsonObject.put(SQLConsts.SQL_TASK_COLUMN_ORDER,cursor.getInt(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ID)));
 			jsonArray.put(jsonObject);
 		}
 		cursor.close();
@@ -438,6 +430,12 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 			contentValues.put(SQLConsts.SQL_TASK_COLUMN_SMS_SEND_PHONE_NUMBERS,jsonObject.getString(SQLConsts.SQL_TASK_COLUMN_SMS_SEND_PHONE_NUMBERS));
 			contentValues.put(SQLConsts.SQL_TASK_COLUMN_SMS_SEND_MESSAGE,jsonObject.getString(SQLConsts.SQL_TASK_COLUMN_SMS_SEND_MESSAGE));
 			contentValues.put(SQLConsts.SQL_TASK_COLUMN_ADDITIONS,jsonObject.getString(SQLConsts.SQL_TASK_COLUMN_ADDITIONS));
+			try{
+				contentValues.put(SQLConsts.SQL_TASK_COLUMN_ORDER,jsonObject.getInt(SQLConsts.SQL_TASK_COLUMN_ORDER));
+			}catch (Exception e){
+				e.printStackTrace();
+				contentValues.put(SQLConsts.SQL_TASK_COLUMN_ORDER,j);
+			}
 			database.insert(newTableName,null,contentValues);
 		}
 	}

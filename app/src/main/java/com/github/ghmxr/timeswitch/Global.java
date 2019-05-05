@@ -1,6 +1,7 @@
 package com.github.ghmxr.timeswitch;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -26,6 +27,8 @@ import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 
 import static com.github.ghmxr.timeswitch.activities.TriggerActivity.getWeekLoopDisplayValue;
 
@@ -47,6 +50,7 @@ public class Global {
                     TaskItem item=new TaskItem();
 
                     item.id = cursor.getInt(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ID));
+                    item.order=cursor.getInt(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ORDER));
                     item.name = cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_NAME));
                     item.isenabled=(cursor.getInt(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ENABLED))==1);
                     item.trigger_type = cursor.getInt(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_TYPE));
@@ -304,11 +308,31 @@ public class Global {
             }
             cursor.close();
             database.close();
+            Collections.sort(list);
             return list;
         }catch (Exception e){
             e.printStackTrace();
         }
         return new ArrayList<>();
+    }
+
+    /**
+     * 根据list中各item的位置刷新item中的order并更新至数据库
+     * @param list 已排好序的list
+     */
+    public static void refreshTaskItemListOrders(Context context,List<TaskItem> list){
+        if(list==null) return;
+        for(int i=0;i<list.size();i++){
+            list.get(i).order=i;
+        }
+        SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
+        final String table_name=MySQLiteOpenHelper.getCurrentTableName(context);
+        for(TaskItem item:list){
+            ContentValues contentValues=new ContentValues();
+            contentValues.put(SQLConsts.SQL_TASK_COLUMN_ORDER,item.order);
+            database.update(table_name,contentValues,SQLConsts.SQL_TASK_COLUMN_ID+"="+item.id,null);
+        }
+        database.close();
     }
 
     public static class BatteryReceiver extends BroadcastReceiver{

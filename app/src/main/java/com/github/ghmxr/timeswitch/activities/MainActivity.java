@@ -1,9 +1,8 @@
 package com.github.ghmxr.timeswitch.activities;
 
+import com.github.ghmxr.timeswitch.Global;
 import com.github.ghmxr.timeswitch.R;
-import com.github.ghmxr.timeswitch.adapters.MainListAdapter;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
-import com.github.ghmxr.timeswitch.data.v2.SQLConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
@@ -17,7 +16,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.BatteryManager;
 import android.os.Build;
@@ -26,7 +24,6 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.transition.TransitionManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -39,11 +36,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -56,17 +51,10 @@ import java.util.List;
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
  */
-public class MainActivity extends BaseActivity implements AdapterView.OnItemClickListener,AdapterView.OnItemLongClickListener{
-    /**
-     * @deprecated
-     */
-    ListView listview;
+public class MainActivity extends BaseActivity {
+
     FloatingActionButton fab;
 
-    /**
-     * @deprecated
-     */
-	public MainListAdapter listview_adapter;
 	SwipeRefreshLayout swrlayout;
 	RecyclerView recyclerView;
 
@@ -112,7 +100,6 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
 		setContentView(R.layout.layout_main);
         SharedPreferences settings=getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE);
         Toolbar toolbar =findViewById(R.id.toolbar);
-        listview=findViewById(R.id.main_listview);
         swrlayout=findViewById(R.id.main_swrlayout);
         recyclerView=(RecyclerView)findViewById(R.id.main_recyclerview);
         findViewById(R.id.main_indicator).setVisibility(settings.getBoolean(PublicConsts.PREFERENCES_MAINPAGE_INDICATOR,PublicConsts.PREFERENCES_MAINPAGE_INDICATOR_DEFAULT)?View.VISIBLE:View.GONE);
@@ -134,6 +121,10 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         swrlayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                if(isMultiSelectMode) {
+                    swrlayout.setRefreshing(false);
+                    return;
+                }
                startService2Refresh();
             }
         });
@@ -189,8 +180,8 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             }
         }else if(requestCode==REQUEST_CODE_ACTIVITY_PROFILE){
             if(resultCode==RESULT_OK){
-                listview_adapter =null;
-                listview.setAdapter(null);
+                //listview_adapter =null;
+                //listview.setAdapter(null);
                 startService2Refresh();
             }
         }else if(requestCode==REQUEST_CODE_ACTIVITY_SETTINGS){
@@ -201,39 +192,11 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         }
     }
 
-
-    private void checkIfHasServiceInstanceAndRun(){
-        if(TimeSwitchService.service==null){
-            startService2Refresh();
-        }else{
-            sendEmptyMessage(MESSAGE_GETLIST_COMPLETE);
-        }
-    }
-
     public void startService2Refresh(){
         swrlayout.setRefreshing(true);
         ((ListAdapter)recyclerView.getAdapter()).removeTouchHelper();
         recyclerView.setAdapter(null);
         TimeSwitchService.startService(this);
-    }
-
-
-    /**
-     * 主界面任务列表 listview 的Item点击回调
-     */
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        if(!isMultiSelectMode) {
-            startEditTaskActivity(i);
-        }else{
-            listview_adapter.onMultiSelectModeItemClicked(i);
-            /*boolean ifHasSelectedItem=false;
-            boolean isSelected [] =listview_adapter.getIsSelected();
-            for(int j=0;j<isSelected.length;j++){
-                if(isSelected[j]) ifHasSelectedItem=true;
-            }
-            this.menu.getItem(MENU_DELETE).setEnabled(ifHasSelectedItem);*/
-        }
     }
 
     private void startEditTaskActivity(int position){
@@ -242,13 +205,6 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         intent.setClass(this, EditTask.class);
         startActivityForResult(intent,REQUEST_CODE_ACTIVITY_EDIT);
     }
-
-    @Override
-    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-        //openMultiSelectMode(i);
-        return true;
-    }
-
 
     public void processMessage(Message msg) {
         switch (msg.what){
@@ -485,14 +441,12 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                     @Override
                     public void run() {
                         try{
-                            SQLiteDatabase database=MySQLiteOpenHelper.getInstance(MainActivity.this).getWritableDatabase();
-                            boolean isSelected[]=MainActivity.this.listview_adapter.getIsSelected();
+                            boolean isSelected[]=((ListAdapter)recyclerView.getAdapter()).getIsSelected();
                             for(int i=0;i<isSelected.length;i++){
                                 if(isSelected[i]){
-                                    int key=TimeSwitchService.list.get(i).id;
-                                    TimeSwitchService.list.get(i).cancelTask();
-                                    //list.remove(i);
-                                    database.delete(MySQLiteOpenHelper.getCurrentTableName(MainActivity.this),SQLConsts.SQL_TASK_COLUMN_ID +"="+key,null);
+                                    TaskItem item=((ListAdapter)recyclerView.getAdapter()).getList().get(i);
+                                    item.cancelTask();
+                                    MySQLiteOpenHelper.deleteRow(MySQLiteOpenHelper.getInstance(MainActivity.this).getWritableDatabase(),MySQLiteOpenHelper.getCurrentTableName(MainActivity.this),item.id);
                                 }
                             }
                             sendEmptyMessage(MESSAGE_DELETE_SELECTED_ITEMS_COMPLETE);
@@ -516,33 +470,35 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             }
             break;
             case R.id.action_fold:{
+                if(isMultiSelectMode) return false;
                 try{
                     menu.getItem(MENU_FOLD).setEnabled(false);
-                    recyclerView.setAdapter(null);
                     swrlayout.setRefreshing(true);
+                    final List<TaskItem> list=((ListAdapter)recyclerView.getAdapter()).getList();
+                    recyclerView.setAdapter(null);
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
                             try{
                                 boolean isAllFolded=true;
-                                for(TaskItem i:TimeSwitchService.list){
+                                for(TaskItem i:list){
                                     if(!i.addition_isFolded) {
                                         isAllFolded=false;
                                         break;
                                     }
                                 }
                                 if(isAllFolded){
-                                    for(int i=0;i<TimeSwitchService.list.size();i++){
+                                    for(int i=0;i<list.size();i++){
                                         //TimeSwitchService.list.get(i).addition_isFolded=false;
                                         try{
-                                            ProcessTaskItem.setTaskFolded(MainActivity.this, TimeSwitchService.list.get(i).id,false);
+                                            ProcessTaskItem.setTaskFolded(MainActivity.this, list.get(i).id,false);
                                         }catch (Exception e){e.printStackTrace();}
                                     }
                                 }else{
-                                    for(int i=0;i<TimeSwitchService.list.size();i++){
+                                    for(int i=0;i<list.size();i++){
                                         //TimeSwitchService.list.get(i).addition_isFolded=true;
                                         try{
-                                            ProcessTaskItem.setTaskFolded(MainActivity.this, TimeSwitchService.list.get(i).id,true);
+                                            ProcessTaskItem.setTaskFolded(MainActivity.this, list.get(i).id,true);
                                         } catch (Exception e){e.printStackTrace();}
                                     }
                                 }
@@ -622,7 +578,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                        holder.task_area.setVisibility(View.VISIBLE);
                        holder.title_arrow.setRotation(90);
                        try{
-                           ProcessTaskItem.setTaskFolded(MainActivity.this,TimeSwitchService.list.get(holder.getAdapterPosition()).id,false);
+                           ProcessTaskItem.setTaskFolded(MainActivity.this,list.get(holder.getAdapterPosition()).id,false);
                        }catch (Exception e){e.printStackTrace();}
                    }else{
                        //TransitionManager.beginDelayedTransition(((ViewGroup)recyclerView));
@@ -630,7 +586,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                        holder.task_area.setVisibility(View.GONE);
                        holder.title_arrow.setRotation(0);
                        try{
-                           ProcessTaskItem.setTaskFolded(MainActivity.this,TimeSwitchService.list.get(holder.getAdapterPosition()).id,true);
+                           ProcessTaskItem.setTaskFolded(MainActivity.this,list.get(holder.getAdapterPosition()).id,true);
                        }catch (Exception e){e.printStackTrace();}
                    }
                }
@@ -768,6 +724,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                         Collections.swap(list, i, i - 1);
                     }
                 }
+                Global.refreshTaskItemListOrders(MainActivity.this,list);
                 recyclerView.getAdapter().notifyItemMoved(fromPosition, toPosition);
                 return true;
             }
@@ -777,7 +734,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
 
             }
         } );
-
+        public List<TaskItem>getList(){return list;}
     }
 
    private static class ViewHolder extends RecyclerView.ViewHolder{

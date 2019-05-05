@@ -1,4 +1,4 @@
-package com.github.ghmxr.timeswitch.ui;
+package com.github.ghmxr.timeswitch.ui.bottomdialogs;
 
 import android.content.Context;
 import android.os.Build;
@@ -10,6 +10,8 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.github.ghmxr.timeswitch.R;
+import com.github.ghmxr.timeswitch.ui.CustomTimePicker;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialog;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 /**

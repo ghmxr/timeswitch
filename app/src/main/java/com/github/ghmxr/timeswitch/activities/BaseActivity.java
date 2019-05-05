@@ -29,15 +29,16 @@ import com.github.ghmxr.timeswitch.utils.ValueUtils;
  */
 public abstract class BaseActivity extends AppCompatActivity {
 
-	public static LinkedList<BaseActivity> queue=new LinkedList<>();
+	public static LinkedList<BaseActivity> queue;
 	public static MyHandler myHandler;
 	public static final String EXTRA_TITLE_COLOR="color_title";
 	//public String color_title="#3F51B5";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		if(queue==null) queue=new LinkedList<>();
 		super.onCreate(savedInstanceState);
-		if(queue.size()<=0) myHandler=new MyHandler();
+		if(queue.size()==0) myHandler=new MyHandler();
 		if(!queue.contains(this)) queue.add(this);
 		Log.d("BaseActivity","onCreate Method called and queue size is "+queue.size());
 	}
@@ -130,13 +131,17 @@ public abstract class BaseActivity extends AppCompatActivity {
 	public void finish(){
 		super.finish();
 		if(queue.contains(this)) queue.remove(this);
-		if(queue.size()<=0) myHandler=null;
+		if(queue.size()==0) {
+			myHandler=null;
+			queue=null;
+		}
+
 	}
 
 	@Override
 	public void onDestroy(){
 		super.onDestroy();
-		if(queue.size()==0) {
+		if(queue==null||queue.size()==0) {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -151,7 +156,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			try{
-				if(queue.size()>0) queue.getLast().processMessage(msg);
+				if(queue!=null&&queue.size()>0) queue.getLast().processMessage(msg);
 			}catch (Exception e){
 				e.printStackTrace();
 			}

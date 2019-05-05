@@ -20,8 +20,8 @@ import android.widget.Toast;
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.data.v2.ExceptionConsts;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
-import com.github.ghmxr.timeswitch.ui.BottomDialogForBattery;
-import com.github.ghmxr.timeswitch.ui.BottomDialogForPeriod;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBattery;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForPeriod;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
