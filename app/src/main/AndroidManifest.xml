@@ -46,81 +46,69 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".activities.TriggerActivity"
             android:label="@string/activity_triggers"
             android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"/>
 
-        </activity>
         <activity
             android:name=".activities.Exceptions"
             android:label="@string/activity_taskgui_exceptions_title"
             android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".activities.ActionActivity"
             android:label="@string/activity_taskgui_actions_title"
             android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".activities.AddTask"
             android:label="@string/activity_add_title"
             android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".activities.EditTask"
             android:label="@string/activity_edit_title"
             android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"/>
 
         <activity android:name=".activities.ActionOfChangingRingtones"
             android:label="@string/activity_ring_selection_title"
             android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
-
-        </activity>
+            android:screenOrientation="portrait"/>
 
         <activity android:name=".activities.SmsActivity"
             android:label="@string/activity_taskgui_sms_title"
             android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
-
-        </activity>
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".activities.Settings"
             android:label="@string/activity_settings_title"
             android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".activities.Log"
             android:label="@string/activity_log"
             android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".activities.Profile"
             android:label="@string/action_profile"
             android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".activities.About"
             android:label="@string/title_activity_about"
             android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"/>
 
         <service android:name=".services.TimeSwitchService"/>
 

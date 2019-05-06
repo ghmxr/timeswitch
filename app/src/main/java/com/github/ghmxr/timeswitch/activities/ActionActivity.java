@@ -4,11 +4,8 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,7 +13,6 @@ import android.os.Message;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,6 +40,7 @@ import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogWith3Selections;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.DialogConfirmedCallBack;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.DialogForAppSelection;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.DialogForTaskSelection;
+import com.github.ghmxr.timeswitch.utils.EnvironmentUtils;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import java.util.Arrays;
@@ -202,54 +199,11 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
         }
     }
 
-    @TargetApi(23)
-    private void showRequestWriteSettingsPermissionSnackbar(){
-        Snackbar snackbar=Snackbar.make(findViewById(R.id.layout_actions_root),getResources().getString(R.string.permission_request_write_settings_message),Snackbar.LENGTH_SHORT);
-        snackbar.setAction(getResources().getString(R.string.permission_grant_action_att), new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(android.provider.Settings.ACTION_MANAGE_WRITE_SETTINGS));
-                Toast.makeText(ActionActivity.this,getResources().getString(R.string.permission_request_write_settings_toast),Toast.LENGTH_SHORT).show();
-            }
-        });
-        snackbar.show();
-    }
-
-    @TargetApi(23)
-    private void showRequestAccessNotificationPolicyPermissionSnackbar(){
-        Snackbar snackbar=Snackbar.make(findViewById(R.id.layout_actions_root),getResources().getString(R.string.permission_request_notification_policy_message),Snackbar.LENGTH_SHORT);
-        snackbar.setAction(getResources().getString(R.string.permission_grant_action_att), new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS));
-                Toast.makeText(ActionActivity.this,getResources().getString(R.string.permission_request_notification_policy_toast),Toast.LENGTH_SHORT).show();
-            }
-        });
-        snackbar.show();
-    }
-
-
     @Override
     public void onClick(View view) {
-        //isItemClicked=true;
         switch (view.getId()){
            default:break;
             case R.id.actions_wifi:{
-                /*if(PermissionChecker.checkSelfPermission(this,Manifest.permission.CHANGE_WIFI_STATE)!=PermissionChecker.PERMISSION_GRANTED){
-                    Snackbar snackbar=Snackbar.make(findViewById(R.id.layout_actions_root),"",Snackbar.LENGTH_SHORT);
-                    snackbar.setAction(getResources().getString(R.string.permission_grant_action_att), new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent appdetail = new Intent();
-                            appdetail.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                            appdetail.setData(Uri.fromParts("package", getApplication().getPackageName(), null));
-                            startActivity(appdetail);
-                        }
-                    });
-                    snackbar.show();
-                    return;
-                }*/
-                //showNormalBottomDialog(view.getId());
                 BottomDialogWith3Selections dialog=new BottomDialogWith3Selections(this,R.drawable.icon_wifi_on
                         ,R.drawable.icon_wifi_off
                         ,Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_WIFI_LOCALE]));
@@ -264,7 +218,6 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             }
             break;
             case R.id.actions_bluetooth:{
-                //showNormalBottomDialog(view.getId());
                 BottomDialogWith3Selections dialog=new BottomDialogWith3Selections(this,R.drawable.icon_bluetooth_on
                         ,R.drawable.icon_bluetooth_off
                         ,Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BLUETOOTH_LOCALE]));
@@ -279,19 +232,9 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             }
             break;
             case R.id.actions_ring_mode: {
-                if(Build.VERSION.SDK_INT>=24){
-                    NotificationManager manager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-                    if(manager==null) {
-                        Log.e("Actions","Can not get NotificationManager instance");
-                        Toast.makeText(this,"Can not get NotificationManager instance",Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    if(!manager.isNotificationPolicyAccessGranted()){
-                        showRequestAccessNotificationPolicyPermissionSnackbar();
-                        return;
-                    }
-                }
-                //showNormalBottomDialog(view.getId());
+                if(!EnvironmentUtils.PermissionRequestUtil.checkAndShowNotificationPolicyRequestSnackbar(this,getResources().getString(R.string.permission_request_notification_policy_message)
+                        ,getResources().getString(R.string.permission_grant_action_att))) return;
+
                 BottomDialogForRingMode dialog=new BottomDialogForRingMode(this,Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_MODE_LOCALE]));
                 dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
                     @Override
@@ -360,11 +303,8 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             }
             break;
             case R.id.actions_brightness:{
-                //Manifest.permission.WRITE_SETTINGS
-                if(Build.VERSION.SDK_INT>=23&&!android.provider.Settings.System.canWrite(this)){
-                    showRequestWriteSettingsPermissionSnackbar();
-                    return;
-                }
+                if(!EnvironmentUtils.PermissionRequestUtil.checkAndShowWriteSettingsPermissionRequestSnackbar(this,getResources().getString(R.string.permission_request_write_settings_message)
+                        ,getResources().getString(R.string.permission_grant_action_att))) return;
                 BottomDialogForBrightness dialog=new BottomDialogForBrightness(this,Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BRIGHTNESS_LOCALE]));
                 dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
                     @Override
@@ -377,22 +317,9 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             }
             break;
             case R.id.actions_ring_volume:{
-                if(Build.VERSION.SDK_INT>=24){
-                    NotificationManager manager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-                    if(manager==null){
-                        Toast.makeText(this,"Can not get NotificationManager instance",Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    if(!manager.isNotificationPolicyAccessGranted()){
-                        showRequestAccessNotificationPolicyPermissionSnackbar();
-                        return;
-                    }
-                }
-                AudioManager audioManager=(AudioManager) getSystemService(Context.AUDIO_SERVICE);
-                if(audioManager==null){
-                    Toast.makeText(this,"Can not get AudioManager instance",Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                if(!EnvironmentUtils.PermissionRequestUtil.checkAndShowNotificationPolicyRequestSnackbar(this,getResources().getString(R.string.permission_request_notification_policy_message)
+                        ,getResources().getString(R.string.permission_grant_action_att))) return;
+
                 BottomDialogForVolume dialog=new BottomDialogForVolume(this,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE]);
                 dialog.show();
                 dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
@@ -406,10 +333,9 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             }
             break;
             case R.id.actions_ring_selection:{
-                if(Build.VERSION.SDK_INT>=23&&!android.provider.Settings.System.canWrite(this)){
-                    showRequestWriteSettingsPermissionSnackbar();
-                    return;
-                }
+                if(!EnvironmentUtils.PermissionRequestUtil.checkAndShowWriteSettingsPermissionRequestSnackbar(this,getResources().getString(R.string.permission_request_write_settings_message)
+                        ,getResources().getString(R.string.permission_grant_action_att))) return;
+
                 Intent intent = new Intent();
                 intent.setClass(this,ActionOfChangingRingtones.class);
                 intent.putExtra(ActionOfChangingRingtones.EXTRA_RING_VALUES,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE]);
@@ -423,17 +349,8 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             case R.id.actions_wallpaper:{
                 if(Build.VERSION.SDK_INT>=23&&PermissionChecker.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE)!=PermissionChecker.PERMISSION_GRANTED){
                     requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},1);
-                    Snackbar snackbar=Snackbar.make(findViewById(R.id.layout_actions_root),getResources().getString(R.string.permission_request_read_external_storage),Snackbar.LENGTH_SHORT);
-                    snackbar.setAction(getResources().getString(R.string.permission_grant_action_att), new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent appdetail = new Intent();
-                            appdetail.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                            appdetail.setData(Uri.fromParts("package", getApplication().getPackageName(), null));
-                            startActivity(appdetail);
-                        }
-                    });
-                    snackbar.show();
+                    EnvironmentUtils.PermissionRequestUtil.showSnackbarWithActionOfAppdetailPage(this,getResources().getString(R.string.permission_request_read_external_storage)
+                    ,getResources().getString(R.string.permission_grant_action_att));
                     return;
                 }
 
@@ -498,21 +415,10 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             }
             break;
             case R.id.actions_sms:{
-                if(PermissionChecker.checkSelfPermission(this,Manifest.permission.SEND_SMS)!=PermissionChecker.PERMISSION_GRANTED){
-                    if(Build.VERSION.SDK_INT>=23){
-                        requestPermissions(new String[]{Manifest.permission.SEND_SMS,Manifest.permission.READ_PHONE_STATE},1);
-                    }
-                    Snackbar snackbar=Snackbar.make(findViewById(R.id.layout_actions_root),getResources().getString(R.string.permission_request_sms_send_message),Snackbar.LENGTH_SHORT);
-                    snackbar.setAction(getResources().getString(R.string.permission_grant_action_att), new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent appdetail = new Intent();
-                            appdetail.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                            appdetail.setData(Uri.fromParts("package", getApplication().getPackageName(), null));
-                            startActivity(appdetail);
-                        }
-                    });
-                    snackbar.show();
+                if(PermissionChecker.checkSelfPermission(this,Manifest.permission.SEND_SMS)!=PermissionChecker.PERMISSION_GRANTED&&Build.VERSION.SDK_INT>=23){
+                    requestPermissions(new String[]{Manifest.permission.SEND_SMS,Manifest.permission.READ_PHONE_STATE},1);
+                    EnvironmentUtils.PermissionRequestUtil.showSnackbarWithActionOfAppdetailPage(this,getResources().getString(R.string.permission_request_sms_send_message)
+                            ,getResources().getString(R.string.permission_grant_action_att));
                     return;
                 }
                 Intent i=new Intent(this,SmsActivity.class);
@@ -592,6 +498,10 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             }
             break;
             case R.id.actions_autorotation:{
+                if(!EnvironmentUtils.PermissionRequestUtil.checkAndShowWriteSettingsPermissionRequestSnackbar(this
+                ,getResources().getString(R.string.permission_request_write_settings_message)
+                ,getResources().getString(R.string.permission_grant_action_att))) return;
+
                 BottomDialogWith3Selections dialog =new BottomDialogWith3Selections(this,R.drawable.icon_autorotation
                         ,R.drawable.icon_autorotation_off
                         ,Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AUTOROTATION]));
@@ -634,23 +544,6 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
                 Snackbar.make(findViewById(R.id.layout_actions_root),getResources().getString(R.string.snackbar_changes_not_saved_back),Toast.LENGTH_SHORT).show();
                 return;
             }
-          /*  new AlertDialog.Builder(this)
-                    .setTitle(getResources().getString(R.string.dialog_edit_changed_not_saved_title))
-                    .setMessage(getResources().getString(R.string.dialog_edit_changed_not_saved_message))
-                    .setPositiveButton(getResources().getString(R.string.dialog_button_positive), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            setResult(RESULT_CANCELED);
-                            finish();
-                        }
-                    })
-                    .setNegativeButton(getResources().getString(R.string.dialog_button_negative), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                        }
-                    })
-                    .show();  */
             setResult(RESULT_CANCELED);
             finish();
         }
@@ -767,113 +660,5 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
                     }
                 }).show();
     }
-
-    /*private class TaskAdapter extends BaseAdapter{
-        boolean isSelected[];
-        private TaskAdapter(){isSelected=new boolean[TimeSwitchService.list!=null?TimeSwitchService.list.size():1];}
-        @Override
-        public int getCount() {
-            return TimeSwitchService.list!=null?TimeSwitchService.list.size():0;
-        }
-
-        @Override
-        public Object getItem(int i) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            if(TimeSwitchService.list==null) return null;
-            if(i>=TimeSwitchService.list.size()) return null;
-            if(view==null){
-                view=LayoutInflater.from(ActionActivity.this).inflate(R.layout.item_dialog_task,viewGroup,false);
-            }
-            int imgRes=R.drawable.ic_launcher;
-            TaskItem item=TimeSwitchService.list.get(i);
-            switch (TimeSwitchService.list.get(i).trigger_type){
-                default:break;
-                case TriggerTypeConsts.TRIGGER_TYPE_SINGLE:imgRes=R.drawable.icon_repeat_single;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME:imgRes=R.drawable.icon_repeat_percertaintime;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK:imgRes=R.drawable.icon_repeat_weekloop;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE:imgRes=R.drawable.icon_battery_high;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE:imgRes=R.drawable.icon_battery_low;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE: case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE:
-                    imgRes=R.drawable.icon_temperature;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_RECEIVED_BROADCAST:imgRes=R.drawable.icon_broadcast;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_WIFI_ON:imgRes=R.drawable.icon_wifi_on;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF:imgRes=R.drawable.icon_wifi_off;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON:imgRes=R.drawable.icon_bluetooth_on;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF:imgRes=R.drawable.icon_bluetooth_off;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF:imgRes=R.drawable.icon_ring_off;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE:imgRes=R.drawable.icon_ring_vibrate;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL:imgRes=R.drawable.icon_ring_normal;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON:imgRes=R.drawable.icon_airplanemode_on;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF:imgRes=R.drawable.icon_airplanemode_off;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED:imgRes=R.drawable.icon_ap_on;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED:imgRes=R.drawable.icon_ap_off;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_NET_ON:imgRes=R.drawable.icon_cellular_on;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_NET_OFF:imgRes=R.drawable.icon_cellular_off;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIFI_CONNECTED:imgRes=R.drawable.icon_wifi_connected;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:imgRes=R.drawable.icon_wifi_disconnected;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_SCREEN_ON:imgRes=R.drawable.icon_screen_on;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_SCREEN_OFF:imgRes=R.drawable.icon_screen_off;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_POWER_CONNECTED:imgRes=R.drawable.icon_power_connected;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_POWER_DISCONNECTED:imgRes=R.drawable.icon_power_disconnected;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_IN: case TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT:{
-                    imgRes=R.drawable.icon_headset;
-                }
-                break;
-                case TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED:imgRes=R.drawable.icon_app_launch;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED:imgRes=R.drawable.icon_app_stop;break;
-            }
-            ((ImageView)view.findViewById(R.id.item_dialog_task_img)).setImageResource(imgRes);
-            ((TextView)view.findViewById(R.id.item_dialog_task_name)).setText(item.name);
-            try{
-                ((TextView)view.findViewById(R.id.item_dialog_task_name)).setTextColor(Color.parseColor(item.addition_title_color));
-            }catch (Exception e){e.printStackTrace();}
-            ((TextView)view.findViewById(R.id.item_dialog_task_name_description)).setText(String.valueOf(item.isenabled?getResources().getString(R.string.opened):
-                    getResources().getString(R.string.closed)));
-            ((TextView)view.findViewById(R.id.item_dialog_task_name_description)).setTextColor(item.isenabled?getResources().getColor(R.color.color_task_enabled_font):getResources().getColor(R.color.color_task_disabled_font));
-            ((CheckBox)view.findViewById(R.id.item_dialog_task_cb)).setChecked(isSelected[i]);
-            return view;
-        }
-
-        public void onItemClicked(int position){
-            if(position<0) return;
-            if(TimeSwitchService.list==null) return;
-            if(position>=TimeSwitchService.list.size()) return;
-            isSelected[position]=!isSelected[position];
-            this.notifyDataSetChanged();
-        }
-
-        public boolean[] getIsSelected(){return this.isSelected;}
-
-        public int getSelectedCount(){
-            int s=0;
-            for(boolean b:isSelected){
-                if(b)s++;
-            }
-            return s;
-        }
-
-        public void setSelectedItems(String [] selectedIDs){
-            if(selectedIDs==null) return;
-            for(String id: selectedIDs){
-                try{
-                    int parsedid=Integer.parseInt(id);
-                    if(parsedid<0) continue;
-                    int position=ProcessTaskItem.getPosition(parsedid);
-                    if(position>=0&&position<isSelected.length) isSelected[position]=true;
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }
-    }  */
 
 }

@@ -14,6 +14,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -49,6 +50,7 @@ import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBattery;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForInterval;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.DialogConfirmedCallBack;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.DialogForAppSelection;
+import com.github.ghmxr.timeswitch.utils.EnvironmentUtils;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
@@ -606,26 +608,9 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
             }
             break;
             case R.id.trigger_app_opened: case R.id.trigger_app_closed:{
-                if(Build.VERSION.SDK_INT>=23){
-                    AppOpsManager manager=(AppOpsManager)getSystemService(Context.APP_OPS_SERVICE);
-                    if(manager==null) {
-                        Toast.makeText(this,"Can not get AppOpsManager instance",Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    boolean isGranted=manager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS,android.os.Process.myUid(),getPackageName())==AppOpsManager.MODE_ALLOWED;
-                    if(!isGranted){
-                        Snackbar snackbar=Snackbar.make(findViewById(R.id.trigger_root),getResources().getString(R.string.activity_trigger_app_usage_att),Snackbar.LENGTH_SHORT);
-                        snackbar.setAction(getResources().getString(R.string.permission_grant_action_att), new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
-                            }
-                        });
-                        snackbar.show();
-                        return;
-                    }
-                }
-
+                if(!EnvironmentUtils.PermissionRequestUtil.checkAndShowRequestUsageStatusPermissionSnackbar(this,
+                        getResources().getString(R.string.activity_trigger_app_usage_att)
+                        ,getResources().getString(R.string.permission_grant_action_att))) return;
 
                 DialogForAppSelection dialog=new DialogForAppSelection(this,v_id==R.id.trigger_app_opened?getResources().getString(R.string.activity_trigger_app_opened)
                         :getResources().getString(R.string.activity_trigger_app_closed),package_names,v_id==R.id.trigger_app_opened?null:"#55e74c3c","");

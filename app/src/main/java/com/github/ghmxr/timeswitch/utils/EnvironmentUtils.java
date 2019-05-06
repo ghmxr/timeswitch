@@ -1,12 +1,17 @@
 package com.github.ghmxr.timeswitch.utils;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AppOpsManager;
+import android.app.KeyguardManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.WallpaperManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
@@ -17,11 +22,15 @@ import android.os.Build;
 import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.telecom.TelecomManager;
 import android.telephony.SmsManager;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.Global;
+import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.receivers.SMSReceiver;
 
@@ -34,6 +43,129 @@ import java.util.ArrayList;
  * 此类中的方法不会向上抛出异常
  */
 public class EnvironmentUtils {
+
+    public static class SpecialPermissionCheckUtil{
+
+        public static boolean isWriteSettingsPermissionGranted(Context context){
+            try{
+                return Build.VERSION.SDK_INT<23||Settings.System.canWrite(context);
+            }catch (Exception e){e.printStackTrace();}
+            return false;
+        }
+
+        public static boolean isNotificationPolicyGranted(Context context){
+            try{
+                return Build.VERSION.SDK_INT<23||((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE)).isNotificationPolicyAccessGranted();
+            }catch (Exception e){e.printStackTrace();}
+            return false;
+        }
+
+        public static boolean isAppUsagePermissionGranted(Context context){
+            try{
+                return Build.VERSION.SDK_INT<19||((AppOpsManager)context.getSystemService(Context.APP_OPS_SERVICE)).checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS,android.os.Process.myUid(),context.getPackageName())==AppOpsManager.MODE_ALLOWED;
+            }catch (Exception e){e.printStackTrace();}
+            return false;
+        }
+    }
+
+    public static class PermissionRequestUtil{
+
+        /**
+         * 检查获取使用权限，如果没有获得权限则向activity发送一个snackbar申请授权并返回false，否则返回true
+         * @param activity 此方法会向activity发送snackbar
+         * @param att snackbar的提示
+         * @param action snackbar的action的提示
+         * @return true-权限已获得，false-权限没有获得并显示一个UI去申请
+         */
+        public static boolean checkAndShowRequestUsageStatusPermissionSnackbar(final Activity activity, String att, String action){
+            if(Build.VERSION.SDK_INT<21) return true;
+            if(SpecialPermissionCheckUtil.isAppUsagePermissionGranted(activity)) return true;
+            Snackbar snackbar=Snackbar.make(activity.findViewById(android.R.id.content),att,Snackbar.LENGTH_SHORT);
+            snackbar.setAction(action, new View.OnClickListener() {
+                @Override
+                @TargetApi(21)
+                public void onClick(View v) {
+                    activity.startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
+                }
+            });
+            snackbar.show();
+            return false;
+        }
+
+        /**
+         * 检查写入设置权限，如果没有获得权限则向activity发送一个snackbar申请授权并返回false，否则返回true
+         * @param activity 此方法会向activity发送snackbar
+         * @param att snackbar的提示
+         * @param action snackbar的action的提示
+         * @return true-权限已获得，false-权限没有获得并显示一个UI去申请
+         */
+        public static boolean checkAndShowWriteSettingsPermissionRequestSnackbar(final Activity activity, String att, String action){
+            if(Build.VERSION.SDK_INT<23)return true;
+            if(SpecialPermissionCheckUtil.isWriteSettingsPermissionGranted(activity)) return true;
+            Snackbar snackbar=Snackbar.make(activity.findViewById(android.R.id.content),att,Snackbar.LENGTH_SHORT);
+            snackbar.setAction(action, new View.OnClickListener() {
+                @Override
+                @TargetApi(23)
+                public void onClick(View v) {
+                    Intent i=new Intent(android.provider.Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                    i.setData(Uri.parse("package:"+activity.getPackageName()));
+                    activity.startActivity(i);
+                }
+            });
+            snackbar.show();
+            return false;
+        }
+
+        /**
+         * 检查勿扰模式权限，如果没有获得权限则向activity发送一个snackbar申请授权并返回false，否则返回true
+         * @param activity 此方法会向activity发送snackbar
+         * @param att snackbar的提示
+         * @param action snackbar的action的提示
+         * @return true-权限已获得，false-权限没有获得并显示一个UI去申请
+         */
+        public static boolean checkAndShowNotificationPolicyRequestSnackbar(final Activity activity,String att,String action){
+            if(Build.VERSION.SDK_INT<24) return true;
+            if(SpecialPermissionCheckUtil.isNotificationPolicyGranted(activity)) return true;
+            Snackbar snackbar=Snackbar.make(activity.findViewById(android.R.id.content),att,Snackbar.LENGTH_SHORT);
+            snackbar.setAction(action, new View.OnClickListener() {
+                @Override
+                @TargetApi(23)
+                public void onClick(View v) {
+                    activity.startActivity(new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS));
+                    Toast.makeText(activity,activity.getResources().getString(R.string.permission_request_notification_policy_toast),Toast.LENGTH_SHORT).show();
+                }
+            });
+            snackbar.show();
+            return false;
+        }
+
+        /**
+         * 跳转到本应用的详情页
+         * @param context context
+         */
+        public static void showAppDetailPageOfThisApplication(Context context){
+            Intent i = new Intent();
+            i.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            i.setData(Uri.fromParts("package", context.getPackageName(), null));
+            context.startActivity(i);
+        }
+
+        /**
+         * 显示一个可跳转至本应用详情页的snackbar
+         * @param activity 需要显示snackbar的activity
+         */
+        public static void showSnackbarWithActionOfAppdetailPage(final Activity activity,String att,String action){
+            Snackbar snackbar=Snackbar.make(activity.findViewById(android.R.id.content),att,Snackbar.LENGTH_SHORT);
+            snackbar.setAction(action, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showAppDetailPageOfThisApplication(activity);
+                }
+            });
+            snackbar.show();
+        }
+
+    }
 
     /**
      * 打开、关闭设备无线WiFi
@@ -374,6 +506,55 @@ public class EnvironmentUtils {
             return ((ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo().getType()==ConnectivityManager.TYPE_WIFI;
         }catch (Exception e){e.printStackTrace();}
         return false;
+    }
+
+    /**
+     * 判断当前系统键盘是否为锁定状态
+     * @return true-锁屏状态
+     */
+    public static boolean isScreenLockedByKeyGuardManager(Context context){
+        try{
+            return ((KeyguardManager)context.getSystemService(Context.KEYGUARD_SERVICE)).inKeyguardRestrictedInputMode();
+        }catch (Exception e){e.printStackTrace();}
+        return false;
+    }
+
+    /**
+     * 获取当前gps是否开启
+     * @return true-gps开启
+     */
+    public static boolean isGpsEnabled(Context context){
+        try{
+            return ((LocationManager) context.getSystemService(Context.LOCATION_SERVICE)).isProviderEnabled(LocationManager.GPS_PROVIDER);
+        }catch (Exception e){e.printStackTrace();}
+        return false;
+    }
+
+    /**
+     * 获取当前是否已开启飞行模式
+     * @return true-当前已开启飞行模式
+     */
+    public static boolean isAirplaneModeOpen(Context context){
+        try{
+            return Settings.System.getInt(context.getContentResolver(),Settings.ACTION_AIRPLANE_MODE_SETTINGS,0)==1;
+        }catch (Exception e){e.printStackTrace();}
+        return false;
+    }
+
+    /**
+     * 获取当前是否为通话状态,API21及以上生效，否则返回默认值false
+     * @return true-当前为通话状态
+     */
+    public static boolean isInCall(Context context){
+        try{
+            if(Build.VERSION.SDK_INT<21) return false;
+            return ((TelecomManager) context.getSystemService(Context.TELECOM_SERVICE)).isInCall();
+        }catch (SecurityException se){
+            return false;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }

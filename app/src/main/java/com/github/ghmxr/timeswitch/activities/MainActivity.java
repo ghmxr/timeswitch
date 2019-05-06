@@ -142,7 +142,52 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        startRefreshingIndicator();
+        this.ifRefresh=true;
+        try{
+            registerReceiver(batteryReceiver,new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        myHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if(Build.VERSION.SDK_INT>=21&&ifRefresh){
+                    myHandler.postDelayed(this,1000);
+                    BatteryManager batteryManager=(BatteryManager) getSystemService(Activity.BATTERY_SERVICE);
+                    try{
+                        refreshIndicatorOfBatteryCurrent(batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW));
+                    }catch (java.lang.NullPointerException ne){
+                        refreshIndicatorOfBatteryCurrent(0);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        myHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (ifRefresh){
+                    myHandler.postDelayed(this,500);
+                    Calendar calendar=Calendar.getInstance();
+                    calendar.setTimeInMillis(System.currentTimeMillis());
+                    int month=calendar.get(Calendar.MONTH)+1;
+                    // BatteryManager batteryManager=(BatteryManager) getSystemService(Activity.BATTERY_SERVICE);
+                    TextView tv_time=findViewById(R.id.main_indicator_time_value);
+                    tv_time.setText(ValueUtils.format(calendar.get(Calendar.YEAR))
+                            +"/"+ ValueUtils.format(month)
+                            +"/"+ ValueUtils.format(calendar.get(Calendar.DAY_OF_MONTH))
+                            +"("+ValueUtils.getDayOfWeek(calendar.getTimeInMillis())
+                            +")/" +ValueUtils.format(calendar.get(Calendar.HOUR_OF_DAY))
+                            +":"+ValueUtils.format(calendar.get(Calendar.MINUTE))
+                            +":"+ValueUtils.format(calendar.get(Calendar.SECOND)));
+
+                    //Log.e("mhandler","activated!!!");
+                }
+            }
+        });
 
         /*myHandler.post(new Runnable() {
             @Override
@@ -282,55 +327,6 @@ public class MainActivity extends BaseActivity {
         this.menu.getItem(MENU_PROFILE).setVisible(true);
         this.menu.getItem(MENU_SETTINGS).setVisible(true);
         setFabVisibility(true);
-    }
-
-    private void startRefreshingIndicator(){
-        this.ifRefresh=true;
-        try{
-            registerReceiver(batteryReceiver,new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-       myHandler.post(new Runnable() {
-           @Override
-           public void run() {
-               if(Build.VERSION.SDK_INT>=21&&ifRefresh){
-                   myHandler.postDelayed(this,1000);
-                   BatteryManager batteryManager=(BatteryManager) getSystemService(Activity.BATTERY_SERVICE);
-                   try{
-                       refreshIndicatorOfBatteryCurrent(batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW));
-                   }catch (java.lang.NullPointerException ne){
-                        refreshIndicatorOfBatteryCurrent(0);
-                   }catch (Exception e){
-                       e.printStackTrace();
-                   }
-               }
-           }
-       });
-
-        myHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (ifRefresh){
-                    myHandler.postDelayed(this,500);
-                     Calendar calendar=Calendar.getInstance();
-                     calendar.setTimeInMillis(System.currentTimeMillis());
-                     int month=calendar.get(Calendar.MONTH)+1;
-                    // BatteryManager batteryManager=(BatteryManager) getSystemService(Activity.BATTERY_SERVICE);
-                     TextView tv_time=findViewById(R.id.main_indicator_time_value);
-                     tv_time.setText(ValueUtils.format(calendar.get(Calendar.YEAR))
-                             +"/"+ ValueUtils.format(month)
-                             +"/"+ ValueUtils.format(calendar.get(Calendar.DAY_OF_MONTH))
-                             +"("+ValueUtils.getDayOfWeek(calendar.getTimeInMillis())
-                             +")/" +ValueUtils.format(calendar.get(Calendar.HOUR_OF_DAY))
-                             +":"+ValueUtils.format(calendar.get(Calendar.MINUTE))
-                            +":"+ValueUtils.format(calendar.get(Calendar.SECOND)));
-
-                    //Log.e("mhandler","activated!!!");
-                }
-            }
-        });
     }
 
     private void refreshIndicatorOfBatteryInfo(Intent intent){
