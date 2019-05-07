@@ -107,7 +107,7 @@ public class CustomAlarmReceiver implements Trigger {
                     public void run() {
                         TimeSwitchService service=TimeSwitchService.service;
                         if(service!=null){
-                            new ProcessTaskItem(service,receiver.item).activateTaskItem();
+                            new ProcessTaskItem(service,receiver.item).checkExceptionsAndRunActions();
                         }
                     }
                 }).start();

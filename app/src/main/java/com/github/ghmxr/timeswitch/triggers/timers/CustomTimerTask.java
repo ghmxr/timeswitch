@@ -120,7 +120,7 @@ public class CustomTimerTask implements Trigger{
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    new ProcessTaskItem(context,item).activateTaskItem();
+                    new ProcessTaskItem(context,item).checkExceptionsAndRunActions();
                 }
             }).start();
             if(item.trigger_type == TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME||item .trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK){

@@ -35,7 +35,7 @@ public abstract class BaseBroadcastReceiver extends BroadcastReceiver implements
         new Thread(new Runnable() {
             @Override
             public void run() {
-                new ProcessTaskItem(context,item).activateTaskItem();
+                new ProcessTaskItem(context,item).checkExceptionsAndRunActions();
             }
         }).start();
     }

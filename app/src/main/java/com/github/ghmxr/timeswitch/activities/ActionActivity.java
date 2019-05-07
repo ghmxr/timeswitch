@@ -1,11 +1,9 @@
 package com.github.ghmxr.timeswitch.activities;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,13 +15,10 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.R;
-import com.github.ghmxr.timeswitch.adapters.AppListAdapter;
 import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
@@ -44,7 +39,6 @@ import com.github.ghmxr.timeswitch.utils.EnvironmentUtils;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
@@ -72,11 +66,11 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             sms_address="",sms_message="";
     String checkString ="";
     private long first_clicked_back_time=0;
-    private int taskid=-1;
-    private static final int TASK_ENABLE=0;
-    private static final int TASK_DISABLE=1;
-    private static final int MESSAGE_GET_LIST_OPEN_COMPLETE=101;
-    private static final int MESSAGE_GET_LIST_CLOSE_COMPLETE=102;
+    //private int taskid=-1;
+    //private static final int TASK_ENABLE=0;
+    //private static final int TASK_DISABLE=1;
+    //private static final int MESSAGE_GET_LIST_OPEN_COMPLETE=101;
+    //private static final int MESSAGE_GET_LIST_CLOSE_COMPLETE=102;
 
     private AlertDialog dialog_app_oc;
     @Override
@@ -112,7 +106,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
         try{
             Intent data=getIntent();
             actions=data.getStringArrayExtra(EXTRA_ACTIONS);
-            taskid=data.getIntExtra(EXTRA_TASK_ID,-1);
+            //taskid=data.getIntExtra(EXTRA_TASK_ID,-1);
             uri_ring_notification=data.getStringExtra(EXTRA_ACTION_URI_RING_NOTIFICATION);
             uri_ring_call=data.getStringExtra(EXTRA_ACTION_URI_RING_CALL);
             uri_wallpaper=data.getStringExtra(EXTRA_ACTION_URI_WALLPAPER_DESKTOP);
@@ -129,75 +123,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
     }
 
     @Override
-    public void processMessage(Message msg) {
-        final int msg_what=msg.what;
-        switch(msg_what){
-            default:break;
-            case MESSAGE_GET_LIST_OPEN_COMPLETE: case MESSAGE_GET_LIST_CLOSE_COMPLETE:{
-                if(dialog_app_oc==null) return;
-                dialog_app_oc.findViewById(R.id.dialog_app_wait).setVisibility(View.GONE);
-                dialog_app_oc.findViewById(R.id.dialog_app_list_area).setVisibility(View.VISIBLE);
-                String [] selectedPackages=new String[1];
-                try{
-                    selectedPackages=actions[msg_what==MESSAGE_GET_LIST_OPEN_COMPLETE? ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES: ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-                    if(Integer.parseInt(selectedPackages[0])<0) selectedPackages=new String[1];
-                }catch (Exception e){
-                    //e.printStackTrace();
-                    //LogUtil.putExceptionLog(this,e);
-                }
-                final AppListAdapter adapter=new AppListAdapter(this,(List<AppListAdapter.AppItemInfo>)msg.obj,selectedPackages);
-                ((ListView)dialog_app_oc.findViewById(R.id.dialog_app_list)).setAdapter(adapter);
-                dialog_app_oc.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String [] package_names=adapter.getSelectedPackageNames();
-                        StringBuilder return_value=new StringBuilder("");
-                        if(package_names.length>0){
-                            for(int i=0;i<package_names.length;i++){
-                                return_value.append(package_names[i]);
-                                if(i<(package_names.length-1)) return_value.append(PublicConsts.SEPARATOR_SECOND_LEVEL);
-                            }
-                        }else return_value=new StringBuilder(String.valueOf(-1));
-                        actions[msg_what==MESSAGE_GET_LIST_OPEN_COMPLETE? ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES: ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES]=return_value.toString();
-                        dialog_app_oc.cancel();
-                        refreshActionStatus();
-                    }
-                });
-                dialog_app_oc.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        adapter.deselectAll();
-                    }
-                });
-                try{
-                    if(msg_what==MESSAGE_GET_LIST_OPEN_COMPLETE){
-                        dialog_app_oc.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                PackageManager pm=getPackageManager();
-                                for(String s:adapter.getSelectedPackageNames()){
-                                    try{
-                                        Intent i=pm.getLaunchIntentForPackage(s);
-                                        startActivity(i);
-                                    }catch (Exception e){
-                                        e.printStackTrace();
-                                        Toast.makeText(ActionActivity.this,e.toString(),Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }
-                        });
-                    }
-                }catch (Exception e){e.printStackTrace();}
-                ((ListView)dialog_app_oc.findViewById(R.id.dialog_app_list)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        adapter.onItemClicked(position);
-                    }
-                });
-            }
-            break;
-        }
-    }
+    public void processMessage(Message msg) {}
 
     @Override
     public void onClick(View view) {
@@ -247,6 +173,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             }
             break;
             case R.id.actions_net:{
+                if(!checkAndShowSnackBarOfSuperuserRequest()) return;
                 BottomDialogWith3Selections dialog=new BottomDialogWith3Selections(this,R.drawable.icon_cellular_on,R.drawable.icon_cellular_off
                 ,Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE]));
                 dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
@@ -260,6 +187,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             }
             break;
             case R.id.actions_gps: {
+                if(!checkAndShowSnackBarOfSuperuserRequest()) return;
                 BottomDialogWith3Selections dialog=new BottomDialogWith3Selections(this,R.drawable.icon_location_on,R.drawable.icon_location_off
                         ,Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE]));
                 dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
@@ -273,6 +201,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             }
             break;
             case R.id.actions_airplane_mode:{
+                if(!checkAndShowSnackBarOfSuperuserRequest()) return;
                 BottomDialogWith3Selections dialog=new BottomDialogWith3Selections(this,R.drawable.icon_airplanemode_on,R.drawable.icon_airplanemode_off
                         ,Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE]));
                 dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
@@ -286,11 +215,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             }
             break;
             case R.id.actions_devicecontrol:{
-                boolean isRoot=getSharedPreferences(PublicConsts.PREFERENCES_NAME, Activity.MODE_PRIVATE).getBoolean(PublicConsts.PREFERENCES_IS_SUPERUSER_MODE,PublicConsts.PREFERENCES_IS_SUPERUSER_MODE_DEFAULT);
-                if(!isRoot){
-                    showSnackBarOfSuperuserRequest();
-                    return;
-                }
+                if(!checkAndShowSnackBarOfSuperuserRequest()) return;
                 BottomDialogForDeviceControl dialog=new BottomDialogForDeviceControl(this,Integer.parseInt(actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]));
                 dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
                     @Override
@@ -430,7 +355,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             }
             break;
             case R.id.actions_enable:{
-                if(TimeSwitchService.list==null||TimeSwitchService.list.size()<=0){
+                if(TimeSwitchService.list==null||TimeSwitchService.list.size()==0){
                     Snackbar.make(findViewById(R.id.layout_actions_root),getResources().getString(R.string.activity_action_switch_task_null),Snackbar.LENGTH_SHORT).show();
                     return;
                 }
@@ -449,7 +374,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             }
             break;
             case R.id.actions_disable:{
-                if(TimeSwitchService.list==null||TimeSwitchService.list.size()<=0){
+                if(TimeSwitchService.list==null||TimeSwitchService.list.size()==0){
                     Snackbar.make(findViewById(R.id.layout_actions_root),getResources().getString(R.string.activity_action_switch_task_null),Snackbar.LENGTH_SHORT).show();
                     return;
                 }
@@ -494,7 +419,17 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             }
             break;
             case R.id.actions_app_force_close:{
-
+                if(!checkAndShowSnackBarOfSuperuserRequest()) return;
+                DialogForAppSelection dialog=new DialogForAppSelection(this,getResources().getString(R.string.activity_taskgui_actions_app_force_close)
+                        ,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FORCE_STOP_APP_PACKAGES],"#55e74c3c",getResources().getString(R.string.dialog_app_force_close_att));
+                dialog.show();
+                dialog.setOnDialogConfirmedCallBack(new DialogConfirmedCallBack() {
+                    @Override
+                    public void onDialogConfirmed(String result) {
+                        actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FORCE_STOP_APP_PACKAGES]=result;
+                        refreshActionStatus();
+                    }
+                });
             }
             break;
             case R.id.actions_autorotation:{
@@ -541,7 +476,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             long clickedTime=System.currentTimeMillis();
             if(clickedTime-first_clicked_back_time>1000){
                 first_clicked_back_time=clickedTime;
-                Snackbar.make(findViewById(R.id.layout_actions_root),getResources().getString(R.string.snackbar_changes_not_saved_back),Toast.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(android.R.id.content),getResources().getString(R.string.snackbar_changes_not_saved_back),Toast.LENGTH_SHORT).show();
                 return;
             }
             setResult(RESULT_CANCELED);
@@ -648,8 +583,9 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
         ((TextView)findViewById(R.id.actions_autorotation_status)).setText(ActionDisplayValue.getGeneralDisplayValue(this,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AUTOROTATION]));
     }
 
-    private void showSnackBarOfSuperuserRequest(){
-        Snackbar.make(findViewById(R.id.layout_actions_root),getResources().getString(R.string.activity_taskgui_root_required),Snackbar.LENGTH_SHORT)
+    private boolean checkAndShowSnackBarOfSuperuserRequest(){
+        if(getSharedPreferences(PublicConsts.PREFERENCES_NAME, Activity.MODE_PRIVATE).getBoolean(PublicConsts.PREFERENCES_IS_SUPERUSER_MODE,PublicConsts.PREFERENCES_IS_SUPERUSER_MODE_DEFAULT)) return true;
+        Snackbar.make(findViewById(android.R.id.content),getResources().getString(R.string.activity_taskgui_root_required),Snackbar.LENGTH_SHORT)
                 .setAction(getResources().getString(R.string.activity_taskgui_root_required_action), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -659,6 +595,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
                         startActivity(i);
                     }
                 }).show();
+        return false;
     }
 
 }

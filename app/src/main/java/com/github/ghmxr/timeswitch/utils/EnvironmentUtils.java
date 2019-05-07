@@ -1,10 +1,12 @@
 package com.github.ghmxr.timeswitch.utils;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.app.KeyguardManager;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.WallpaperManager;
@@ -21,10 +23,13 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Vibrator;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NotificationCompat;
 import android.telecom.TelecomManager;
 import android.telephony.SmsManager;
+import android.telephony.TelephonyManager;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
@@ -40,7 +45,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 /**
- * 此类中的方法不会向上抛出异常
+ * 运行改变系统设置或者执行一些操作以及获取一些权限、设备状态静态方法的类，
+ * 其中执行操作的一些方法可能会向上抛出异常，获得状态参数的一些方法不会向上抛出异常
  */
 public class EnvironmentUtils {
 
@@ -171,43 +177,45 @@ public class EnvironmentUtils {
      * 打开、关闭设备无线WiFi
      * @param context context
      * @param enabled true 打开，false 关闭
-     * @return true 成功，false 失败
      */
     public static boolean setWifiEnabled(Context context,boolean enabled){
-        try{
-            WifiManager manager=(WifiManager)context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            return manager.setWifiEnabled(enabled);
-        }catch (Exception e){e.printStackTrace();}
-        return false;
+        return ((WifiManager)context.getApplicationContext().getSystemService(Context.WIFI_SERVICE)).setWifiEnabled(enabled);
+    }
+
+    /**
+     * 是否能获得WifiManager实例
+     * @param context context
+     * @return true-能够获得WifiManager实例
+     */
+    public static boolean isWifiSupported(Context context){
+        return context.getApplicationContext().getSystemService(Context.WIFI_SERVICE)!=null;
     }
 
     /**
      * 打开、关闭设备蓝牙
-     * @param context context
      * @param enabled true 打开，false 关闭
      * @return true 成功, false 失败
      */
-    public static boolean setBluetoothEnabled(Context context,boolean enabled){
-        try{
-            BluetoothAdapter adapter=BluetoothAdapter.getDefaultAdapter();
-            return enabled?adapter.enable():adapter.disable();
-        }catch (Exception e){e.printStackTrace();}
-        return false;
+    public static boolean setBluetoothEnabled(boolean enabled){
+        BluetoothAdapter adapter=BluetoothAdapter.getDefaultAdapter();
+        return enabled?adapter.enable():adapter.disable();
+    }
+
+    /**
+     * 设备是否支持蓝牙
+     * @return true-能够得到蓝牙实例
+     */
+    public static boolean isBluetoothSupported(){
+        return BluetoothAdapter.getDefaultAdapter()!=null;
     }
 
     /**
      * 设置铃声模式
      * @param context context
      * @param mode  调用AudioManager来获取参数
-     * @return 执行结果
      */
-    public static boolean setRingerMode(Context context, int mode){
-        try{
-            AudioManager manager=(AudioManager)context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-            manager.setRingerMode(mode);
-            return true;
-        }catch (Exception e){e.printStackTrace();}
-        return false;
+    public static void setRingerMode(Context context, int mode){
+        ((AudioManager)context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE)).setRingerMode(mode);
     }
 
     /**
@@ -215,15 +223,9 @@ public class EnvironmentUtils {
      * @param context context
      * @param type 铃声类型，通过AudioManager获取STREAM实例
      * @param volume 铃声大小
-     * @return 结果
      */
-    public static boolean setRingerVolume(Context context, int type, int volume){
-        try{
-           AudioManager manager=(AudioManager)context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-           manager.setStreamVolume(type,volume,AudioManager.FLAG_SHOW_UI);
-           return true;
-        }catch (Exception e){e.printStackTrace();}
-        return false;
+    public static void setRingerVolume(Context context, int type, int volume){
+        ((AudioManager)context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(type,volume,AudioManager.FLAG_SHOW_UI);
     }
 
     /**
@@ -245,50 +247,33 @@ public class EnvironmentUtils {
      * @param context context
      * @param type 从RingtoneManager获取静态参数
      * @param uri uri
-     * @return 结果
      */
-    public static boolean setRingtone(Context context , int type,String uri){
-        try{
-            RingtoneManager.setActualDefaultRingtoneUri(context,type, Uri.parse(uri));
-        }catch (Exception e){e.printStackTrace();}
-        return false;
+    public static void setRingtone(Context context , int type,String uri){
+        RingtoneManager.setActualDefaultRingtoneUri(context,type, Uri.parse(uri));
     }
 
     /**
      * 调整屏幕亮度
      * @param context context
      * @param auto_brightness 是否为自动亮度
-     * @param brightness 亮度值(0~255)
+     * @param brightness 亮度值(0~255)，如果第二个参数已传入true的话此参数随意传入一个值即可
      * @return 执行结果
      */
     public static boolean setBrightness(Context context, boolean auto_brightness , int brightness){
-        try{
-            if(auto_brightness){
-                Settings.System.putInt(context.getContentResolver(),Settings.System.SCREEN_BRIGHTNESS_MODE,Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
-            }else{
-                Settings.System.putInt(context.getContentResolver(),Settings.System.SCREEN_BRIGHTNESS_MODE,Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
-            }
-            return Settings.System.putInt(context.getContentResolver(),Settings.System.SCREEN_BRIGHTNESS,brightness);
-        }catch (Exception e){e.printStackTrace();}
-        return false;
+        if(auto_brightness){
+            return Settings.System.putInt(context.getContentResolver(),Settings.System.SCREEN_BRIGHTNESS_MODE,Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
+        }
+        return Settings.System.putInt(context.getContentResolver(),Settings.System.SCREEN_BRIGHTNESS_MODE,Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL)
+                &Settings.System.putInt(context.getContentResolver(),Settings.System.SCREEN_BRIGHTNESS,brightness);
     }
 
     /**
      * 根据指定path设定壁纸，此为耗时操作方法
      * @param context context
      * @param path 文件path
-     * @return 执行结果
      */
-    public static boolean setWallPaper(Context context,String path){
-        try{
-            WallpaperManager wallpaperManager=WallpaperManager.getInstance(context);
-            //Bitmap bitmap= BitmapFactory.decodeFile(path);
-            //if(bitmap==null) return false;
-            //wallpaperManager.setBitmap(bitmap);
-            wallpaperManager.setStream(new FileInputStream(new File(path)));
-            return true;
-        }catch (Exception e){e.printStackTrace();}
-        return false;
+    public static void setWallPaper(Context context,String path) throws Exception{
+        WallpaperManager.getInstance(context).setStream(new FileInputStream(new File(path)));
     }
 
     /**
@@ -299,15 +284,13 @@ public class EnvironmentUtils {
      * @param interval 间隔时间(毫秒)
      */
     public static void vibrate(Context context,int frequency,long duration,long interval){
-        try{
-            Vibrator vibrator=(Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
-            long[] vibrate_array=new long[(frequency*2)+1];
-            vibrate_array[0]=0;
-            for(int i=1;i<vibrate_array.length;i++){
-                vibrate_array[i]=(i%2==0?interval:duration);
-            }
-            vibrator.vibrate(vibrate_array,-1);
-        }catch (Exception e){e.printStackTrace();}
+        Vibrator vibrator=(Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
+        long[] vibrate_array=new long[(frequency*2)+1];
+        vibrate_array[0]=0;
+        for(int i=1;i<vibrate_array.length;i++){
+            vibrate_array[i]=(i%2==0?interval:duration);
+        }
+        vibrator.vibrate(vibrate_array,-1);
     }
 
     /**
@@ -337,10 +320,8 @@ public class EnvironmentUtils {
      * @param context context
      * @param b true 打开自动转屏，false 关闭自动转屏
      */
-    public static void setIfAutorotation(Context context , boolean b){
-        try{
-            android.provider.Settings.System.putInt(context.getContentResolver(),Settings.System.ACCELEROMETER_ROTATION,b?1:0);
-        }catch (Exception e){e.printStackTrace();}
+    public static boolean setIfAutorotation(Context context , boolean b){
+        return android.provider.Settings.System.putInt(context.getContentResolver(),Settings.System.ACCELEROMETER_ROTATION,b?1:0);
     }
 
     /**
@@ -350,29 +331,54 @@ public class EnvironmentUtils {
      * @param addresses  地址
      * @param message 内容，过长将会自动拆分发送
      * @param if_need_receipt 是否显示发送回执toast
-     * @return 执行结果
      */
-    public static boolean sendSMSMessage(Context context,@Nullable Integer subscriptionId,String[]addresses,String message,boolean if_need_receipt){
-        try{
-            SmsManager manager;
-            if(subscriptionId!=null&& Build.VERSION.SDK_INT>=22){
-                manager=SmsManager.getSmsManagerForSubscriptionId(subscriptionId);
-            }else{
-                manager=SmsManager.getDefault();
+    public static void sendSMSMessage(Context context,@Nullable Integer subscriptionId,String[]addresses,String message,boolean if_need_receipt){
+        SmsManager manager;
+        if(subscriptionId!=null&& Build.VERSION.SDK_INT>=22){
+            manager=SmsManager.getSmsManagerForSubscriptionId(subscriptionId);
+        }else{
+            manager=SmsManager.getDefault();
+        }
+        ArrayList<String> msgs=manager.divideMessage(message);
+        for(String address:addresses){
+            Intent i_delivered=new Intent(PublicConsts.ACTION_SMS_DELIVERED);
+            i_delivered.putExtra(SMSReceiver.EXTRA_IF_SHOW_RECEIPT_TOAST,if_need_receipt);
+            i_delivered.putExtra(SMSReceiver.EXTRA_SENT_ADDRESS,address);
+            PendingIntent pi_receipt=PendingIntent.getBroadcast(context,0,i_delivered,PendingIntent.FLAG_UPDATE_CURRENT);
+            for(String s:msgs){
+                manager.sendTextMessage(address,null,s,null,pi_receipt);
             }
-            ArrayList<String> msgs=manager.divideMessage(message);
-            for(String address:addresses){
-                Intent i_delivered=new Intent(PublicConsts.ACTION_SMS_DELIVERED);
-                i_delivered.putExtra(SMSReceiver.EXTRA_IF_SHOW_RECEIPT_TOAST,if_need_receipt);
-                i_delivered.putExtra(SMSReceiver.EXTRA_SENT_ADDRESS,address);
-                PendingIntent pi_receipt=PendingIntent.getBroadcast(context,0,i_delivered,PendingIntent.FLAG_UPDATE_CURRENT);
-                for(String s:msgs){
-                    manager.sendTextMessage(address,null,s,null,pi_receipt);
-                }
-            }
-            return true;
-        }catch (Exception e){e.printStackTrace();}
-        return false;
+        }
+    }
+
+    /**
+     * 向系统通知栏发送一条通知
+     * @param context context
+     * @param id notification id
+     * @param title 通知标题
+     * @param message 通知内容
+     */
+    public static void sendNotification(Context context, int id, @NonNull String title, @NonNull String message){
+        NotificationManager manager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder builder;
+        if(Build.VERSION.SDK_INT>=26){
+            String channel_id="channel_tasks";
+            NotificationChannel channel=new NotificationChannel(channel_id,"Tasks", NotificationManager.IMPORTANCE_DEFAULT);
+            manager.createNotificationChannel(channel);
+            builder=new NotificationCompat.Builder(context,channel_id);
+        }else{
+            builder=new NotificationCompat.Builder(context);
+        }
+        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        builder.setSmallIcon(R.drawable.ic_launcher);
+        builder.setContentTitle(title);
+        builder.setContentText(message);
+        PendingIntent pi =PendingIntent.getActivity(context,1,new Intent(),PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(pi);
+        builder.setAutoCancel(true);
+        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+        builder.setFullScreenIntent(pi,false);
+        manager.notify(id,builder.build());
     }
 
     /**
@@ -381,10 +387,7 @@ public class EnvironmentUtils {
      * @return 执行结果
      */
     public static boolean setGprsNetworkEnabled(boolean b){
-        try{
-            return RootUtils.executeCommand(b?RootUtils.COMMAND_ENABLE_CELLUAR_NETWORK:RootUtils.COMMAND_DISABLE_CELLUAR_NETWORK)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
-        }catch (Exception e){e.printStackTrace();}
-        return false;
+        return RootUtils.executeCommand(b?RootUtils.COMMAND_ENABLE_CELLUAR_NETWORK:RootUtils.COMMAND_DISABLE_CELLUAR_NETWORK)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
     }
 
     /**
@@ -393,14 +396,36 @@ public class EnvironmentUtils {
      * @return 结果
      */
     public static boolean setGpsEnabled(boolean b){
-        try{
-            if(Build.VERSION.SDK_INT>=23){
-                return RootUtils.executeCommand(b?RootUtils.COMMAND_ENABLE_GPS_API23:RootUtils.COMMAND_DISABLE_GPS_API23)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
-            }else{
-                return RootUtils.executeCommand(b?RootUtils.COMMAND_DISABLE_GPS:RootUtils.COMMAND_DISABLE_GPS)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
-            }
-        }catch (Exception e){e.printStackTrace();}
-        return false;
+        if(Build.VERSION.SDK_INT>=23){
+            return RootUtils.executeCommand(b?RootUtils.COMMAND_ENABLE_GPS_API23:RootUtils.COMMAND_DISABLE_GPS_API23)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
+        }else{
+            return RootUtils.executeCommand(b?RootUtils.COMMAND_ENABLE_GPS:RootUtils.COMMAND_DISABLE_GPS)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
+        }
+    }
+
+    /**
+     * 设定飞行模式的打开与关闭，通过shell执行
+     * @param b true 打开
+     * @return 执行结果
+     */
+    public static boolean setAirplaneModeEnabled(boolean b){
+        return RootUtils.executeCommand(b?RootUtils.COMMAND_ENABLE_AIRPLANE_MODE:RootUtils.COMMAND_DISABLE_AIRPLANE_MODE)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
+    }
+
+    /**
+     * 通过shell命令关机
+     * @return 执行结果
+     */
+    public static boolean shutdownDevice(){
+        return RootUtils.executeCommand(RootUtils.COMMAND_SHUTDOWN)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
+    }
+
+    /**
+     * 通过shell命令重启
+     * @return 执行结果
+     */
+    public static boolean restartDevice(){
+        return RootUtils.executeCommand(RootUtils.COMMAND_REBOOT)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
     }
 
     /**
@@ -409,10 +434,7 @@ public class EnvironmentUtils {
      * @return 是否正常结束
      */
     public static boolean runSUCommand(String command){
-        try{
-            return RootUtils.executeCommand(command)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
-        }catch (Exception e){e.printStackTrace();}
-        return false;
+        return RootUtils.executeCommand(command)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
     }
 
     /**
@@ -421,10 +443,8 @@ public class EnvironmentUtils {
      * @param package_name 包名
      */
     public static void launchAppByPackageName(Context context , String package_name){
-        try{
-            Intent i = context.getPackageManager().getLaunchIntentForPackage(package_name);
-            context.startActivity(i);
-        }catch (Exception e){e.printStackTrace();}
+        Intent i = context.getPackageManager().getLaunchIntentForPackage(package_name);
+        context.startActivity(i);
     }
 
     /**
@@ -445,10 +465,7 @@ public class EnvironmentUtils {
      * @param package_name 包名
      */
     public static void stopAppByPackageName(Context context,String package_name){
-        try{
-            ActivityManager manager=(ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
-            manager.killBackgroundProcesses(package_name);
-        }catch (Exception e){e.printStackTrace();}
+        ((ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE)).killBackgroundProcesses(package_name);
     }
 
     /**
@@ -469,10 +486,7 @@ public class EnvironmentUtils {
      * @return 是否正常结束
      */
     public static boolean forceStopAppByPackageName(String package_name){
-        try{
-            return RootUtils.executeCommand(RootUtils.COMMAND_FORCE_STOP_PACKAGE+" "+package_name)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
-        }catch (Exception e){e.printStackTrace();}
-        return false;
+        return RootUtils.executeCommand(RootUtils.COMMAND_FORCE_STOP_PACKAGE+package_name)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
     }
 
     /**
@@ -487,6 +501,10 @@ public class EnvironmentUtils {
             if(networkInfo.getType()==ConnectivityManager.TYPE_MOBILE) return true;
             if(networkInfo.getType()==ConnectivityManager.TYPE_WIFI){
                 try{
+                    /*if(Build.VERSION.SDK_INT>=26){
+                        TelephonyManager manager=(TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
+                        return manager.isDataEnabled();
+                    }*/
                     Method getMobileDataEnabledMethod = ConnectivityManager.class.getDeclaredMethod("getMobileDataEnabled");
                     getMobileDataEnabledMethod.setAccessible(true);
                     return (Boolean) getMobileDataEnabledMethod.invoke(connectivityManager);

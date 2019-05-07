@@ -254,7 +254,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 			try{
 				int id_insert=getInsertId(db,getCurrentTableName(activity));
 				values.put(SQLConsts.SQL_TASK_COLUMN_ID,id_insert);
-				values.put(SQLConsts.SQL_TASK_COLUMN_ORDER,id_insert);
+				values.put(SQLConsts.SQL_TASK_COLUMN_ORDER,getNewInsertRowTaskOrder(db,MySQLiteOpenHelper.getCurrentTableName(activity)));
 			}catch (Exception e){
 				e.printStackTrace();
 				Snackbar.make(activity.findViewById(android.R.id.content),e.toString(),Snackbar.LENGTH_SHORT).show();
@@ -272,10 +272,39 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 
 	public static int getInsertId(SQLiteDatabase db,String table_name) throws Exception{
 		Cursor cursor=db.rawQuery("select * from "+table_name,null);
-		int task_count=cursor.getCount();
+		int id_not_used=0;
+		boolean look_flag=true;
+		while (look_flag){
+			boolean need_next_loop=false;
+			while (cursor.moveToNext()){
+				if(cursor.getInt(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ID))==id_not_used) {
+					id_not_used++;
+					if(id_not_used>=Integer.MAX_VALUE) throw new Exception("The task num has reached the integer max value");
+					need_next_loop=true;
+					cursor.moveToFirst();
+					break;
+				}
+			}
+			if(!need_next_loop) look_flag=false;
+		}
 		cursor.close();
-		if(task_count>=Integer.MAX_VALUE) throw new Exception("The task num has reached the integer max value");
-		return task_count;
+		Log.d("InsertID","The id get can be used is "+id_not_used);
+		return id_not_used;
+	}
+
+	public static int getNewInsertRowTaskOrder(SQLiteDatabase database,String table_name){
+		Cursor cursor=database.rawQuery("select * from "+table_name,null);
+		if(cursor.getCount()==0) {
+			cursor.close();
+			return 0;
+		}
+		int task_order_max=0;
+		while (cursor.moveToNext()){
+			int task_order_this_row=cursor.getInt(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ORDER));
+			if(task_order_this_row>task_order_max) task_order_max=task_order_this_row;
+		}
+		cursor.close();
+		return task_order_max+1;
 	}
 
 	/**
@@ -285,15 +314,21 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 	 * @param id ÒªÉ¾³ýµÄÐÐ
 	 */
 	public static void deleteRow(final SQLiteDatabase db,final String table_name,final int id) {
-		db.delete(table_name,SQLConsts.SQL_TASK_COLUMN_ID+" = "+id,null);
-		Cursor cursor=db.rawQuery("select * from "+table_name+" where "+SQLConsts.SQL_TASK_COLUMN_ID+" >= "+id,null);
+		Cursor cursor_looked=db.rawQuery("select * from "+table_name+" where "+SQLConsts.SQL_TASK_COLUMN_ID+" = "+id,null);
+		cursor_looked.moveToNext();
+		int order_of_delete_row=cursor_looked.getInt(cursor_looked.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ORDER));
+		cursor_looked.close();
 
+		//do delete the row
+		db.delete(table_name,SQLConsts.SQL_TASK_COLUMN_ID+" = "+id,null);
+
+		Cursor cursor=db.rawQuery("select * from "+table_name+" where "+SQLConsts.SQL_TASK_COLUMN_ORDER+" >= "+order_of_delete_row,null);
 		while (cursor.moveToNext()){
 			int id_this_row=cursor.getInt(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ID));
+			int order_this_row=cursor.getInt(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ORDER));
 			ContentValues contentValues=new ContentValues();
-			contentValues.put(SQLConsts.SQL_TASK_COLUMN_ID,id_this_row-1);
+			contentValues.put(SQLConsts.SQL_TASK_COLUMN_ORDER,order_this_row-1);
 			db.update(table_name,contentValues,SQLConsts.SQL_TASK_COLUMN_ID+" = "+id_this_row,null);
-
 		}
 		cursor.close();
 	}

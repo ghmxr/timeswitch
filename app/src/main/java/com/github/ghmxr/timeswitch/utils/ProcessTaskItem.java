@@ -58,7 +58,7 @@ import java.util.Calendar;
 import java.util.List;
 
 /**
- * 处理并执行TaskItem中的actions和一些附加选项的类
+ * 处理并执行TaskItem中的exceptions,actions和一些附加选项的类
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
  */
 public class ProcessTaskItem {
@@ -71,73 +71,44 @@ public class ProcessTaskItem {
     public static String last_activated_task_name="";
     public static int notification_id=2;
 
-    public ProcessTaskItem(@NonNull Context context, @Nullable TaskItem item){
+    public ProcessTaskItem(@NonNull Context context, TaskItem item){
         this.item=item;
         this.context=context;
         //this.canTrigger=true;
     }
 
-    public void activateTaskItem(){
+    public void checkExceptionsAndRunActions(){
         if(this.item==null) return;
-        //StringBuilder log_taskitem=new StringBuilder("");
-        //log_taskitem.append(context.getResources().getString(R.string.log_taskname));
+
         log_taskitem.append(item.name);
         log_taskitem.append(":");
 
         SQLiteDatabase database= MySQLiteOpenHelper.getInstance(this.context).getWritableDatabase();
 
-
         if(item.trigger_type == TriggerTypeConsts.TRIGGER_TYPE_SINGLE){
             //do close the item
+            item.isenabled=false;
             ContentValues values=new ContentValues();
             values.put(SQLConsts.SQL_TASK_COLUMN_ENABLED,0);
             database.update(MySQLiteOpenHelper.getCurrentTableName(this.context),values,SQLConsts.SQL_TASK_COLUMN_ID +"="+item.id,null);
 
-            //do close the single task and refresh the list in Main;
-            int position=getPosition(item.id);
-            if(TimeSwitchService.list!=null&&position>=0&&position<TimeSwitchService.list.size()) TimeSwitchService.list.get(position).isenabled=false;
+            //refresh the list in Main;
             MainActivity.sendEmptyMessage(MainActivity.MESSAGE_REQUEST_UPDATE_LIST);
         }
-
-        /*if(item.trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE||item.trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE
-                ||item.trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE||item.trigger_type==PublicConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE){
-
-        }*/
 
         if(item.trigger_type == TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK){
             Calendar c=Calendar.getInstance();
             c.setTimeInMillis(System.currentTimeMillis());
-            int dayofweek=c.get(Calendar.DAY_OF_WEEK);
-            switch (dayofweek){
+            int day_of_week=c.get(Calendar.DAY_OF_WEEK);
+            switch (day_of_week){
                 default:break;
-                case Calendar.MONDAY:if(!item.week_repeat[PublicConsts.WEEK_MONDAY]){
-                    return;
-                }
-                break;
-                case Calendar.TUESDAY:if(!item.week_repeat[PublicConsts.WEEK_TUESDAY]) {
-                    return;
-                }
-                break;
-                case Calendar.WEDNESDAY:if(!item.week_repeat[PublicConsts.WEEK_WEDNESDAY]){
-                    return;
-                }
-                break;
-                case Calendar.THURSDAY:if(!item.week_repeat[PublicConsts.WEEK_THURSDAY]){
-                    return;
-                }
-                break;
-                case Calendar.FRIDAY:if(!item.week_repeat[PublicConsts.WEEK_FRIDAY]) {
-                    return;
-                }
-                break;
-                case Calendar.SATURDAY:if(!item.week_repeat[PublicConsts.WEEK_SATURDAY]){
-                    return;
-                }
-                break;
-                case Calendar.SUNDAY:if(!item.week_repeat[PublicConsts.WEEK_SUNDAY]) {
-                    return;
-                }
-                break;
+                case Calendar.MONDAY:if(!item.week_repeat[PublicConsts.WEEK_MONDAY]) return; break;
+                case Calendar.TUESDAY:if(!item.week_repeat[PublicConsts.WEEK_TUESDAY]) return; break;
+                case Calendar.WEDNESDAY:if(!item.week_repeat[PublicConsts.WEEK_WEDNESDAY]) return; break;
+                case Calendar.THURSDAY:if(!item.week_repeat[PublicConsts.WEEK_THURSDAY]) return; break;
+                case Calendar.FRIDAY:if(!item.week_repeat[PublicConsts.WEEK_FRIDAY]) return; break;
+                case Calendar.SATURDAY:if(!item.week_repeat[PublicConsts.WEEK_SATURDAY]) return; break;
+                case Calendar.SUNDAY:if(!item.week_repeat[PublicConsts.WEEK_SUNDAY]) return; break;
             }
         }
 
@@ -189,17 +160,16 @@ public class ProcessTaskItem {
         if(item.autodelete&&canTrigger){
             try{
                 item.cancelTask();
-                int rows=database.delete(MySQLiteOpenHelper.getCurrentTableName(this.context),SQLConsts.SQL_TASK_COLUMN_ID +"="+item.id,null);
-                Log.i(TAG,"receiver deleted "+rows+" rows");
-                int position=getPosition(item.id);
-                if(TimeSwitchService.list!=null&&position>=0&&position<TimeSwitchService.list.size()) {
-                    TimeSwitchService.list.remove(position);
-                }
-                MainActivity.sendEmptyMessage(MainActivity.MESSAGE_REQUEST_UPDATE_LIST);
+                //int rows=database.delete(MySQLiteOpenHelper.getCurrentTableName(this.context),SQLConsts.SQL_TASK_COLUMN_ID +"="+item.id,null);
+                MySQLiteOpenHelper.deleteRow(database,MySQLiteOpenHelper.getCurrentTableName(context),item.id);
+                //Log.i(TAG,"receiver deleted "+rows+" rows");
             }catch (Exception e){
                 e.printStackTrace();
-                LogUtil.putExceptionLog(context,e);
             }
+            try{
+                TimeSwitchService.list.remove(item);
+            }catch (Exception e){e.printStackTrace();}
+            MainActivity.sendEmptyMessage(MainActivity.MESSAGE_REQUEST_UPDATE_LIST);
         }
 
         if(canTrigger){
@@ -222,11 +192,8 @@ public class ProcessTaskItem {
                action_gps=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE]);
                action_airplanemode=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE]);
                action_device_control=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]);
-           }catch (NumberFormatException ne){
-               ne.printStackTrace();
-               Toast.makeText(context,ne.toString(),Toast.LENGTH_SHORT).show();
-               log_taskitem.append(ne.toString());
-               log_taskitem.append("\n");
+           }catch (Exception e){
+               e.printStackTrace();
            }
             activateActionOfWifi(action_wifi);
             activateActionOfBluetooth(action_bluetooth);
@@ -514,7 +481,7 @@ public class ProcessTaskItem {
         try{
             if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_NET_ENABLED])==1){
                 type_and_if_has_exception=true;
-                if(isCellarNetworkEnabled()) {
+                if(EnvironmentUtils.isGprsNetworkEnabled(context)) {
                     if(processType==TYPE_OR){
                         log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_net_enabled));
                         log_exception.append(" ");
@@ -533,7 +500,7 @@ public class ProcessTaskItem {
 
             if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_NET_DISABLED])==1){
                 type_and_if_has_exception=true;
-                if(!isCellarNetworkEnabled()) {
+                if(!EnvironmentUtils.isGprsNetworkEnabled(context)) {
                     if(processType==TYPE_OR){
                         log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_net_disabled));
                         log_exception.append(" ");
@@ -556,7 +523,7 @@ public class ProcessTaskItem {
         try{
             if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_GPS_ENABLED])==1){
                 type_and_if_has_exception=true;
-                if(isLocationServiceEnabled()) {
+                if(EnvironmentUtils.isGpsEnabled(context)) {
                     if(processType==TYPE_OR){
                         log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_gps_on));
                         log_exception.append(" ");
@@ -575,7 +542,7 @@ public class ProcessTaskItem {
 
             if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_GPS_DISABLED])==1){
                 type_and_if_has_exception=true;
-                if(!isLocationServiceEnabled()) {
+                if(!EnvironmentUtils.isGpsEnabled(context)) {
                     if(processType==TYPE_OR){
                         log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_gps_off));
                         log_exception.append(" ");
@@ -598,7 +565,7 @@ public class ProcessTaskItem {
         try{
             if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_ENABLED])==1){
                 type_and_if_has_exception=true;
-                if(isAirplaneModeOn()) {
+                if(EnvironmentUtils.isAirplaneModeOpen(context)) {
                     if(processType==TYPE_OR){
                         log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_airplanemode_on));
                         log_exception.append(" ");
@@ -617,7 +584,7 @@ public class ProcessTaskItem {
 
             if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_DISABLED])==1){
                 type_and_if_has_exception=true;
-                if(!isAirplaneModeOn()) {
+                if(!EnvironmentUtils.isAirplaneModeOpen(context)) {
                     if(processType==TYPE_OR){
                         log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_airplanemode_off));
                         log_exception.append(" ");
@@ -1031,404 +998,173 @@ public class ProcessTaskItem {
     }
 
     private void activateActionOfWifi(int action_wifi){
-        try{
-            WifiManager mWifiManager=(WifiManager)context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            switch (action_wifi){
-                default:break;
-                case ActionConsts.ActionValueConsts.ACTION_OPEN:{
-                    boolean action_wifi_result=mWifiManager.setWifiEnabled(true);
-                    Log.i(TAG,"Try to enable wifi...");
-                    log_taskitem.append(context.getResources().getString(R.string.action_wifi_open));
-                    log_taskitem.append(":");
-                    log_taskitem.append(action_wifi_result ? context.getResources().getString(R.string.log_result_success):context.getResources().getString(R.string.log_result_fail));
-                    log_taskitem.append(" ");
-                }
-                break;
-                case ActionConsts.ActionValueConsts.ACTION_CLOSE:{
-                    boolean action_wifi_result=mWifiManager.setWifiEnabled(false);
-                    Log.i(TAG,"Try to disable wifi...");
-                    log_taskitem.append(context.getResources().getString(R.string.action_wifi_close));
-                    log_taskitem.append(":");
-                    log_taskitem.append(action_wifi_result ? context.getResources().getString(R.string.log_result_success):context.getResources().getString(R.string.log_result_fail));
-                    log_taskitem.append(" ");
-                }
-                break;
+        switch (action_wifi){
+            default:break;
+            case ActionConsts.ActionValueConsts.ACTION_OPEN:{
+                EnvironmentUtils.setWifiEnabled(context,true);
+                Log.i(TAG,"Try to enable wifi...");
             }
-        }catch (Exception e){
-            e.printStackTrace();
-            log_taskitem.append(e.toString());
-            log_taskitem.append(" ");
+            break;
+            case ActionConsts.ActionValueConsts.ACTION_CLOSE:{
+                EnvironmentUtils.setWifiEnabled(context,false);
+                Log.i(TAG,"Try to disable wifi...");
+            }
+            break;
         }
     }
 
     private void activateActionOfBluetooth(int action_bluetooth){
-        try{
-            BluetoothAdapter mBluetoothAdapter=BluetoothAdapter.getDefaultAdapter();
-            if(mBluetoothAdapter==null) return;
-            switch (action_bluetooth){
-                default:break;
-                case ActionConsts.ActionValueConsts.ACTION_OPEN:{
-                    boolean action_bluetooth_result=mBluetoothAdapter.enable();
-                    Log.i(TAG,"try to enable bluetooth...");
-                    log_taskitem.append(context.getResources().getString(R.string.action_bluetooth_open));
-                    log_taskitem.append(":");
-                    log_taskitem.append(action_bluetooth_result?context.getResources().getString(R.string.log_result_success):context.getResources().getString(R.string.log_result_fail));
-                    log_taskitem.append(" ");
-                }
-                break;
-                case ActionConsts.ActionValueConsts.ACTION_CLOSE:{
-                    boolean action_bluetooth_result=mBluetoothAdapter.disable();
-                    Log.i(TAG,"Try to disable bluetooth...");
-                    log_taskitem.append(context.getResources().getString(R.string.action_bluetooth_close));
-                    log_taskitem.append(":");
-                    log_taskitem.append(action_bluetooth_result?context.getResources().getString(R.string.log_result_success):context.getResources().getString(R.string.log_result_fail));
-                    log_taskitem.append(" ");
-                }
-                break;
+        switch (action_bluetooth){
+            default:break;
+            case ActionConsts.ActionValueConsts.ACTION_OPEN:{
+                EnvironmentUtils.setBluetoothEnabled(true);
+                Log.i(TAG,"try to enable bluetooth...");
             }
-        }catch (Exception e){
-            e.printStackTrace();
-            log_taskitem.append(e.toString());
-            log_taskitem.append(" ");
+            break;
+            case ActionConsts.ActionValueConsts.ACTION_CLOSE:{
+                EnvironmentUtils.setBluetoothEnabled(false);
+                Log.i(TAG,"Try to disable bluetooth...");
+            }
+            break;
         }
 
     }
 
     private void activateActionOfRingMode(int action_ring_mode){
-        AudioManager mAudioManager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-        boolean action_ring_mode_result=true;
-        if(mAudioManager==null) return ;
         switch (action_ring_mode){
             default:break;
             case ActionConsts.ActionValueConsts.ACTION_RING_VIBRATE:{
-                try{
-                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);Log.i(TAG,"Try to set audio vibrate...");
-                }catch (Exception e){
-                    e.printStackTrace();
-                    LogUtil.putExceptionLog(context,e);
-                    action_ring_mode_result=false;
-                }
-                // if(mAudioManager.getRingerMode()!=AudioManager.RINGER_MODE_VIBRATE) action_ring_mode_result=false;
-                log_taskitem.append(context.getResources().getString(R.string.action_ring_mode_vibrate));
-                log_taskitem.append(":");
-                log_taskitem.append(action_ring_mode_result?context.getResources().getString(R.string.log_result_success):context.getResources().getString(R.string.log_result_fail));
-                log_taskitem.append(" ");
+                EnvironmentUtils.setRingerMode(context,AudioManager.RINGER_MODE_VIBRATE);
                 break;
             }
             case ActionConsts.ActionValueConsts.ACTION_RING_OFF:{
-                //boolean action_ring_result=fa
-                try{
-                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);Log.i(TAG,"Try to set audio silent...");
-                }catch (Exception e){
-                    e.printStackTrace();
-                    LogUtil.putExceptionLog(context,e);
-                    action_ring_mode_result=false;
-                }
-                // if(mAudioManager.getRingerMode()!=AudioManager.RINGER_MODE_SILENT)  action_ring_mode_result=false;
-                log_taskitem.append(context.getResources().getString(R.string.action_ring_mode_off));
-                log_taskitem.append(":");
-                log_taskitem.append(action_ring_mode_result?context.getResources().getString(R.string.log_result_success):context.getResources().getString(R.string.log_result_fail));
-                log_taskitem.append(" ");
+                EnvironmentUtils.setRingerMode(context,AudioManager.RINGER_MODE_SILENT);
                 break;
             }
             case ActionConsts.ActionValueConsts.ACTION_RING_NORMAL:{
-                try{
-                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);Log.i(TAG,"Try to set audio normal...");
-                }catch (Exception e){
-                    e.printStackTrace();
-                    LogUtil.putExceptionLog(context,e);
-                    action_ring_mode_result=false;
-                }
-                //if(mAudioManager.getRingerMode()!=AudioManager.RINGER_MODE_NORMAL) action_ring_mode_result=false;
-                log_taskitem.append(context.getResources().getString(R.string.action_ring_mode_normal));
-                log_taskitem.append(":");
-                log_taskitem.append(action_ring_mode_result?context.getResources().getString(R.string.log_result_success):context.getResources().getString(R.string.log_result_fail));
-                log_taskitem.append(" ");
+                EnvironmentUtils.setRingerMode(context,AudioManager.RINGER_MODE_NORMAL);
                 break;
             }
         }
     }
 
     private void activateActionOfVolume(String values){
-        try{
-            String [] volumes=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-            AudioManager mAudioManager=(AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-            int volume_ring=Integer.parseInt(volumes[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_RING_LOCALE]);
-            int volume_media=Integer.parseInt(volumes[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_MEDIA_LOCALE]);
-            int volume_notification=Integer.parseInt(volumes[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_NOTIFICATION_LOCALE]);
-            int volume_alarm=Integer.parseInt(volumes[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_ALARM_LOCALE]);
-            if(volume_ring>=0) {
-                mAudioManager.setStreamVolume(AudioManager.STREAM_RING,volume_ring,AudioManager.FLAG_SHOW_UI);
-                log_taskitem.append(context.getResources().getString(R.string.dialog_actions_ring_volume_ring));
-                log_taskitem.append((int)(((double)volume_ring/mAudioManager.getStreamMaxVolume(AudioManager.STREAM_RING))*100));
-                log_taskitem.append("% ");
-            }
-            if(volume_media>=0) {
-                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,volume_media,AudioManager.FLAG_SHOW_UI);
-                log_taskitem.append(context.getResources().getString(R.string.dialog_actions_ring_volume_media));
-                log_taskitem.append((int)(((double)volume_media/mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC))*100));
-                log_taskitem.append("% ");
-            }
-            if(volume_notification>=0){
-                mAudioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION,volume_notification,AudioManager.FLAG_SHOW_UI);
-                log_taskitem.append(context.getResources().getString(R.string.dialog_actions_ring_volume_notification));
-                log_taskitem.append((int)(((double)volume_notification/mAudioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION))*100));
-                log_taskitem.append("% ");
-            }
-            if(volume_alarm>=0) {
-                mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM,volume_alarm,AudioManager.FLAG_SHOW_UI);
-                log_taskitem.append(context.getResources().getString(R.string.dialog_actions_ring_volume_alarmclock));
-                log_taskitem.append((int)(((double)volume_alarm/mAudioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM))*100));
-                log_taskitem.append("% ");
-            }
-            // log_taskitem.append(context.getResources().getString(R.string.action_ring_volume));
-            //log_taskitem.append(" ");
-        }catch (Exception e){
-            e.printStackTrace();
-            log_taskitem.append(e.toString());
-            log_taskitem.append("\n");
+        String [] volumes=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+        int volume_ring=Integer.parseInt(volumes[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_RING_LOCALE]);
+        int volume_media=Integer.parseInt(volumes[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_MEDIA_LOCALE]);
+        int volume_notification=Integer.parseInt(volumes[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_NOTIFICATION_LOCALE]);
+        int volume_alarm=Integer.parseInt(volumes[ActionConsts.ActionSecondLevelLocaleConsts.VOLUME_ALARM_LOCALE]);
+        if(volume_ring>=0) {
+            EnvironmentUtils.setRingerVolume(context,AudioManager.STREAM_RING,volume_ring);
+        }
+        if(volume_media>=0) {
+            EnvironmentUtils.setRingerVolume(context,AudioManager.STREAM_MUSIC,volume_media);
+        }
+        if(volume_notification>=0){
+            EnvironmentUtils.setRingerVolume(context,AudioManager.STREAM_NOTIFICATION,volume_notification);
+        }
+        if(volume_alarm>=0) {
+            EnvironmentUtils.setRingerVolume(context,AudioManager.STREAM_ALARM,volume_alarm);
         }
     }
 
     private void activateActionOfSettingRingtone(String values){
-        try{
-            // RingtoneManager ringtoneManager=new RingtoneManager(context);
-            String ring_selection_values[]=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-            int ring_notification_selection= Integer.parseInt(ring_selection_values[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE]);
-            int ring_phone_selection=Integer.parseInt(ring_selection_values[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_CALL_TYPE_LOCALE]);
-            //String ring_value_notification=ring_selection_values[PublicConsts.RING_SELECTION_NOTIFICATION_VALUE_LOCALE];
-            //String ring_value_phone=ring_selection_values[PublicConsts.RING_SELECTION_PHONE_VALUE_LOCALE];
-            if(ring_notification_selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM ||ring_notification_selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_MEDIA)
-            {
-                //RingtoneManager.setActualDefaultRingtoneUri(context,RingtoneManager.TYPE_NOTIFICATION ,Uri.parse(ring_value_notification));
-                RingtoneManager.setActualDefaultRingtoneUri(context,RingtoneManager.TYPE_NOTIFICATION ,Uri.parse(item.uri_ring_notification));
-                log_taskitem.append(context.getResources().getString(R.string.action_set_ringtone_notification));
-                log_taskitem.append(context.getResources().getString(R.string.log_result_success));
-                log_taskitem.append(" ");
-            }
-            if(ring_phone_selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM ||ring_phone_selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_MEDIA)
-            {
-                //RingtoneManager.setActualDefaultRingtoneUri(context,RingtoneManager.TYPE_RINGTONE,Uri.parse(ring_value_phone));
-                RingtoneManager.setActualDefaultRingtoneUri(context,RingtoneManager.TYPE_RINGTONE,Uri.parse(item.uri_ring_call));
-                log_taskitem.append(context.getResources().getString(R.string.action_set_ringtone_phone));
-                log_taskitem.append(context.getResources().getString(R.string.log_result_success));
-                log_taskitem.append(" ");
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            log_taskitem.append(e.toString());
-            log_taskitem.append("\n");
+        String ring_selection_values[]=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+        int ring_notification_selection= Integer.parseInt(ring_selection_values[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE]);
+        int ring_phone_selection=Integer.parseInt(ring_selection_values[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_CALL_TYPE_LOCALE]);
+
+        if(ring_notification_selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM ||ring_notification_selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_MEDIA)
+        {
+            EnvironmentUtils.setRingtone(context,RingtoneManager.TYPE_NOTIFICATION,item.uri_ring_notification);
+            //RingtoneManager.setActualDefaultRingtoneUri(context,RingtoneManager.TYPE_NOTIFICATION ,Uri.parse(item.uri_ring_notification));
+        }
+        if(ring_phone_selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM ||ring_phone_selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_MEDIA)
+        {
+            EnvironmentUtils.setRingtone(context,RingtoneManager.TYPE_RINGTONE,item.uri_ring_call);
+            //RingtoneManager.setActualDefaultRingtoneUri(context,RingtoneManager.TYPE_RINGTONE,Uri.parse(item.uri_ring_call));
         }
     }
 
     private void activateActionOfBrightness(int screen_brightness){
         if(screen_brightness!=-1){
             if(screen_brightness== ActionConsts.ActionValueConsts.ACTION_BRIGHTNESS_AUTO){
-                try{
-                    Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-                log_taskitem.append(context.getResources().getString(R.string.action_brightness_auto));
-                log_taskitem.append(" ");
+                EnvironmentUtils.setBrightness(context,true,0);
             }else if(screen_brightness>=0&&screen_brightness<=PublicConsts.BRIGHTNESS_MAX) {
-                try{
-                    Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
-                    Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, screen_brightness);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-                log_taskitem.append(context.getResources().getString(R.string.action_brightness_manual));
-                log_taskitem.append((int)(((double)screen_brightness/PublicConsts.BRIGHTNESS_MAX)*100));
-                log_taskitem.append(" ");
+                EnvironmentUtils.setBrightness(context,false,screen_brightness);
             }
 
         }
     }
 
     private void activateActionOfWallpaper(String values){
-        try{
-            int value=Integer.parseInt(values);
-            if(value>=0){
-                log_taskitem.append(context.getResources().getString(R.string.action_set_wallpaper));
-                Message msg=new Message();
-                msg.what=TimeSwitchService.MESSAGE_DISPLAY_TOAST;
-                msg.obj=String.valueOf(context.getResources().getString(R.string.att_change_wallpaper));
-                TimeSwitchService.sendMessage(msg);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try{
-                            WallpaperManager wallpaperManager=WallpaperManager.getInstance(context);
-                            //DisplayMetrics displayMetrics=context.getResources().getDisplayMetrics();
-                            //use file path instead of uri
-                            //Bitmap bitmap= BitmapFactory.decodeFile(item.uri_wallpaper_desktop);//ValueUtils.getDecodedBitmapFromFile(item.uri_wallpaper_desktop,1920*1080);
-                            //this is for the task already set from old versions and can execute successfully
-                            //if(bitmap==null) bitmap= MediaStore.Images.Media.getBitmap(context.getContentResolver(), Uri.parse(item.uri_wallpaper_desktop));
-                            wallpaperManager.setStream(new FileInputStream(new File(item.uri_wallpaper_desktop)));
-                            //wallpaperManager.setBitmap(bitmap,null,WallpaperManager.FLAG_LOCK);
-                        }catch (Exception e){
-                            e.printStackTrace();
-                            LogUtil.putExceptionLog(context,e);
-                        }
-                    }
-                }).start();
-                //log_taskitem.append(context.getResources().getString(R.string.log_result_success));
-                log_taskitem.append(" ");
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            log_taskitem.append(e.toString());
-            log_taskitem.append("\n");
+        int value=Integer.parseInt(values);
+        if(value>=0){
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try{
+                        EnvironmentUtils.setWallPaper(context,item.uri_wallpaper_desktop);
+                    }catch (Exception e){e.printStackTrace();}
+                }
+            }).start();
         }
     }
 
     private void activateActionOfVibrate(String values){
-        try{
-            String vibrate_values[]=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
-            long frequency=Long.parseLong(vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_FREQUENCY_LOCALE]);
-            long duration=Long.parseLong(vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_DURATION_LOCALE]);
-            long interval=Long.parseLong(vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_INTERVAL_LOCALE]);
-            if(frequency>0){
-                Vibrator vibrator=(Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-                if(vibrator==null) return;
-                long[] vibrate_array=new long[(int)(frequency*2)+1];
-                vibrate_array[0]=0;
-                for(int i=1;i<vibrate_array.length;i++){
-                    vibrate_array[i]=(i%2==0?interval:duration);
-                }
-                vibrator.vibrate(vibrate_array,-1);
-                log_taskitem.append(context.getResources().getString(R.string.activity_taskgui_actions_vibrate));
-                log_taskitem.append(" ");
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            log_taskitem.append(e.toString());
-            log_taskitem.append("\n");
-        }
+        String vibrate_values[]=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
+        Integer frequency=Integer.parseInt(vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_FREQUENCY_LOCALE]);
+        long duration=Long.parseLong(vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_DURATION_LOCALE]);
+        long interval=Long.parseLong(vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_INTERVAL_LOCALE]);
+        if(frequency>0) EnvironmentUtils.vibrate(context,frequency,duration,interval);
     }
 
     private void activateActionOfToast(String values){
-        try{
-            String [] toast_values=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-            int type=Integer.parseInt(toast_values[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_TYPE_LOCALE]);
-            if(type>=0){
-                  /* Toast toast=Toast.makeText(context,item.toast,Toast.LENGTH_SHORT);
-                   if(type==PublicConsts.TOAST_TYPE_CUSTOM) toast.setGravity(Gravity.TOP|Gravity.START,
-                           Integer.parseInt(toast_values[PublicConsts.TOAST_LOCATION_X_OFFSET_LOCALE]),
-                           Integer.parseInt(toast_values[PublicConsts.TOAST_LOCATION_Y_OFFSET_LOCALE]));*/
-                TimeSwitchService.CustomToast content=new TimeSwitchService.CustomToast();
-                content.toast_value=toast_values;
-                content.toast=item.toast;
-                Message message=new Message();
-                message.what=TimeSwitchService.MESSAGE_DISPLAY_CUSTOM_TOAST;
-                message.obj=content;
-                TimeSwitchService.sendMessage(message);
-                // toast.show();
+        String [] toast_values=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+        int type=Integer.parseInt(toast_values[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_TYPE_LOCALE]);
+        if(type>=0){
+            int[] offsets=null;
+            if(type==ActionConsts.ActionValueConsts.TOAST_TYPE_CUSTOM){
+                offsets=new int[2];
+                offsets[0]=Integer.parseInt(toast_values[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_LOCATION_X_OFFSET_LOCALE]);
+                offsets[1]=Integer.parseInt(toast_values[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_LOCATION_Y_OFFSET_LOCALE]);
             }
-        }catch (Exception e){
-            e.printStackTrace();
-            LogUtil.putExceptionLog(context,e);
+            EnvironmentUtils.showToast(context,offsets,item.toast);
         }
     }
 
-    private void activateActionOfAutorotation(String value){
-        try{
-           int a=Integer.parseInt(value);
-           if(a<0) return;
-           android.provider.Settings.System.putInt(context.getContentResolver(),Settings.System.ACCELEROMETER_ROTATION,a);
-        }catch (Exception e){e.printStackTrace();}
+    private void activateActionOfAutorotation(int value){
+        if(value>=0) EnvironmentUtils.setIfAutorotation(context,value==1);
     }
 
     private void activateActionOfSMS(String values){
-        try{
-            String sms_values[]=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
-            if(Integer.parseInt(sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_ENABLED_LOCALE])>=0){
-                SmsManager manager;
-                int subscriptionId=Integer.parseInt(sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_SUBINFO_LOCALE]);
-                if(Build.VERSION.SDK_INT>=22&&subscriptionId>=0){
-                    manager=SmsManager.getSmsManagerForSubscriptionId(subscriptionId);
-                }else {
-                    manager=SmsManager.getDefault();
-                }
-                List<String> messages=manager.divideMessage(item.sms_message);
-                String[] addresses=item.sms_address.split(PublicConsts.SEPARATOR_SMS_RECEIVERS);
-                for(String address:addresses){
-                    for(String message:messages){
-                        try{
-                            manager.sendTextMessage(address,null,message,null,null);
-                        }catch (IllegalArgumentException le){
-                            le.printStackTrace();
-                            LogUtil.putExceptionLog(context,le);
-                        }
+        String sms_values[]=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
+        if(Integer.parseInt(sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_ENABLED_LOCALE])>=0){
+            Integer subid=null;
+            int subid_int=Integer.parseInt(sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_SUBINFO_LOCALE]);
+            if(Build.VERSION.SDK_INT>=22&&subid_int>=0) subid=subid_int;
+            EnvironmentUtils.sendSMSMessage(context,subid,item.sms_address.split(PublicConsts.SEPARATOR_SMS_RECEIVERS),item.sms_message
+                    ,Integer.parseInt(sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_RESULT_TOAST_LOCALE])>=0);
 
-                    }
-                }
-                log_taskitem.append(context.getResources().getString(R.string.action_sms_send));
-                log_taskitem.append(":");
-                for(String log_address:addresses){
-                    log_taskitem.append(log_address);
-                    log_taskitem.append(PublicConsts.SEPARATOR_SMS_RECEIVERS);
-                }
-                log_taskitem.append(" ");
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            log_taskitem.append(e.toString());
-            log_taskitem.append("\n");
-            //LogUtil.putExceptionLog(context,e);
         }
     }
 
     private void activateActionOfNet(int action_net){
         switch (action_net){
             default:break;
-            case ActionConsts.ActionValueConsts.ACTION_OPEN:{
-                boolean result=RootUtils.executeCommand(RootUtils.COMMAND_ENABLE_CELLUAR_NETWORK)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
-                log_taskitem.append(context.getResources().getString(R.string.action_net_on));
-                log_taskitem.append(":");
-                log_taskitem.append(result?context.getResources().getString(R.string.log_result_success):context.getResources().getString(R.string.log_result_fail));
-                log_taskitem.append(" ");
-            }
-            break;
-            case ActionConsts.ActionValueConsts.ACTION_CLOSE:{
-                boolean result=RootUtils.executeCommand(RootUtils.COMMAND_DISABLE_CELLUAR_NETWORK)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
-                log_taskitem.append(context.getResources().getString(R.string.action_net_off));
-                log_taskitem.append(":");
-                log_taskitem.append(result?context.getResources().getString(R.string.log_result_success):context.getResources().getString(R.string.log_result_fail));
-                log_taskitem.append(" ");
-            }
-            break;
+            case ActionConsts.ActionValueConsts.ACTION_OPEN: EnvironmentUtils.setGprsNetworkEnabled(true);break;
+            case ActionConsts.ActionValueConsts.ACTION_CLOSE: EnvironmentUtils.setGprsNetworkEnabled(false);break;
         }
     }
 
     private void activateActionOfGps(int action_gps){
-        Log.d(TAG,"BEGIN TO OPERATE GPS!!!!!!");
         switch (action_gps){
             default:break;
-            case ActionConsts.ActionValueConsts.ACTION_OPEN:{
-                String command=RootUtils.COMMAND_ENABLE_GPS;
-                if(Build.VERSION.SDK_INT>=23) command=RootUtils.COMMAND_ENABLE_GPS_API23;
-                final String runCommand=command;
-
-                RootUtils.executeCommand(runCommand);
-                log_taskitem.append(context.getResources().getString(R.string.action_gps_on));
-                //log_taskitem.append(":");
-                //log_taskitem.append(result?context.getResources().getString(R.string.log_result_success):context.getResources().getString(R.string.log_result_fail));
-                log_taskitem.append(" ");
-                //Log.i(TAG,"Root command of enable gps 's result is "+result);
+            case ActionConsts.ActionValueConsts.ACTION_OPEN: {
+                EnvironmentUtils.setGpsEnabled(true);
             }
             break;
             case ActionConsts.ActionValueConsts.ACTION_CLOSE:{
-                String command=RootUtils.COMMAND_DISABLE_GPS;
-                if(Build.VERSION.SDK_INT>=23) command=RootUtils.COMMAND_DISABLE_GPS_API23;
-                final String runCommand=command;
-                RootUtils.executeCommand(runCommand);
-                log_taskitem.append(context.getResources().getString(R.string.action_gps_off));
-                //log_taskitem.append(":");
-                //log_taskitem.append(result?context.getResources().getString(R.string.log_result_success):context.getResources().getString(R.string.log_result_fail));
-                log_taskitem.append(" ");
-                //Log.i(TAG,"Root command of disable gps "+result);
+                EnvironmentUtils.setGpsEnabled(false);
             }
             break;
         }
@@ -1438,19 +1174,11 @@ public class ProcessTaskItem {
         switch (action_airplanemode){
             default:break;
             case ActionConsts.ActionValueConsts.ACTION_OPEN:{
-                boolean result=RootUtils.executeCommand(RootUtils.COMMAND_ENABLE_AIRPLANE_MODE)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
-                log_taskitem.append(context.getResources().getString(R.string.action_airplane_mode_on));
-                log_taskitem.append(":");
-                log_taskitem.append(result?context.getResources().getString(R.string.log_result_success):context.getResources().getString(R.string.log_result_fail));
-                log_taskitem.append(" ");
+                EnvironmentUtils.setAirplaneModeEnabled(true);
             }
             break;
             case ActionConsts.ActionValueConsts.ACTION_CLOSE:{
-                boolean result=RootUtils.executeCommand(RootUtils.COMMAND_DISABLE_AIRPLANE_MODE)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
-                log_taskitem.append(context.getResources().getString(R.string.action_airplane_mode_off));
-                log_taskitem.append(":");
-                log_taskitem.append(result?context.getResources().getString(R.string.log_result_success):context.getResources().getString(R.string.log_result_fail));
-                log_taskitem.append(" ");
+                EnvironmentUtils.setAirplaneModeEnabled(false);
             }
             break;
         }
@@ -1460,196 +1188,76 @@ public class ProcessTaskItem {
         switch (action_device_control){
             default:break;
             case ActionConsts.ActionValueConsts.ACTION_DEVICE_CONTROL_SHUTDOWN:{
-                boolean result=RootUtils.executeCommand(RootUtils.COMMAND_SHUTDOWN)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
-                log_taskitem.append(context.getResources().getString(R.string.action_device_shutdown));
-                log_taskitem.append(":");
-                log_taskitem.append(result?context.getResources().getString(R.string.log_result_success):context.getResources().getString(R.string.log_result_fail));
-                log_taskitem.append(" ");
+                EnvironmentUtils.shutdownDevice();
             }
             break;
             case ActionConsts.ActionValueConsts.ACTION_DEVICE_CONTROL_REBOOT:{
-                boolean result=RootUtils.executeCommand(RootUtils.COMMAND_REBOOT)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
-                log_taskitem.append(context.getResources().getString(R.string.action_device_reboot));
-                log_taskitem.append(":");
-                log_taskitem.append(result?context.getResources().getString(R.string.log_result_success):context.getResources().getString(R.string.log_result_fail));
-                log_taskitem.append(" ");
-
+                EnvironmentUtils.restartDevice();
             }break;
         }
     }
 
     private void activateActionOfNotification(String values){
-        try{
-            String notification_values[]=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-            int type=Integer.parseInt(notification_values[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_LOCALE]);
-            if(type== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_NOT_OVERRIDE ||type== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_OVERRIDE_LAST){
-                NotificationManager manager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-                NotificationCompat.Builder builder;
-                if(Build.VERSION.SDK_INT>=26){
-                    String channel_id="channel_tasks";
-                    NotificationChannel channel=new NotificationChannel(channel_id,"Tasks", NotificationManager.IMPORTANCE_DEFAULT);
-                    manager.createNotificationChannel(channel);
-                    builder=new NotificationCompat.Builder(context,channel_id);
-                }else{
-                    builder=new NotificationCompat.Builder(context);
-                }
-                builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-                builder.setSmallIcon(R.drawable.ic_launcher);
-                builder.setContentTitle(context.getResources().getString(R.string.notification_task_activated_title));
-                builder.setContentText(log_taskitem.toString());
-                if(Integer.parseInt(notification_values[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE])== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_CONTENT_CUSTOM){
-                    builder.setContentTitle(item.notification_title);
-                    builder.setContentText(item.notification_message);
-                }
-                PendingIntent pi =PendingIntent.getActivity(context,1,new Intent(),PendingIntent.FLAG_UPDATE_CURRENT);
-                builder.setContentIntent(pi);
-                builder.setAutoCancel(true);
-                builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-                builder.setFullScreenIntent(pi,false);
-                if(type== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_NOT_OVERRIDE){
-                    if(notification_id<Integer.MAX_VALUE) notification_id++;//Can user make notification shows like that total?
-                    else notification_id=2;
-                }
-                manager.notify(notification_id,builder.build());
-                log_taskitem.append(context.getResources().getString(R.string.activity_taskgui_actions_notification));
-                log_taskitem.append(" ");
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            log_taskitem.append(e.toString());
-            log_taskitem.append("\n");
+        String notification_values[]=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+        int type=Integer.parseInt(notification_values[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_LOCALE]);
+        int if_custom=Integer.parseInt(notification_values[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE]);
+        if(type== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_NOT_OVERRIDE){
+            if(notification_id<Integer.MAX_VALUE) notification_id++;//Can user make notification shows like that total?
+            else notification_id=2;
         }
+        String title,message;
+        if(if_custom==ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_CONTENT_CUSTOM){
+            title=item.notification_title;
+            message=item.notification_message;
+        }else {
+            title=context.getResources().getString(R.string.notification_task_activated_title);
+            message=log_taskitem.toString();
+        }
+        EnvironmentUtils.sendNotification(context,notification_id,title,message);
     }
 
     private void launchAppsByPackageName(Context context,String values){
-        try{
-            String packageNames[]=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
-            PackageManager manager=context.getPackageManager();
-            if(manager==null) return;
-            if(packageNames.length==0) return;
-            try{if(Integer.parseInt(values)==-1) return;}catch (Exception e){}
-            for(String s:packageNames){
-                if(s==null) continue;
-                try{
-                    Intent i=manager.getLaunchIntentForPackage(s);
-                    context.startActivity(i);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
+        if(values.equals(String.valueOf(-1)))return;
+        String packageNames[]=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
+        EnvironmentUtils.launchAppByPackageName(context,packageNames);
     }
 
     private void stopAppsByPackageName(Context context,String values){
-        try{
-            ActivityManager manager=(ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-            if(manager==null) return;
-            String [] packageNames=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
-            for(String s:packageNames){
-                manager.killBackgroundProcesses(s);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        if(values.equals(String.valueOf(-1)))return;
+        String packageNames[]=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
+        EnvironmentUtils.stopAppByPackageName(context,packageNames);
     }
 
-    /**
-     * ROOT Required
-     * @param values package names split by ":"
-     */
     private void forceStopAppsByPackageName(String values){
-        //android.permission.FORCE_STOP_PACKAGES
-        try{
-            String [] packageNames=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
-            for(String s:packageNames){
-                RootUtils.executeCommand(RootUtils.COMMAND_FORCE_STOP_PACKAGE+" "+s);
-            }
-            /*ActivityManager manager=(ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-            Method method=ActivityManager.class.getMethod("forceStopPackage",String.class);
-            for(String s:packageNames){
-                method.invoke(manager,s);
-            }*/
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        if(values.equals(String.valueOf(-1)))return;
+        String packageNames[]=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
+        for(String s:packageNames) EnvironmentUtils.forceStopAppByPackageName(s);
     }
 
-    private boolean isCellarNetworkEnabled(){
-        ConnectivityManager connectivityManager=(ConnectivityManager) this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(connectivityManager==null) return  false;
-        else {
-            NetworkInfo networkInfo=connectivityManager.getActiveNetworkInfo();
-            if(networkInfo==null) return false;
-            if(networkInfo.getType()==ConnectivityManager.TYPE_MOBILE) return true;
-            if(networkInfo.getType()==ConnectivityManager.TYPE_WIFI){
-                try{
-                    Method getMobileDataEnabledMethod = ConnectivityManager.class.getDeclaredMethod("getMobileDataEnabled");
-                    getMobileDataEnabledMethod.setAccessible(true);
-                    return (Boolean) getMobileDataEnabledMethod.invoke(connectivityManager);
-                }catch (Exception e){
-                    e.printStackTrace();
-                    return false;
+    /**
+     * 启用或者关闭指定任务
+     * @param enableOrDisable 0--enable,1--disable
+     */
+    private void switchTasks(int enableOrDisable){
+        SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
+        String[] switch_values=item.actions[enableOrDisable==0? ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE: ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
+        if(Integer.parseInt(switch_values[0])>=0){
+            for(String s:switch_values){
+                int id=Integer.parseInt(s);
+                Cursor cursor=database.rawQuery("select * from "+ MySQLiteOpenHelper.getCurrentTableName(context)+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
+                if(cursor.getCount()>0){
+                    //int position=getPosition(id);
+                    setTaskEnabled(context,id,enableOrDisable==0);
                 }
+                cursor.close();
             }
+            MainActivity.sendEmptyMessage(MainActivity.MESSAGE_REQUEST_UPDATE_LIST);
         }
-        return false;
-    }
-
-    /**
-     * get if wifi is connected
-     * @return returns true if wifi is connected
-     */
-    private boolean isWifiConnected(@Nullable Integer[] ssids){
-        try{
-            ConnectivityManager connectivityManager=(ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            if(connectivityManager==null) return false;
-            if(connectivityManager.getActiveNetworkInfo().getType()==ConnectivityManager.TYPE_WIFI) return true;
-        }catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
-        return false;
-    }
-
-    /**
-     * 获取系统GPS是否开启
-     * @return GPS是否开启
-     */
-    private boolean isLocationServiceEnabled(){
-        LocationManager locationManager=(LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        return locationManager!=null&&(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER));
-    }
-
-    private boolean isAirplaneModeOn(){
-        return Settings.System.getInt(context.getContentResolver(),Settings.ACTION_AIRPLANE_MODE_SETTINGS,0)==1;
-    }
-
-    private boolean isInCall(){
-        if(Build.VERSION.SDK_INT>=21){
-            try{
-                TelecomManager manager=(TelecomManager) context.getSystemService(Context.TELECOM_SERVICE);
-                if(PermissionChecker.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE)==PermissionChecker.PERMISSION_GRANTED) return manager.isInCall();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }else{
-            try{
-                TelephonyManager manager=(TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
-                //manager.getCallState()
-
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-
-        return false;
     }
 
 
     /**
+     * @deprecated
      * 通过TaskItem中的ID获取该TaskItem在list中的位置；
      * 如果查询不到该ID，则返回-1
      * @param id TaskItem中的id
@@ -1665,33 +1273,9 @@ public class ProcessTaskItem {
         return -1;
     }
 
-    /**
-     * 启用或者关闭指定任务
-     * @param enableOrDisable 0--enable,1--disable
-     */
-    private void switchTasks(int enableOrDisable){
-        SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
-        try{
-            String[] switch_values=item.actions[enableOrDisable==0? ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE: ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
-            if(Integer.parseInt(switch_values[0])>=0){
-                for(String s:switch_values){
-                    int id=Integer.parseInt(s);
-                    Cursor cursor=database.rawQuery("select * from "+ MySQLiteOpenHelper.getCurrentTableName(context)+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
-                    if(cursor.getCount()>0){
-                        //int position=getPosition(id);
-                        setTaskEnabled(context,id,enableOrDisable==0);
-                    }
-                    cursor.close();
-                }
-                MainActivity.sendEmptyMessage(MainActivity.MESSAGE_REQUEST_UPDATE_LIST);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            LogUtil.putExceptionLog(context,e);
-        }
-    }
 
     /**
+     * @deprecated
      * 启用或者关闭指定任务，更新list，刷新数据库
      * @param id 任务id
      */
@@ -1733,6 +1317,9 @@ public class ProcessTaskItem {
         }
     }
 
+    /**
+     *
+     */
     public static void setTaskFolded(final Context context, int id , boolean isFolded){
         SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
         final String table_name= MySQLiteOpenHelper.getCurrentTableName(context);

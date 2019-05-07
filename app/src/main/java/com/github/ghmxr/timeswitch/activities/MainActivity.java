@@ -239,8 +239,7 @@ public class MainActivity extends BaseActivity {
 
     public void startService2Refresh(){
         swrlayout.setRefreshing(true);
-        ((ListAdapter)recyclerView.getAdapter()).removeTouchHelper();
-        recyclerView.setAdapter(null);
+        removeRecyclerViewElements();
         TimeSwitchService.startService(this);
     }
 
@@ -251,23 +250,37 @@ public class MainActivity extends BaseActivity {
         startActivityForResult(intent,REQUEST_CODE_ACTIVITY_EDIT);
     }
 
+    private void removeRecyclerViewElements(){
+        ListAdapter adapter=(ListAdapter) recyclerView.getAdapter();
+        if(adapter!=null){
+            adapter.removeTouchHelper();
+        }
+        recyclerView.setAdapter(null);
+    }
+
+    private void setRecyclerViewElements(){
+        removeRecyclerViewElements();
+        LinearLayoutManager manager=new LinearLayoutManager(this);
+        //GridLayoutManager gmanager=new GridLayoutManager(this,3);
+        manager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(manager);
+        ListAdapter adapter=new ListAdapter(TimeSwitchService.list);
+        recyclerView.setAdapter(adapter);
+        adapter.atatchTouchHelper();
+        swrlayout.setRefreshing(false);
+        recyclerView.setVisibility(View.VISIBLE);
+    }
+
     public void processMessage(Message msg) {
         switch (msg.what){
             case MESSAGE_REQUEST_UPDATE_LIST:{
-                recyclerView.getAdapter().notifyDataSetChanged();
+                try{
+                    recyclerView.getAdapter().notifyDataSetChanged();
+                }catch (Exception e){e.printStackTrace();}
             }
             break;
             case MESSAGE_GETLIST_COMPLETE:{
-                //this.list=TimeSwitchService.list;
-                LinearLayoutManager manager=new LinearLayoutManager(this);
-                GridLayoutManager gmanager=new GridLayoutManager(this,3);
-                manager.setOrientation(LinearLayoutManager.VERTICAL);
-               recyclerView.setLayoutManager(manager);
-                ListAdapter adapter=new ListAdapter(TimeSwitchService.list);
-               recyclerView.setAdapter(adapter);
-                adapter.itemTouchHelper.attachToRecyclerView(recyclerView);
-
-                this.swrlayout.setRefreshing(false);
+                setRecyclerViewElements();
             }
             break;
             case MESSAGE_DELETE_SELECTED_ITEMS_COMPLETE:{
@@ -286,11 +299,8 @@ public class MainActivity extends BaseActivity {
             }
             break;
             case MESSAGE_ON_ICON_FOLDED_PROCESS_COMPLETE:{
-                try{
-                    swrlayout.setRefreshing(false);
-                    menu.getItem(MENU_FOLD).setEnabled(true);
-                    recyclerView.setAdapter(new ListAdapter(TimeSwitchService.list));
-                }catch (Exception e){e.printStackTrace();}
+                menu.getItem(MENU_FOLD).setEnabled(true);
+                setRecyclerViewElements();
             }
             break;
         }
@@ -369,8 +379,7 @@ public class MainActivity extends BaseActivity {
     public void finish(){
         super.finish();
         this.ifRefresh=false;
-        ((ListAdapter)recyclerView.getAdapter()).removeTouchHelper();
-        recyclerView.setAdapter(null);
+        removeRecyclerViewElements();
         try{
             unregisterReceiver(batteryReceiver);
         }catch (Exception e){
@@ -427,11 +436,10 @@ public class MainActivity extends BaseActivity {
                     return false;
                 }
 
-                try{
-                    menu.getItem(MENU_DELETE).setEnabled(false);
-                    closeMultiSelectMode();
-                    swrlayout.setRefreshing(true);
-                }catch (Exception e){e.printStackTrace();}
+                menu.getItem(MENU_DELETE).setEnabled(false);
+                closeMultiSelectMode();
+                swrlayout.setRefreshing(true);
+                recyclerView.setVisibility(View.INVISIBLE);
 
                 new Thread(new Runnable() {
                     @Override
@@ -471,7 +479,7 @@ public class MainActivity extends BaseActivity {
                     menu.getItem(MENU_FOLD).setEnabled(false);
                     swrlayout.setRefreshing(true);
                     final List<TaskItem> list=((ListAdapter)recyclerView.getAdapter()).getList();
-                    recyclerView.setAdapter(null);
+                    removeRecyclerViewElements();
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -685,6 +693,8 @@ public class MainActivity extends BaseActivity {
        }
 
        private boolean[] getIsSelected () {return isSelected;}
+
+       void atatchTouchHelper(){itemTouchHelper.attachToRecyclerView(recyclerView);}
 
        void removeTouchHelper(){itemTouchHelper.attachToRecyclerView(null);}
 

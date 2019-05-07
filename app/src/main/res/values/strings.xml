@@ -361,6 +361,7 @@
 	<string name="snack_dialog_color_invalid">无效的颜色值</string>
 	<string name="dialog_app_select_long_press_test">提示:长按一个应用来测试是否可以通过launcher打开</string>
 	<string name="dialog_app_close_att">提示:此操作仅为结束后台进程，对于前台应用不会生效</string>
+	<string name="dialog_app_force_close_att">警告:此操作为通过shell命令强制结束应用进程，不建议使用在系统应用上</string>
 	<string name="adapter_per">每</string>
 	<string name="adapter_trigger">触发</string>
 	<string name="adapter_single">仅一次</string>
