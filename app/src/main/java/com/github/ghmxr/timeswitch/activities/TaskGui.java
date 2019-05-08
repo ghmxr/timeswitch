@@ -75,10 +75,10 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 	private final View.OnClickListener listener_on_exception_item_clicked=new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Intent i=new Intent(TaskGui.this,Exceptions.class);
-			i.putExtra(Exceptions.INTENT_EXTRA_EXCEPTIONS,taskitem.exceptions);
-			i.putExtra(Exceptions.INTENT_EXTRA_TRIGGER_TYPE,taskitem.trigger_type);
-			try{i.putExtra(Exceptions.EXTRA_EXCEPTION_CONNECTOR,Integer.parseInt(taskitem.addition_exception_connector));}catch (Exception e){e.printStackTrace();}
+			Intent i=new Intent(TaskGui.this,ExceptionActivity.class);
+			i.putExtra(ExceptionActivity.INTENT_EXTRA_EXCEPTIONS,taskitem.exceptions);
+			i.putExtra(ExceptionActivity.INTENT_EXTRA_TRIGGER_TYPE,taskitem.trigger_type);
+			try{i.putExtra(ExceptionActivity.EXTRA_EXCEPTION_CONNECTOR,Integer.parseInt(taskitem.addition_exception_connector));}catch (Exception e){e.printStackTrace();}
 			i.putExtra(EXTRA_TITLE_COLOR,taskitem.addition_title_color);
 			TaskGui.this.startActivityForResult(i,REQUEST_CODE_EXCEPTIONS);
 		}
@@ -1409,9 +1409,9 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			case REQUEST_CODE_EXCEPTIONS:{
 				if(resultCode==RESULT_OK) {
 					if(data==null) return;
-					String[] result=data.getStringArrayExtra(Exceptions.INTENT_EXTRA_EXCEPTIONS);
+					String[] result=data.getStringArrayExtra(ExceptionActivity.INTENT_EXTRA_EXCEPTIONS);
 					if (result != null) taskitem.exceptions = result;
-					taskitem.addition_exception_connector=String.valueOf(data.getIntExtra(Exceptions.EXTRA_EXCEPTION_CONNECTOR,-1));
+					taskitem.addition_exception_connector=String.valueOf(data.getIntExtra(ExceptionActivity.EXTRA_EXCEPTION_CONNECTOR,-1));
 					refreshExceptionViews();
 				}
 			}

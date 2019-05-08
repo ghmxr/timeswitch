@@ -53,7 +53,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".activities.Exceptions"
+            android:name=".activities.ExceptionActivity"
             android:label="@string/activity_taskgui_exceptions_title"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"/>

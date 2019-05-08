@@ -30,7 +30,7 @@ import java.util.Arrays;
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
  */
-public class Exceptions extends BaseActivity implements View.OnClickListener {
+public class ExceptionActivity extends BaseActivity implements View.OnClickListener {
 
     public static final String INTENT_EXTRA_EXCEPTIONS="exceptions";
     public static final String INTENT_EXTRA_TRIGGER_TYPE="trigger_type";
@@ -112,9 +112,8 @@ public class Exceptions extends BaseActivity implements View.OnClickListener {
             ((CheckBox)findViewById(R.id.exceptions_gps_off_cb)).setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_GPS_DISABLED])==1);
             ((CheckBox)findViewById(R.id.exceptions_airplanemode_on_cb)).setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_ENABLED])==1);
             ((CheckBox)findViewById(R.id.exceptions_airplanemode_off_cb)).setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_DISABLED])==1);
-        }catch (NumberFormatException ne){
-            ne.printStackTrace();
-            LogUtil.putExceptionLog(this,ne);
+        }catch (Exception e){
+            e.printStackTrace();
         }
         refreshExceptionConnectorValue();
         refreshBatteryPercentageView();

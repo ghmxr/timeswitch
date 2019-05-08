@@ -1255,27 +1255,21 @@ public class ProcessTaskItem {
         }
     }
 
-
     /**
-     * @deprecated
-     * 通过TaskItem中的ID获取该TaskItem在list中的位置；
-     * 如果查询不到该ID，则返回-1
-     * @param id TaskItem中的id
-     * @return TaskItem所在list的position
+     * 根据指定ID返回list中的TaskItem
+     * @param list 要查询的list
+     * @param id 要获得的TaskItem的ID
+     * @return TaskItem，如果没有对应ID的则返回null
      */
-    public static int getPosition(int id){
-        if(TimeSwitchService.list==null) return -1;
+    public static @Nullable TaskItem getTaskItemOfId(List<TaskItem>list,int id){
         try{
-            for(int i=0;i< TimeSwitchService.list.size();i++){
-                if(id==TimeSwitchService.list.get(i).id) return i;
-            }
+            for(TaskItem item:list) if(item.id==id) return item;
         }catch (Exception e){e.printStackTrace();}
-        return -1;
+        return null;
     }
 
 
     /**
-     * @deprecated
      * 启用或者关闭指定任务，更新list，刷新数据库
      * @param id 任务id
      */
@@ -1284,25 +1278,28 @@ public class ProcessTaskItem {
             Log.e("invalid","an invalid type of context ,must be a type of TimeSwitchService instance!!");
             return;
         }
-        int position=getPosition(id);
-        if(position<0||position>=TimeSwitchService.list.size()) return;
+
+        TaskItem item=getTaskItemOfId(TimeSwitchService.list,id);
+        if(item==null) return;
+
         try{
-            if(TimeSwitchService.list.get(position).trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE&&TimeSwitchService.list.get(position).time<=System.currentTimeMillis()) return;
-            TimeSwitchService.list.get(position).isenabled=enabled;
+            if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE&&item.time<=System.currentTimeMillis()) return;
+            item.isenabled=enabled;
             SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
             database.execSQL("update "+ MySQLiteOpenHelper.getCurrentTableName(context)
                     +" set "+SQLConsts.SQL_TASK_COLUMN_ENABLED +"="+(enabled?1:0)+
                     " where "+SQLConsts.SQL_TASK_COLUMN_ID +"="+id);
 
-            if(TimeSwitchService.list.get(position).trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME&&enabled){
-                TimeSwitchService.list.get(position).time=System.currentTimeMillis();
+            if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME&&enabled){
+                long currentTime=System.currentTimeMillis();
+                item.time=currentTime;
                 Cursor cursor=database.rawQuery("select * from "+ MySQLiteOpenHelper.getCurrentTableName(context)+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
                 if(cursor.moveToFirst()){
                     long[] values_read=ValueUtils.string2longArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_TRIGGER_VALUES)));
                     if(values_read.length==2){
                         long interval_read=values_read[1];
                         long values_put[]=new long[2];
-                        values_put[0]=System.currentTimeMillis();
+                        values_put[0]=currentTime;
                         values_put[1]=interval_read;
                         ContentValues contentValues=new ContentValues();
                         contentValues.put(SQLConsts.SQL_TASK_COLUMN_TRIGGER_VALUES,ValueUtils.longArray2String(values_put));
@@ -1310,16 +1307,14 @@ public class ProcessTaskItem {
                     }
                 }
                 cursor.close();
+                database.close();
             }
-            if(enabled) TimeSwitchService.list.get(position).activateTask(context); else TimeSwitchService.list.get(position).cancelTask();
+            if(enabled) item.activateTask(context); else item.cancelTask();
         }catch (Exception e){
             e.printStackTrace();
         }
     }
 
-    /**
-     *
-     */
     public static void setTaskFolded(final Context context, int id , boolean isFolded){
         SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
         final String table_name= MySQLiteOpenHelper.getCurrentTableName(context);
@@ -1337,7 +1332,9 @@ public class ProcessTaskItem {
         }
         cursor.close();
         database.close();
-        TimeSwitchService.list.get(getPosition(id)).addition_isFolded=isFolded;
+        //TimeSwitchService.list.get(getPosition(id)).addition_isFolded=isFolded;
+        TaskItem item=getTaskItemOfId(TimeSwitchService.list,id);
+        if(item!=null) item.addition_isFolded=isFolded;
     }
 
 }

@@ -43,6 +43,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Collections;
@@ -80,10 +81,11 @@ public class MainActivity extends BaseActivity {
 
 	public static final int MENU_FOLD=0;
 	public static final int MENU_DELETE=1;
-	public static final int MENU_SELECT_ALL=2;
-	public static final int MENU_DESELCT_ALL=3;
-	public static final int MENU_PROFILE=4;
-	public static final int MENU_SETTINGS=5;
+	public static final int MENU_SERVICE_CONTROL=2;
+	public static final int MENU_SELECT_ALL=3;
+	public static final int MENU_DESELCT_ALL=4;
+	public static final int MENU_PROFILE=5;
+	public static final int MENU_SETTINGS=6;
 
 	private final BroadcastReceiver batteryReceiver=new BroadcastReceiver() {
         @Override
@@ -125,7 +127,7 @@ public class MainActivity extends BaseActivity {
                     swrlayout.setRefreshing(false);
                     return;
                 }
-               startService2Refresh();
+                startService2Refresh();
             }
         });
 
@@ -201,7 +203,7 @@ public class MainActivity extends BaseActivity {
             }
         }); */
 
-        TimeSwitchService.startService(this);
+        setServiceEnabled(settings.getBoolean(PublicConsts.PREFERENCE_SERVICE_ENABLED,PublicConsts.PREFERENCE_SERVICE_ENABLED_DEFAULT));
 	}
 
 	@Override
@@ -213,18 +215,19 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        boolean isEnabled=getSharedPreferences(PublicConsts.PREFERENCES_NAME,Context.MODE_PRIVATE).getBoolean(PublicConsts.PREFERENCE_SERVICE_ENABLED,PublicConsts.PREFERENCE_SERVICE_ENABLED_DEFAULT);
         if(requestCode==REQUEST_CODE_ACTIVITY_ADD){
-            if(resultCode==RESULT_OK){
+            if(resultCode==RESULT_OK&&isEnabled){
                 startService2Refresh();
                 //sendEmptyMessage(MESSAGE_GETLIST_COMPLETE);
             }
         }else if(requestCode==REQUEST_CODE_ACTIVITY_EDIT){
-            if(resultCode==RESULT_OK){
+            if(resultCode==RESULT_OK&&isEnabled){
                 startService2Refresh();
                 //sendEmptyMessage(MESSAGE_GETLIST_COMPLETE);
             }
         }else if(requestCode==REQUEST_CODE_ACTIVITY_PROFILE){
-            if(resultCode==RESULT_OK){
+            if(resultCode==RESULT_OK&&isEnabled){
                 //listview_adapter =null;
                 //listview.setAdapter(null);
                 startService2Refresh();
@@ -266,7 +269,7 @@ public class MainActivity extends BaseActivity {
         recyclerView.setLayoutManager(manager);
         ListAdapter adapter=new ListAdapter(TimeSwitchService.list);
         recyclerView.setAdapter(adapter);
-        adapter.atatchTouchHelper();
+        adapter.attachTouchHelper();
         swrlayout.setRefreshing(false);
         recyclerView.setVisibility(View.VISIBLE);
     }
@@ -405,7 +408,36 @@ public class MainActivity extends BaseActivity {
         getMenuInflater().inflate(R.menu.main,menu);
         this.menu=menu;
         setIconEnable(menu,true);
+        MenuItem menuItem=menu.getItem(MENU_SERVICE_CONTROL);
+        if(getSharedPreferences(PublicConsts.PREFERENCES_NAME,Context.MODE_PRIVATE).getBoolean(PublicConsts.PREFERENCE_SERVICE_ENABLED,PublicConsts.PREFERENCE_SERVICE_ENABLED_DEFAULT))
+        {
+            menuItem.setTitle(getResources().getString(R.string.action_stop_service));
+            menuItem.setIcon(android.R.drawable.ic_media_pause);
+            menu.getItem(MENU_PROFILE).setVisible(true);
+            menu.getItem(MENU_FOLD).setVisible(true);
+        }else{
+            menuItem.setTitle(getResources().getString(R.string.action_start_service));
+            menuItem.setIcon(android.R.drawable.ic_media_play);
+            menu.getItem(MENU_PROFILE).setVisible(false);
+            menu.getItem(MENU_FOLD).setVisible(false);
+        }
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private void setServiceEnabled(boolean b){
+        if(b) {
+            findViewById(R.id.main_service_disabled).setVisibility(View.GONE);
+            setFabVisibility(true);
+            swrlayout.setEnabled(true);
+            startService2Refresh();
+        }else{
+            findViewById(R.id.main_service_disabled).setVisibility(View.VISIBLE);
+            setFabVisibility(false);
+            swrlayout.setEnabled(false);
+            removeRecyclerViewElements();
+            TimeSwitchService.stopService();
+        }
+
     }
 
     @Override
@@ -418,6 +450,20 @@ public class MainActivity extends BaseActivity {
                 }
             }
             break;
+            case R.id.action_service_control:{
+                SharedPreferences settings=getSharedPreferences(PublicConsts.PREFERENCES_NAME,Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor=settings.edit();
+                boolean isEnabled=settings.getBoolean(PublicConsts.PREFERENCE_SERVICE_ENABLED,PublicConsts.PREFERENCE_SERVICE_ENABLED_DEFAULT);
+                editor.putBoolean(PublicConsts.PREFERENCE_SERVICE_ENABLED,!isEnabled);
+                editor.apply();
+
+                menu.getItem(MENU_SERVICE_CONTROL).setIcon(isEnabled?android.R.drawable.ic_media_play:android.R.drawable.ic_media_pause);
+                menu.getItem(MENU_SERVICE_CONTROL).setTitle(isEnabled?getResources().getString(R.string.action_start_service):getResources().getString(R.string.action_stop_service));
+                menu.getItem(MENU_PROFILE).setVisible(!isEnabled);
+                menu.getItem(MENU_FOLD).setVisible(!isEnabled);
+
+                setServiceEnabled(!isEnabled);
+            }
             case R.id.action_selectall:{
                 //listview_adapter.selectAll();
                 menu.getItem(MENU_DELETE).setEnabled(true);
@@ -636,22 +682,25 @@ public class MainActivity extends BaseActivity {
                switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                    @Override
                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                       if(b&&list.get(holder.getAdapterPosition()).trigger_type == TriggerTypeConsts.TRIGGER_TYPE_SINGLE&&(list.get(holder.getAdapterPosition()).time<System.currentTimeMillis())){
-                           Snackbar.make(fab,getResources().getString(R.string.activity_main_toast_task_invalid),Snackbar.LENGTH_SHORT)
-                                   .setAction(getResources().getString(R.string.activity_main_toast_task_invalid_action), new View.OnClickListener() {
-                                       @Override
-                                       public void onClick(View view) {
-                                           startEditTaskActivity(holder.getAdapterPosition());
-                                       }
-                                   }).show();
-
-                           return;
-                       }
                        try{
+                           if(b&&list.get(holder.getAdapterPosition()).trigger_type == TriggerTypeConsts.TRIGGER_TYPE_SINGLE&&(list.get(holder.getAdapterPosition()).time<System.currentTimeMillis())){
+                               Snackbar.make(fab,getResources().getString(R.string.activity_main_toast_task_invalid),Snackbar.LENGTH_SHORT)
+                                       .setAction(getResources().getString(R.string.activity_main_toast_task_invalid_action), new View.OnClickListener() {
+                                           @Override
+                                           public void onClick(View view) {
+                                               startEditTaskActivity(holder.getAdapterPosition());
+                                           }
+                                       }).show();
+                               holder.switch_enabled.setChecked(!b);
+                               return;
+                           }
                            ProcessTaskItem.setTaskEnabled(TimeSwitchService.service,list.get(holder.getAdapterPosition()).id,b);
                        }catch (Exception e){
                            e.printStackTrace();
+                           holder.switch_enabled.setChecked(!b);
+                           Toast.makeText(MainActivity.this,e.toString(),Toast.LENGTH_SHORT).show();
                        }
+
                    }
                });
                View.OnLongClickListener longClickListener=new View.OnLongClickListener() {
@@ -694,7 +743,7 @@ public class MainActivity extends BaseActivity {
 
        private boolean[] getIsSelected () {return isSelected;}
 
-       void atatchTouchHelper(){itemTouchHelper.attachToRecyclerView(recyclerView);}
+       void attachTouchHelper(){itemTouchHelper.attachToRecyclerView(recyclerView);}
 
        void removeTouchHelper(){itemTouchHelper.attachToRecyclerView(null);}
 

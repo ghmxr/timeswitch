@@ -12,6 +12,8 @@
     <string name="activity_log">日志</string>
 	<string name="activity_profile">切换列表</string>
 	<string name="activity_main_att">当前任务为空</string>
+	<string name="activity_main_service_disabled_att">服务已停止运行</string>
+	<string name="activity_main_service_disabled_att_action">立即启用</string>
 	<string name="activity_action_switch_task_null">列表中没有任务</string>
 	<string name="activity_action_app_open_title">运行应用</string>
 	<string name="activity_action_app_open_msg">运行指定的应用</string>
@@ -412,6 +414,8 @@
 	<string name="toast_location_default">默认位置</string>
 	<string name="toast_location_custom">自定义位置</string>
 	<string name="word_center"><u>居中</u></string>
+	<string name="action_start_service">启用服务</string>
+	<string name="action_stop_service">停止服务</string>
     <string name="action_fold">折叠/展开</string>
 	<string name="action_save">保存</string>
 	<string name="action_confirm">确定</string>

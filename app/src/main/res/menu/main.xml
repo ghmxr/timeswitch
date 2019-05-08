@@ -17,22 +17,28 @@
         android:title="@string/action_delete"/>
 
     <item
-        android:id="@+id/action_selectall"
+        android:id="@+id/action_service_control"
         android:orderInCategory="2"
+        app:showAsAction="never"
+        android:visible="true"
+        android:title=""/>
+    <item
+        android:id="@+id/action_selectall"
+        android:orderInCategory="3"
         app:showAsAction="ifRoom"
         android:visible="false"
         android:title="@string/action_selectall"/>
 
     <item
         android:id="@+id/action_deselectall"
-        android:orderInCategory="3"
+        android:orderInCategory="4"
         app:showAsAction="ifRoom"
         android:visible="false"
         android:title="@string/action_deselectall"/>
 
     <item
        android:id="@+id/action_profile"
-        android:orderInCategory="4"
+        android:orderInCategory="5"
         app:showAsAction="never"
         android:visible="true"
         android:icon="@android:drawable/ic_menu_rotate"
@@ -40,7 +46,7 @@
 
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="5"
+        android:orderInCategory="6"
         app:showAsAction="never"
         android:icon="@android:drawable/ic_menu_manage"
         android:title="@string/action_settings"/>

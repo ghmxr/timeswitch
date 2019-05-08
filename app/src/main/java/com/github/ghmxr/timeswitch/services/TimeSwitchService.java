@@ -50,15 +50,20 @@ public class TimeSwitchService extends Service {
     public static MyHandler mHandler;
 
     public static final int MESSAGE_REQUEST_REFRESH_TASKS=0;
+    /**
+     * @deprecated
+     */
     public static final int MESSAGE_REFRESH_TASKS_COMPLETE =1;
     /**
+     * @deprecated
      * message.obj = String.valueOf("DisplayContent");
      */
-    public static final int MESSAGE_DISPLAY_TOAST=2;
+    public static final int MESSAGE_DISPLAY_TOAST=101;
     /**
+     * @deprecated
      * message.obj=new TimeSwitchService.CustomToast();
      */
-    public static final int MESSAGE_DISPLAY_CUSTOM_TOAST=3;
+    public static final int MESSAGE_DISPLAY_CUSTOM_TOAST=102;
 
     public static NotificationCompat.Builder notification=null;
 
@@ -129,7 +134,12 @@ public class TimeSwitchService extends Service {
                         if(item==null) continue;
                         if(item.isenabled) item.activateTask(TimeSwitchService.this);
                     }
-                    sendEmptyMessage(TimeSwitchService.MESSAGE_REFRESH_TASKS_COMPLETE);
+                    //sendEmptyMessage(TimeSwitchService.MESSAGE_REFRESH_TASKS_COMPLETE);
+                    MainActivity.sendEmptyMessage(MainActivity.MESSAGE_GETLIST_COMPLETE);
+                    Settings.sendEmptyMessage(Settings.MESSAGE_CHANGE_API_COMPLETE);
+                    Profile.sendEmptyMessage(Profile.MESSAGE_REFRESH_TABLES);
+
+                    new Thread(new RefreshListRemainingTimeTask()).start();
                 }
             }
         }).start();
@@ -235,7 +245,9 @@ public class TimeSwitchService extends Service {
                     for(TaskItem i:list){
                         i.cancelTask();
                     }
-                    list.clear();
+                    //other places may user the values of this list
+                    //list.clear();
+                    System.gc();
                 }
             }
         }).start();
@@ -298,6 +310,10 @@ public class TimeSwitchService extends Service {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    public static void stopService(){
+        if(service!=null) service.stopSelf();
     }
 
     private void refreshForegroundNotification(){

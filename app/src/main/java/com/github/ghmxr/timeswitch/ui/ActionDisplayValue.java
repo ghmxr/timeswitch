@@ -265,11 +265,15 @@ public class ActionDisplayValue {
             if(Integer.parseInt(values[0])>=0) {
                 StringBuilder builder=new StringBuilder("");
                 for (String id:values){
-                    int position= ProcessTaskItem.getPosition(Integer.parseInt(id));
+                    /*int position= ProcessTaskItem.getPosition(Integer.parseInt(id));
                     if(position>=0&& TimeSwitchService.list!=null&&position<TimeSwitchService.list.size()){
                         builder.append(TimeSwitchService.list.get(position).name);
                         builder.append(" ");
-                    }
+                    }*/
+                    TaskItem item=ProcessTaskItem.getTaskItemOfId(TimeSwitchService.list,Integer.parseInt(id));
+                    if(item==null) continue;
+                    builder.append(item.name);
+                    builder.append(" ");
                 }
                 //String displayValue=builder.toString();
                 //if(displayValue.length()>15) displayValue=displayValue.substring(0,15)+"...";
@@ -637,8 +641,10 @@ public class ActionDisplayValue {
                 if(Integer.parseInt(ids[0])<0) return "";
                 StringBuilder builder=new StringBuilder("");
                 for(int i=0;i<ids.length;i++){
-                    int position=ProcessTaskItem.getPosition(Integer.parseInt(ids[i]));
-                    if(position>=0) builder.append(TimeSwitchService.list.get(position).name);
+                    //int position=ProcessTaskItem.getPosition(Integer.parseInt(ids[i]));
+                    //if(position>=0) builder.append(TimeSwitchService.list.get(position).name);
+                    TaskItem item=ProcessTaskItem.getTaskItemOfId(TimeSwitchService.list,Integer.parseInt(ids[i]));
+                    if(item!=null) builder.append(item.name);
                     if(i<ids.length-1) builder.append(",");
                 }
                 return builder.toString();

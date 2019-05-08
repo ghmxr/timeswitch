@@ -69,4 +69,7 @@ public class PublicConsts {
 
 	public static final String PREFERENCE_DISABLE_ANIMATION_EFFECTS="disable_animation_effects";
 	public static boolean PREFERENCE_DISABLE_ANIMATION_EFFECTS_DEFAULT=false;
+
+	public static final String PREFERENCE_SERVICE_ENABLED="service_enabled";
+	public static final boolean PREFERENCE_SERVICE_ENABLED_DEFAULT=true;
 }
