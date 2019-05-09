@@ -246,13 +246,6 @@ public class MainActivity extends BaseActivity {
         TimeSwitchService.startService(this);
     }
 
-    private void startEditTaskActivity(int position){
-        Intent intent = new Intent();
-        intent.putExtra(EditTask.TAG_SELECTED_ITEM_POSITION,position);
-        intent.setClass(this, EditTask.class);
-        startActivityForResult(intent,REQUEST_CODE_ACTIVITY_EDIT);
-    }
-
     private void removeRecyclerViewElements(){
         ListAdapter adapter=(ListAdapter) recyclerView.getAdapter();
         if(adapter!=null){
@@ -790,6 +783,13 @@ public class MainActivity extends BaseActivity {
             }
         } );
         public List<TaskItem>getList(){return list;}
+
+        private void startEditTaskActivity(int position){
+            Intent intent = new Intent();
+            intent.putExtra(EditTaskActivity.EXTRA_SERIALIZED_TASKITEM,list.get(position));
+            intent.setClass(MainActivity.this, EditTaskActivity.class);
+            startActivityForResult(intent,REQUEST_CODE_ACTIVITY_EDIT);
+        }
     }
 
    private static class ViewHolder extends RecyclerView.ViewHolder{

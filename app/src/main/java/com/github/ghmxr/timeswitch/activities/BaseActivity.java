@@ -29,7 +29,12 @@ import com.github.ghmxr.timeswitch.utils.ValueUtils;
  */
 public abstract class BaseActivity extends AppCompatActivity {
 
-	public static LinkedList<BaseActivity> queue;
+	/**
+	 * intend to transfer TaskItem Object between activities
+	 * call this to get or put a serialized TaskItem to an Intent instance
+	 */
+    public static final String EXTRA_SERIALIZED_TASKITEM="serialized_task_item";
+    public static LinkedList<BaseActivity> queue;
 	public static MyHandler myHandler;
 	public static final String EXTRA_TITLE_COLOR="color_title";
 	//public String color_title="#3F51B5";

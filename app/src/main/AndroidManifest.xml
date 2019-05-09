@@ -71,7 +71,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".activities.EditTask"
+            android:name=".activities.EditTaskActivity"
             android:label="@string/activity_edit_title"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"/>

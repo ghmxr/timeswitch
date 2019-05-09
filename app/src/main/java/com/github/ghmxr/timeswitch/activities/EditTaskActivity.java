@@ -18,17 +18,9 @@ import com.github.ghmxr.timeswitch.data.v2.MySQLiteOpenHelper;
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
  */
-public class EditTask extends TaskGui {
+public class EditTaskActivity extends TaskGui {
 
-    //private int taskid=0;
-    private TaskItem taskitem_read;
-
-    //public static final String TAG_EDITTASK_KEY  = "taskkey";
-    public static final String TAG_SELECTED_ITEM_POSITION ="position";
-
-    //public static final int ACTIVITY_EDIT_RESULT_CANCEL         =   0x00000;
-    //public static final int ACTIVITY_EDIT_RESULT_SUCCESS        =   0x00001;
-
+    private String checkString;
     private long first_click_time_back =0;
     private long first_click_time_delete=0;
     @Override
@@ -43,26 +35,8 @@ public class EditTask extends TaskGui {
 
     @Override
     public void initialVariables() {
-        //this.taskid=getIntent().getIntExtra(TAG_EDITTASK_KEY,0);
-        int position=getIntent().getIntExtra(TAG_SELECTED_ITEM_POSITION,-1);
-        //int position=ProcessTaskItem.getPosition(taskid);
-        if(position<0) {
-            Toast.makeText(this,"Can not get the task position",Toast.LENGTH_SHORT).show();
-            return;
-        }
-        try{
-            taskitem_read=TimeSwitchService.list.get(position);
-            taskitem=new TaskItem(taskitem_read);
-        }catch (Exception e){
-            e.printStackTrace();
-            Toast.makeText(this,e.toString(),Toast.LENGTH_SHORT).show();
-            finish();
-        }
-        //if(taskid==0) taskid=taskitem.id;
-        Log.i("EDIT","task id is "+taskitem.id);
-        //if(taskitem_read.trigger_type==PublicConsts.TRIGGER_TYPE_SINGLE||taskitem_read.trigger_type==PublicConsts.TRIGGER_TYPE_LOOP_WEEK) {
-            //calendar.setTimeInMillis(taskitem.time);
-       // }
+        taskitem=(TaskItem) getIntent().getSerializableExtra(EXTRA_SERIALIZED_TASKITEM);
+        checkString=taskitem.toString();
     }
 
     @Override
@@ -100,16 +74,6 @@ public class EditTask extends TaskGui {
                 return false;
             }
             SQLiteDatabase database= MySQLiteOpenHelper.getInstance(this).getWritableDatabase();
-            /*if(database.delete(MySQLiteOpenHelper.getCurrentTableName(this),SQLConsts.SQL_TASK_COLUMN_ID +"="+taskitem.id,null)==1) {
-                setResult(RESULT_OK);
-                this.finish();
-            }
-            else {
-                Toast.makeText(this, "Task does not exist", Toast.LENGTH_SHORT).show();
-            }
-            database.close();*/
-
-
             try{
                 MySQLiteOpenHelper.deleteRow(database,MySQLiteOpenHelper.getCurrentTableName(this),taskitem.id);
                 setResult(RESULT_OK);
@@ -123,10 +87,10 @@ public class EditTask extends TaskGui {
     }
 
     private void checkIfChangedAndExit(){
-        boolean isChanged=!taskitem_read.toString().equals(taskitem.toString());
+        boolean isChanged=!taskitem.toString().equals(checkString);
         //Log.e("isChanged",""+isChanged);
         if(isChanged){
-            Log.i("taskitem_old",taskitem_read.toString());
+            Log.i("checkString",checkString);
             Log.i("taskitem_new",taskitem.toString());
             //showChangesNotSaveDialog();
             long currentTime=System.currentTimeMillis();
@@ -143,24 +107,4 @@ public class EditTask extends TaskGui {
         }
     }
 
-    /*private void showChangesNotSaveDialog(){
-        new AlertDialog.Builder(this)
-                .setTitle(getResources().getString(R.string.dialog_edit_changed_not_saved_title))
-                .setIcon(R.drawable.icon_warn)
-                .setMessage(getResources().getString(R.string.dialog_edit_changed_not_saved_message))
-                .setPositiveButton(getResources().getString(R.string.dialog_button_positive), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        setResult(ACTIVITY_EDIT_RESULT_CANCEL);
-                        finish();
-                    }
-                })
-                .setNegativeButton(getResources().getString(R.string.dialog_button_negative), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        //do nothing
-                    }
-                })
-                .show();
-    }  */
 }

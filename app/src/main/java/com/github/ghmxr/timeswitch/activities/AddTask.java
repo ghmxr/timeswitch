@@ -14,7 +14,7 @@ import android.view.MenuItem;
  */
 
 public class AddTask extends TaskGui{
-
+    private String checkString;
     //public static final int ACTIVITY_ADD_RESULT_CANCEL  =   0x00000;
     //public static final int ACTIVITY_ADD_RESULT_SUCCESS =   0x00001;
     private long first_clicked_back=0;
@@ -33,6 +33,7 @@ public class AddTask extends TaskGui{
             return;
         }
         taskitem.name=getResources().getString(R.string.activity_add_name_mask)+(TimeSwitchService.list.size()+1);
+        checkString=taskitem.toString();
 	}
 
     @Override

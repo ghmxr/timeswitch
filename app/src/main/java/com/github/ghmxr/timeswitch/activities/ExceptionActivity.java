@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.R;
+import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.ExceptionConsts;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBattery;
@@ -31,26 +32,13 @@ import java.util.Arrays;
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
  */
 public class ExceptionActivity extends BaseActivity implements View.OnClickListener {
-
-    public static final String INTENT_EXTRA_EXCEPTIONS="exceptions";
-    public static final String INTENT_EXTRA_TRIGGER_TYPE="trigger_type";
-    public static final String EXTRA_EXCEPTION_CONNECTOR="exception_connector";
-
-    private String exceptions[]=new String[ExceptionConsts.EXCEPTION_LENGTH];
-    //private String exceptions_check[]=new String[PublicConsts.EXCEPTION_LENGTH];
-    private String check_string="";
-    private int exception_connector=-1;
-    private long first_exit_time=0;
+    private TaskItem item;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        item=(TaskItem) getIntent().getSerializableExtra(EXTRA_SERIALIZED_TASKITEM);
 
-        this.exceptions=this.getIntent().getStringArrayExtra(INTENT_EXTRA_EXCEPTIONS);
-        //System.arraycopy(exceptions,0,exceptions_check,0,exceptions.length);
-        int trigger_type=this.getIntent().getIntExtra(INTENT_EXTRA_TRIGGER_TYPE,-1);
-        exception_connector=getIntent().getIntExtra(EXTRA_EXCEPTION_CONNECTOR,-1);
-        check_string=toCheckString();
         setContentView(R.layout.layout_exceptions);
 
         Toolbar toolbar=findViewById(R.id.exceptions_toolbar);
@@ -85,33 +73,33 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
         findViewById(R.id.exceptions_period).setOnClickListener(this);
         findViewById(R.id.exceptions_headset).setOnClickListener(this);
 
-        if(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE||trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK){
+        if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE||item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK){
             findViewById(R.id.exceptions_period).setVisibility(View.GONE);
             findViewById(R.id.exceptions_day_of_week).setVisibility(View.GONE);
         }
-        if(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE||trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE){
+        if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE||item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE){
             findViewById(R.id.exceptions_battery_temperature).setVisibility(View.GONE);
         }
-        if(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE||trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE){
+        if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE||item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE){
             findViewById(R.id.exceptions_battery_percentage).setVisibility(View.GONE);
         }
 
         try{
-            ((CheckBox)findViewById(R.id.exceptions_screen_locked_cb)).setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_LOCKEDSCREEN])==1);
-            ((CheckBox)findViewById(R.id.exceptions_screen_unlocked_cb)).setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_UNLOCKEDSCREEN])==1);
-            ((CheckBox)findViewById(R.id.exceptions_wifi_enabled_cb)).setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_WIFI_ENABLED])==1);
-            ((CheckBox)findViewById(R.id.exceptions_wifi_disabled_cb)).setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_WIFI_DISABLED])==1);
-            ((CheckBox)findViewById(R.id.exceptions_bluetooth_enabled_cb)).setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_ENABLED])==1);
-            ((CheckBox)findViewById(R.id.exceptions_bluetooth_disabled_cb)).setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_DISABLED])==1);
-            ((CheckBox)findViewById(R.id.exceptions_ring_vibrate_cb)).setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_RING_VIBRATE])==1);
-            ((CheckBox)findViewById(R.id.exceptions_ring_normal_cb)).setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_RING_NORMAL])==1);
-            ((CheckBox)findViewById(R.id.exceptions_ring_off_cb)).setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_RING_OFF])==1);
-            ((CheckBox)findViewById(R.id.exceptions_net_enabled_cb)).setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_NET_ENABLED])==1);
-            ((CheckBox)findViewById(R.id.exceptions_net_disabled_cb)).setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_NET_DISABLED])==1);
-            ((CheckBox)findViewById(R.id.exceptions_gps_on_cb)).setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_GPS_ENABLED])==1);
-            ((CheckBox)findViewById(R.id.exceptions_gps_off_cb)).setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_GPS_DISABLED])==1);
-            ((CheckBox)findViewById(R.id.exceptions_airplanemode_on_cb)).setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_ENABLED])==1);
-            ((CheckBox)findViewById(R.id.exceptions_airplanemode_off_cb)).setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_DISABLED])==1);
+            ((CheckBox)findViewById(R.id.exceptions_screen_locked_cb)).setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_LOCKEDSCREEN])==1);
+            ((CheckBox)findViewById(R.id.exceptions_screen_unlocked_cb)).setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_UNLOCKEDSCREEN])==1);
+            ((CheckBox)findViewById(R.id.exceptions_wifi_enabled_cb)).setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_WIFI_ENABLED])==1);
+            ((CheckBox)findViewById(R.id.exceptions_wifi_disabled_cb)).setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_WIFI_DISABLED])==1);
+            ((CheckBox)findViewById(R.id.exceptions_bluetooth_enabled_cb)).setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_ENABLED])==1);
+            ((CheckBox)findViewById(R.id.exceptions_bluetooth_disabled_cb)).setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_DISABLED])==1);
+            ((CheckBox)findViewById(R.id.exceptions_ring_vibrate_cb)).setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_RING_VIBRATE])==1);
+            ((CheckBox)findViewById(R.id.exceptions_ring_normal_cb)).setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_RING_NORMAL])==1);
+            ((CheckBox)findViewById(R.id.exceptions_ring_off_cb)).setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_RING_OFF])==1);
+            ((CheckBox)findViewById(R.id.exceptions_net_enabled_cb)).setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_NET_ENABLED])==1);
+            ((CheckBox)findViewById(R.id.exceptions_net_disabled_cb)).setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_NET_DISABLED])==1);
+            ((CheckBox)findViewById(R.id.exceptions_gps_on_cb)).setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_GPS_ENABLED])==1);
+            ((CheckBox)findViewById(R.id.exceptions_gps_off_cb)).setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_GPS_DISABLED])==1);
+            ((CheckBox)findViewById(R.id.exceptions_airplanemode_on_cb)).setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_ENABLED])==1);
+            ((CheckBox)findViewById(R.id.exceptions_airplanemode_off_cb)).setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_DISABLED])==1);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -126,14 +114,6 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void processMessage(Message msg){}
 
-    private String toCheckString(){
-        return Arrays.toString(exceptions)+",connector="+exception_connector;
-    }
-
-    private boolean ifHasChanged(){
-        return !check_string.equals(toCheckString());
-    }
-
     @Override
     public void onClick(View view) {
         switch(view.getId()){
@@ -143,6 +123,7 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                         .setTitle(getResources().getString(R.string.activity_taskgui_exception_connector))
                         .setView(LayoutInflater.from(this).inflate(R.layout.layout_dialog_with_two_single_choices,null))
                         .show();
+                int exception_connector=Integer.parseInt(item.addition_exception_connector);
                 ((RadioButton)dialog.findViewById(R.id.dialog_choice_first)).setChecked(exception_connector== ExceptionConsts.EXCEPTION_CONNECTOR_OR);
                 ((RadioButton)dialog.findViewById(R.id.dialog_choice_second)).setChecked(exception_connector== ExceptionConsts.EXCEPTION_CONNECTOR_AND);
                 ((RadioButton)dialog.findViewById(R.id.dialog_choice_first)).setText(getResources().getString(R.string.activity_taskgui_exception_connector_or));
@@ -151,7 +132,7 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                     @Override
                     public void onClick(View v) {
                         dialog.cancel();
-                        exception_connector= ExceptionConsts.EXCEPTION_CONNECTOR_OR;
+                        item.addition_exception_connector= String.valueOf(ExceptionConsts.EXCEPTION_CONNECTOR_OR);
                         refreshExceptionConnectorValue();
                     }
                 });
@@ -159,7 +140,7 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                     @Override
                     public void onClick(View v) {
                         dialog.cancel();
-                        exception_connector= ExceptionConsts.EXCEPTION_CONNECTOR_AND;
+                        item.addition_exception_connector= String.valueOf(ExceptionConsts.EXCEPTION_CONNECTOR_AND);
                         refreshExceptionConnectorValue();
                     }
                 });
@@ -170,8 +151,8 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                 CheckBox cb_screen_unlocked=findViewById(R.id.exceptions_screen_unlocked_cb);
                 cb_screen_locked.toggle();
                 if(cb_screen_locked.isChecked()) cb_screen_unlocked.setChecked(false);
-                exceptions[ExceptionConsts.EXCEPTION_LOCKEDSCREEN]=cb_screen_locked.isChecked()?String.valueOf(1):String.valueOf(0);
-                exceptions[ExceptionConsts.EXCEPTION_UNLOCKEDSCREEN]=(cb_screen_unlocked.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_LOCKEDSCREEN]=cb_screen_locked.isChecked()?String.valueOf(1):String.valueOf(0);
+                item.exceptions[ExceptionConsts.EXCEPTION_UNLOCKEDSCREEN]=(cb_screen_unlocked.isChecked()?String.valueOf(1):String.valueOf(0));
             }
             break;
             case R.id.exceptions_screen_unlocked:{
@@ -179,8 +160,8 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                 CheckBox cb_screen_unlocked=findViewById(R.id.exceptions_screen_unlocked_cb);
                 cb_screen_unlocked.toggle();
                 if(cb_screen_unlocked.isChecked()) cb_screen_locked.setChecked(false);
-                exceptions[ExceptionConsts.EXCEPTION_LOCKEDSCREEN]=cb_screen_locked.isChecked()?String.valueOf(1):String.valueOf(0);
-                exceptions[ExceptionConsts.EXCEPTION_UNLOCKEDSCREEN]=(cb_screen_unlocked.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_LOCKEDSCREEN]=cb_screen_locked.isChecked()?String.valueOf(1):String.valueOf(0);
+                item.exceptions[ExceptionConsts.EXCEPTION_UNLOCKEDSCREEN]=(cb_screen_unlocked.isChecked()?String.valueOf(1):String.valueOf(0));
             }
             break;
             case R.id.exceptions_wifi_enabled:{
@@ -188,8 +169,8 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                 CheckBox cb_wifi_disabled=findViewById(R.id.exceptions_wifi_disabled_cb);
                 cb_wifi_enabled.toggle();
                 if(cb_wifi_enabled.isChecked()) cb_wifi_disabled.setChecked(false);
-                exceptions[ExceptionConsts.EXCEPTION_WIFI_ENABLED]=(cb_wifi_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
-                exceptions[ExceptionConsts.EXCEPTION_WIFI_DISABLED]=(cb_wifi_disabled.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_WIFI_ENABLED]=(cb_wifi_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_WIFI_DISABLED]=(cb_wifi_disabled.isChecked()?String.valueOf(1):String.valueOf(0));
             }
             break;
             case R.id.exceptions_wifi_disabled:{
@@ -197,8 +178,8 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                 CheckBox cb_wifi_disabled=findViewById(R.id.exceptions_wifi_disabled_cb);
                 cb_wifi_disabled.toggle();
                 if(cb_wifi_disabled.isChecked()) cb_wifi_enabled.setChecked(false);
-                exceptions[ExceptionConsts.EXCEPTION_WIFI_ENABLED]=(cb_wifi_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
-                exceptions[ExceptionConsts.EXCEPTION_WIFI_DISABLED]=(cb_wifi_disabled.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_WIFI_ENABLED]=(cb_wifi_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_WIFI_DISABLED]=(cb_wifi_disabled.isChecked()?String.valueOf(1):String.valueOf(0));
             }
             break;
             case R.id.exceptions_bluetooth_enabled:{
@@ -206,8 +187,8 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                 CheckBox cb_bluetooth_disabled=findViewById(R.id.exceptions_bluetooth_disabled_cb);
                 cb_bluetooth_enabled.toggle();
                 if(cb_bluetooth_enabled.isChecked()) cb_bluetooth_disabled.setChecked(false);
-                exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_ENABLED]=(cb_bluetooth_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
-                exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_DISABLED]=(cb_bluetooth_disabled.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_ENABLED]=(cb_bluetooth_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_DISABLED]=(cb_bluetooth_disabled.isChecked()?String.valueOf(1):String.valueOf(0));
             }
             break;
             case R.id.exceptions_bluetooth_disabled:{
@@ -215,8 +196,8 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                 CheckBox cb_bluetooth_disabled=findViewById(R.id.exceptions_bluetooth_disabled_cb);
                 cb_bluetooth_disabled.toggle();
                 if(cb_bluetooth_disabled.isChecked()) cb_bluetooth_enabled.setChecked(false);
-                exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_ENABLED]=(cb_bluetooth_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
-                exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_DISABLED]=(cb_bluetooth_disabled.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_ENABLED]=(cb_bluetooth_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_DISABLED]=(cb_bluetooth_disabled.isChecked()?String.valueOf(1):String.valueOf(0));
             }
             break;
             case R.id.exceptions_ring_vibrate:{
@@ -225,7 +206,7 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                 //CheckBox cb_ring_normal=findViewById(R.id.exceptions_ring_normal_cb);
                 cb_ring_vibrate.toggle();
                 //if(cb_ring_vibrate.isChecked()) {cb_ring_off.setChecked(false);cb_ring_normal.setChecked(false);}
-                exceptions[ExceptionConsts.EXCEPTION_RING_VIBRATE]=(cb_ring_vibrate.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_RING_VIBRATE]=(cb_ring_vibrate.isChecked()?String.valueOf(1):String.valueOf(0));
                 //exceptions[PublicConsts.EXCEPTION_RING_OFF]=(cb_ring_off.isChecked()?String.valueOf(1):String.valueOf(0));
                 //exceptions[PublicConsts.EXCEPTION_RING_NORMAL]=(cb_ring_normal.isChecked()?String.valueOf(1):String.valueOf(0));
             }
@@ -237,7 +218,7 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                 cb_ring_off.toggle();
                 //if(cb_ring_off.isChecked()) {cb_ring_vibrate.setChecked(false);cb_ring_normal.setChecked(false);}
                 //exceptions[PublicConsts.EXCEPTION_RING_VIBRATE]=(cb_ring_vibrate.isChecked()?String.valueOf(1):String.valueOf(0));
-                exceptions[ExceptionConsts.EXCEPTION_RING_OFF]=(cb_ring_off.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_RING_OFF]=(cb_ring_off.isChecked()?String.valueOf(1):String.valueOf(0));
                 //exceptions[PublicConsts.EXCEPTION_RING_NORMAL]=(cb_ring_normal.isChecked()?String.valueOf(1):String.valueOf(0));
             }
             break;
@@ -249,7 +230,7 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                 //if(cb_ring_normal.isChecked()) {cb_ring_vibrate.setChecked(false);cb_ring_off.setChecked(false);}
                 //exceptions[PublicConsts.EXCEPTION_RING_VIBRATE]=(cb_ring_vibrate.isChecked()?String.valueOf(1):String.valueOf(0));
                 //exceptions[PublicConsts.EXCEPTION_RING_OFF]=(cb_ring_off.isChecked()?String.valueOf(1):String.valueOf(0));
-                exceptions[ExceptionConsts.EXCEPTION_RING_NORMAL]=(cb_ring_normal.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_RING_NORMAL]=(cb_ring_normal.isChecked()?String.valueOf(1):String.valueOf(0));
             }
             break;
             case R.id.exceptions_net_enabled:{
@@ -257,8 +238,8 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                 CheckBox cb_net_disabled=findViewById(R.id.exceptions_net_disabled_cb);
                 cb_net_enabled.toggle();
                 if(cb_net_enabled.isChecked()) cb_net_disabled.setChecked(false);
-                exceptions[ExceptionConsts.EXCEPTION_NET_ENABLED]=(cb_net_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
-                exceptions[ExceptionConsts.EXCEPTION_NET_DISABLED]=(cb_net_disabled.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_NET_ENABLED]=(cb_net_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_NET_DISABLED]=(cb_net_disabled.isChecked()?String.valueOf(1):String.valueOf(0));
             }
             break;
             case R.id.exceptions_net_disabled:{
@@ -266,8 +247,8 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                 CheckBox cb_net_disabled=findViewById(R.id.exceptions_net_disabled_cb);
                 cb_net_disabled.toggle();
                 if(cb_net_disabled.isChecked()) cb_net_enabled.setChecked(false);
-                exceptions[ExceptionConsts.EXCEPTION_NET_ENABLED]=(cb_net_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
-                exceptions[ExceptionConsts.EXCEPTION_NET_DISABLED]=(cb_net_disabled.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_NET_ENABLED]=(cb_net_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_NET_DISABLED]=(cb_net_disabled.isChecked()?String.valueOf(1):String.valueOf(0));
             }
             break;
             case R.id.exceptions_gps_on:{
@@ -275,8 +256,8 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                 CheckBox cb_gps_disabled=findViewById(R.id.exceptions_gps_off_cb);
                 cb_gps_enabled.toggle();
                 if(cb_gps_enabled.isChecked()) cb_gps_disabled.setChecked(false);
-                exceptions[ExceptionConsts.EXCEPTION_GPS_ENABLED]=(cb_gps_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
-                exceptions[ExceptionConsts.EXCEPTION_GPS_DISABLED]=(cb_gps_disabled.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_GPS_ENABLED]=(cb_gps_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_GPS_DISABLED]=(cb_gps_disabled.isChecked()?String.valueOf(1):String.valueOf(0));
             }
             break;
             case R.id.exceptions_gps_off:{
@@ -284,8 +265,8 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                 CheckBox cb_gps_disabled=findViewById(R.id.exceptions_gps_off_cb);
                 cb_gps_disabled.toggle();
                 if(cb_gps_disabled.isChecked()) cb_gps_enabled.setChecked(false);
-                exceptions[ExceptionConsts.EXCEPTION_GPS_ENABLED]=(cb_gps_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
-                exceptions[ExceptionConsts.EXCEPTION_GPS_DISABLED]=(cb_gps_disabled.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_GPS_ENABLED]=(cb_gps_enabled.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_GPS_DISABLED]=(cb_gps_disabled.isChecked()?String.valueOf(1):String.valueOf(0));
             }
             break;
             case R.id.exceptions_airplanemode_on:{
@@ -293,8 +274,8 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                 CheckBox cb_airplane_mode_off=findViewById(R.id.exceptions_airplanemode_off_cb);
                 cb_airplane_mode_on.toggle();
                 if(cb_airplane_mode_on.isChecked()) cb_airplane_mode_off.setChecked(false);
-                exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_ENABLED]=(cb_airplane_mode_on.isChecked()?String.valueOf(1):String.valueOf(0));
-                exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_DISABLED]=(cb_airplane_mode_off.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_ENABLED]=(cb_airplane_mode_on.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_DISABLED]=(cb_airplane_mode_off.isChecked()?String.valueOf(1):String.valueOf(0));
             }
             break;
             case R.id.exceptions_airplanemode_off:{
@@ -302,8 +283,8 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                 CheckBox cb_airplane_mode_off=findViewById(R.id.exceptions_airplanemode_off_cb);
                 cb_airplane_mode_off.toggle();
                 if(cb_airplane_mode_off.isChecked()) cb_airplane_mode_on.setChecked(false);
-                exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_ENABLED]=(cb_airplane_mode_on.isChecked()?String.valueOf(1):String.valueOf(0));
-                exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_DISABLED]=(cb_airplane_mode_off.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_ENABLED]=(cb_airplane_mode_on.isChecked()?String.valueOf(1):String.valueOf(0));
+                item.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_DISABLED]=(cb_airplane_mode_off.isChecked()?String.valueOf(1):String.valueOf(0));
             }
             break;
             case R.id.exceptions_battery_percentage:{
@@ -323,16 +304,16 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                 });
 
                 try{
-                    dialog.checkbox_enable.setChecked((Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])>=0)||
-                            Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])>=0);
+                    dialog.checkbox_enable.setChecked((Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])>=0)||
+                            Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])>=0);
                     dialog.wheelview_first.setEnabled(dialog.checkbox_enable.isChecked());
                     dialog.wheelview_second.setEnabled(dialog.checkbox_enable.isChecked());
-                    dialog.wheelview_first.setSeletion(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])>=0?0:
-                            (Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])>=0?1:0));
-                    dialog.wheelview_second.setSeletion(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])>=0?
-                            (Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])-1):
-                            (Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])>=0?
-                                    (Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])-1):
+                    dialog.wheelview_first.setSeletion(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])>=0?0:
+                            (Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])>=0?1:0));
+                    dialog.wheelview_second.setSeletion(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])>=0?
+                            (Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])-1):
+                            (Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])>=0?
+                                    (Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])-1):
                                     49));
                 }catch (NumberFormatException ne){
                     ne.printStackTrace();
@@ -343,16 +324,16 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                     @Override
                     public void onClick(View view) {
                         if(!dialog.checkbox_enable.isChecked()){
-                            exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]=String.valueOf(-1);
-                            exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]=String.valueOf(-1);
+                            item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]=String.valueOf(-1);
+                            item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]=String.valueOf(-1);
                         }
                         else{
                             if(dialog.wheelview_first.getSeletedIndex()==0){
-                                exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]=dialog.wheelview_second.getSeletedItem();
-                                exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]=String.valueOf(-1);
+                                item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]=dialog.wheelview_second.getSeletedItem();
+                                item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]=String.valueOf(-1);
                             }else if(dialog.wheelview_first.getSeletedIndex()==1){
-                                exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]=String.valueOf(-1);
-                                exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]=dialog.wheelview_second.getSeletedItem();
+                                item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]=String.valueOf(-1);
+                                item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]=dialog.wheelview_second.getSeletedItem();
                             }
                         }
                         dialog.cancel();
@@ -380,35 +361,34 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                     }
                 });
                 try{
-                    dialog.checkbox_enable.setChecked((Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])>=0)||
-                            Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])>=0);
+                    dialog.checkbox_enable.setChecked((Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])>=0)||
+                            Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])>=0);
                     dialog.wheelview_first.setEnabled(dialog.checkbox_enable.isChecked());
                     dialog.wheelview_second.setEnabled(dialog.checkbox_enable.isChecked());
-                    dialog.wheelview_first.setSeletion(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])>=0?0:
-                            (Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])>=0?1:0));
-                    dialog.wheelview_second.setSeletion(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])>=0?
-                            Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]):
-                            (Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])>=0?
-                            Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]):40));
+                    dialog.wheelview_first.setSeletion(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])>=0?0:
+                            (Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])>=0?1:0));
+                    dialog.wheelview_second.setSeletion(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])>=0?
+                            Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]):
+                            (Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])>=0?
+                            Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]):40));
                 }catch (NumberFormatException ne){
                     ne.printStackTrace();
-                    LogUtil.putExceptionLog(this,ne);
                 }
 
                 dialog.textview_confirm.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         if(!dialog.checkbox_enable.isChecked()){
-                            exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]=String.valueOf(-1);
-                            exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]=String.valueOf(-1);
+                            item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]=String.valueOf(-1);
+                            item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]=String.valueOf(-1);
                         }
                         else{
                             if(dialog.wheelview_first.getSeletedIndex()==0){
-                                exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]=dialog.wheelview_second.getSeletedItem();
-                                exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]=String.valueOf(-1);
+                                item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]=dialog.wheelview_second.getSeletedItem();
+                                item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]=String.valueOf(-1);
                             }else if(dialog.wheelview_first.getSeletedIndex()==1){
-                                exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]=String.valueOf(-1);
-                                exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]=dialog.wheelview_second.getSeletedItem();
+                                item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]=String.valueOf(-1);
+                                item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]=dialog.wheelview_second.getSeletedItem();
                             }
                         }
                         dialog.cancel();
@@ -431,16 +411,15 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                 final CheckBox cb_sun=dialogview.findViewById(R.id.layout_dialog_weekloop_cb_sun);
 
                 try{
-                    cb_mon.setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_MONDAY])==1);
-                    cb_tue.setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_TUESDAY])==1);
-                    cb_wed.setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_WEDNESDAY])==1);
-                    cb_thu.setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_THURSDAY])==1);
-                    cb_fri.setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_FRIDAY])==1);
-                    cb_sat.setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_SATURDAY])==1);
-                    cb_sun.setChecked(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_SUNDAY])==1);
+                    cb_mon.setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_MONDAY])==1);
+                    cb_tue.setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_TUESDAY])==1);
+                    cb_wed.setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_WEDNESDAY])==1);
+                    cb_thu.setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_THURSDAY])==1);
+                    cb_fri.setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_FRIDAY])==1);
+                    cb_sat.setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_SATURDAY])==1);
+                    cb_sun.setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_SUNDAY])==1);
                 }catch (NumberFormatException ne){
                     ne.printStackTrace();
-                    LogUtil.putExceptionLog(this,ne);
                 }
 
                 final AlertDialog dialog=new AlertDialog.Builder(this)
@@ -455,13 +434,13 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                         if(!cb_mon.isChecked()||!cb_tue.isChecked()||!cb_wed.isChecked()
                                 ||!cb_thu.isChecked()||!cb_fri.isChecked()||!cb_sat.isChecked()
                                 ||!cb_sun.isChecked()){
-                            exceptions[ExceptionConsts.EXCEPTION_MONDAY]=cb_mon.isChecked()?String.valueOf(1):String.valueOf(0);
-                            exceptions[ExceptionConsts.EXCEPTION_TUESDAY]=cb_tue.isChecked()?String.valueOf(1):String.valueOf(0);
-                            exceptions[ExceptionConsts.EXCEPTION_WEDNESDAY]=cb_wed.isChecked()?String.valueOf(1):String.valueOf(0);
-                            exceptions[ExceptionConsts.EXCEPTION_THURSDAY]=cb_thu.isChecked()?String.valueOf(1):String.valueOf(0);
-                            exceptions[ExceptionConsts.EXCEPTION_FRIDAY]=cb_fri.isChecked()?String.valueOf(1):String.valueOf(0);
-                            exceptions[ExceptionConsts.EXCEPTION_SATURDAY]=cb_sat.isChecked()?String.valueOf(1):String.valueOf(0);
-                            exceptions[ExceptionConsts.EXCEPTION_SUNDAY]=cb_sun.isChecked()?String.valueOf(1):String.valueOf(0);
+                            item.exceptions[ExceptionConsts.EXCEPTION_MONDAY]=cb_mon.isChecked()?String.valueOf(1):String.valueOf(0);
+                            item.exceptions[ExceptionConsts.EXCEPTION_TUESDAY]=cb_tue.isChecked()?String.valueOf(1):String.valueOf(0);
+                            item.exceptions[ExceptionConsts.EXCEPTION_WEDNESDAY]=cb_wed.isChecked()?String.valueOf(1):String.valueOf(0);
+                            item.exceptions[ExceptionConsts.EXCEPTION_THURSDAY]=cb_thu.isChecked()?String.valueOf(1):String.valueOf(0);
+                            item.exceptions[ExceptionConsts.EXCEPTION_FRIDAY]=cb_fri.isChecked()?String.valueOf(1):String.valueOf(0);
+                            item.exceptions[ExceptionConsts.EXCEPTION_SATURDAY]=cb_sat.isChecked()?String.valueOf(1):String.valueOf(0);
+                            item.exceptions[ExceptionConsts.EXCEPTION_SUNDAY]=cb_sun.isChecked()?String.valueOf(1):String.valueOf(0);
                             dialog.cancel();
                             refreshDayOfWeekView();
                         }
@@ -491,14 +470,13 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                 int endHour=0;
                 int endMin=0;
                 try{
-                    isEnabled=Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_START_TIME])!=-1&&Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_END_TIME])!=-1;
-                    startHour=isEnabled?Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_START_TIME])/60:18;
-                    startMin=isEnabled?Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_START_TIME])%60:0;
-                    endHour=isEnabled?Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_END_TIME])/60:8;
-                    endMin=isEnabled?Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_END_TIME])%60:0;
+                    isEnabled=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_START_TIME])!=-1&&Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_END_TIME])!=-1;
+                    startHour=isEnabled?Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_START_TIME])/60:18;
+                    startMin=isEnabled?Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_START_TIME])%60:0;
+                    endHour=isEnabled?Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_END_TIME])/60:8;
+                    endMin=isEnabled?Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_END_TIME])%60:0;
                 }catch (NumberFormatException ne){
                     ne.printStackTrace();
-                    LogUtil.putExceptionLog(this,ne);
                 }
                 dialog.setVariables(isEnabled,startHour,startMin,endHour,endMin);
                 dialog.setTitle(getResources().getString(R.string.dialog_exceptions_period_title));
@@ -506,8 +484,8 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                 dialog.setOnDialogConfirmedListener(new BottomDialogForPeriod.OnDialogConfirmedListener() {
                     @Override
                     public void onConfirmed(boolean isEnabled, int start_hour, int start_minute, int end_hour, int end_minute) {
-                        exceptions[ExceptionConsts.EXCEPTION_START_TIME]=isEnabled?String.valueOf(start_hour*60+start_minute):String.valueOf(-1);
-                        exceptions[ExceptionConsts.EXCEPTION_END_TIME]=isEnabled?String.valueOf(end_hour*60+end_minute):String.valueOf(-1);
+                        item.exceptions[ExceptionConsts.EXCEPTION_START_TIME]=isEnabled?String.valueOf(start_hour*60+start_minute):String.valueOf(-1);
+                        item.exceptions[ExceptionConsts.EXCEPTION_END_TIME]=isEnabled?String.valueOf(end_hour*60+end_minute):String.valueOf(-1);
                         refreshPeriodView();
                     }
                 });
@@ -516,7 +494,7 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
             break;
             case R.id.exceptions_headset:{
                 try{
-                    int headset_selection=Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS]);
+                    int headset_selection=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS]);
                     final AlertDialog dialog=new AlertDialog.Builder(this)
                             .setTitle(getResources().getString(R.string.activity_taskgui_exception_headset))
                             .setIcon(R.drawable.icon_headset)
@@ -534,7 +512,7 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                     button_unselected.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS]=String.valueOf(0);
+                            item.exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS]=String.valueOf(0);
                             dialog.cancel();
                             refreshHeadsetStatusView();
                         }
@@ -542,7 +520,7 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                     button_unplugged.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS]=String.valueOf(ExceptionConsts.EXCEPTION_HEADSET_PLUG_OUT);
+                            item.exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS]=String.valueOf(ExceptionConsts.EXCEPTION_HEADSET_PLUG_OUT);
                             dialog.cancel();
                             refreshHeadsetStatusView();
                         }
@@ -550,7 +528,7 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                     button_plugged.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS]=String.valueOf(ExceptionConsts.EXCEPTION_HEADSET_PLUG_IN);
+                            item.exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS]=String.valueOf(ExceptionConsts.EXCEPTION_HEADSET_PLUG_IN);
                             dialog.cancel();
                             refreshHeadsetStatusView();
                         }
@@ -565,32 +543,12 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-
-
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode==KeyEvent.KEYCODE_BACK){
-            checkAndExit();
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    private void checkAndExit(){
-        long click_time=System.currentTimeMillis();
-        if(ifHasChanged()){
-            if((click_time-first_exit_time>1000)){
-                first_exit_time=click_time;
-                Snackbar.make(findViewById(R.id.layout_exceptions_root),getResources().getString(R.string.snackbar_changes_not_saved_back),Snackbar.LENGTH_SHORT).show();
-                return;
-            }
-            setResult(RESULT_CANCELED);
-            finish();
-        }else{
-            setResult(RESULT_CANCELED);
-            finish();
-        }
-
+    public void finish(){
+        Intent i=new Intent();
+        i.putExtra(EXTRA_SERIALIZED_TASKITEM,item);
+        setResult(RESULT_OK,i);
+        super.finish();
     }
 
     @Override
@@ -605,14 +563,10 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
         switch (id){
             default:break;
             case android.R.id.home:{
-                checkAndExit();
+                finish();
             }
             break;
             case R.id.actions_exceptions_confirm:{
-                Intent i=new Intent();
-                i.putExtra(INTENT_EXTRA_EXCEPTIONS,this.exceptions);
-                i.putExtra(EXTRA_EXCEPTION_CONNECTOR,exception_connector);
-                setResult(RESULT_OK,i);
                 finish();
             }
             break;
@@ -622,22 +576,21 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
 
     private void refreshExceptionConnectorValue(){
         TextView tv=findViewById(R.id.exceptions_connector_value);
-        tv.setText(exception_connector>=0?getResources().getString(R.string.activity_taskgui_exception_connector_and):getResources().getString(R.string.activity_taskgui_exception_connector_or));
+        tv.setText(Integer.parseInt(item.addition_exception_connector)>=0?getResources().getString(R.string.activity_taskgui_exception_connector_and):getResources().getString(R.string.activity_taskgui_exception_connector_or));
     }
 
     private void refreshBatteryPercentageView(){
         TextView value=this.findViewById(R.id.exceptions_battery_percentage_value);
         try{
-            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])>=0){
-                value.setText(this.getResources().getString(R.string.dialog_battery_compare_less_than)+exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]+"%");
-            }else if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])>=0){
-                value.setText(this.getResources().getString(R.string.dialog_battery_compare_more_than)+exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]+"%");
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])>=0){
+                value.setText(this.getResources().getString(R.string.dialog_battery_compare_less_than)+item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]+"%");
+            }else if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])>=0){
+                value.setText(this.getResources().getString(R.string.dialog_battery_compare_more_than)+item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]+"%");
             }else {
                 value.setText(this.getResources().getString(R.string.dialog_battery_not_enabled));
             }
         }catch (NumberFormatException ne){
             ne.printStackTrace();
-            LogUtil.putExceptionLog(this,ne);
         }
 
     }
@@ -645,7 +598,7 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
     private void refreshHeadsetStatusView(){
         try{
             TextView tv=findViewById(R.id.exceptions_headset_value);
-            int selection=Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS]);
+            int selection=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS]);
             switch (selection){
                 default:break;
                 case 0:tv.setText(getResources().getString(R.string.word_unselected));break;
@@ -660,10 +613,10 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
     private void refreshBatteryTemperatureView(){
         TextView value=this.findViewById(R.id.exceptions_battery_temperature_value);
         try{
-            if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])>=0){
-                value.setText(this.getResources().getString(R.string.dialog_battery_compare_lower_than)+exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]+"¡æ");
-            }else if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])>=0){
-                value.setText(this.getResources().getString(R.string.dialog_battery_compare_higher_than)+exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]+"¡æ");
+            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])>=0){
+                value.setText(this.getResources().getString(R.string.dialog_battery_compare_lower_than)+item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]+"¡æ");
+            }else if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])>=0){
+                value.setText(this.getResources().getString(R.string.dialog_battery_compare_higher_than)+item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]+"¡æ");
             }else {
                 value.setText(this.getResources().getString(R.string.dialog_battery_not_enabled));
             }
@@ -678,13 +631,13 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
         TextView tv_value=findViewById(R.id.exceptions_day_of_week_value);
         StringBuilder value=new StringBuilder("");
         try{
-            value.append(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_MONDAY])==1?getResources().getString(R.string.monday)+" ":"");
-            value.append(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_TUESDAY])==1?getResources().getString(R.string.tuesday)+" ":"");
-            value.append(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_WEDNESDAY])==1?getResources().getString(R.string.wednesday)+" ":"");
-            value.append(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_THURSDAY])==1?getResources().getString(R.string.thursday)+" ":"");
-            value.append(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_FRIDAY])==1?getResources().getString(R.string.friday)+" ":"");
-            value.append(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_SATURDAY])==1?getResources().getString(R.string.saturday)+' ':"");
-            value.append(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_SUNDAY])==1?getResources().getString(R.string.sunday)+" ":"");
+            value.append(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_MONDAY])==1?getResources().getString(R.string.monday)+" ":"");
+            value.append(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_TUESDAY])==1?getResources().getString(R.string.tuesday)+" ":"");
+            value.append(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_WEDNESDAY])==1?getResources().getString(R.string.wednesday)+" ":"");
+            value.append(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_THURSDAY])==1?getResources().getString(R.string.thursday)+" ":"");
+            value.append(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_FRIDAY])==1?getResources().getString(R.string.friday)+" ":"");
+            value.append(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_SATURDAY])==1?getResources().getString(R.string.saturday)+' ':"");
+            value.append(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_SUNDAY])==1?getResources().getString(R.string.sunday)+" ":"");
             tv_value.setText(value.toString().equals("")?getResources().getString(R.string.not_activated):value.toString());
         }catch (NumberFormatException ne){
             ne.printStackTrace();
@@ -696,12 +649,11 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
     private void refreshPeriodView(){
         TextView tv_value=findViewById(R.id.exceptions_period_value);
         try{
-            tv_value.setText((Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_START_TIME])!=-1&&Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_END_TIME])!=-1)?
-                    ValueUtils.format(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_START_TIME])/60)+":"+ ValueUtils.format(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_START_TIME])%60)+"~"+ ValueUtils.format(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_END_TIME])/60)+":"+ ValueUtils.format(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_END_TIME])%60)
+            tv_value.setText((Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_START_TIME])!=-1&&Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_END_TIME])!=-1)?
+                    ValueUtils.format(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_START_TIME])/60)+":"+ ValueUtils.format(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_START_TIME])%60)+"~"+ ValueUtils.format(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_END_TIME])/60)+":"+ ValueUtils.format(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_END_TIME])%60)
                     :getResources().getString(R.string.not_activated));
         }catch (NumberFormatException ne){
             ne.printStackTrace();
-            LogUtil.putExceptionLog(this,ne);
         }
 
     }

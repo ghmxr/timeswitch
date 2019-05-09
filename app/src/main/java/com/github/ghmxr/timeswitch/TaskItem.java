@@ -1,6 +1,7 @@
 package com.github.ghmxr.timeswitch;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
@@ -10,12 +11,13 @@ import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.triggers.Trigger;
 import com.github.ghmxr.timeswitch.triggers.TriggerUtil;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
  */
-public class TaskItem implements Comparable<TaskItem>{
+public class TaskItem implements Comparable<TaskItem>,Serializable{
 	
 	/**
 	 * 控制排序的变量值。
@@ -119,16 +121,16 @@ public class TaskItem implements Comparable<TaskItem>{
 
 	public boolean addition_isFolded=false;
 
-	public Trigger trigger;
+	public transient Trigger trigger;
 
 	/**
 	 * 触发器显示内容，如果触发类型为指定时间重复时，会被TimeSwitchService的一个线程每隔500毫秒刷新一次倒计时值
 	 */
-	public String display_trigger="--";
-	public int display_trigger_icon_res=-1;
-	public String display_exception="";
-	public String display_actions="";
-	public String display_additions="";
+	public transient String display_trigger="--";
+	public transient int display_trigger_icon_res=-1;
+	public transient String display_exception="";
+	public transient String display_actions="";
+	public transient String display_additions="";
 
 	/**
      * 基本构造方法，初始化变量
@@ -211,17 +213,19 @@ public class TaskItem implements Comparable<TaskItem>{
 	@Override
 	public String toString() {
 		return "TaskItem{" +
-				"id=" + id +
+				"order=" + order +
+				", id=" + id +
 				", name='" + name + '\'' +
-				", enabled=" + isenabled +
-				", trigger_value=" + time +
+				", isenabled=" + isenabled +
+				", time=" + time +
+				", wifiIds='" + wifiIds + '\'' +
 				", trigger_type=" + trigger_type +
 				", week_repeat=" + Arrays.toString(week_repeat) +
 				", interval_milliseconds=" + interval_milliseconds +
 				", battery_percentage=" + battery_percentage +
 				", battery_temperature=" + battery_temperature +
-				", wifiIds=" + wifiIds +
-				", package_names="+ Arrays.toString(package_names)+
+				", selectedAction='" + selectedAction + '\'' +
+				", package_names=" + Arrays.toString(package_names) +
 				", exceptions=" + Arrays.toString(exceptions) +
 				", actions=" + Arrays.toString(actions) +
 				", uri_ring_notification='" + uri_ring_notification + '\'' +
@@ -235,8 +239,8 @@ public class TaskItem implements Comparable<TaskItem>{
 				", notify=" + notify +
 				", autodelete=" + autodelete +
 				", autoclose=" + autoclose +
-				", addition_exception_connector=" + addition_exception_connector +
-				", addition_title_color=" + addition_title_color +
+				", addition_exception_connector='" + addition_exception_connector + '\'' +
+				", addition_title_color='" + addition_title_color + '\'' +
 				", addition_isFolded=" + addition_isFolded +
 				'}';
 	}

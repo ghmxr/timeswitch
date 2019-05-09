@@ -6,26 +6,19 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.app.AlertDialog;
-import android.app.AppOpsManager;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
-import android.net.Uri;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,10 +32,11 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.Global;
 import com.github.ghmxr.timeswitch.R;
+import com.github.ghmxr.timeswitch.TaskItem;
+import com.github.ghmxr.timeswitch.adapters.ContentAdapter;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.ui.ActionDisplayValue;
@@ -52,24 +46,10 @@ import com.github.ghmxr.timeswitch.ui.bottomdialogs.DialogConfirmedCallBack;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.DialogForAppSelection;
 import com.github.ghmxr.timeswitch.utils.EnvironmentUtils;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
-import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 public class TriggerActivity extends BaseActivity implements View.OnClickListener{
-    public static final String EXTRA_TRIGGER_TYPE="trigger_type";
-    public static final String EXTRA_TRIGGER_VALUES="trigger_values";
-
-    private int trigger_type=0;
-    private boolean[] week_repeat=new boolean[]{true,true,true,true,true,true,true};
-    private long interval=60*60*1000;
-    private int battery_percentage=50,battery_temperature=35;
-    private String wifi_ssidinfo ="";
-    private String [] package_names=new String[0];
-    private String broadcast_intent_action="android.intent.ANSWER";
-
-    Calendar calendar;
-
-    private String checkString="";
-    private long first_clicked=0;
+    private TaskItem item;
+    Calendar calendar=Calendar.getInstance();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,10 +60,6 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
 
         try{getSupportActionBar().setDisplayHomeAsUpEnabled(true);}catch (Exception e){e.printStackTrace();}
         setToolBarAndStatusBarColor(toolbar,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
-
-        calendar= Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis()+10*60*1000);
-        calendar.set(Calendar.SECOND,0);
 
         findViewById(R.id.trigger_single).setOnClickListener(this);
         findViewById(R.id.trigger_percertaintime).setOnClickListener(this);
@@ -102,146 +78,68 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
         findViewById(R.id.trigger_app_closed).setOnClickListener(this);
         findViewById(R.id.trigger_headset).setOnClickListener(this);
         //initialize the values
-        try{
-            trigger_type=getIntent().getIntExtra(EXTRA_TRIGGER_TYPE,0);
-            String trigger_values[]=getIntent().getStringArrayExtra(EXTRA_TRIGGER_VALUES);
-            switch(trigger_type){
-                default:break;
-                case TriggerTypeConsts.TRIGGER_TYPE_SINGLE:{
-                    //time=Long.parseLong(trigger_values[0]);
-                    try{
-                        calendar.setTimeInMillis(Long.parseLong(trigger_values[0]));
-                        calendar.set(Calendar.SECOND,0);
-                    }catch (Exception e){
-                        LogUtil.putExceptionLog(this,e);
-                        e.printStackTrace();
-                    }
-                }
-                break;
-                case TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME:{
-                    //time=Long.parseLong(trigger_values[0]);
-                    interval=Long.parseLong(trigger_values[0]);
-                }
-                break;
-                case TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK:{
-                    //time=Long.parseLong(trigger_values[0]);
-                    try{
-                        calendar.setTimeInMillis(Long.parseLong(trigger_values[0]));
-                        calendar.set(Calendar.SECOND,0);
-                        for(int i=1;i<trigger_values.length;i++){
-                            week_repeat[i-1]=Integer.parseInt(trigger_values[i])==1;
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                        LogUtil.putExceptionLog(this,e);
-                    }
-
-                }
-                break;
-                case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE: case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE:{
-                    battery_temperature=Integer.parseInt(trigger_values[0]);
-                }
-                break;
-                case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE: case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE:{
-                    battery_percentage=Integer.parseInt(trigger_values[0]);
-                }
-                break;
-
-                case TriggerTypeConsts.TRIGGER_TYPE_RECEIVED_BROADCAST:{
-                    broadcast_intent_action=String.valueOf(trigger_values[0]);
-                }
-                break;
-
-                case TriggerTypeConsts.TRIGGER_TYPE_WIFI_CONNECTED: case TriggerTypeConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:{
-                    wifi_ssidinfo=String.valueOf(trigger_values[0]);
-                    //Log.d("wifi ssids" ,wifi_ssidinfo);
-                }
-                break;
-                case TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED: case TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED:{
-                    package_names=trigger_values;
-                }
-                break;
-
-            }
-        }catch (Exception e){
-            LogUtil.putExceptionLog(this,e);
-            e.printStackTrace();
-        }
-
-        checkString=toCheckString();
+        item=(TaskItem) getIntent().getSerializableExtra(EXTRA_SERIALIZED_TASKITEM);
+        calendar.setTimeInMillis(item.time);
+        calendar.set(Calendar.SECOND,0);
+        Log.d("TaskItem",item.toString());
 
         //set the views
 
-        activateTriggerType(trigger_type);
-    }
-
-    public String toCheckString() {
-        return "Triggers{" +
-                "trigger_type=" + trigger_type +
-                ", week_repeat=" + Arrays.toString(week_repeat) +
-                ", interval=" + interval +
-                ", battery_percentage=" + battery_percentage +
-                ", battery_temperature=" + battery_temperature +
-                ", wifi_ssidinfo='" + wifi_ssidinfo + '\'' +
-                ", package_names='" + Arrays.toString(package_names) + '\'' +
-                ", broadcast_intent_action='" + broadcast_intent_action + '\'' +
-                ", calendar=" + calendar.getTimeInMillis() +
-                ", wifi_ssidinfo=" + wifi_ssidinfo +
-                '}';
+        activateTriggerType(item.trigger_type);
     }
 
     private void activateTriggerType(int type){
-        trigger_type=type;
+        item.trigger_type=type;
         refreshTriggerDisplayValues(type);
         switch (type){
             default:break;
             case TriggerTypeConsts.TRIGGER_TYPE_SINGLE:{
-                ((TextView)findViewById(R.id.trigger_single_value)).setText(getSingleTimeDisplayValue(this,calendar.getTimeInMillis()));
+                ((TextView)findViewById(R.id.trigger_single_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getSingleTimeDisplayValue(this,calendar.getTimeInMillis()));
                 //timePicker.setVisibility(View.VISIBLE);
             }
             break;
             case TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME:{
-                ((TextView)findViewById(R.id.trigger_percertaintime_value)).setText(getCertainLoopTimeDisplayValue(this,interval));
+                ((TextView)findViewById(R.id.trigger_percertaintime_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getCertainLoopTimeDisplayValue(this,item.interval_milliseconds));
                 //timePicker.setVisibility(View.GONE);
             }
             break;
             case TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK:{
-                ((TextView)findViewById(R.id.trigger_weekloop_value)).setText(getWeekLoopDisplayValue(this,week_repeat,calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE)));
+                ((TextView)findViewById(R.id.trigger_weekloop_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getWeekLoopDisplayValue(this,item.week_repeat,calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE)));
                 //timePicker.setVisibility(View.VISIBLE);
             }
             break;
             case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE: case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE:{
-                ((TextView)findViewById(R.id.trigger_battery_temperature_value)).setText(getBatteryTemperatureDisplayValue(this,type,battery_temperature));
+                ((TextView)findViewById(R.id.trigger_battery_temperature_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getBatteryTemperatureDisplayValue(this,type,item.battery_temperature));
                 //timePicker.setVisibility(View.GONE);
             }
             break;
             case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE: case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE:{
-                ((TextView)findViewById(R.id.trigger_battery_percentage_value)).setText(getBatteryPercentageDisplayValue(this,type,battery_percentage));
+                ((TextView)findViewById(R.id.trigger_battery_percentage_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getBatteryPercentageDisplayValue(this,type,item.battery_percentage));
                 //timePicker.setVisibility(View.GONE);
             }
             break;
             case TriggerTypeConsts.TRIGGER_TYPE_RECEIVED_BROADCAST:{
-                ((TextView)findViewById(R.id.trigger_received_broadcast_value)).setText(getBroadcastDisplayValue(broadcast_intent_action));
+                ((TextView)findViewById(R.id.trigger_received_broadcast_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getBroadcastDisplayValue(item.selectedAction));
                 //timePicker.setVisibility(View.GONE);
             }
             break;
             case TriggerTypeConsts.TRIGGER_TYPE_WIFI_CONNECTED:{
-                ((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText(getWifiConnectionDisplayValue(this,wifi_ssidinfo));
+                ((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getWifiConnectionDisplayValue(this,item.wifiIds));
                 //timePicker.setVisibility(View.GONE);
             }
             break;
             case TriggerTypeConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:{
-                ((TextView)findViewById(R.id.trigger_wifi_disconnected_value)).setText(getWifiConnectionDisplayValue(this,wifi_ssidinfo));
+                ((TextView)findViewById(R.id.trigger_wifi_disconnected_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getWifiConnectionDisplayValue(this,item.wifiIds));
                 //timePicker.setVisibility(View.GONE);
             }
             break;
             case TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED: {
-                ((TextView)findViewById(R.id.trigger_app_opened_value)).setText(getAppNameDisplayValue(this,package_names));
+                ((TextView)findViewById(R.id.trigger_app_opened_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getAppNameDisplayValue(this,item.package_names));
                 //timePicker.setVisibility(View.GONE);
             }
             break;
             case TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED:{
-                ((TextView)findViewById(R.id.trigger_app_closed_value)).setText(getAppNameDisplayValue(this,package_names));
+                ((TextView)findViewById(R.id.trigger_app_closed_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getAppNameDisplayValue(this,item.package_names));
                 //timePicker.setVisibility(View.GONE);
             }
             break;
@@ -280,7 +178,7 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
             case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL: case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON: case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF:
             case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED: case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED: case TriggerTypeConsts.TRIGGER_TYPE_NET_ON:
             case TriggerTypeConsts.TRIGGER_TYPE_NET_OFF:{
-                ((TextView)findViewById(R.id.trigger_widget_changed_value)).setText(getWidgetDisplayValue(this,type));
+                ((TextView)findViewById(R.id.trigger_widget_changed_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getWidgetDisplayValue(this,type));
                 //timePicker.setVisibility(View.GONE);
             }
             break;
@@ -315,6 +213,7 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                                 calendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
                                 calendar.set(Calendar.MINUTE,minute);
                                 calendar.set(Calendar.SECOND,0);
+                                item.time=calendar.getTimeInMillis();
                                 activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_SINGLE);
                             }
                         },calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE),true).show();
@@ -326,16 +225,16 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
             case R.id.trigger_percertaintime:{
                 activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME);
                 BottomDialogForInterval dialog=new BottomDialogForInterval(this);
-                dialog.setVariables((int)(interval/(1000*60*60*24)),
-                        (int)((interval%(1000*60*60*24))/(1000*60*60)),
-                        (int)((interval%(1000*60*60))/(1000*60)));
+                dialog.setVariables((int)(item.interval_milliseconds/(1000*60*60*24)),
+                        (int)((item.interval_milliseconds%(1000*60*60*24))/(1000*60*60)),
+                        (int)((item.interval_milliseconds%(1000*60*60))/(1000*60)));
                 dialog.setTitle(getResources().getString(R.string.dialog_setinterval_title));
                 dialog.show();
                 dialog.setOnDialogConfirmedListener(new BottomDialogForInterval.OnDialogConfirmedListener() {
                     @Override
                     public void onDialogConfirmed(long millis) {
-                        interval=millis;
-                        ((TextView)findViewById(R.id.trigger_percertaintime_value)).setText(getCertainLoopTimeDisplayValue(TriggerActivity.this,millis));
+                        item.interval_milliseconds=millis;
+                        ((TextView)findViewById(R.id.trigger_percertaintime_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getCertainLoopTimeDisplayValue(TriggerActivity.this,millis));
                         activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME);
                     }
                 });
@@ -368,13 +267,13 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                 final CheckBox cb_sat=dialogview.findViewById(R.id.layout_dialog_weekloop_cb_sat);
                 final CheckBox cb_sun=dialogview.findViewById(R.id.layout_dialog_weekloop_cb_sun);
 
-                cb_sun.setChecked(week_repeat[PublicConsts.WEEK_SUNDAY]);
-                cb_mon.setChecked(week_repeat[PublicConsts.WEEK_MONDAY]);
-                cb_tue.setChecked(week_repeat[PublicConsts.WEEK_TUESDAY]);
-                cb_wed.setChecked(week_repeat[PublicConsts.WEEK_WEDNESDAY]);
-                cb_thu.setChecked(week_repeat[PublicConsts.WEEK_THURSDAY]);
-                cb_fri.setChecked(week_repeat[PublicConsts.WEEK_FRIDAY]);
-                cb_sat.setChecked(week_repeat[PublicConsts.WEEK_SATURDAY]);
+                cb_sun.setChecked(item.week_repeat[PublicConsts.WEEK_SUNDAY]);
+                cb_mon.setChecked(item.week_repeat[PublicConsts.WEEK_MONDAY]);
+                cb_tue.setChecked(item.week_repeat[PublicConsts.WEEK_TUESDAY]);
+                cb_wed.setChecked(item.week_repeat[PublicConsts.WEEK_WEDNESDAY]);
+                cb_thu.setChecked(item.week_repeat[PublicConsts.WEEK_THURSDAY]);
+                cb_fri.setChecked(item.week_repeat[PublicConsts.WEEK_FRIDAY]);
+                cb_sat.setChecked(item.week_repeat[PublicConsts.WEEK_SATURDAY]);
 
                 dialog_weekloop.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
 
@@ -411,10 +310,11 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                                     return;
                                 }
                                 //dialog_weekloop.cancel();
-                                TriggerActivity.this.week_repeat=week_repeat;
+                                TriggerActivity.this.item.week_repeat=week_repeat;
                                 calendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
                                 calendar.set(Calendar.MINUTE,minute);
                                 calendar.set(Calendar.SECOND,0);
+                                item.time=calendar.getTimeInMillis();
                                 activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK);
                             }
                         },calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE),true).show();
@@ -439,10 +339,10 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
             }
             break;
             case R.id.trigger_battery_percentage:{
-                if(trigger_type!= TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE&&trigger_type!= TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE){
+                if(item.trigger_type!= TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE&&item.trigger_type!= TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE){
                     activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE);
                 }else{
-                    activateTriggerType(trigger_type);
+                    activateTriggerType(item.trigger_type);
                 }
 
                 final BottomDialogForBattery dialog=new BottomDialogForBattery(this);
@@ -457,27 +357,27 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                 String[] compares={this.getResources().getString(R.string.dialog_battery_compare_more_than),this.getResources().getString(R.string.dialog_battery_compare_less_than)};
                 dialog.wheelview_first.setItems(Arrays.asList(compares));
                 dialog.wheelview_second.setItems(Arrays.asList(percentage));
-                dialog.wheelview_first.setSeletion(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE?0:(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE?1:0));
-                dialog.wheelview_second.setSeletion(battery_percentage-1);
+                dialog.wheelview_first.setSeletion(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE?0:(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE?1:0));
+                dialog.wheelview_second.setSeletion(item.battery_percentage-1);
                 dialog.textview_confirm.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         int position=dialog.wheelview_first.getSeletedIndex();
                         int trigger_type=(position==0? TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE:(position==1? TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE: TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE));
-                        battery_percentage=Integer.parseInt(dialog.wheelview_second.getSeletedItem());
+                        item.battery_percentage=Integer.parseInt(dialog.wheelview_second.getSeletedItem());
                         dialog.cancel();
                         activateTriggerType(trigger_type);
-                        ((TextView)findViewById(R.id.trigger_battery_percentage_value)).setText(getBatteryPercentageDisplayValue(TriggerActivity.this,trigger_type,battery_percentage));
+                        ((TextView)findViewById(R.id.trigger_battery_percentage_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getBatteryPercentageDisplayValue(TriggerActivity.this,trigger_type,item.battery_percentage));
                     }
                 });
                 dialog.show();
             }
             break;
             case R.id.trigger_battery_temperature:{
-                if(trigger_type!= TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE &&trigger_type!= TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE){
+                if(item.trigger_type!= TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE &&item.trigger_type!= TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE){
                     activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE);
                 }else{
-                    activateTriggerType(trigger_type);
+                    activateTriggerType(item.trigger_type);
                 }
 
                 final BottomDialogForBattery dialog=new BottomDialogForBattery(this);
@@ -491,17 +391,17 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                 String[] compares={this.getResources().getString(R.string.dialog_battery_compare_higher_than),this.getResources().getString(R.string.dialog_battery_compare_lower_than)};
                 dialog.wheelview_first.setItems(Arrays.asList(compares));
                 dialog.wheelview_second.setItems(Arrays.asList(temperature));
-                dialog.wheelview_first.setSeletion(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE?0:(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE?1:0));
-                dialog.wheelview_second.setSeletion(battery_temperature);
+                dialog.wheelview_first.setSeletion(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE?0:(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE?1:0));
+                dialog.wheelview_second.setSeletion(item.battery_temperature);
                 dialog.textview_confirm.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         int position=dialog.wheelview_first.getSeletedIndex();
                         int trigger_type=(position==0? TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE:(position==1? TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE: TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE));
-                        battery_temperature=Integer.parseInt(dialog.wheelview_second.getSeletedItem());
+                        item.battery_temperature=Integer.parseInt(dialog.wheelview_second.getSeletedItem());
                         dialog.cancel();
                         activateTriggerType(trigger_type);
-                        ((TextView)findViewById(R.id.trigger_battery_temperature_value)).setText(getBatteryTemperatureDisplayValue(TriggerActivity.this,trigger_type,battery_temperature));
+                        ((TextView)findViewById(R.id.trigger_battery_temperature_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getBatteryTemperatureDisplayValue(TriggerActivity.this,trigger_type,item.battery_temperature));
                     }
                 });
                 dialog.show();
@@ -510,7 +410,7 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
             case R.id.trigger_received_broadcast:{
                 activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_RECEIVED_BROADCAST);
                 View dialogView=LayoutInflater.from(this).inflate(R.layout.layout_dialog_with_listview,null);
-                final BroadcastSelectionAdapter adapter=new BroadcastSelectionAdapter(broadcast_intent_action);
+                final BroadcastSelectionAdapter adapter=new BroadcastSelectionAdapter(item.selectedAction);
                 ListView listView=dialogView.findViewById(R.id.layout_dialog_listview);
                 listView.setDivider(null);
                 (listView).setAdapter(adapter);
@@ -534,9 +434,9 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        broadcast_intent_action=adapter.getSelectedAction();
+                        item.selectedAction=adapter.getSelectedAction();
                         activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_RECEIVED_BROADCAST);
-                        ((TextView)findViewById(R.id.trigger_received_broadcast_value)).setText(getBroadcastDisplayValue(broadcast_intent_action));
+                        ((TextView)findViewById(R.id.trigger_received_broadcast_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getBroadcastDisplayValue(item.selectedAction));
                         dialog.cancel();
                     }
                 });
@@ -550,14 +450,14 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                 final WifiManager wifiManager=(WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
                 if(wifiManager==null){
                     Log.e("Triggers","WifiManager is null !!");
-                    ((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText(getWifiConnectionDisplayValue(TriggerActivity.this,wifi_ssidinfo));
+                    ((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getWifiConnectionDisplayValue(TriggerActivity.this,item.wifiIds));
                     return;
                 }
 
                 if(Global.NetworkReceiver.wifiList==null){
                     Snackbar snackbar=Snackbar.make(findViewById(R.id.trigger_root),getResources().getString(R.string.activity_trigger_wifi_open_att),Snackbar.LENGTH_SHORT);
-                    if(v_id==R.id.trigger_wifi_connected)((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText(getWifiConnectionDisplayValue(TriggerActivity.this,wifi_ssidinfo));
-                    else if(v_id==R.id.trigger_wifi_disconnected)((TextView)findViewById(R.id.trigger_wifi_disconnected_value)).setText(getWifiConnectionDisplayValue(TriggerActivity.this,wifi_ssidinfo));
+                    if(v_id==R.id.trigger_wifi_connected)((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getWifiConnectionDisplayValue(TriggerActivity.this,item.wifiIds));
+                    else if(v_id==R.id.trigger_wifi_disconnected)((TextView)findViewById(R.id.trigger_wifi_disconnected_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getWifiConnectionDisplayValue(TriggerActivity.this,item.wifiIds));
                     snackbar.setAction(getResources().getString(R.string.snackbar_action_open_wifi), new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -572,7 +472,7 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
 
                 View dialogview=LayoutInflater.from(this).inflate(R.layout.layout_dialog_with_listview,null);
                 ListView wifi_list=dialogview.findViewById(R.id.layout_dialog_listview);
-                final WifiInfoListAdapter adapter=new WifiInfoListAdapter(Global.NetworkReceiver.wifiList, wifi_ssidinfo);
+                final WifiInfoListAdapter adapter=new WifiInfoListAdapter(Global.NetworkReceiver.wifiList, item.wifiIds);
                 //Log.d("wifi ssids ",wifi_ssidinfo);
                 wifi_list.setAdapter(adapter);
                 wifi_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -587,14 +487,14 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                         .setPositiveButton(getResources().getString(R.string.dialog_button_positive), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                wifi_ssidinfo =adapter.getSelectedIDs();
+                                item.wifiIds =adapter.getSelectedIDs();
                                 if(v_id==R.id.trigger_wifi_connected) {
                                     activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_WIFI_CONNECTED);
-                                    ((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText(getWifiConnectionDisplayValue(TriggerActivity.this,wifi_ssidinfo));
+                                    ((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getWifiConnectionDisplayValue(TriggerActivity.this,item.wifiIds));
                                 }
                                 else if(v_id==R.id.trigger_wifi_disconnected) {
                                     activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_WIFI_DISCONNECTED);
-                                    ((TextView)findViewById(R.id.trigger_wifi_disconnected_value)).setText(getWifiConnectionDisplayValue(TriggerActivity.this,wifi_ssidinfo));
+                                    ((TextView)findViewById(R.id.trigger_wifi_disconnected_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getWifiConnectionDisplayValue(TriggerActivity.this,item.wifiIds));
                                 }
                             }
                         })
@@ -613,18 +513,18 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                         ,getResources().getString(R.string.permission_grant_action_att))) return;
 
                 DialogForAppSelection dialog=new DialogForAppSelection(this,v_id==R.id.trigger_app_opened?getResources().getString(R.string.activity_trigger_app_opened)
-                        :getResources().getString(R.string.activity_trigger_app_closed),package_names,v_id==R.id.trigger_app_opened?null:"#55e74c3c","");
+                        :getResources().getString(R.string.activity_trigger_app_closed),item.package_names,v_id==R.id.trigger_app_opened?null:"#55e74c3c","");
                 dialog.setOnDialogConfirmedCallBack(new DialogConfirmedCallBack() {
                     @Override
                     public void onDialogConfirmed(String result) {
                         try{
                             if(result.equals("-1")) return;
-                            package_names=result.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+                            item.package_names=result.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
                             refreshTriggerDisplayValues(v_id==R.id.trigger_app_opened?TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED:TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED);
                             //if(v_id==R.id.trigger_app_opened){
                             ((TextView)findViewById(v_id==R.id.trigger_app_opened?R.id.trigger_app_opened_value:R.id.trigger_app_closed_value)).setText(ActionDisplayValue.getAppNameDisplayValue(TriggerActivity.this,result));
                             //}
-                        }catch (Exception e){package_names=new String[0];}
+                        }catch (Exception e){item.package_names=new String[0];}
 
                     }
                 });
@@ -641,12 +541,12 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                 RadioButton ra_plug_out=dialog.findViewById(R.id.dialog_choice_second);
                 ra_plug_in.setText(getResources().getString(R.string.activity_trigger_headset_plug_in));
                 ra_plug_out.setText(getResources().getString(R.string.activity_trigger_headset_plug_out));
-                ra_plug_in.setChecked(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_IN);
-                ra_plug_out.setChecked(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT);
+                ra_plug_in.setChecked(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_IN);
+                ra_plug_out.setChecked(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT);
                 ra_plug_in.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        trigger_type= TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_IN;
+                        item.trigger_type= TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_IN;
                         dialog.cancel();
                         activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_IN);
                     }
@@ -654,7 +554,7 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                 ra_plug_out.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        trigger_type= TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT;
+                        item.trigger_type= TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT;
                         dialog.cancel();
                         activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT);
                     }
@@ -672,19 +572,19 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                     activateTriggerType(PublicConsts.TRIGGER_TYPE_WIDGET_WIFI_ON);
                 }*/
                 View dialogView=LayoutInflater.from(this).inflate(R.layout.layout_dialog_triggers_widget,null);
-                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_wifi_on_ra)).setChecked(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_WIFI_ON);
-                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_wifi_off_ra)).setChecked(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF);
-                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_bluetooth_on_ra)).setChecked(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON);
-                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_bluetooth_off_ra)).setChecked(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF);
-                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_ring_off_ra)).setChecked(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF);
-                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_ring_vibrate_ra)).setChecked(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE);
-                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_ring_normal_ra)).setChecked(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL);
-                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_airplane_mode_on_ra)).setChecked(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON);
-                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_airplane_mode_off_ra)).setChecked(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF);
-                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_ap_on_ra)).setChecked(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED);
-                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_ap_off_ra)).setChecked(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED);
-                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_net_on_ra)).setChecked(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_NET_ON);
-                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_net_off_ra)).setChecked(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_NET_OFF);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_wifi_on_ra)).setChecked(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_WIFI_ON);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_wifi_off_ra)).setChecked(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_bluetooth_on_ra)).setChecked(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_bluetooth_off_ra)).setChecked(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_ring_off_ra)).setChecked(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_ring_vibrate_ra)).setChecked(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_ring_normal_ra)).setChecked(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_airplane_mode_on_ra)).setChecked(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_airplane_mode_off_ra)).setChecked(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_ap_on_ra)).setChecked(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_ap_off_ra)).setChecked(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_net_on_ra)).setChecked(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_NET_ON);
+                ((RadioButton)dialogView.findViewById(R.id.triggers_widget_net_off_ra)).setChecked(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_NET_OFF);
                 final AlertDialog dialog=new AlertDialog.Builder(this)
                         .setTitle(getResources().getString(R.string.activity_triggers_widget_changed))
                         .setView(dialogView)
@@ -782,8 +682,8 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                         .show();
                 ((RadioButton)dialog.findViewById(R.id.dialog_choice_first)).setText(getResources().getString(R.string.activity_triggers_screen_on));
                 ((RadioButton)dialog.findViewById(R.id.dialog_choice_second)).setText(getResources().getString(R.string.activity_triggers_screen_off));
-                ((RadioButton)dialog.findViewById(R.id.dialog_choice_first)).setChecked(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SCREEN_ON);
-                ((RadioButton)dialog.findViewById(R.id.dialog_choice_second)).setChecked(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SCREEN_OFF);
+                ((RadioButton)dialog.findViewById(R.id.dialog_choice_first)).setChecked(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SCREEN_ON);
+                ((RadioButton)dialog.findViewById(R.id.dialog_choice_second)).setChecked(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SCREEN_OFF);
                 (dialog.findViewById(R.id.dialog_choice_first)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -811,8 +711,8 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                         .show();
                 ((RadioButton)dialog.findViewById(R.id.dialog_choice_first)).setText(getResources().getString(R.string.activity_triggers_power_connected));
                 ((RadioButton)dialog.findViewById(R.id.dialog_choice_second)).setText(getResources().getString(R.string.activity_triggers_power_disconnected));
-                ((RadioButton)dialog.findViewById(R.id.dialog_choice_first)).setChecked(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_POWER_CONNECTED);
-                ((RadioButton)dialog.findViewById(R.id.dialog_choice_second)).setChecked(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_POWER_DISCONNECTED);
+                ((RadioButton)dialog.findViewById(R.id.dialog_choice_first)).setChecked(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_POWER_CONNECTED);
+                ((RadioButton)dialog.findViewById(R.id.dialog_choice_second)).setChecked(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_POWER_DISCONNECTED);
                 (dialog.findViewById(R.id.dialog_choice_first)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -844,214 +744,15 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        switch(menuItem.getItemId()){
             default:break;
-            case R.id.action_triggers_confirm:{
-                String trigger_values []=new String[1];
-                switch(trigger_type){
-                    default:break;
-                    case TriggerTypeConsts.TRIGGER_TYPE_SINGLE:{
-                        trigger_values=new String [1];
-                        trigger_values[0]=String.valueOf(calendar.getTimeInMillis());
-                    }
-                    break;
-                    case TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME:{
-                        trigger_values=new String[1];
-                        trigger_values[0]=String.valueOf(interval);
-                    }
-                    break;
-                    case TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK:{
-                        trigger_values=new String[8];
-                        trigger_values[0]=String.valueOf(calendar.getTimeInMillis());
-                        for(int i=1;i<trigger_values.length;i++){
-                            trigger_values[i]=week_repeat[i-1]?String.valueOf(1):String.valueOf(0);
-                        }
-                    }
-                    break;
-                    case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE: case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE:{
-                        trigger_values=new String[1];
-                        trigger_values[0]=String.valueOf(battery_percentage);
-                    }
-                    break;
-                    case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE: case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE:{
-                        trigger_values=new String[1];
-                        trigger_values[0]=String.valueOf(battery_temperature);
-                    }
-                    break;
-                    case TriggerTypeConsts.TRIGGER_TYPE_RECEIVED_BROADCAST:{
-                        trigger_values=new String[1];
-                        trigger_values[0]=String.valueOf(broadcast_intent_action);
-                    }
-                    break;
-                    case TriggerTypeConsts.TRIGGER_TYPE_WIFI_CONNECTED: case TriggerTypeConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:{
-                        trigger_values=new String[1];
-                        trigger_values[0]= wifi_ssidinfo;
-                    }
-                    break;
-                    case TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED: case TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED:{
-                        trigger_values=package_names;
-                        if(trigger_values.length==0) trigger_values=new String[1];
-                    }
-                    break;
-                }
-                //if(trigger_values==null) return false;
-                Intent i=new Intent();
-                i.putExtra(EXTRA_TRIGGER_TYPE,trigger_type);
-                i.putExtra(EXTRA_TRIGGER_VALUES,trigger_values);
-                setResult(RESULT_OK,i);
+            case R.id.action_triggers_confirm:case android.R.id.home:{
                 finish();
             }
             break;
-            case android.R.id.home:{
-                checkAndExit();
-            }
         }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode==KeyEvent.KEYCODE_BACK){
-            checkAndExit();
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    public static String getSingleTimeDisplayValue(@NonNull Context context, long millis){
-       // TextView tv_condition_single_value=findViewById(R.id.trigger_single_value);
-        Calendar calendar=Calendar.getInstance();
-        calendar.setTimeInMillis(millis);
-        int month=calendar.get(Calendar.MONTH)+1;
-        return context.getResources().getString(R.string.activity_taskgui_condition_single_value)+ ValueUtils.format(calendar.get(Calendar.YEAR))+"/"+ ValueUtils.format(month)+"/"+ ValueUtils.format(calendar.get(Calendar.DAY_OF_MONTH))+"("+ValueUtils.getDayOfWeek(calendar.getTimeInMillis())+")/"+ ValueUtils.format(calendar.get(Calendar.HOUR_OF_DAY))+":"+ ValueUtils.format(calendar.get(Calendar.MINUTE));
-    }
-
-
-    public static String getCertainLoopTimeDisplayValue(Context context, long loopmillis){
-        //TextView tv_condition_percertaintime_value=findViewById(R.id.trigger_percertaintime_value);
-        return context.getResources().getString(R.string.adapter_per)+ ValueUtils.getFormatTime(context,loopmillis)+context.getResources().getString(R.string.adapter_trigger);
-    }
-
-    public static String getWeekLoopDisplayValue(Context context,boolean week_repeat [],int hourOfDay,int minute){
-        if(context==null||week_repeat==null||week_repeat.length!=7) return "";
-        String tv_value="";
-        //TextView tv_condition_weekloop_value=findViewById(R.id.layout_taskgui_area_condition_weekloop_value);
-        if(week_repeat[1]) tv_value+=context.getResources().getString(R.string.monday)+" ";//if(this.weekloop[1]) tv_value+="ÖÜÒ» ";
-        if(week_repeat[2]) tv_value+=context.getResources().getString(R.string.tuesday)+" ";
-        if(week_repeat[3]) tv_value+=context.getResources().getString(R.string.wednesday)+" ";
-        if(week_repeat[4]) tv_value+=context.getResources().getString(R.string.thursday)+" ";
-        if(week_repeat[5]) tv_value+=context.getResources().getString(R.string.friday)+" ";
-        if(week_repeat[6]) tv_value+=context.getResources().getString(R.string.saturday)+" ";
-        if(week_repeat[0]) tv_value+=context.getResources().getString(R.string.sunday);
-
-        boolean everyday=true;
-        for(int i=0;i<7;i++){
-            if(!week_repeat[i]) {  //if(!this.weekloop[i]) {
-                everyday=false;
-                break;
-            }
-        }
-
-        String time=ValueUtils.format(hourOfDay)+":"+ValueUtils.format(minute);
-        if(everyday) return context.getResources().getString(R.string.everyday)+" "+time;
-        return  tv_value+" "+time;
-    }
-
-    public static String getBatteryPercentageDisplayValue(Context context,int trigger_type,int percentage){
-       // TextView tv_battery=findViewById(R.id.layout_taskgui_area_condition_battery_percentage_value);
-        StringBuilder value=new StringBuilder("");
-        if(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE){
-            value.append(context.getResources().getString(R.string.more_than)+" ");
-            value.append(percentage+"%");
-        }else if(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE){
-            value.append(context.getResources().getString(R.string.less_than)+" ");
-            value.append(percentage+"%");
-        }
-         return value.toString();
-    }
-
-    public static String getBatteryTemperatureDisplayValue(Context context,int trigger_type,int battery_temperature){
-        //TextView tv_battery=findViewById(R.id.layout_taskgui_area_condition_battery_temperature_value);
-        StringBuilder value=new StringBuilder("");
-        if(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE){
-            value.append(context.getResources().getString(R.string.lower_than)+" ");
-            value.append(battery_temperature+"¡æ");
-        }else if(trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE){
-            value.append(context.getResources().getString(R.string.higher_than)+" ");
-            value.append(battery_temperature+"¡æ");
-        }
-        return value.toString();
-    }
-
-    public static String getBroadcastDisplayValue(String intent_action){
-       // TextView tv_broadcast=findViewById(R.id.layout_taskgui_area_condition_received_broadcast_value);
-       // if(trigger_type==PublicConsts.TRIGGER_TYPE_RECEIVED_BROADCAST){
-        //    tv_broadcast.setText(taskitem.selectedAction);
-       // }
-        return  intent_action;
-    }
-
-    public static String getWifiConnectionDisplayValue(Context context, String ssids){
-        if(context==null||ssids==null) return "";
-        if(ssids.length()==0||ssids.trim().equals("")) return context.getResources().getString(R.string.activity_trigger_wifi_no_ssid_assigned);
-       // WifiManager wifiManager=(WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        if(Global.NetworkReceiver.wifiList==null|| Global.NetworkReceiver.wifiList.size()<=0) return context.getResources().getString(R.string.activity_trigger_wifi_assigned_ssid);
-        StringBuilder display=new StringBuilder("");
-        //List<WifiConfiguration> list=wifiManager.getConfiguredNetworks();
-       // if(list==null||list.size()<=0) return "";
-        String ssid_array [] =ssids.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-        for(String s:ssid_array){
-            for(Global.NetworkReceiver.WifiConfigInfo w: Global.NetworkReceiver.wifiList){
-                try{
-                   if(Integer.parseInt(s)==w.networkID){
-                       if(!display.toString().equals("")) display.append(" , ");
-                       display.append(w.SSID);
-                   }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }
-        String displayValue=display.toString();
-        if(displayValue.length()>75) displayValue=displayValue.substring(0,75)+"...";
-        return displayValue;
-    }
-
-    public static String getWidgetDisplayValue(Context context,int triggerType){
-        switch (triggerType){
-            default:break;
-            case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_WIFI_ON: return context.getResources().getString(R.string.dialog_triggers_widget_wifi_on);
-            case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF:return context.getResources().getString(R.string.dialog_triggers_widget_wifi_off);
-            case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON: return context.getResources().getString(R.string.dialog_triggers_widget_bluetooth_on);
-            case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF: return context.getResources().getString(R.string.dialog_triggers_widget_bluetooth_off);
-            case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF: return context.getResources().getString(R.string.dialog_triggers_widget_ring_mode_off);
-            case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE: return context.getResources().getString(R.string.dialog_triggers_widget_ring_mode_vibrate);
-            case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL: return context.getResources().getString(R.string.dialog_triggers_widget_ring_mode_normal);
-            case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED: return context.getResources().getString(R.string.dialog_triggers_widget_ap_on);
-            case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED: return context.getResources().getString(R.string.dialog_triggers_widget_ap_off);
-            case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON: return context.getResources().getString(R.string.dialog_triggers_widget_airplane_mode_on);
-            case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF: return context.getResources().getString(R.string.dialog_triggers_widget_airplane_mode_off);
-            case TriggerTypeConsts.TRIGGER_TYPE_NET_ON: return context.getResources().getString(R.string.dialog_triggers_widget_net_on);
-            case TriggerTypeConsts.TRIGGER_TYPE_NET_OFF: return context.getResources().getString(R.string.dialog_triggers_widget_net_off);
-        }
-        return "";
-    }
-
-    public static String getAppNameDisplayValue(Context context,String[] packageNames){
-        if(packageNames==null||packageNames.length==0) return "";
-        StringBuilder builder=new StringBuilder("");
-        PackageManager manager=context.getPackageManager();
-        for(int i=0;i<packageNames.length;i++){
-            String packageName=packageNames[i];
-            try{
-                builder.append(manager.getApplicationLabel(manager.getApplicationInfo(packageNames[i],PackageManager.GET_META_DATA)));
-                if(packageName.length()>1&&i<packageNames.length-1) builder.append(",");
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-        return builder.toString();
+        return super.onOptionsItemSelected(menuItem);
     }
 
     private void refreshTriggerDisplayValues(int type){
@@ -1096,7 +797,7 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
         //((RadioButton)findViewById(R.id.trigger_power_disconnected_ra)).setChecked(type==PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED);
         ((RadioButton)findViewById(R.id.trigger_app_opened_ra)).setChecked(type== TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED);
         ((RadioButton)findViewById(R.id.trigger_app_closed_ra)).setChecked(type== TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED);
-        ((RadioButton)findViewById(R.id.trigger_headset_ra)).setChecked(type== TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_IN||trigger_type== TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT);
+        ((RadioButton)findViewById(R.id.trigger_headset_ra)).setChecked(type== TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_IN||type== TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT);
 
         tv_condition_single_value.setText(unchoose);
         tv_condition_percertaintime_value.setText(unchoose);
@@ -1118,20 +819,13 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
         tv_headset.setText(unchoose);
     }
 
-    private void checkAndExit(){
-        if(!toCheckString().equals(checkString)){
-            long thisTime=System.currentTimeMillis();
-            if(thisTime-first_clicked>1000){
-                first_clicked=thisTime;
-                Snackbar.make(findViewById(R.id.trigger_root),getResources().getString(R.string.snackbar_changes_not_saved_back),Snackbar.LENGTH_SHORT).show();
-                return;
-            }
-            setResult(RESULT_CANCELED);
-            finish();
-        }else{
-            setResult(RESULT_CANCELED);
-            finish();
-        }
+    @Override
+    public void finish(){
+        Intent intent=new Intent();
+        intent.putExtra(EXTRA_SERIALIZED_TASKITEM,item);
+        setResult(RESULT_OK,intent);
+        Log.d("taskitem",item.toString());
+        super.finish();
     }
 
     private class BroadcastSelectionAdapter extends BaseAdapter {
