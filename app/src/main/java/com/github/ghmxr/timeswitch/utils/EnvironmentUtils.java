@@ -29,6 +29,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
 import android.telecom.TelecomManager;
 import android.telephony.SmsManager;
+import android.telephony.SubscriptionInfo;
+import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 import android.view.Gravity;
 import android.view.View;
@@ -36,6 +38,7 @@ import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.Global;
 import com.github.ghmxr.timeswitch.R;
+import com.github.ghmxr.timeswitch.data.v2.ExceptionConsts;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.receivers.SMSReceiver;
 
@@ -43,6 +46,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 运行改变系统设置或者执行一些操作以及获取一些权限、设备状态静态方法的类，
@@ -573,6 +577,14 @@ public class EnvironmentUtils {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static List<SubscriptionInfo> getAvailableSubscribtionInfos(Context context){
+        try{
+            if(Build.VERSION.SDK_INT<22) return null;
+            return SubscriptionManager.from(context).getActiveSubscriptionInfoList();
+        }catch (Exception e){e.printStackTrace();}
+        return null;
     }
 
 }

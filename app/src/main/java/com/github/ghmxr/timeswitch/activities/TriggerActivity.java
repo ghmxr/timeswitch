@@ -40,7 +40,8 @@ import com.github.ghmxr.timeswitch.adapters.ContentAdapter;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.ui.ActionDisplayValue;
-import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBattery;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBatteryPercentageWithEnabledSelection;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBatteryTemperatureWithEnabledSelection;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForInterval;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.DialogConfirmedCallBack;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.DialogForAppSelection;
@@ -344,33 +345,24 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                 }else{
                     activateTriggerType(item.trigger_type);
                 }
-
-                final BottomDialogForBattery dialog=new BottomDialogForBattery(this);
-                dialog.textview_title.setText(getResources().getString(R.string.activity_taskgui_condition_battery_percentage_att));
-                dialog.checkbox_enable.setVisibility(View.GONE);
-                dialog.textview_second_description.setText("%");
-                String[] percentage=new String[99];
-                for(int i=0;i<percentage.length;i++) {
-                    int a=i+1;
-                    percentage[i]=String.valueOf(a);
-                }
-                String[] compares={this.getResources().getString(R.string.dialog_battery_compare_more_than),this.getResources().getString(R.string.dialog_battery_compare_less_than)};
-                dialog.wheelview_first.setItems(Arrays.asList(compares));
-                dialog.wheelview_second.setItems(Arrays.asList(percentage));
-                dialog.wheelview_first.setSeletion(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE?0:(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE?1:0));
-                dialog.wheelview_second.setSeletion(item.battery_percentage-1);
-                dialog.textview_confirm.setOnClickListener(new View.OnClickListener() {
+                int selection_first=0;
+                if(item.trigger_type==TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE) selection_first=0;
+                else if(item.trigger_type==TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE) selection_first=1;
+                final BottomDialogForBatteryPercentageWithEnabledSelection.BottomDialogForBatteryPercentageWithoutEnabledSelection dialog=
+                        new BottomDialogForBatteryPercentageWithEnabledSelection.BottomDialogForBatteryPercentageWithoutEnabledSelection(this,selection_first,item.battery_percentage);
+                dialog.show();
+                dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
                     @Override
-                    public void onClick(View view) {
-                        int position=dialog.wheelview_first.getSeletedIndex();
-                        int trigger_type=(position==0? TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE:(position==1? TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE: TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE));
-                        item.battery_percentage=Integer.parseInt(dialog.wheelview_second.getSeletedItem());
-                        dialog.cancel();
-                        activateTriggerType(trigger_type);
-                        ((TextView)findViewById(R.id.trigger_battery_percentage_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getBatteryPercentageDisplayValue(TriggerActivity.this,trigger_type,item.battery_percentage));
+                    public void onDialogConfirmed(String result) {
+                       // String[] results= result.split(",");
+                        item.battery_percentage=dialog.getSecondSelectionValue();
+                        if(dialog.getFirstSelectionValue()== BottomDialogForBatteryPercentageWithEnabledSelection.BottomDialogForBatteryPercentageWithoutEnabledSelection.SELECTION_VALUE_MORE_THAN) {
+                            activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE);
+                        }else if(dialog.getFirstSelectionValue()== BottomDialogForBatteryPercentageWithEnabledSelection.BottomDialogForBatteryPercentageWithoutEnabledSelection.SELECTION_VALUE_LESS_THAN){
+                            activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE);
+                        }
                     }
                 });
-                dialog.show();
             }
             break;
             case R.id.trigger_battery_temperature:{
@@ -379,32 +371,24 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                 }else{
                     activateTriggerType(item.trigger_type);
                 }
-
-                final BottomDialogForBattery dialog=new BottomDialogForBattery(this);
-                dialog.textview_title.setText(getResources().getString(R.string.activity_taskgui_condition_battery_temperature_att));
-                dialog.checkbox_enable.setVisibility(View.GONE);
-                dialog.textview_second_description.setText("¡æ");
-                String[] temperature=new String[66];
-                for(int i=0;i<temperature.length;i++) {
-                    temperature[i]=String.valueOf(i);
-                }
-                String[] compares={this.getResources().getString(R.string.dialog_battery_compare_higher_than),this.getResources().getString(R.string.dialog_battery_compare_lower_than)};
-                dialog.wheelview_first.setItems(Arrays.asList(compares));
-                dialog.wheelview_second.setItems(Arrays.asList(temperature));
-                dialog.wheelview_first.setSeletion(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE?0:(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE?1:0));
-                dialog.wheelview_second.setSeletion(item.battery_temperature);
-                dialog.textview_confirm.setOnClickListener(new View.OnClickListener() {
+                int selection_first=0;
+                if(item.trigger_type==TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE) selection_first=0;
+                else if(item.trigger_type==TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE) selection_first=1;
+                final BottomDialogForBatteryTemperatureWithEnabledSelection.BottomDialogForBatteryTemperatureWithoutEnabledSelection dialog=
+                        new BottomDialogForBatteryTemperatureWithEnabledSelection.BottomDialogForBatteryTemperatureWithoutEnabledSelection(this,selection_first,item.battery_percentage);
+                dialog.show();
+                dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
                     @Override
-                    public void onClick(View view) {
-                        int position=dialog.wheelview_first.getSeletedIndex();
-                        int trigger_type=(position==0? TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE:(position==1? TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE: TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE));
-                        item.battery_temperature=Integer.parseInt(dialog.wheelview_second.getSeletedItem());
-                        dialog.cancel();
-                        activateTriggerType(trigger_type);
-                        ((TextView)findViewById(R.id.trigger_battery_temperature_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getBatteryTemperatureDisplayValue(TriggerActivity.this,trigger_type,item.battery_temperature));
+                    public void onDialogConfirmed(String result) {
+                        // String[] results= result.split(",");
+                        item.battery_temperature=dialog.getSecondSelectionValue();
+                        if(dialog.getFirstSelectionValue()== 0) {
+                            activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE);
+                        }else if(dialog.getFirstSelectionValue()== 1){
+                            activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE);
+                        }
                     }
                 });
-                dialog.show();
             }
             break;
             case R.id.trigger_received_broadcast:{

@@ -1,6 +1,7 @@
 package com.github.ghmxr.timeswitch.activities;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -14,6 +15,8 @@ import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -27,9 +30,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.R;
+import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
-import com.github.ghmxr.timeswitch.utils.LogUtil;
+import com.github.ghmxr.timeswitch.utils.EnvironmentUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,17 +42,19 @@ import java.util.List;
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
  */
 public class SmsActivity extends BaseActivity {
+    private TaskItem item;
     boolean enabled=false;
     private EditText edit_addresses;
     private EditText edit_message;
     private android.support.v7.widget.AppCompatSpinner spinner;
-    public static final String EXTRA_SMS_VALUES ="sms_values";
-    public static final String EXTRA_SMS_ADDRESS ="sms_address";
-    public static final String EXTRA_SMS_MESSAGE="sms_message";
-    private static final int REQUEST_CODE_SELECT_CONTACTS=0x00000;
+
+    private static final int REQUEST_CODE_SELECT_CONTACTS=0;
     private int subid=-1; //for the widget can not save the subscription id;
     CheckBox cb_receipt_toast;
     //public static final String SPLIT_RECEIVERS=",";
+    /**
+     * @deprecated
+     */
     private String checkString="";
     private long first_click_back_time=0;
     @Override
@@ -64,21 +70,48 @@ public class SmsActivity extends BaseActivity {
         spinner=findViewById(R.id.layout_sms_spinner);
         cb_receipt_toast=findViewById(R.id.layout_sms_toast_cb);
         try{
-            String sms_values[]=getIntent().getStringExtra(EXTRA_SMS_VALUES).split(PublicConsts.SEPARATOR_SECOND_LEVEL);
+            item=(TaskItem) getIntent().getSerializableExtra(EXTRA_SERIALIZED_TASKITEM);
+            String sms_values[]=item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
             enabled=Integer.parseInt(sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_ENABLED_LOCALE])>=0;
             subid=Integer.parseInt(sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_SUBINFO_LOCALE]);
-            edit_addresses.setText(getIntent().getStringExtra(EXTRA_SMS_ADDRESS));
-            edit_message.setText(getIntent().getStringExtra(EXTRA_SMS_MESSAGE));
-            if(Build.VERSION.SDK_INT>=22){
-                List<SubscriptionInfo> list_read=new ArrayList<>();
-                try{
-                    list_read=SubscriptionManager.from(this).getActiveSubscriptionInfoList();
-                }catch (Exception e){
-                    e.printStackTrace();
-                    LogUtil.putExceptionLog(this,e);
+            edit_addresses.setText(item.sms_address);
+            edit_message.setText(item.sms_message);
+            edit_addresses.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
                 }
-                final List<SubscriptionInfo> list_subinfo=list_read;
-                //TelephonyManager telephonyManager=(TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    item.sms_address=s.toString();
+                }
+            });
+            edit_message.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    item.sms_message=s.toString();
+                    Log.d("sms_ms",item.sms_message);
+                }
+            });
+
+            if(Build.VERSION.SDK_INT>=22){
+                final List<SubscriptionInfo> list_subinfo=EnvironmentUtils.getAvailableSubscribtionInfos(this);
                 List<String> displayNames=new ArrayList<>();
                 int selection=0;
                 if(list_subinfo!=null&&list_subinfo.size()>0){
@@ -104,8 +137,10 @@ public class SmsActivity extends BaseActivity {
                 spinner.setEnabled(list_subinfo!=null&&list_subinfo.size()>0);
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
+                    @TargetApi(22)
                     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                        if(Build.VERSION.SDK_INT>=22&&list_subinfo!=null&&list_subinfo.size()>0) subid=list_subinfo.get(i).getSubscriptionId();
+                        if(list_subinfo!=null&&list_subinfo.size()>0) subid=list_subinfo.get(i).getSubscriptionId();
+                        //item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE]
                     }
 
                     @Override
@@ -122,7 +157,6 @@ public class SmsActivity extends BaseActivity {
 
         }catch (Exception e){
             e.printStackTrace();
-            LogUtil.putExceptionLog(this,e);
         }
         final SwitchCompat switchCompat=(findViewById(R.id.layout_sms_switch));
         switchCompat.setChecked(enabled);
@@ -145,7 +179,7 @@ public class SmsActivity extends BaseActivity {
             public void onClick(View view) {
                 if(Build.VERSION.SDK_INT>=23&&PermissionChecker.checkSelfPermission(SmsActivity.this, Manifest.permission.READ_CONTACTS)!=PermissionChecker.PERMISSION_GRANTED){
                     requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},1);
-                    Snackbar snackbar=Snackbar.make(findViewById(R.id.layout_sms_root),getResources().getString(R.string.permission_request_read_contacts),Snackbar.LENGTH_SHORT);
+                    /*Snackbar snackbar=Snackbar.make(findViewById(R.id.layout_sms_root),getResources().getString(R.string.permission_request_read_contacts),Snackbar.LENGTH_SHORT);
                     snackbar.setAction(getResources().getString(R.string.permission_grant_action_att), new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -155,13 +189,14 @@ public class SmsActivity extends BaseActivity {
                             startActivity(appdetail);
                         }
                     });
-                    snackbar.show();
+                    snackbar.show();*/
+                    EnvironmentUtils.PermissionRequestUtil.showSnackbarWithActionOfAppdetailPage(SmsActivity.this,getResources().getString(R.string.permission_request_read_contacts)
+                            ,getResources().getString(R.string.permission_grant_action_att));
                     return;
                 }
                 startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUEST_CODE_SELECT_CONTACTS);
             }
         });
-        checkString=new String(toCheckString());
     }
 
     private void setSmsAreaVisible(boolean b){
@@ -231,25 +266,11 @@ public class SmsActivity extends BaseActivity {
         switch (item.getItemId()){
             default:break;
             case android.R.id.home:{
-                checkAndExit();
+                checkAndFinish();
             }
             break;
             case R.id.action_sms_confirm:{
-                String addresses=edit_addresses.getText().toString().trim();
-                String message=edit_message.getText().toString();
-                if(addresses.trim().equals("")&&enabled){
-                    Snackbar.make(findViewById(R.id.layout_sms_root),"输入收件人号码",Snackbar.LENGTH_SHORT).show();
-                    return false;
-                }
-                Intent data=new Intent();
-                String sms_values=String.valueOf(enabled?0:-1)+PublicConsts.SEPARATOR_SECOND_LEVEL
-                        +String.valueOf(subid)+PublicConsts.SEPARATOR_SECOND_LEVEL
-                        +String.valueOf(cb_receipt_toast.isChecked()?0:-1);
-                data.putExtra(EXTRA_SMS_VALUES,sms_values);
-                data.putExtra(EXTRA_SMS_ADDRESS,addresses);
-                data.putExtra(EXTRA_SMS_MESSAGE,message);
-                setResult(RESULT_OK,data);
-                finish();
+                checkAndFinish();
             }
         }
         return super.onOptionsItemSelected(item);
@@ -258,48 +279,32 @@ public class SmsActivity extends BaseActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode==KeyEvent.KEYCODE_BACK){
-            checkAndExit();
+            checkAndFinish();
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
 
-    private void checkAndExit(){
-        if(!toCheckString().equals(checkString)){
-            Log.d("SmsCheck",toCheckString()+"\n"+checkString);
-           /*new AlertDialog.Builder(this)
-           .setTitle(getResources().getString(R.string.dialog_edit_changed_not_saved_title))
-           .setMessage(getResources().getString(R.string.dialog_edit_changed_not_saved_message))
-           .setPositiveButton(getResources().getString(R.string.dialog_button_positive), new DialogInterface.OnClickListener() {
-               @Override
-               public void onClick(DialogInterface dialog, int which) {
-                  setResult(RESULT_CANCELED);
-                  finish();
-               }
-           })
-           .setNegativeButton(getResources().getString(R.string.dialog_button_negative), new DialogInterface.OnClickListener() {
-               @Override
-               public void onClick(DialogInterface dialog, int which) {
-
-               }
-           })
-           .show(); */
-           long clickedTime=System.currentTimeMillis();
-           if(clickedTime-first_click_back_time>1000){
-               first_click_back_time=clickedTime;
-               Snackbar.make(findViewById(R.id.layout_sms_root),getResources().getString(R.string.snackbar_changes_not_saved_back),Snackbar.LENGTH_SHORT).show();
-               return;
-           }
-           setResult(RESULT_CANCELED);
-           finish();
+    private void checkAndFinish(){
+        String addresses=edit_addresses.getText().toString().trim();
+        if(addresses.trim().equals("")&&enabled){
+            long time=System.currentTimeMillis();
+            if(time-first_click_back_time>1000){
+                first_click_back_time=time;
+                Snackbar.make(findViewById(android.R.id.content),"没有收件人号码，再按一次舍弃修改并退出",Snackbar.LENGTH_SHORT).show();
+                return;
+            }else{
+                setResult(RESULT_CANCELED);
+                finish();
+            }
         }
-        else {
-            setResult(RESULT_CANCELED);
-            finish();
-        }
-    }
-
-    private String toCheckString(){
-        return this.enabled+"/"+this.edit_addresses.getText().toString()+"/"+this.edit_message.getText().toString()+"/"+this.subid;
+        String sms_values=String.valueOf(enabled?0:-1)+PublicConsts.SEPARATOR_SECOND_LEVEL
+                +String.valueOf(subid)+PublicConsts.SEPARATOR_SECOND_LEVEL
+                +String.valueOf(cb_receipt_toast.isChecked()?0:-1);
+        item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE]=sms_values;
+        Intent intent=new Intent();
+        intent.putExtra(EXTRA_SERIALIZED_TASKITEM,item);
+        setResult(RESULT_OK,intent);
+        finish();
     }
 }

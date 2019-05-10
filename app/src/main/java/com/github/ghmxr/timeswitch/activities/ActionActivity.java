@@ -312,9 +312,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
                     return;
                 }
                 Intent i=new Intent(this,SmsActivity.class);
-                i.putExtra(SmsActivity.EXTRA_SMS_VALUES,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE]);
-                i.putExtra(SmsActivity.EXTRA_SMS_ADDRESS,item.sms_address);
-                i.putExtra(SmsActivity.EXTRA_SMS_MESSAGE,item.sms_message);
+                i.putExtra(EXTRA_SERIALIZED_TASKITEM,item);
                 i.putExtra(EXTRA_TITLE_COLOR,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
                 startActivityForResult(i,REQUEST_CODE_SMS_SET);
             }
@@ -447,11 +445,11 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(data==null)return;
         switch (requestCode){
             default:break;
             case REQUEST_CODE_RING_CHANGED:{
                 if(resultCode==RESULT_OK){
-                    if(data==null) return;
                     String ring_selection_values=data.getStringExtra(ActionOfChangingRingtones.EXTRA_RING_VALUES);
                     if(ring_selection_values==null) return;
                     item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE]=ring_selection_values;
@@ -464,7 +462,6 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             break;
             case REQUEST_CODE_WALLPAPER_CHANGED:{
                 if(resultCode==RESULT_OK){
-                    if(data==null) return;
                     Uri uri=data.getData();
                     if(uri==null) return;
                     item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE]=String.valueOf(0);
@@ -475,12 +472,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             break;
             case REQUEST_CODE_SMS_SET:{
                 if(resultCode==RESULT_OK){
-                    if(data==null) return;
-                    String values=data.getStringExtra(SmsActivity.EXTRA_SMS_VALUES);
-                    if(values==null) return;
-                    item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE]=values;
-                    item.sms_address=data.getStringExtra(SmsActivity.EXTRA_SMS_ADDRESS);
-                    item.sms_message=data.getStringExtra(SmsActivity.EXTRA_SMS_MESSAGE);
+                    item=(TaskItem)data.getSerializableExtra(EXTRA_SERIALIZED_TASKITEM);
                     refreshActionStatus();
                 }
             }

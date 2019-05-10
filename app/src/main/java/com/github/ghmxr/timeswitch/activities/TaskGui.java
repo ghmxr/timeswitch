@@ -112,10 +112,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		initialVariables();
 
 		//do set the views of the variables.
-
-		String taskname=taskitem.name;
-		if(taskname.length()>24) taskname=taskname.substring(0,24)+"...";
-		((TextView)findViewById(R.id.layout_taskgui_area_name_text)).setText(taskname);
+		((TextView)findViewById(R.id.layout_taskgui_area_name_text)).setText(taskitem.name);
 		((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autoclose_cb)).setChecked(taskitem.autoclose);
 		((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autodelete_cb)).setChecked(taskitem.autodelete);
 		//activateTriggerType(taskitem.trigger_type);
@@ -360,9 +357,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				@Override
 				public void onClick(View v) {
 					Intent i=new Intent(TaskGui.this,SmsActivity.class);
-					i.putExtra(SmsActivity.EXTRA_SMS_VALUES,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE]);
-					i.putExtra(SmsActivity.EXTRA_SMS_ADDRESS,taskitem.sms_address);
-					i.putExtra(SmsActivity.EXTRA_SMS_MESSAGE,taskitem.sms_message);
+					i.putExtra(EXTRA_SERIALIZED_TASKITEM,taskitem);
 					i.putExtra(EXTRA_TITLE_COLOR,taskitem.addition_title_color);
 					startActivityForResult(i,REQUEST_CODE_SMS);
 				}
@@ -1124,12 +1119,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			break;
 			case REQUEST_CODE_SMS:{
 				if(resultCode==RESULT_OK){
-					if(data==null) return;
-					String values=data.getStringExtra(SmsActivity.EXTRA_SMS_VALUES);
-					if(values==null) return;
-					taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE]=values;
-					taskitem.sms_address=data.getStringExtra(SmsActivity.EXTRA_SMS_ADDRESS);
-					taskitem.sms_message=data.getStringExtra(SmsActivity.EXTRA_SMS_MESSAGE);
+					taskitem=(TaskItem)data.getSerializableExtra(EXTRA_SERIALIZED_TASKITEM);
 					refreshActionStatus();
 				}
 			}

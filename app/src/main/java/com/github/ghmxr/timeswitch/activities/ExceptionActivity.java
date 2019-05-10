@@ -6,13 +6,11 @@ import android.os.Bundle;
 import android.os.Message;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,12 +19,12 @@ import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.ExceptionConsts;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
-import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBattery;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBatteryPercentageWithEnabledSelection;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBatteryTemperatureWithEnabledSelection;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForPeriod;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.DialogConfirmedCallBack;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
-
-import java.util.Arrays;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
@@ -288,115 +286,58 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
             }
             break;
             case R.id.exceptions_battery_percentage:{
-                final BottomDialogForBattery dialog=new BottomDialogForBattery(this);
-                dialog.textview_title.setText("电池电量");
-                dialog.textview_second_description.setText("%");
-                String [] percentage=new String[99];
-                for(int i=0;i<percentage.length;i++){int a=i+1;percentage[i]=String.valueOf(a);}
-                dialog.wheelview_first.setItems(Arrays.asList(this.getResources().getString(R.string.dialog_battery_compare_more_than),this.getResources().getString(R.string.dialog_battery_compare_less_than)));
-                dialog.wheelview_second.setItems(Arrays.asList(percentage));
-                dialog.checkbox_enable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                int ex_more_than=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]);
+                int ex_less_than=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]);
+                int selection_first=0;
+                if(ex_less_than>=0) selection_first=1;
+                int selection_second=50;
+                if(ex_more_than>=0) selection_second=ex_more_than;
+                else if(ex_less_than>=0) selection_second=ex_less_than;
+                final BottomDialogForBatteryPercentageWithEnabledSelection dialog=new BottomDialogForBatteryPercentageWithEnabledSelection(this,(ex_more_than>=0||ex_less_than>=0),selection_first,selection_second);
+                dialog.show();
+                dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
                     @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        dialog.wheelview_first.setEnabled(b);
-                        dialog.wheelview_second.setEnabled(b);
-                    }
-                });
-
-                try{
-                    dialog.checkbox_enable.setChecked((Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])>=0)||
-                            Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])>=0);
-                    dialog.wheelview_first.setEnabled(dialog.checkbox_enable.isChecked());
-                    dialog.wheelview_second.setEnabled(dialog.checkbox_enable.isChecked());
-                    dialog.wheelview_first.setSeletion(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])>=0?0:
-                            (Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])>=0?1:0));
-                    dialog.wheelview_second.setSeletion(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])>=0?
-                            (Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])-1):
-                            (Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])>=0?
-                                    (Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])-1):
-                                    49));
-                }catch (NumberFormatException ne){
-                    ne.printStackTrace();
-                    LogUtil.putExceptionLog(this,ne);
-                }
-
-                dialog.textview_confirm.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if(!dialog.checkbox_enable.isChecked()){
+                    public void onDialogConfirmed(String result) {
+                        if(result.equals("-1")){
                             item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]=String.valueOf(-1);
                             item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]=String.valueOf(-1);
+                        }else{
+                            //String[]results=result.split(",");
+                            //int selection=Integer.parseInt(results[0]);
+                            item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]=dialog.getFirstSelectionValue()==0?String.valueOf(dialog.getSecondSelectionValue()):String.valueOf(-1);
+                            item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]=dialog.getFirstSelectionValue()==1?String.valueOf(dialog.getSecondSelectionValue()):String.valueOf(-1);
                         }
-                        else{
-                            if(dialog.wheelview_first.getSeletedIndex()==0){
-                                item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]=dialog.wheelview_second.getSeletedItem();
-                                item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]=String.valueOf(-1);
-                            }else if(dialog.wheelview_first.getSeletedIndex()==1){
-                                item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]=String.valueOf(-1);
-                                item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]=dialog.wheelview_second.getSeletedItem();
-                            }
-                        }
-                        dialog.cancel();
                         refreshBatteryPercentageView();
                     }
                 });
-
-                dialog.show();
             }
             break;
 
             case R.id.exceptions_battery_temperature:{
-                final BottomDialogForBattery dialog=new BottomDialogForBattery(this);
-                dialog.textview_title.setText("电池温度");
-                dialog.textview_second_description.setText("℃");
-                String [] temperature=new String[66];
-                for(int i=0;i<temperature.length;i++) temperature[i]=String.valueOf(i);
-                dialog.wheelview_first.setItems(Arrays.asList(this.getResources().getString(R.string.dialog_battery_compare_higher_than),this.getResources().getString(R.string.dialog_battery_compare_lower_than)));
-                dialog.wheelview_second.setItems(Arrays.asList(temperature));
-                dialog.checkbox_enable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                int ex_higher_than=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]);
+                int ex_lower_than=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]);
+                int selection_first=0;
+                if(ex_lower_than>=0) selection_first=1;
+                int selection_second=45;
+                if(ex_higher_than>=0) selection_second=ex_higher_than;
+                else if(ex_lower_than>=0) selection_second=ex_lower_than;
+                final BottomDialogForBatteryTemperatureWithEnabledSelection dialog=new BottomDialogForBatteryTemperatureWithEnabledSelection(this,(ex_lower_than>=0||ex_higher_than>=0),selection_first,selection_second);
+                dialog.show();
+                dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
                     @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        dialog.wheelview_first.setEnabled(b);
-                        dialog.wheelview_second.setEnabled(b);
-                    }
-                });
-                try{
-                    dialog.checkbox_enable.setChecked((Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])>=0)||
-                            Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])>=0);
-                    dialog.wheelview_first.setEnabled(dialog.checkbox_enable.isChecked());
-                    dialog.wheelview_second.setEnabled(dialog.checkbox_enable.isChecked());
-                    dialog.wheelview_first.setSeletion(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])>=0?0:
-                            (Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])>=0?1:0));
-                    dialog.wheelview_second.setSeletion(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])>=0?
-                            Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]):
-                            (Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])>=0?
-                            Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]):40));
-                }catch (NumberFormatException ne){
-                    ne.printStackTrace();
-                }
-
-                dialog.textview_confirm.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if(!dialog.checkbox_enable.isChecked()){
+                    public void onDialogConfirmed(String result) {
+                        if(result.equals("-1")){
                             item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]=String.valueOf(-1);
                             item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]=String.valueOf(-1);
+                        }else {
+                            //String[]results=result.split(",");
+                            //int selection=Integer.parseInt(results[0]);
+                            item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]=dialog.getFirstSelectionValue()==0?String.valueOf(dialog.getSecondSelectionValue()):String.valueOf(-1);
+                            item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]=dialog.getFirstSelectionValue()==1?String.valueOf(dialog.getSecondSelectionValue()):String.valueOf(-1);
                         }
-                        else{
-                            if(dialog.wheelview_first.getSeletedIndex()==0){
-                                item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]=dialog.wheelview_second.getSeletedItem();
-                                item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]=String.valueOf(-1);
-                            }else if(dialog.wheelview_first.getSeletedIndex()==1){
-                                item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]=String.valueOf(-1);
-                                item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]=dialog.wheelview_second.getSeletedItem();
-                            }
-                        }
-                        dialog.cancel();
                         refreshBatteryTemperatureView();
                     }
                 });
-
-                dialog.show();
             }
             break;
 

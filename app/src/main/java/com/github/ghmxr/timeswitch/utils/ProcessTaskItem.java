@@ -39,6 +39,7 @@ import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.Global;
 import com.github.ghmxr.timeswitch.R;
+import com.github.ghmxr.timeswitch.activities.ExceptionActivity;
 import com.github.ghmxr.timeswitch.activities.MainActivity;
 import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
 import com.github.ghmxr.timeswitch.data.v2.AdditionConsts;
@@ -195,20 +196,20 @@ public class ProcessTaskItem {
            }catch (Exception e){
                e.printStackTrace();
            }
-            activateActionOfWifi(action_wifi);
-            activateActionOfBluetooth(action_bluetooth);
-            activateActionOfRingMode(action_ring_mode);
-            activateActionOfVolume(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE]);
-            activateActionOfSettingRingtone(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE]);
-            activateActionOfBrightness(screen_brightness);
-            activateActionOfWallpaper(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE]);
-            activateActionOfVibrate(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE]);
-            activateActionOfToast(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE]);
-            activateActionOfSMS(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE]);
-            launchAppsByPackageName(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES]);
-            stopAppsByPackageName(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES]);
-            switchTasks(0);
-            switchTasks(1);
+           try{activateActionOfWifi(action_wifi);}catch (Exception e){e.printStackTrace();}
+            try{activateActionOfBluetooth(action_bluetooth);}catch (Exception e){e.printStackTrace();}
+            try{activateActionOfRingMode(action_ring_mode);}catch (Exception e){e.printStackTrace();}
+            try{activateActionOfVolume(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE]);}catch (Exception e){e.printStackTrace();}
+            try{activateActionOfSettingRingtone(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE]);}catch (Exception e){e.printStackTrace();}
+            try{activateActionOfBrightness(screen_brightness);}catch (Exception e){e.printStackTrace();}
+            try{activateActionOfWallpaper(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE]);}catch (Exception e){e.printStackTrace();}
+            try{activateActionOfVibrate(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE]);}catch (Exception e){e.printStackTrace();}
+            try{activateActionOfToast(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE]);}catch (Exception e){e.printStackTrace();}
+            try{activateActionOfSMS(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE]);}catch (Exception e){e.printStackTrace();}
+            try{launchAppsByPackageName(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES]);}catch (Exception e){e.printStackTrace();}
+            try{stopAppsByPackageName(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES]);}catch (Exception e){e.printStackTrace();}
+            try{switchTasks(0);}catch (Exception e){e.printStackTrace();}
+            try{switchTasks(1);}catch (Exception e){e.printStackTrace();}
 
             SharedPreferences settings=context.getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE);
             boolean isRoot=settings.getBoolean(PublicConsts.PREFERENCES_IS_SUPERUSER_MODE,PublicConsts.PREFERENCES_IS_SUPERUSER_MODE_DEFAULT);
@@ -991,7 +992,7 @@ public class ProcessTaskItem {
         }
 
         if(processType==TYPE_AND){
-            if(type_and_if_has_exception) return false;
+           return !type_and_if_has_exception;
         }
 
         return true;
@@ -1282,37 +1283,33 @@ public class ProcessTaskItem {
         TaskItem item=getTaskItemOfId(TimeSwitchService.list,id);
         if(item==null) return;
 
-        try{
-            if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE&&item.time<=System.currentTimeMillis()) return;
-            item.isenabled=enabled;
-            SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
-            database.execSQL("update "+ MySQLiteOpenHelper.getCurrentTableName(context)
-                    +" set "+SQLConsts.SQL_TASK_COLUMN_ENABLED +"="+(enabled?1:0)+
-                    " where "+SQLConsts.SQL_TASK_COLUMN_ID +"="+id);
+        if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE&&item.time<=System.currentTimeMillis()) return;
+        item.isenabled=enabled;
+        SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
+        database.execSQL("update "+ MySQLiteOpenHelper.getCurrentTableName(context)
+                +" set "+SQLConsts.SQL_TASK_COLUMN_ENABLED +"="+(enabled?1:0)+
+                " where "+SQLConsts.SQL_TASK_COLUMN_ID +"="+id);
 
-            if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME&&enabled){
-                long currentTime=System.currentTimeMillis();
-                item.time=currentTime;
-                Cursor cursor=database.rawQuery("select * from "+ MySQLiteOpenHelper.getCurrentTableName(context)+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
-                if(cursor.moveToFirst()){
-                    long[] values_read=ValueUtils.string2longArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_TRIGGER_VALUES)));
-                    if(values_read.length==2){
-                        long interval_read=values_read[1];
-                        long values_put[]=new long[2];
-                        values_put[0]=currentTime;
-                        values_put[1]=interval_read;
-                        ContentValues contentValues=new ContentValues();
-                        contentValues.put(SQLConsts.SQL_TASK_COLUMN_TRIGGER_VALUES,ValueUtils.longArray2String(values_put));
-                        database.update(MySQLiteOpenHelper.getCurrentTableName(context),contentValues,SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
-                    }
+        if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME&&enabled){
+            long currentTime=System.currentTimeMillis();
+            item.time=currentTime;
+            Cursor cursor=database.rawQuery("select * from "+ MySQLiteOpenHelper.getCurrentTableName(context)+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
+            if(cursor.moveToFirst()){
+                long[] values_read=ValueUtils.string2longArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_TRIGGER_VALUES)));
+                if(values_read.length==2){
+                    long interval_read=values_read[1];
+                    long values_put[]=new long[2];
+                    values_put[0]=currentTime;
+                    values_put[1]=interval_read;
+                    ContentValues contentValues=new ContentValues();
+                    contentValues.put(SQLConsts.SQL_TASK_COLUMN_TRIGGER_VALUES,ValueUtils.longArray2String(values_put));
+                    database.update(MySQLiteOpenHelper.getCurrentTableName(context),contentValues,SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
                 }
-                cursor.close();
-                database.close();
             }
-            if(enabled) item.activateTask(context); else item.cancelTask();
-        }catch (Exception e){
-            e.printStackTrace();
+            cursor.close();
+            database.close();
         }
+        if(enabled) item.activateTask(context); else item.cancelTask();
     }
 
     public static void setTaskFolded(final Context context, int id , boolean isFolded){
