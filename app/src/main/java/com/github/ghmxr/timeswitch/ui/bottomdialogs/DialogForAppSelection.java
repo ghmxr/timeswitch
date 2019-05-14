@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
+import com.github.ghmxr.timeswitch.ui.DialogConfirmedCallBack;
 
 import java.util.ArrayList;
 import java.util.List;

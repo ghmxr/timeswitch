@@ -13,7 +13,7 @@ import android.view.MenuItem;
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
  */
 
-public class AddTask extends TaskGui{
+public class AddTaskActivity extends TaskGui{
     private String checkString;
     //public static final int ACTIVITY_ADD_RESULT_CANCEL  =   0x00000;
     //public static final int ACTIVITY_ADD_RESULT_SUCCESS =   0x00001;

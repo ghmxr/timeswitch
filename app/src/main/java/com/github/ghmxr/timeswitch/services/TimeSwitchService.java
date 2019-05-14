@@ -237,6 +237,7 @@ public class TimeSwitchService extends Service {
             unregisterReceiver(headsetPlugReceiver);
         }catch (Exception e){e.printStackTrace();}
 
+        mHandler=null;
         service=null;
         new Thread(new Runnable() {
             @Override

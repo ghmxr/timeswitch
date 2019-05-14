@@ -11,7 +11,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -57,12 +59,17 @@ import java.util.Calendar;
 import java.util.List;
 
 /**
+ * @deprecated
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
  */
 public class Profile extends BaseActivity {
 
     List<TableItem> tablelist=new ArrayList<>();
+    /**
+     * @deprecated
+     */
     ListView listview;
+
     TableListAdapter adapter;
     private boolean isMultiSelectMode=false;
     private Menu menu;
@@ -71,8 +78,17 @@ public class Profile extends BaseActivity {
     Thread thread;
     RefreshTaskTablesFromDatabase runnable;
 
+    /**
+     * @deprecated
+     */
     List<File> jsonFiles=new ArrayList<>();
+    /**
+     * @deprecated
+     */
     AlertDialog file_dialog;
+    /**
+     * @deprecated
+     */
     Thread thread_getalljsonfiles;
     GetAllJSONFiles getAllJSONFiles;
     long delete_firstclicked=0;
@@ -638,6 +654,9 @@ public class Profile extends BaseActivity {
         this.menu.getItem(4).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
     }
 
+    /**
+     * @deprecated
+     */
     private class RefreshTaskTablesFromDatabase implements Runnable{
     boolean isInterrupted=false;
         @Override
@@ -671,6 +690,13 @@ public class Profile extends BaseActivity {
         }
     }
 
+
+
+
+
+    /**
+     * @deprecated
+     */
     private class TableListAdapter extends BaseAdapter{
         private boolean isMultiSelectMode=false;
         boolean isSelected[] ;
@@ -873,6 +899,9 @@ public class Profile extends BaseActivity {
         }
     }
 
+    /**
+     * @deprecated
+     */
     private static class TableItem{
         public String table_name="";
         public String table_diaplay_name="";
@@ -885,6 +914,9 @@ public class Profile extends BaseActivity {
         }
     }
 
+    /**
+     * @deprecated
+     */
     private class SaveTables2Files implements Runnable{
         private List<String> table_names;
         String file_path;
@@ -980,6 +1012,9 @@ public class Profile extends BaseActivity {
         }
     }
 
+    /**
+     * @deprecated
+     */
     private class ReadFilesAndSave2Tables implements Runnable{
         private List<File> files;
         private List<String> exceptions=new ArrayList<>();
@@ -1084,6 +1119,9 @@ public class Profile extends BaseActivity {
 
     }
 
+    /**
+     * @deprecated
+     */
     private class GetAllJSONFiles implements Runnable{
         boolean isInterrupted=false;
         @Override
@@ -1107,6 +1145,9 @@ public class Profile extends BaseActivity {
         }
     }
 
+    /**
+     * @deprecated
+     */
     private class JSONFileAdapter extends BaseAdapter{
         private boolean[] isSelected;
         private JSONFileAdapter(){

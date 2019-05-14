@@ -114,7 +114,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 if(isMultiSelectMode) closeMultiSelectMode();
-                startActivityForResult(new Intent(MainActivity.this,AddTask.class),REQUEST_CODE_ACTIVITY_ADD);
+                startActivityForResult(new Intent(MainActivity.this,AddTaskActivity.class),REQUEST_CODE_ACTIVITY_ADD);
             }
         });
 
@@ -507,7 +507,7 @@ public class MainActivity extends BaseActivity {
             break;
             case R.id.action_profile:{
                 Intent i=new Intent();
-                i.setClass(this,Profile.class);
+                i.setClass(this,ProfileActivity.class);
                 i.putExtra(EXTRA_TITLE_COLOR,getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE).getString(PublicConsts.PREFERENCES_THEME_COLOR,PublicConsts.PREFERENCES_THEME_COLOR_DEFAULT));
                 startActivityForResult(i,REQUEST_CODE_ACTIVITY_PROFILE);
             }

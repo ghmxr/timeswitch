@@ -14,7 +14,6 @@ import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SubscriptionInfo;
-import android.telephony.SubscriptionManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -45,17 +44,11 @@ public class SmsActivity extends BaseActivity {
     private TaskItem item;
     boolean enabled=false;
     private EditText edit_addresses;
-    private EditText edit_message;
-    private android.support.v7.widget.AppCompatSpinner spinner;
 
     private static final int REQUEST_CODE_SELECT_CONTACTS=0;
-    private int subid=-1; //for the widget can not save the subscription id;
+    private int subid=-1;
     CheckBox cb_receipt_toast;
-    //public static final String SPLIT_RECEIVERS=",";
-    /**
-     * @deprecated
-     */
-    private String checkString="";
+
     private long first_click_back_time=0;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,11 +59,11 @@ public class SmsActivity extends BaseActivity {
         try{getSupportActionBar().setDisplayHomeAsUpEnabled(true);}catch (Exception e){e.printStackTrace();}
         setToolBarAndStatusBarColor(toolbar,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
         edit_addresses=findViewById(R.id.layout_sms_edit_address);
-        edit_message=findViewById(R.id.layout_sms_edit_message);
-        spinner=findViewById(R.id.layout_sms_spinner);
+        EditText edit_message=findViewById(R.id.layout_sms_edit_message);
+        android.support.v7.widget.AppCompatSpinner spinner=findViewById(R.id.layout_sms_spinner);
         cb_receipt_toast=findViewById(R.id.layout_sms_toast_cb);
+        item=(TaskItem) getIntent().getSerializableExtra(EXTRA_SERIALIZED_TASKITEM);
         try{
-            item=(TaskItem) getIntent().getSerializableExtra(EXTRA_SERIALIZED_TASKITEM);
             String sms_values[]=item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
             enabled=Integer.parseInt(sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_ENABLED_LOCALE])>=0;
             subid=Integer.parseInt(sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_SUBINFO_LOCALE]);
@@ -157,6 +150,7 @@ public class SmsActivity extends BaseActivity {
 
         }catch (Exception e){
             e.printStackTrace();
+            Toast.makeText(this,e.toString(),Toast.LENGTH_SHORT).show();
         }
         final SwitchCompat switchCompat=(findViewById(R.id.layout_sms_switch));
         switchCompat.setChecked(enabled);
@@ -286,12 +280,11 @@ public class SmsActivity extends BaseActivity {
     }
 
     private void checkAndFinish(){
-        String addresses=edit_addresses.getText().toString().trim();
-        if(addresses.trim().equals("")&&enabled){
+        if(item.sms_address.trim().equals("")&&enabled){
             long time=System.currentTimeMillis();
             if(time-first_click_back_time>1000){
                 first_click_back_time=time;
-                Snackbar.make(findViewById(android.R.id.content),"没有收件人号码，再按一次舍弃修改并退出",Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(android.R.id.content),getResources().getString(R.string.activity_sms_no_address),Snackbar.LENGTH_SHORT).show();
                 return;
             }else{
                 setResult(RESULT_CANCELED);

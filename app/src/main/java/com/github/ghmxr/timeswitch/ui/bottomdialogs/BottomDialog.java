@@ -9,6 +9,7 @@ import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 
 import com.github.ghmxr.timeswitch.R;
+import com.github.ghmxr.timeswitch.ui.DialogConfirmedCallBack;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch

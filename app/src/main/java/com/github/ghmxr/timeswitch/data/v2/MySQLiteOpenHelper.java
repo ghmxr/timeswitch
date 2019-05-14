@@ -18,6 +18,7 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -31,6 +32,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -292,7 +294,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 		return id_not_used;
 	}
 
-	public static int getNewInsertRowTaskOrder(SQLiteDatabase database,String table_name){
+	private static int getNewInsertRowTaskOrder(SQLiteDatabase database,String table_name){
 		Cursor cursor=database.rawQuery("select * from "+table_name,null);
 		if(cursor.getCount()==0) {
 			cursor.close();
@@ -388,6 +390,15 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 		try{
 			List<SqlTableItem> list=new ArrayList<>();
 			SQLiteDatabase database= MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
+
+			SqlTableItem default_item=new SqlTableItem();
+			default_item.table_name=SQLConsts.SQL_DATABASE_DEFAULT_TABLE_NAME;
+			default_item.table_display_name=context.getResources().getString(R.string.word_default);
+			Cursor cursor_default=database.rawQuery("select * from "+SQLConsts.SQL_DATABASE_DEFAULT_TABLE_NAME,null);
+			default_item.task_num=cursor_default.getCount();
+			cursor_default.close();
+			list.add(default_item);
+
 			SharedPreferences settings=context.getSharedPreferences(PublicConsts.PREFERENCES_NAME, Activity.MODE_PRIVATE);
 			final String sql="select name from "+ "sqlite_master"+" where type='table' order by name";
 			Cursor cursor=database.rawQuery(sql,null);
@@ -397,12 +408,8 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 				item.table_display_name=settings.getString(item.table_name,"");
 				if((item.table_name.contains(SQLConsts.SQL_DATABASE_TABLE_NAME_FONT))&&!item.table_name.equals(SQLConsts.SQL_DATABASE_DEFAULT_TABLE_NAME)) {
 					Cursor insideCursor=database.rawQuery("select * from "+item.table_name+"",null);
-					int count=0;
-					while (insideCursor.moveToNext()){
-						count++;
-					}
+					item.task_num=insideCursor.getCount();
 					insideCursor.close();
-					item.task_num=count;
 					list.add(item);
 				}
 			}
@@ -410,6 +417,39 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 			return list;
 		}catch (Exception e){e.printStackTrace();}
 		return new ArrayList<>();
+	}
+
+	/**
+	 * 删除库中的指定表
+	 * @param table_name 要删除的表的名称
+	 */
+	public static void deleteTable(Context context,final String table_name){
+		SharedPreferences settings=context.getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE);
+		final SharedPreferences.Editor editor=settings.edit();
+		if(settings.getString(PublicConsts.PREFERENCES_CURRENT_TABLE_NAME,SQLConsts.SQL_DATABASE_DEFAULT_TABLE_NAME).equals(table_name)){
+			editor.putString(PublicConsts.PREFERENCES_CURRENT_TABLE_NAME,SQLConsts.SQL_DATABASE_DEFAULT_TABLE_NAME);
+			editor.apply();
+		}
+		SQLiteDatabase database=getInstance(context).getWritableDatabase();
+		if(!table_name.equals(SQLConsts.SQL_DATABASE_DEFAULT_TABLE_NAME)) {
+			database.execSQL("drop table "+table_name+" ;");
+			editor.remove(table_name);
+			editor.apply();
+		}
+	}
+
+	/**
+	 * 插入一个新的表
+	 * @param display_name 这个表要显示的名称
+	 */
+	public static void addTable(Context context,String display_name){
+		final String table_name=SQLConsts.SQL_DATABASE_TABLE_NAME_FONT+ getIdForNewTable(context);
+		SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
+		database.execSQL(MySQLiteOpenHelper.getCreateTableSQLCommand(table_name));
+		SharedPreferences settings=context.getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE);
+		SharedPreferences.Editor editor=settings.edit();
+		editor.putString(table_name,display_name);
+		editor.apply();
 	}
 
 	/**
@@ -441,7 +481,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 			object=jsonTokener.nextValue();
 		}
 		JSONArray jsonarray = (JSONArray) object;
-		String newTableName=SQLConsts.SQL_DATABASE_TABLE_NAME_FONT+getNotUsedMinimalId(context);
+		String newTableName=SQLConsts.SQL_DATABASE_TABLE_NAME_FONT+ getIdForNewTable(context);
 		database.execSQL(MySQLiteOpenHelper.getCreateTableSQLCommand(newTableName));
 		String display_name=file.getName().substring(0,file.getName().lastIndexOf("."));
 		editor.putString(newTableName,display_name);
@@ -465,11 +505,12 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 			contentValues.put(SQLConsts.SQL_TASK_COLUMN_SMS_SEND_PHONE_NUMBERS,jsonObject.getString(SQLConsts.SQL_TASK_COLUMN_SMS_SEND_PHONE_NUMBERS));
 			contentValues.put(SQLConsts.SQL_TASK_COLUMN_SMS_SEND_MESSAGE,jsonObject.getString(SQLConsts.SQL_TASK_COLUMN_SMS_SEND_MESSAGE));
 			contentValues.put(SQLConsts.SQL_TASK_COLUMN_ADDITIONS,jsonObject.getString(SQLConsts.SQL_TASK_COLUMN_ADDITIONS));
+			contentValues.put(SQLConsts.SQL_TASK_COLUMN_ORDER,j);
 			try{
 				contentValues.put(SQLConsts.SQL_TASK_COLUMN_ORDER,jsonObject.getInt(SQLConsts.SQL_TASK_COLUMN_ORDER));
-			}catch (Exception e){
+			}catch (JSONException e){
 				e.printStackTrace();
-				contentValues.put(SQLConsts.SQL_TASK_COLUMN_ORDER,j);
+				Log.e("TaskOrder","May be this Json Array does not contain the order value");
 			}
 			database.insert(newTableName,null,contentValues);
 		}
@@ -480,7 +521,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 	 * @param context context
 	 * @return 最小的可用的id值
 	 */
-	public static int getNotUsedMinimalId(Context context){
+	public static int getIdForNewTable(Context context){
 		List<SqlTableItem> list=getTableListFromDatabase(context);
 		int selectedID;
 		for (selectedID=0;selectedID<list.size();selectedID++){

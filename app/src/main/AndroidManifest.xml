@@ -65,7 +65,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".activities.AddTask"
+            android:name=".activities.AddTaskActivity"
             android:label="@string/activity_add_title"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"/>
@@ -99,7 +99,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".activities.Profile"
+            android:name=".activities.ProfileActivity"
             android:label="@string/action_profile"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"/>
