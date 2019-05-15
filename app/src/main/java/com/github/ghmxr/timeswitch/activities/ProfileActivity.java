@@ -1,15 +1,18 @@
 package com.github.ghmxr.timeswitch.activities;
 
+import android.Manifest;
 import android.app.Activity;
 
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,9 +39,11 @@ import com.github.ghmxr.timeswitch.data.v2.MySQLiteOpenHelper;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.data.v2.SQLConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
+import com.github.ghmxr.timeswitch.ui.DialogForJsonFileSelect;
 import com.github.ghmxr.timeswitch.utils.EnvironmentUtils;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.List;
 
@@ -146,11 +151,13 @@ public class ProfileActivity extends BaseActivity implements Runnable{
                 long current=System.currentTimeMillis();
                 if(current-confirm_time>1000){
                     confirm_time=current;
-                    Snackbar.make(findViewById(android.R.id.content),"",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(android.R.id.content),getResources().getString(R.string.dialog_profile_delete_confirm),Snackbar.LENGTH_SHORT).show();
                     return false;
                 }
                 recyclerView.setAdapter(null);
                 setMenuItemVisibilityOfMultiSelectMode(false);
+                wait_dialog=getWaitDialogInstance();
+                wait_dialog.show();
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -177,6 +184,7 @@ public class ProfileActivity extends BaseActivity implements Runnable{
             }
             break;
             case R.id.action_profile_export:{
+                setMenuItemVisibilityOfMultiSelectMode(false);
                 final StringBuilder error=new StringBuilder("");
                 wait_dialog=getWaitDialogInstance();
                 wait_dialog.show();
@@ -192,7 +200,7 @@ public class ProfileActivity extends BaseActivity implements Runnable{
                         for(int i=1;i<list.size();i++){
                             if(isSelected[i]){
                                 try{
-                                    MySQLiteOpenHelper.saveTable2File(ProfileActivity.this,list.get(i).table_name,getExternalFilesDir(null).toString()+head+i+".json");
+                                    MySQLiteOpenHelper.saveTable2File(ProfileActivity.this,list.get(i).table_name,getExternalFilesDir(null).toString()+"/"+head+i+".json");
                                 }catch (Exception e){
                                     e.printStackTrace();
                                     error.append(e.toString());
@@ -202,15 +210,69 @@ public class ProfileActivity extends BaseActivity implements Runnable{
                         }
                         new Thread(ProfileActivity.this).start();
                         if(!error.toString().equals("")){
-                            new AlertDialog.Builder(ProfileActivity.this).setTitle("ErrorMessages")
-                                    .setMessage(error.toString())
-                                    .setPositiveButton(getResources().getString(R.string.dialog_button_positive), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {}
-                                    }).show();
+                            Global.handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    new AlertDialog.Builder(ProfileActivity.this).setTitle("ErrorMessages")
+                                            .setMessage(error.toString())
+                                            .setPositiveButton(getResources().getString(R.string.dialog_button_positive), new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {}
+                                            }).show();
+                                }
+                            });
                         }
+                        EnvironmentUtils.showToast(ProfileActivity.this,null,getResources().getString(R.string.profile_export_complete)+getExternalFilesDir(null));
                     }
                 }).start();
+            }
+            break;
+            case R.id.action_profile_import:{
+                if(Build.VERSION.SDK_INT>=23&&PermissionChecker.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE)!=PermissionChecker.PERMISSION_GRANTED){
+                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},0);
+                    EnvironmentUtils.PermissionRequestUtil.showSnackbarWithActionOfAppdetailPage(this
+                            ,getResources().getString(R.string.permission_request_read_external_storage)
+                            ,getResources().getString(R.string.permission_grant_action_att));
+                    return false;
+                }
+                DialogForJsonFileSelect dialog=new DialogForJsonFileSelect(this);
+                dialog.show();
+                dialog.setOnDialogConfirmedListener(new DialogForJsonFileSelect.DialogConfirmedListener() {
+                    @Override
+                    public void onDialogConfirmed(final List<File> selected_files) {
+                        wait_dialog=getWaitDialogInstance();
+                        wait_dialog.show();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                final StringBuilder error=new StringBuilder("");
+                                for(File file:selected_files){
+                                    try{
+                                        MySQLiteOpenHelper.readFile2Table(ProfileActivity.this,file);
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                        error.append(e.toString());
+                                    }
+
+                                }
+                                new Thread(ProfileActivity.this).start();
+                                if(error.toString().length()>0){
+                                    Global.handler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            new AlertDialog.Builder(ProfileActivity.this).setTitle("Error")
+                                                    .setMessage(error.toString())
+                                                    .setPositiveButton(getResources().getString(R.string.dialog_button_positive), new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {}
+                                                    }).show();
+                                        }
+                                    });
+                                }
+                            }
+                        }).start();
+                    }
+                });
             }
             break;
         }
@@ -299,7 +361,7 @@ public class ProfileActivity extends BaseActivity implements Runnable{
         public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
             final MySQLiteOpenHelper.SqlTableItem item=list.get(position);
             holder.tv.setText(list.get(position).table_display_name);
-            holder.tv_att.setText(""+list.get(position).task_num);
+            holder.tv_att.setText(list.get(position).task_num+getResources().getString(R.string.activity_profile_task_total_mask));
             holder.ra.setChecked(position==selected_position);
             holder.cb.setChecked(isSelected[position]);
 
@@ -439,7 +501,8 @@ public class ProfileActivity extends BaseActivity implements Runnable{
                                             @Override
                                             public void run() {
                                                 if(wait_dialog!=null) wait_dialog.cancel();
-                                                Snackbar.make(findViewById(android.R.id.content),getResources().getString(R.string.profile_export_complete)+write_path,Snackbar.LENGTH_SHORT).show();
+                                                //Snackbar.make(findViewById(android.R.id.content),getResources().getString(R.string.profile_export_complete)+write_path,Snackbar.LENGTH_SHORT).show();
+                                                Toast.makeText(ProfileActivity.this,getResources().getString(R.string.profile_export_complete)+write_path,Toast.LENGTH_SHORT).show();
                                             }
                                         });
                                     }catch (Exception e){

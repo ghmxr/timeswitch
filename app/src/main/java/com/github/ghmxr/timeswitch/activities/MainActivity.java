@@ -204,13 +204,20 @@ public class MainActivity extends BaseActivity {
         }); */
 
         setServiceEnabled(settings.getBoolean(PublicConsts.PREFERENCE_SERVICE_ENABLED,PublicConsts.PREFERENCE_SERVICE_ENABLED_DEFAULT));
-	}
+        findViewById(R.id.att_start_service).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getSharedPreferences(PublicConsts.PREFERENCES_NAME,Context.MODE_PRIVATE)
+                        .edit().putBoolean(PublicConsts.PREFERENCE_SERVICE_ENABLED,true).apply();
 
-	@Override
-    public void onResume(){
-        super.onResume();
-        //startService2Refresh();
-    }
+                menu.getItem(MENU_SERVICE_CONTROL).setIcon(android.R.drawable.ic_media_pause);
+                menu.getItem(MENU_SERVICE_CONTROL).setTitle(getResources().getString(R.string.action_stop_service));
+                menu.getItem(MENU_FOLD).setVisible(true);
+
+                setServiceEnabled(true);
+            }
+        });
+	}
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -406,12 +413,10 @@ public class MainActivity extends BaseActivity {
         {
             menuItem.setTitle(getResources().getString(R.string.action_stop_service));
             menuItem.setIcon(android.R.drawable.ic_media_pause);
-            menu.getItem(MENU_PROFILE).setVisible(true);
             menu.getItem(MENU_FOLD).setVisible(true);
         }else{
             menuItem.setTitle(getResources().getString(R.string.action_start_service));
             menuItem.setIcon(android.R.drawable.ic_media_play);
-            menu.getItem(MENU_PROFILE).setVisible(false);
             menu.getItem(MENU_FOLD).setVisible(false);
         }
         return super.onCreateOptionsMenu(menu);
@@ -425,6 +430,7 @@ public class MainActivity extends BaseActivity {
             startService2Refresh();
         }else{
             findViewById(R.id.main_service_disabled).setVisibility(View.VISIBLE);
+            findViewById(R.id.main_no_task_att).setVisibility(View.GONE);
             setFabVisibility(false);
             swrlayout.setEnabled(false);
             removeRecyclerViewElements();
@@ -452,7 +458,6 @@ public class MainActivity extends BaseActivity {
 
                 menu.getItem(MENU_SERVICE_CONTROL).setIcon(isEnabled?android.R.drawable.ic_media_play:android.R.drawable.ic_media_pause);
                 menu.getItem(MENU_SERVICE_CONTROL).setTitle(isEnabled?getResources().getString(R.string.action_start_service):getResources().getString(R.string.action_stop_service));
-                menu.getItem(MENU_PROFILE).setVisible(!isEnabled);
                 menu.getItem(MENU_FOLD).setVisible(!isEnabled);
 
                 setServiceEnabled(!isEnabled);

@@ -18,10 +18,10 @@ public class LogUtil {
     public static void putExceptionLog(@NonNull Context context, @NonNull Exception e){
         putLog(context,e.toString());
        // Toast.makeText(context,"Exception:"+e.toString()+"\n",Toast.LENGTH_SHORT).show();
-        Message message=new Message();
-        message.what=TimeSwitchService.MESSAGE_DISPLAY_TOAST;
-        message.obj="Exception:"+e.toString();
-        TimeSwitchService.sendMessage(message);
+        //Message message=new Message();
+        //message.what=TimeSwitchService.MESSAGE_DISPLAY_TOAST;
+        //message.obj="Exception:"+e.toString();
+        //TimeSwitchService.sendMessage(message);
     }
 
     public static void putLog(@NonNull Context context,@NonNull String log){

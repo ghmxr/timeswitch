@@ -18,7 +18,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.github.ghmxr.timeswitch.adapters.ContentAdapter;
-import com.github.ghmxr.timeswitch.adapters.MainListAdapter;
 import com.github.ghmxr.timeswitch.data.v2.AdditionConsts;
 import com.github.ghmxr.timeswitch.data.v2.SQLConsts;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
@@ -26,11 +25,8 @@ import com.github.ghmxr.timeswitch.data.v2.MySQLiteOpenHelper;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-
-import static com.github.ghmxr.timeswitch.adapters.ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getWeekLoopDisplayValue;
 
 public class Global {
     public static Handler handler=new Handler(Looper.getMainLooper());
@@ -127,9 +123,9 @@ public class Global {
                     }catch (Exception e){e.printStackTrace();}
 
 
-                    item.display_exception= MainListAdapter.getExceptionValue(context,item);
-                    item.display_actions=MainListAdapter.getActionValue(context,item);
-                    item.display_additions=MainListAdapter.getAdditionValue(context,item);
+                    item.display_exception= ContentAdapter.ExceptionContentAdapter.getExceptionValue(context,item);
+                    item.display_actions= ContentAdapter.ActionContentAdapter.ActionDisplayValuesOfMainPage.getActionValue(context,item);
+                    item.display_additions= ContentAdapter.getAdditionDisplayValue(context,item);
 
                     list.add(item);
                 }catch (Exception e){e.printStackTrace();}

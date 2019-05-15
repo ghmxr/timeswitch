@@ -18,21 +18,16 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.view.Gravity;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.Global;
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.activities.MainActivity;
-import com.github.ghmxr.timeswitch.activities.Profile;
 import com.github.ghmxr.timeswitch.activities.Settings;
-import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.Global.BatteryReceiver;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
-import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
@@ -50,20 +45,6 @@ public class TimeSwitchService extends Service {
     public static MyHandler mHandler;
 
     public static final int MESSAGE_REQUEST_REFRESH_TASKS=0;
-    /**
-     * @deprecated
-     */
-    public static final int MESSAGE_REFRESH_TASKS_COMPLETE =1;
-    /**
-     * @deprecated
-     * message.obj = String.valueOf("DisplayContent");
-     */
-    public static final int MESSAGE_DISPLAY_TOAST=101;
-    /**
-     * @deprecated
-     * message.obj=new TimeSwitchService.CustomToast();
-     */
-    public static final int MESSAGE_DISPLAY_CUSTOM_TOAST=102;
 
     public static NotificationCompat.Builder notification=null;
 
@@ -137,7 +118,7 @@ public class TimeSwitchService extends Service {
                     //sendEmptyMessage(TimeSwitchService.MESSAGE_REFRESH_TASKS_COMPLETE);
                     MainActivity.sendEmptyMessage(MainActivity.MESSAGE_GETLIST_COMPLETE);
                     Settings.sendEmptyMessage(Settings.MESSAGE_CHANGE_API_COMPLETE);
-                    Profile.sendEmptyMessage(Profile.MESSAGE_REFRESH_TABLES);
+                    //Profile.sendEmptyMessage(Profile.MESSAGE_REFRESH_TABLES);
 
                     new Thread(new RefreshListRemainingTimeTask()).start();
                 }
@@ -174,35 +155,6 @@ public class TimeSwitchService extends Service {
         switch (msg.what){
             case MESSAGE_REQUEST_REFRESH_TASKS:{
                 refreshTaskItems();
-            }
-            break;
-            case MESSAGE_REFRESH_TASKS_COMPLETE:{
-                MainActivity.sendEmptyMessage(MainActivity.MESSAGE_GETLIST_COMPLETE);
-                Settings.sendEmptyMessage(Settings.MESSAGE_CHANGE_API_COMPLETE);
-                Profile.sendEmptyMessage(Profile.MESSAGE_REFRESH_TABLES);
-
-                new Thread(new RefreshListRemainingTimeTask()).start();
-            }
-            break;
-            case MESSAGE_DISPLAY_TOAST:{
-                String text=(String)msg.obj;
-                Toast.makeText(this,text,Toast.LENGTH_SHORT).show();
-            }
-            break;
-            case MESSAGE_DISPLAY_CUSTOM_TOAST:{
-                CustomToast content=(CustomToast) msg.obj;
-                Toast toast=Toast.makeText(this,content.toast,Toast.LENGTH_SHORT);
-                try{
-                    if(Integer.parseInt(content.toast_value[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_TYPE_LOCALE])== ActionConsts.ActionValueConsts.TOAST_TYPE_CUSTOM){
-                        toast.setGravity(Gravity.TOP|Gravity.START,
-                                Integer.parseInt(content.toast_value[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_LOCATION_X_OFFSET_LOCALE]),
-                                Integer.parseInt(content.toast_value[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_LOCATION_Y_OFFSET_LOCALE]));
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                    LogUtil.putExceptionLog(this,e);
-                }
-                toast.show();
             }
             break;
         }

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="60dp">
+    android:layout_width="match_parent" android:layout_height="60dp"
+    android:clickable="true"
+    android:background="?attr/selectableItemBackground">
     <ImageView
         android:id="@+id/item_json_file_img"
         android:layout_width="35dp"
@@ -8,7 +10,7 @@
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="15dp"
-        android:src="@drawable/icon_json"/>
+        android:src="@drawable/icon_folder"/>
 
     <TextView
         android:id="@+id/item_json_file_name"
@@ -19,7 +21,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="50dp"
         android:textSize="13sp"
-        android:text="json.json"/>
+        android:singleLine="true"/>
 
     <CheckBox
         android:id="@+id/item_json_file_checkbox"
@@ -30,6 +32,15 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="15dp"/>
+
+    <ImageView
+        android:id="@+id/item_json_file_arrow"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="20dp"
+        android:src="@drawable/drawable_arrow_right"/>
 
     <ImageView
         android:layout_width="match_parent"

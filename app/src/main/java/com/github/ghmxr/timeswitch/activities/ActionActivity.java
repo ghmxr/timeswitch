@@ -18,10 +18,10 @@ import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.TaskItem;
+import com.github.ghmxr.timeswitch.adapters.ContentAdapter;
 import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
-import com.github.ghmxr.timeswitch.ui.ActionDisplayValue;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBrightness;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForDeviceControl;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForNotification;
@@ -222,11 +222,9 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
                         ,getResources().getString(R.string.permission_grant_action_att))) return;
 
                 Intent intent = new Intent();
-                intent.setClass(this,ActionOfChangingRingtones.class);
-                intent.putExtra(ActionOfChangingRingtones.EXTRA_RING_VALUES,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE]);
-                intent.putExtra(ActionOfChangingRingtones.EXTRA_RING_URI_NOTIFICATION,item.uri_ring_notification);
-                intent.putExtra(ActionOfChangingRingtones.EXTRA_RING_URI_CALL,item.uri_ring_call);
+                intent.setClass(this,ChangeRingtoneActivity.class);
                 intent.putExtra(EXTRA_TITLE_COLOR,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
+                intent.putExtra(EXTRA_SERIALIZED_TASKITEM,item);
                 startActivityForResult(intent,REQUEST_CODE_RING_CHANGED);
             }
             break;
@@ -445,12 +443,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             default:break;
             case REQUEST_CODE_RING_CHANGED:{
                 if(resultCode==RESULT_OK){
-                    String ring_selection_values=data.getStringExtra(ActionOfChangingRingtones.EXTRA_RING_VALUES);
-                    if(ring_selection_values==null) return;
-                    item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE]=ring_selection_values;
-                    item.uri_ring_notification=data.getStringExtra(ActionOfChangingRingtones.EXTRA_RING_URI_NOTIFICATION);
-                    item.uri_ring_call=data.getStringExtra(ActionOfChangingRingtones.EXTRA_RING_URI_CALL);
-                    //Log.i("TaskGui",ring_selection_values);
+                    item=(TaskItem) data.getSerializableExtra(EXTRA_SERIALIZED_TASKITEM);
                     refreshActionStatus();
                 }
             }
@@ -476,26 +469,26 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void refreshActionStatus(){
-        ((TextView)findViewById(R.id.actions_wifi_status)).setText(ActionDisplayValue.getGeneralDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_WIFI_LOCALE]));
-        ((TextView)findViewById(R.id.actions_bluetooth_status)).setText(ActionDisplayValue.getGeneralDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BLUETOOTH_LOCALE]));
-        ((TextView)findViewById(R.id.actions_ring_mode_status)).setText(ActionDisplayValue.getRingModeDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_MODE_LOCALE]));
-        ((TextView)findViewById(R.id.actions_ring_volume_status)).setText(ActionDisplayValue.getRingVolumeDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE]));
-        ((TextView)findViewById(R.id.actions_ring_selection_status)).setText(ActionDisplayValue.getRingSelectionDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE]));
-        ((TextView)findViewById(R.id.actions_brightness_status)).setText(ActionDisplayValue.getBrightnessDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BRIGHTNESS_LOCALE]));
-        ((TextView)findViewById(R.id.actions_vibrate_status)).setText(ActionDisplayValue.getVibrateDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE]));
-        ((TextView)findViewById(R.id.actions_wallpaper_status)).setText(ActionDisplayValue.getWallpaperDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE],item.uri_wallpaper_desktop));
-        ((TextView)findViewById(R.id.actions_sms_status)).setText(ActionDisplayValue.getSMSDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE]));
-        ((TextView)findViewById(R.id.actions_notification_status)).setText(ActionDisplayValue.getNotificationDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE]));
-        ((TextView)findViewById(R.id.actions_net_status)).setText(ActionDisplayValue.getGeneralDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE]));
-        ((TextView)findViewById(R.id.actions_gps_status)).setText(ActionDisplayValue.getGeneralDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE]));
-        ((TextView)findViewById(R.id.actions_airplane_mode_status)).setText(ActionDisplayValue.getGeneralDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE]));
-        ((TextView)findViewById(R.id.actions_devicecontrol_status)).setText(ActionDisplayValue.getDeviceControlDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]));
-        ((TextView)findViewById(R.id.actions_toast_status)).setText(ActionDisplayValue.getToastDisplayValue(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE],item.toast));
-        ((TextView)findViewById(R.id.actions_enable_status)).setText(ActionDisplayValue.getTaskSwitchDisplayValue(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE]));
-        ((TextView)findViewById(R.id.actions_disable_status)).setText(ActionDisplayValue.getTaskSwitchDisplayValue(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE]));
-        ((TextView)findViewById(R.id.actions_app_open_status)).setText(ActionDisplayValue.getAppNameDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES]));
-        ((TextView)findViewById(R.id.actions_app_close_status)).setText(ActionDisplayValue.getAppNameDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES]));
-        ((TextView)findViewById(R.id.actions_autorotation_status)).setText(ActionDisplayValue.getGeneralDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AUTOROTATION]));
+        ((TextView)findViewById(R.id.actions_wifi_status)).setText(ContentAdapter.ActionContentAdapter.getGeneralDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_WIFI_LOCALE]));
+        ((TextView)findViewById(R.id.actions_bluetooth_status)).setText(ContentAdapter.ActionContentAdapter.getGeneralDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BLUETOOTH_LOCALE]));
+        ((TextView)findViewById(R.id.actions_ring_mode_status)).setText(ContentAdapter.ActionContentAdapter.getRingModeDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_MODE_LOCALE]));
+        ((TextView)findViewById(R.id.actions_ring_volume_status)).setText(ContentAdapter.ActionContentAdapter.getRingVolumeDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE]));
+        ((TextView)findViewById(R.id.actions_ring_selection_status)).setText(ContentAdapter.ActionContentAdapter.getRingSelectionDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE]));
+        ((TextView)findViewById(R.id.actions_brightness_status)).setText(ContentAdapter.ActionContentAdapter.getBrightnessDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BRIGHTNESS_LOCALE]));
+        ((TextView)findViewById(R.id.actions_vibrate_status)).setText(ContentAdapter.ActionContentAdapter.getVibrateDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE]));
+        ((TextView)findViewById(R.id.actions_wallpaper_status)).setText(ContentAdapter.ActionContentAdapter.getWallpaperDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE],item.uri_wallpaper_desktop));
+        ((TextView)findViewById(R.id.actions_sms_status)).setText(ContentAdapter.ActionContentAdapter.getSMSDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE]));
+        ((TextView)findViewById(R.id.actions_notification_status)).setText(ContentAdapter.ActionContentAdapter.getNotificationDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE]));
+        ((TextView)findViewById(R.id.actions_net_status)).setText(ContentAdapter.ActionContentAdapter.getGeneralDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE]));
+        ((TextView)findViewById(R.id.actions_gps_status)).setText(ContentAdapter.ActionContentAdapter.getGeneralDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE]));
+        ((TextView)findViewById(R.id.actions_airplane_mode_status)).setText(ContentAdapter.ActionContentAdapter.getGeneralDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE]));
+        ((TextView)findViewById(R.id.actions_devicecontrol_status)).setText(ContentAdapter.ActionContentAdapter.getDeviceControlDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]));
+        ((TextView)findViewById(R.id.actions_toast_status)).setText(ContentAdapter.ActionContentAdapter.getToastDisplayValue(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE],item.toast));
+        ((TextView)findViewById(R.id.actions_enable_status)).setText(ContentAdapter.ActionContentAdapter.getTaskSwitchDisplayValue(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE]));
+        ((TextView)findViewById(R.id.actions_disable_status)).setText(ContentAdapter.ActionContentAdapter.getTaskSwitchDisplayValue(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE]));
+        ((TextView)findViewById(R.id.actions_app_open_status)).setText(ContentAdapter.ActionContentAdapter.getAppNameDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES]));
+        ((TextView)findViewById(R.id.actions_app_close_status)).setText(ContentAdapter.ActionContentAdapter.getAppNameDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES]));
+        ((TextView)findViewById(R.id.actions_autorotation_status)).setText(ContentAdapter.ActionContentAdapter.getGeneralDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AUTOROTATION]));
     }
 
     private boolean checkAndShowSnackBarOfSuperuserRequest(){

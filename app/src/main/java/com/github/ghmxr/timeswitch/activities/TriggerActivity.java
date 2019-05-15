@@ -38,7 +38,6 @@ import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.adapters.ContentAdapter;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
-import com.github.ghmxr.timeswitch.ui.ActionDisplayValue;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBatteryPercentageWithEnabledSelection;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBatteryTemperatureWithEnabledSelection;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForInterval;
@@ -505,7 +504,7 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                             item.package_names=result.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
                             refreshTriggerDisplayValues(v_id==R.id.trigger_app_opened?TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED:TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED);
                             //if(v_id==R.id.trigger_app_opened){
-                            ((TextView)findViewById(v_id==R.id.trigger_app_opened?R.id.trigger_app_opened_value:R.id.trigger_app_closed_value)).setText(ActionDisplayValue.getAppNameDisplayValue(TriggerActivity.this,result));
+                            ((TextView)findViewById(v_id==R.id.trigger_app_opened?R.id.trigger_app_opened_value:R.id.trigger_app_closed_value)).setText(ContentAdapter.ActionContentAdapter.getAppNameDisplayValue(TriggerActivity.this,result));
                             //}
                         }catch (Exception e){item.package_names=new String[0];}
 

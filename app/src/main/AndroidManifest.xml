@@ -76,7 +76,7 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".activities.ActionOfChangingRingtones"
+        <activity android:name=".activities.ChangeRingtoneActivity"
             android:label="@string/activity_ring_selection_title"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"/>

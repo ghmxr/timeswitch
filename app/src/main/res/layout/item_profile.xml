@@ -32,13 +32,16 @@
         android:orientation="vertical"
         android:layout_toRightOf="@+id/item_profile_ra"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp">
+        android:layout_marginLeft="10dp"
+        android:layout_toLeftOf="@+id/item_profile_more"
+        android:gravity="start">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/item_profile_name"
-            android:textSize="16sp"
-            android:textColor="@color/color_text_normal"/>
+            android:textSize="14sp"
+            android:textColor="@color/color_text_normal"
+            android:singleLine="true"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

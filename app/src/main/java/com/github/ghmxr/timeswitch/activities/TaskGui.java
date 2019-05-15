@@ -39,7 +39,6 @@ import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
-import com.github.ghmxr.timeswitch.ui.ActionDisplayValue;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBrightness;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForDeviceControl;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForNotification;
@@ -151,7 +150,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		if(action_wifi>=0){
 			View view=getActionItemViewForViewGroup(group,R.drawable.icon_wifi_on,
 					resources.getString(R.string.activity_taskgui_actions_wifi),
-					ActionDisplayValue.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_WIFI_LOCALE]));
+					ContentAdapter.ActionContentAdapter.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_WIFI_LOCALE]));
 			view.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -174,7 +173,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		if(action_bluetooth>=0){
 			View view=getActionItemViewForViewGroup(group,R.drawable.icon_bluetooth_on,
 					resources.getString(R.string.activity_taskgui_actions_bluetooth),
-					ActionDisplayValue.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BLUETOOTH_LOCALE]));
+					ContentAdapter.ActionContentAdapter.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BLUETOOTH_LOCALE]));
 			view.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -197,7 +196,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		if(action_ring_mode>=0){
             View view=getActionItemViewForViewGroup(group,R.drawable.icon_ring_normal,
                     resources.getString(R.string.activity_taskgui_actions_ring_mode),
-                    ActionDisplayValue.getRingModeDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_MODE_LOCALE]));
+                    ContentAdapter.ActionContentAdapter.getRingModeDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_MODE_LOCALE]));
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -219,7 +218,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
         if(!taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE].equals("-1:-1:-1:-1")){
 			View view=getActionItemViewForViewGroup(group,R.drawable.icon_ring_volume,
 					resources.getString(R.string.activity_taskgui_actions_ring_volume),
-					ActionDisplayValue.getRingVolumeDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE]));
+					ContentAdapter.ActionContentAdapter.getRingVolumeDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE]));
 			view.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -241,16 +240,14 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		if(!taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE].equals("-1:-1")){
 			View view=getActionItemViewForViewGroup(group,R.drawable.icon_music
 			,resources.getString(R.string.activity_taskgui_actions_ring_selection),
-					ActionDisplayValue.getRingSelectionDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE]));
+					ContentAdapter.ActionContentAdapter.getRingSelectionDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE]));
 			view.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					Intent i=new Intent();
-					i.setClass(TaskGui.this,ActionOfChangingRingtones.class);
+					i.setClass(TaskGui.this,ChangeRingtoneActivity.class);
 					i.putExtra(EXTRA_TITLE_COLOR,taskitem.addition_title_color);
-					i.putExtra(ActionOfChangingRingtones.EXTRA_RING_VALUES,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE]);
-					i.putExtra(ActionOfChangingRingtones.EXTRA_RING_URI_CALL,taskitem.uri_ring_call);
-					i.putExtra(ActionOfChangingRingtones.EXTRA_RING_URI_NOTIFICATION,taskitem.uri_ring_notification);
+					i.putExtra(EXTRA_SERIALIZED_TASKITEM,taskitem);
 					startActivityForResult(i,REQUEST_CODE_ACTION_RINGTONE);
 				}
 			});
@@ -261,7 +258,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		if(action_brightness>=0){
 			View view=getActionItemViewForViewGroup(group,R.drawable.icon_brightness
 			,resources.getString(R.string.activity_taskgui_actions_brightness)
-			,ActionDisplayValue.getBrightnessDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BRIGHTNESS_LOCALE]));
+			, ContentAdapter.ActionContentAdapter.getBrightnessDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BRIGHTNESS_LOCALE]));
 			view.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -281,7 +278,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 
 		if(!"-1:-1:-1".equals(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE])){
 			View view=getActionItemViewForViewGroup(group,R.drawable.icon_ring_vibrate,resources.getString(R.string.activity_taskgui_actions_vibrate)
-			,ActionDisplayValue.getVibrateDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE]));
+			, ContentAdapter.ActionContentAdapter.getVibrateDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE]));
 			view.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -302,7 +299,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		final int action_autorotation=Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AUTOROTATION]);
 		if(action_autorotation>=0){
 		    View view=getActionItemViewForViewGroup(group,R.drawable.icon_autorotation,resources.getString(R.string.activity_taskgui_actions_autorotation)
-            ,ActionDisplayValue.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AUTOROTATION]));
+            , ContentAdapter.ActionContentAdapter.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AUTOROTATION]));
 		    view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -324,7 +321,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		if(action_wallpaper>=0){
 		    View view =getActionItemViewForViewGroup(group,R.drawable.icon_wallpaper
                     ,resources.getString(R.string.action_set_wallpaper)
-            ,ActionDisplayValue.getWallpaperDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE],taskitem.uri_wallpaper_desktop));
+            , ContentAdapter.ActionContentAdapter.getWallpaperDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE],taskitem.uri_wallpaper_desktop));
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -351,7 +348,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 
         if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[ActionConsts.ActionSecondLevelLocaleConsts.SMS_ENABLED_LOCALE])>=0){
 			View view=getActionItemViewForViewGroup(group,R.drawable.icon_sms,resources.getString(R.string.activity_taskgui_actions_sms)
-					,ActionDisplayValue.getSMSDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE]));
+					, ContentAdapter.ActionContentAdapter.getSMSDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE]));
 			view.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -366,7 +363,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 
 		if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[0])>=0){
 			View view=getActionItemViewForViewGroup(group,R.drawable.icon_notification,resources.getString(R.string.activity_taskgui_actions_notification)
-			,ActionDisplayValue.getNotificationDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE]));
+			, ContentAdapter.ActionContentAdapter.getNotificationDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE]));
 			view.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -390,7 +387,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 
 		if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[0])>=0){
 		    View view=getActionItemViewForViewGroup(group,R.drawable.icon_toast,resources.getString(R.string.activity_taskgui_actions_toast)
-                    ,ActionDisplayValue.getToastDisplayValue(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE],taskitem.toast));
+                    , ContentAdapter.ActionContentAdapter.getToastDisplayValue(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE],taskitem.toast));
 		    view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -412,7 +409,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
         int action_net=Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE]);
 		if(action_net>=0){
 			View view=getActionItemViewForViewGroup(group,R.drawable.icon_cellular_on,resources.getString(R.string.activity_taskgui_actions_net)
-			,ActionDisplayValue.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE]));
+			, ContentAdapter.ActionContentAdapter.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE]));
 			view.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -434,7 +431,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		int action_gps=Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE]);
 		if(action_gps>=0){
 			View view=getActionItemViewForViewGroup(group,R.drawable.icon_location_on,resources.getString(R.string.activity_taskgui_actions_gps)
-			,ActionDisplayValue.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE]));
+			, ContentAdapter.ActionContentAdapter.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE]));
 			view.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -456,7 +453,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		int action_airplane_mode=Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE]);
 		if(action_airplane_mode>=0){
 			View view=getActionItemViewForViewGroup(group,R.drawable.icon_airplanemode_on,resources.getString(R.string.activity_taskgui_actions_airplane_mode)
-			,ActionDisplayValue.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE]));
+			, ContentAdapter.ActionContentAdapter.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE]));
 			view.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -478,7 +475,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		int action_device_control=Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]);
 		if(action_device_control>=0){
 			View view=getActionItemViewForViewGroup(group,R.drawable.icon_screen_on,resources.getString(R.string.activity_taskgui_actions_device_control)
-			,ActionDisplayValue.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]));
+			, ContentAdapter.ActionContentAdapter.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]));
 			view.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -498,7 +495,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 
 		if(!taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE].equals("-1")){
 			View view=getActionItemViewForViewGroup(group,R.drawable.icon_mark,resources.getString(R.string.adapter_action_task_enable)
-			,ActionDisplayValue.getTaskSwitchDisplayValue(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE]));
+			, ContentAdapter.ActionContentAdapter.getTaskSwitchDisplayValue(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE]));
 			view.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -520,7 +517,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 
 		if(!taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE].equals("-1")){
 			View view=getActionItemViewForViewGroup(group,R.drawable.icon_cross,resources.getString(R.string.adapter_action_task_disable)
-			,ActionDisplayValue.getTaskSwitchDisplayValue(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE]));
+			, ContentAdapter.ActionContentAdapter.getTaskSwitchDisplayValue(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE]));
 			view.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -541,7 +538,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 
 		if(!taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES].equals("-1")){
 			View view=getActionItemViewForViewGroup(group,R.drawable.icon_app_launch,resources.getString(R.string.activity_action_app_open_title),
-					ActionDisplayValue.getAppNameDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES]));
+					ContentAdapter.ActionContentAdapter.getAppNameDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES]));
 			view.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -561,7 +558,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		}
 		if(!taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES].equals("-1")){
 			View view=getActionItemViewForViewGroup(group,R.drawable.icon_app_stop,resources.getString(R.string.activity_action_app_close_title),
-					ActionDisplayValue.getAppNameDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES]));
+					ContentAdapter.ActionContentAdapter.getAppNameDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES]));
 			view.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -1097,19 +1094,15 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			break;
 			case REQUEST_CODE_ACTION_RINGTONE:{
 				if(resultCode==RESULT_OK){
-					String ring_selection_values=data.getStringExtra(ActionOfChangingRingtones.EXTRA_RING_VALUES);
-					if(ring_selection_values==null) return;
-					taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE]=ring_selection_values;
-					taskitem.uri_ring_notification=data.getStringExtra(ActionOfChangingRingtones.EXTRA_RING_URI_NOTIFICATION);
-					taskitem.uri_ring_call=data.getStringExtra(ActionOfChangingRingtones.EXTRA_RING_URI_CALL);
+					taskitem=(TaskItem)data.getSerializableExtra(EXTRA_SERIALIZED_TASKITEM);
 					refreshActionStatus();
 				}
 			}
 			break;
 			case REQUEST_CODE_SET_WALLPAPER:{
 				if(resultCode==RESULT_OK){
-					if(data==null||data.getData()==null) return;
 					Uri uri=data.getData();
+					if(uri==null) return;
 					taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE]=String.valueOf(0);
 					taskitem.uri_wallpaper_desktop= ValueUtils.getRealPathFromUri(this,uri);//uri.toString();
 					refreshActionStatus();
