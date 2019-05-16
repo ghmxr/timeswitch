@@ -30,13 +30,13 @@ import com.github.ghmxr.timeswitch.utils.RootUtils;
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
  */
-public class Settings extends BaseActivity implements View.OnClickListener,CompoundButton.OnCheckedChangeListener{
+public class SettingsActivity extends BaseActivity implements View.OnClickListener,CompoundButton.OnCheckedChangeListener{
 
     SharedPreferences settings;
     //SharedPreferences.Editor editor;
     public static final int MESSAGE_CHANGE_API_COMPLETE=0x10000;
 
-    public static final int RESULT_CHAGED_INDICATOR_STATE=0x00010;
+    public static final int RESULT_CHANGED_INDICATOR_STATE =0x00010;
 
     private AlertDialog waitDialog;
 
@@ -49,7 +49,7 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
         Toolbar toolbar=findViewById(R.id.settings_toolbar);
         setSupportActionBar(toolbar);
 
-        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setToolBarAndStatusBarColor(toolbar,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
         settings=getSharedPreferences(PublicConsts.PREFERENCES_NAME, Activity.MODE_PRIVATE);
         //editor=settings.edit();
@@ -57,7 +57,9 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
         findViewById(R.id.settings_api).setOnClickListener(this);
         findViewById(R.id.settings_autostart).setOnClickListener(this);
         findViewById(R.id.settings_indicator).setOnClickListener(this);
+        findViewById(R.id.settings_animator).setOnClickListener(this);
         findViewById(R.id.settings_log).setOnClickListener(this);
+        findViewById(R.id.settings_privilege).setOnClickListener(this);
         findViewById(R.id.settings_superuser).setOnClickListener(this);
         findViewById(R.id.settings_about).setOnClickListener(this);
         findViewById(R.id.settings_color).setOnClickListener(this);
@@ -66,10 +68,13 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
         CheckBox cb_autostart=findViewById(R.id.settings_autostart_cb);
         CheckBox cb_indicator=findViewById(R.id.settings_indicator_cb);
         CheckBox cb_superuser=findViewById(R.id.settings_superuser_cb);
+        CheckBox cb_animator=findViewById(R.id.settings_animator_cb);
 
         cb_autostart.setChecked(settings.getBoolean(PublicConsts.PREFERENCES_AUTO_START,PublicConsts.PREFERENCES_AUTO_START_DEFAULT));
         cb_indicator.setChecked(settings.getBoolean(PublicConsts.PREFERENCES_MAINPAGE_INDICATOR,PublicConsts.PREFERENCES_MAINPAGE_INDICATOR_DEFAULT));
         cb_superuser.setChecked(settings.getBoolean(PublicConsts.PREFERENCES_IS_SUPERUSER_MODE,PublicConsts.PREFERENCES_IS_SUPERUSER_MODE_DEFAULT));
+        cb_animator.setChecked(settings.getBoolean(PublicConsts.PREFERENCE_DISABLE_ANIMATION_EFFECTS,PublicConsts.PREFERENCE_DISABLE_ANIMATION_EFFECTS_DEFAULT));
+
         ((TextView)findViewById(R.id.settings_color_value)).setText(settings.getString(PublicConsts.PREFERENCES_THEME_COLOR,PublicConsts.PREFERENCES_THEME_COLOR_DEFAULT));
         try{
             ((TextView)findViewById(R.id.settings_color_value)).setTextColor(Color.parseColor(settings.getString(PublicConsts.PREFERENCES_THEME_COLOR,PublicConsts.PREFERENCES_THEME_COLOR_DEFAULT)));
@@ -77,7 +82,7 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
         cb_autostart.setOnCheckedChangeListener(this);
         cb_indicator.setOnCheckedChangeListener(this);
         cb_superuser.setOnCheckedChangeListener(this);
-
+        cb_animator.setOnCheckedChangeListener(this);
         refreshAPIValue();
         refreshServiceTypeValue();
     }
@@ -125,7 +130,7 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
 
                         dialog.cancel();
                         refreshAPIValue();
-                        waitDialog=new AlertDialog.Builder(Settings.this).setView(LayoutInflater.from(Settings.this).inflate(R.layout.layout_dialog_wait,null))
+                        waitDialog=new AlertDialog.Builder(SettingsActivity.this).setView(LayoutInflater.from(SettingsActivity.this).inflate(R.layout.layout_dialog_wait,null))
                                 .setCancelable(false)
                                 .create();
                         waitDialog.show();
@@ -134,7 +139,7 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
                         if(TimeSwitchService.service!=null) TimeSwitchService.service.refreshTaskItems();
                         else{
                             //Settings.this.startService(new Intent(Settings.this,TimeSwitchService.class));
-                            TimeSwitchService.startService(Settings.this);
+                            TimeSwitchService.startService(SettingsActivity.this);
                         }
                     }
                 });
@@ -154,11 +159,21 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
             case R.id.settings_indicator:{
                 CheckBox cb_indicator=findViewById(R.id.settings_indicator_cb);
                 cb_indicator.toggle();
-                setResult(RESULT_CHAGED_INDICATOR_STATE);
+                setResult(RESULT_CHANGED_INDICATOR_STATE);
+            }
+            break;
+            case R.id.settings_animator:{
+                ((CheckBox)findViewById(R.id.settings_animator_cb)).toggle();
             }
             break;
             case R.id.settings_log:{
-                Intent i=new Intent(this, com.github.ghmxr.timeswitch.activities.Log.class);
+                Intent i=new Intent(this, LogActivity.class);
+                i.putExtra(EXTRA_TITLE_COLOR,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
+                startActivity(i);
+            }
+            break;
+            case R.id.settings_privilege:{
+                Intent i=new Intent(this,PrivilegeTestActivity.class);
                 i.putExtra(EXTRA_TITLE_COLOR,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
                 startActivity(i);
             }
@@ -221,7 +236,7 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
                 ra_background.setText(getResources().getString(R.string.activity_settings_service_type_background));
                 ra_foreground.setText(getResources().getString(R.string.activity_settings_service_type_foreground));
                 ra_background.setChecked(settings.getInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_DEFAULT)==PublicConsts.PREFERENCES_SERVICE_TYPE_BACKGROUND);
-                ra_foreground.setChecked(settings.getInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_DEFAULT)==PublicConsts.PREFERENCES_SERVICE_TYPE_FORGROUND);
+                ra_foreground.setChecked(settings.getInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_DEFAULT)==PublicConsts.PREFERENCES_SERVICE_TYPE_FOREGROUND);
                 ra_background.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -229,17 +244,17 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
                         editor.apply();
                         dialog.cancel();
                         refreshServiceTypeValue();
-                        TimeSwitchService.startService(Settings.this);
+                        TimeSwitchService.sendEmptyMessage(TimeSwitchService.MESSAGE_REQUEST_REFRESH_TASKS);
                     }
                 });
                 ra_foreground.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        editor.putInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_FORGROUND);
+                        editor.putInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_FOREGROUND);
                         editor.apply();
                         dialog.cancel();
                         refreshServiceTypeValue();
-                        TimeSwitchService.startService(Settings.this);
+                        TimeSwitchService.sendEmptyMessage(TimeSwitchService.MESSAGE_REQUEST_REFRESH_TASKS);
                     }
                 });
 
@@ -265,7 +280,7 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
             }
             break;
             case R.id.settings_superuser_cb:{
-                final CheckBox cb_superuser=Settings.this.findViewById(R.id.settings_superuser_cb);
+                final CheckBox cb_superuser=SettingsActivity.this.findViewById(R.id.settings_superuser_cb);
                 if(b&&RootUtils.isDeviceRooted()){
                     final AlertDialog dialog=new AlertDialog.Builder(this)
                             .setCancelable(false)
@@ -284,10 +299,10 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
                                 editor.putBoolean(PublicConsts.PREFERENCES_IS_SUPERUSER_MODE,true);
                                 editor.apply();
                                 cb_superuser.setChecked(true);
-                                Toast.makeText(Settings.this,getResources().getString(R.string.activity_settings_toast_get_superuser_success),Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SettingsActivity.this,getResources().getString(R.string.activity_settings_toast_get_superuser_success),Toast.LENGTH_SHORT).show();
                             }else{
                                 cb_superuser.setChecked(false);
-                                Toast.makeText(Settings.this,getResources().getString(R.string.activity_settings_toast_get_superuser_fail),Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SettingsActivity.this,getResources().getString(R.string.activity_settings_toast_get_superuser_fail),Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -307,6 +322,11 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
                 }
             }
             break;
+            case R.id.settings_animator_cb:{
+                editor.putBoolean(PublicConsts.PREFERENCE_DISABLE_ANIMATION_EFFECTS, b);
+                editor.apply();
+            }
+            break;
         }
     }
 
@@ -322,7 +342,7 @@ public class Settings extends BaseActivity implements View.OnClickListener,Compo
         if(type==PublicConsts.PREFERENCES_SERVICE_TYPE_BACKGROUND){
             tv.setText(getResources().getString(R.string.activity_settings_service_type_background));
         }
-        if(type==PublicConsts.PREFERENCES_SERVICE_TYPE_FORGROUND){
+        if(type==PublicConsts.PREFERENCES_SERVICE_TYPE_FOREGROUND){
             tv.setText(getResources().getString(R.string.activity_settings_service_type_foreground));
         }
     }

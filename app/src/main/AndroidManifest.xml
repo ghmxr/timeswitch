@@ -21,13 +21,14 @@
     <uses-permission android:name="android.permission.SET_WALLPAPER"/>
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <uses-permission android:name="android.permission.SEND_SMS"/>
+    <uses-permission android:name="android.permission.FLASHLIGHT"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="19"/>
     <uses-permission android:name="android.permission.GET_TASKS" android:maxSdkVersion="20"/>
     <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES"/>
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"/>
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
 
     <application
         android:allowBackup="true"
@@ -87,15 +88,21 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".activities.Settings"
+            android:name=".activities.SettingsActivity"
             android:label="@string/activity_settings_title"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".activities.Log"
+            android:name=".activities.LogActivity"
             android:label="@string/activity_log"
             android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".activities.PrivilegeTestActivity"
+            android:label="@string/activity_settings_privilege"
+            android:theme="@style/Theme.AppCompat.Light"
             android:screenOrientation="portrait"/>
 
         <activity

@@ -373,7 +373,6 @@ public class ValueUtils {
             return context.getResources().getString(R.string.permission_denied);
         }catch (Exception e){
             e.printStackTrace();
-            LogUtil.putExceptionLog(context,e);
             return "";
         }
     }

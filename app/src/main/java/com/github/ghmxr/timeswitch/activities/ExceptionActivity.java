@@ -23,7 +23,6 @@ import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBatteryPercen
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBatteryTemperatureWithEnabledSelection;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForPeriod;
 import com.github.ghmxr.timeswitch.ui.DialogConfirmedCallBack;
-import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 /**
@@ -563,7 +562,6 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
             }
         }catch (NumberFormatException ne){
             ne.printStackTrace();
-            LogUtil.putExceptionLog(this,ne);
         }
 
     }
@@ -582,7 +580,6 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
             tv_value.setText(value.toString().equals("")?getResources().getString(R.string.not_activated):value.toString());
         }catch (NumberFormatException ne){
             ne.printStackTrace();
-            LogUtil.putExceptionLog(this,ne);
         }
 
     }

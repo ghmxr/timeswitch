@@ -19,7 +19,6 @@ import com.github.ghmxr.timeswitch.data.v2.ExceptionConsts;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
-import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
@@ -607,7 +606,6 @@ public class ContentAdapter {
                 else if(action_value== ActionConsts.ActionValueConsts.ACTION_UNSELECTED) return "";
             }catch (Exception e){
                 e.printStackTrace();
-                LogUtil.putExceptionLog(context,e);
             }
             return "";
         }
@@ -621,7 +619,6 @@ public class ContentAdapter {
                 else if(action_device== ActionConsts.ActionValueConsts.ACTION_DEVICE_CONTROL_NONE) return "";
             }catch (Exception e){
                 e.printStackTrace();
-                LogUtil.putExceptionLog(context,e);
             }
             return "";
         }
@@ -636,7 +633,6 @@ public class ContentAdapter {
                 else if(action_ring_mode== ActionConsts.ActionValueConsts.ACTION_RING_UNSELECTED) return "";
             }catch (Exception e){
                 e.printStackTrace();
-                LogUtil.putExceptionLog(context,e);
             }
             return "";
         }
@@ -676,7 +672,6 @@ public class ContentAdapter {
                 return displayBuilder.toString();
             }catch (Exception e){
                 e.printStackTrace();
-                LogUtil.putExceptionLog(context,e);
             }
             return "";
         }
@@ -689,7 +684,6 @@ public class ContentAdapter {
                     return context.getResources().getString(R.string.action_brightness_manual)+(int)((float)action_brightness/PublicConsts.BRIGHTNESS_MAX*100)+"%";
             }catch (Exception e){
                 e.printStackTrace();
-                LogUtil.putExceptionLog(context,e);
             }
             return "";
         }
@@ -712,7 +706,6 @@ public class ContentAdapter {
                return displayBuilder.toString();
             }catch (Exception e){
                 e.printStackTrace();
-                LogUtil.putExceptionLog(context,e);
             }
             return "";
         }
@@ -758,7 +751,6 @@ public class ContentAdapter {
                 return displayValue.toString();
             }catch (Exception e){
                 e.printStackTrace();
-                LogUtil.putExceptionLog(context,e);
             }
             return "";
         }
@@ -789,7 +781,6 @@ public class ContentAdapter {
                 return builder.toString();
             }catch (Exception e){
                 e.printStackTrace();
-                LogUtil.putExceptionLog(context,e);
             }
             return "";
         }
@@ -808,7 +799,6 @@ public class ContentAdapter {
                 return builder.toString();
             }catch (Exception e){
                 e.printStackTrace();
-                LogUtil.putExceptionLog(context,e);
             }
             return "";
         }

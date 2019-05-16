@@ -6,11 +6,15 @@ import java.util.LinkedList;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.transition.TransitionManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -65,21 +69,30 @@ public abstract class BaseActivity extends AppCompatActivity {
 		}catch (Exception e){e.printStackTrace();}
 	}
 
-	public void setToolBarAndStatusBarColor(View toolbar,String color){
+	public void setToolBarAndStatusBarColor(@Nullable View toolbar, String color){
 		try{
 			if(color==null) return;
 			int color_value=Color.parseColor(color);
-			toolbar.setBackgroundColor(color_value);
 			if(Build.VERSION.SDK_INT>=21){
 				Window window=getWindow();
 				window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 				window.setStatusBarColor(color_value);
 			}
-			if(ValueUtils.isHighLightRGB(color_value)){
-				setSupportActionbarContentsColor(toolbar,getResources().getColor(R.color.color_black));
+
+			if(toolbar!=null) {
+				try{
+					toolbar.setBackgroundDrawable(new ColorDrawable(Color.parseColor(color)));
+					if(ValueUtils.isHighLightRGB(color_value)){
+						setSupportActionbarContentsColor(toolbar,getResources().getColor(R.color.color_black));
+					}else{
+						setSupportActionbarContentsColor(toolbar,getResources().getColor(R.color.color_white));
+					}
+				}catch (Exception e){e.printStackTrace();}
 			}else{
-				setSupportActionbarContentsColor(toolbar,getResources().getColor(R.color.color_white));
+				try{ getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor(color)));}catch (Exception e){}
+				try{ getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor(color))); }catch (Exception e){}
 			}
+
 		}catch (Exception e){
 			e.printStackTrace();
 		}

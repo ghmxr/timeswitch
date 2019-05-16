@@ -1,6 +1,5 @@
 package com.github.ghmxr.timeswitch.utils;
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -11,14 +10,18 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.WallpaperManager;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.Camera;
+import android.hardware.camera2.CameraManager;
 import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Vibrator;
@@ -31,7 +34,6 @@ import android.telecom.TelecomManager;
 import android.telephony.SmsManager;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
-import android.telephony.TelephonyManager;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
@@ -329,6 +331,38 @@ public class EnvironmentUtils {
     }
 
     /**
+     * 打开闪光灯并持续相应的毫秒数，此方法在闪光灯关闭前阻塞不会返回，必须在子线程执行该方法
+     * @param milliseconds 持续的毫秒数
+     */
+    public static void setTorch(Context context,long milliseconds) throws Exception{
+        if(Build.VERSION.SDK_INT<23){
+            Camera camera= Camera.open();
+            Camera.Parameters parameters=camera.getParameters();
+            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+            camera.setParameters(parameters);
+            try{
+                Thread.sleep(milliseconds);
+            }catch (InterruptedException e){
+                e.printStackTrace();
+            }finally {
+                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                camera.setParameters(parameters);
+                camera.release();
+            }
+        }else{
+            CameraManager manager=(CameraManager)context.getSystemService(Context.CAMERA_SERVICE);
+            manager.setTorchMode("0",true);
+            try{
+                Thread.sleep(milliseconds);
+            }catch (InterruptedException e){
+                e.printStackTrace();
+            }finally {
+                manager.setTorchMode("0",false);
+            }
+        }
+    }
+
+    /**
      * 发送短信到指定address
      * @param context context
      * @param subscriptionId 指定发送的Sim卡，null 则表示默认卡，API 21及以下版本此参数不生效
@@ -519,15 +553,50 @@ public class EnvironmentUtils {
     }
 
     /**
-     * 判断当前是否连接Wifi网络
-     * @param context context
-     * @return true 连接
+     * Wifi是否已启用
+     * @return true-已启用
      */
-    public static boolean isWifiConnected(Context context){
-        try{
-            return ((ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo().getType()==ConnectivityManager.TYPE_WIFI;
+    public static boolean isWifiEnabled(Context context){
+        try {
+            return ((WifiManager)context.getApplicationContext().getSystemService(Context.WIFI_SERVICE)).isWifiEnabled();
         }catch (Exception e){e.printStackTrace();}
         return false;
+    }
+
+    /**
+     * 判断当前是否连接Wifi网络或是否连接至指定Wifi网络
+     * @param id 如果传入null，则连接至任一Wifi网络时则返回true，或者传入一个大于等于0的network id，则当连接到这个id的网络时才返回true
+     * @return true 连接到了指定wifi
+     */
+    public static boolean isWifiConnected(Context context,@Nullable Integer id){
+        try{
+            if(id==null) return ((ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo().getType()==ConnectivityManager.TYPE_WIFI;
+            WifiInfo info=Global.NetworkReceiver.connectedWifiInfo;
+            return ((ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo().getType()==ConnectivityManager.TYPE_WIFI
+                    &&info!=null&&id.equals(info.getNetworkId());
+        }catch (Exception e){e.printStackTrace();}
+        return false;
+    }
+
+    /**
+     * 蓝牙是否开启
+     */
+    public static boolean isBluetoothEnabled(Context context){
+        try{
+            return BluetoothAdapter.getDefaultAdapter().isEnabled();
+        }catch (Exception e){e.printStackTrace();}
+        return false;
+    }
+
+    /**
+     * 获取当前铃声模式，参考值通过AudioManager获取实例
+     * @return 当前铃声模式
+     */
+    public static int getRingerMode(Context context){
+        try{
+            return ((AudioManager)context.getSystemService(Context.AUDIO_SERVICE)).getRingerMode();
+        }catch (Exception e){e.printStackTrace();}
+        return -1;
     }
 
     /**

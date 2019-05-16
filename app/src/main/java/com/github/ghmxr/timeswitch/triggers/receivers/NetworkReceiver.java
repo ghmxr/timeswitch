@@ -14,7 +14,6 @@ import com.github.ghmxr.timeswitch.Global;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
-import com.github.ghmxr.timeswitch.utils.LogUtil;
 
 public class NetworkReceiver extends BaseBroadcastReceiver{
     boolean mLock=true;
@@ -57,7 +56,6 @@ public class NetworkReceiver extends BaseBroadcastReceiver{
                             }
                         }catch (Exception e){
                             e.printStackTrace();
-                            LogUtil.putExceptionLog(context,e);
                         }
                     }
                 }
@@ -96,7 +94,6 @@ public class NetworkReceiver extends BaseBroadcastReceiver{
                             }
                         }catch (Exception e){
                             e.printStackTrace();
-                            LogUtil.putExceptionLog(context,e);
                         }
                     }
                 }

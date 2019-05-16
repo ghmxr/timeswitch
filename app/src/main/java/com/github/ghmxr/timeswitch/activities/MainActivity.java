@@ -240,7 +240,7 @@ public class MainActivity extends BaseActivity {
                 startService2Refresh();
             }
         }else if(requestCode==REQUEST_CODE_ACTIVITY_SETTINGS){
-            if(resultCode==Settings.RESULT_CHAGED_INDICATOR_STATE){
+            if(resultCode== SettingsActivity.RESULT_CHANGED_INDICATOR_STATE){
                 SharedPreferences settings=getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE);
                 findViewById(R.id.main_indicator).setVisibility(settings.getBoolean(PublicConsts.PREFERENCES_MAINPAGE_INDICATOR,PublicConsts.PREFERENCES_MAINPAGE_INDICATOR_DEFAULT)?View.VISIBLE:View.GONE);
             }
@@ -505,7 +505,7 @@ public class MainActivity extends BaseActivity {
             break;
             case R.id.action_settings:{
                 Intent i=new Intent();
-                i.setClass(this,Settings.class);
+                i.setClass(this,SettingsActivity.class);
                 i.putExtra(EXTRA_TITLE_COLOR,getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE).getString(PublicConsts.PREFERENCES_THEME_COLOR,PublicConsts.PREFERENCES_THEME_COLOR_DEFAULT));
                 startActivityForResult(i,REQUEST_CODE_ACTIVITY_SETTINGS);
             }

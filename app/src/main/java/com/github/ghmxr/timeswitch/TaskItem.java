@@ -1,7 +1,6 @@
 package com.github.ghmxr.timeswitch;
 
 import android.content.Context;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
@@ -168,48 +167,6 @@ public class TaskItem implements Comparable<TaskItem>,Serializable{
 		actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE]=String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(-1)+PublicConsts.SEPARATOR_SECOND_LEVEL +String.valueOf(0);
 	}
 
-    public TaskItem(TaskItem item){
-		this.id=item.id;
-		this.name=item.name;
-		this.isenabled=item.isenabled;
-		this.time=item.time;
-		//this.hour=item.hour;
-		//this.minute=item.minute;
-		this.trigger_type=item.trigger_type;
-		this.week_repeat=new boolean[item.week_repeat.length];
-		for(int i=0;i<this.week_repeat.length;i++) this.week_repeat[i]=item.week_repeat[i];
-		//System.arraycopy(item.week_repeat,0,this.week_repeat,item.week_repeat.length);
-		this.interval_milliseconds=item.interval_milliseconds;
-		this.battery_percentage=item.battery_percentage;
-		this.battery_temperature=item.battery_temperature;
-		this.package_names=new String[item.package_names.length];
-		System.arraycopy(item.package_names,0,this.package_names,0,item.package_names.length);
-		//this.exceptions=item.exceptions;
-		this.exceptions=new String[item.exceptions.length];
-		//for(int i=0;i<exceptions.length;i++) this.exceptions[i]=item.exceptions[i];
-		System.arraycopy(item.exceptions,0,this.exceptions,0,item.exceptions.length);
-		//this.actions=item.actions;
-		this.actions=new String[item.actions.length];
-		//for(int i=0;i<item.actions.length;i++) this.actions[i]=item.actions[i];
-		System.arraycopy(item.actions,0,this.actions,0,item.actions.length);
-		uri_ring_notification=new String(item.uri_ring_notification);
-		uri_ring_call =new String(item.uri_ring_call);
-		uri_wallpaper_desktop=new String(item.uri_wallpaper_desktop);
-		sms_address=new String(item.sms_address);
-		sms_message=new String(item.sms_message);
-		notification_title=new String(item.notification_title);
-		notification_message=new String(item.notification_message);
-		toast=new String(item.toast);
-		selectedAction=new String(item.selectedAction);
-		wifiIds=new String(item.wifiIds);
-		this.notify=item.notify;
-		this.autodelete=item.autodelete;
-		this.autoclose=item.autoclose;
-		this.addition_title_color=new String(item.addition_title_color);
-		this.addition_exception_connector=new String(item.addition_exception_connector);
-		this.addition_isFolded=item.addition_isFolded;
-	}
-
 	@Override
 	public String toString() {
 		return "TaskItem{" +
@@ -281,7 +238,9 @@ public class TaskItem implements Comparable<TaskItem>,Serializable{
 	@Override
 	public int compareTo(@NonNull TaskItem o) {
 		// TODO Auto-generated method stub
-		return this.order<o.order?-1:1;
+		if(this.order<o.order) return -1;
+		if(this.order>o.order) return 1;
+		return 0;
 	}
 
 }

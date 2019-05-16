@@ -173,6 +173,52 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/settings_animator"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="10dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/settings_animator_att"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:textColor="@color/color_text_normal"
+                        android:text="@string/activity_settings_animation"/>
+
+                    <TextView
+                        android:id="@+id/settings_animator_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:text="@string/activity_settings_animation_att"/>
+                </LinearLayout>
+
+                <CheckBox
+                    android:id="@+id/settings_animator_cb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:clickable="false"
+                    android:layout_marginRight="15dp"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/color_dividing_line"/>
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:id="@+id/settings_autostart"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
@@ -288,6 +334,45 @@
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
                         android:text="@string/activity_settings_log_att_att"/>
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/drawable_arrow_right"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/settings_privilege"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="10dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/settings_privilege_att"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:textColor="@color/color_text_normal"
+                        android:text="@string/activity_settings_privilege"/>
+
+                    <TextView
+                        android:id="@+id/settings_privilege_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:text="@string/activity_settings_privilege_att"/>
                 </LinearLayout>
 
                 <ImageView

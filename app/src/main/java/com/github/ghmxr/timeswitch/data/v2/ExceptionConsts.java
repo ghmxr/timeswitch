@@ -58,5 +58,6 @@ public class ExceptionConsts {
     //the locales 30~34 is not used now and the initial value is 0.
     //the following initial values are -1.from the locale 35 and on.
     public static final int EXCEPTION_WIFI_CONNECTED								=	35;
+    public static final int EXCEPTION_WIFI_CONNECTED_TO_RANDOM_SSID                 =   -2;
     public static final int EXCEPTION_WIFI_DISCONNECTED								=	36;
 }

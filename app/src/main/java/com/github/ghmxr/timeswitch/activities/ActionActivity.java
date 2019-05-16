@@ -498,7 +498,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
                     @Override
                     public void onClick(View view) {
                         Toast.makeText(ActionActivity.this,getResources().getString(R.string.activity_taskgui_root_toast_attention),Toast.LENGTH_SHORT).show();
-                        Intent i=new Intent(ActionActivity.this,com.github.ghmxr.timeswitch.activities.Settings.class);
+                        Intent i=new Intent(ActionActivity.this,SettingsActivity.class);
                         i.putExtra(EXTRA_TITLE_COLOR,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
                         startActivity(i);
                     }

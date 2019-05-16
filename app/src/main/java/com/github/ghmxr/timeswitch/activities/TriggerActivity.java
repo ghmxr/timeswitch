@@ -44,7 +44,6 @@ import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForInterval;
 import com.github.ghmxr.timeswitch.ui.DialogConfirmedCallBack;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.DialogForAppSelection;
 import com.github.ghmxr.timeswitch.utils.EnvironmentUtils;
-import com.github.ghmxr.timeswitch.utils.LogUtil;
 
 public class TriggerActivity extends BaseActivity implements View.OnClickListener{
     private TaskItem item;
@@ -890,7 +889,6 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                 }
             }catch (Exception e){
                 e.printStackTrace();
-                LogUtil.putExceptionLog(TriggerActivity.this,e);
             }
 
         }

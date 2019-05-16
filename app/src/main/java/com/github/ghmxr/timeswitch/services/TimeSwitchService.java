@@ -23,7 +23,7 @@ import android.widget.RemoteViews;
 import com.github.ghmxr.timeswitch.Global;
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.activities.MainActivity;
-import com.github.ghmxr.timeswitch.activities.Settings;
+import com.github.ghmxr.timeswitch.activities.SettingsActivity;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.Global.BatteryReceiver;
@@ -72,7 +72,7 @@ public class TimeSwitchService extends Service {
         if(mHandler==null) mHandler=new MyHandler();
         service=this;
         //Log.i("TimeSwitchService","onCreate called and queue size is "+service_queue.size());
-        if(getSharedPreferences(PublicConsts.PREFERENCES_NAME,Context.MODE_PRIVATE).getInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_DEFAULT)==PublicConsts.PREFERENCES_SERVICE_TYPE_FORGROUND){
+        if(getSharedPreferences(PublicConsts.PREFERENCES_NAME,Context.MODE_PRIVATE).getInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_DEFAULT)==PublicConsts.PREFERENCES_SERVICE_TYPE_FOREGROUND){
             makeThisForeground();
         }
         try{
@@ -117,7 +117,7 @@ public class TimeSwitchService extends Service {
                     }
                     //sendEmptyMessage(TimeSwitchService.MESSAGE_REFRESH_TASKS_COMPLETE);
                     MainActivity.sendEmptyMessage(MainActivity.MESSAGE_GETLIST_COMPLETE);
-                    Settings.sendEmptyMessage(Settings.MESSAGE_CHANGE_API_COMPLETE);
+                    SettingsActivity.sendEmptyMessage(SettingsActivity.MESSAGE_CHANGE_API_COMPLETE);
                     //Profile.sendEmptyMessage(Profile.MESSAGE_REFRESH_TABLES);
 
                     new Thread(new RefreshListRemainingTimeTask()).start();

@@ -1,45 +1,24 @@
 package com.github.ghmxr.timeswitch.utils;
 
-import android.Manifest;
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.KeyguardManager;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.WallpaperManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.os.Message;
-import android.os.Vibrator;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.PermissionChecker;
-import android.telecom.TelecomManager;
-import android.telephony.SmsManager;
-import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.Global;
 import com.github.ghmxr.timeswitch.R;
-import com.github.ghmxr.timeswitch.activities.ExceptionActivity;
+import com.github.ghmxr.timeswitch.activities.LogActivity;
 import com.github.ghmxr.timeswitch.activities.MainActivity;
 import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
 import com.github.ghmxr.timeswitch.data.v2.AdditionConsts;
@@ -51,9 +30,6 @@ import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -154,7 +130,6 @@ public class ProcessTaskItem {
                 MainActivity.sendEmptyMessage(MainActivity.MESSAGE_REQUEST_UPDATE_LIST);
             }catch (Exception e){
                 e.printStackTrace();
-                LogUtil.putExceptionLog(context,e);
             }
         }
         //do if delete this taskitem
@@ -222,10 +197,11 @@ public class ProcessTaskItem {
             activateActionOfNotification(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE]);
         }
         LogUtil.putLog(context,log_taskitem.toString());
-        com.github.ghmxr.timeswitch.activities.Log.sendEmptyMessage(com.github.ghmxr.timeswitch.activities.Log.MESSAGE_REQUEST_REFRESH);
+        LogActivity.sendEmptyMessage(LogActivity.MESSAGE_REQUEST_REFRESH);
     }
 
     /**
+     * @deprecated
      * process exceptions and judge if can trigger this task
      * @param processType process type,-1 for "or" and  0 for "and"
      * @param log_exception the log builder need to append
@@ -995,6 +971,188 @@ public class ProcessTaskItem {
            return !type_and_if_has_exception;
         }
 
+        return true;
+    }
+
+    /**
+     * 分析TaskItem中的exceptions并返回此TaskItem中的Actions是否可以被执行
+     * @return true-可以执行,false-不能执行
+     */
+    private static boolean processExceptionOfTaskItem(@NonNull Context context,@NonNull TaskItem item){
+        int process_type=Integer.parseInt(item.addition_exception_connector);
+
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_LOCKEDSCREEN])==1){
+            boolean b=EnvironmentUtils.isScreenLockedByKeyGuardManager(context);
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&b)return false;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&!b)return true;
+        }
+
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_UNLOCKEDSCREEN])==1){
+            boolean b=EnvironmentUtils.isScreenLockedByKeyGuardManager(context);
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&!b)return false;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&b)return true;
+        }
+
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_WIFI_ENABLED])==1){
+            boolean b =EnvironmentUtils.isWifiEnabled(context);
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&b)return false;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&!b)return true;
+        }
+
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_WIFI_DISABLED])==1){
+            boolean b=EnvironmentUtils.isWifiEnabled(context);
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&!b)return false;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&b)return true;
+        }
+
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS])==ExceptionConsts.EXCEPTION_HEADSET_PLUG_OUT){
+            boolean isPlugged=Global.HeadsetPlugReceiver.isHeadsetPluggedIn();
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&!isPlugged) return false;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&isPlugged) return true;
+        }else if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS])==ExceptionConsts.EXCEPTION_HEADSET_PLUG_IN){
+            boolean isPlugged=Global.HeadsetPlugReceiver.isHeadsetPluggedIn();
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&isPlugged) return false;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&!isPlugged) return true;
+        }
+
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_ENABLED])==1){
+            boolean b=EnvironmentUtils.isBluetoothEnabled(context);
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&b) return false;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&!b) return true;
+        }
+
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_DISABLED])==1){
+            boolean b=EnvironmentUtils.isBluetoothEnabled(context);
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&!b) return false;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&b) return true;
+        }
+
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_RING_VIBRATE])==1){
+            boolean is_vibrate_mode= EnvironmentUtils.getRingerMode(context)==AudioManager.RINGER_MODE_VIBRATE;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&is_vibrate_mode)return false;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&!is_vibrate_mode)return true;
+        }
+
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_RING_OFF])==1){
+            boolean b= EnvironmentUtils.getRingerMode(context)==AudioManager.RINGER_MODE_SILENT;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&b) return false;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&!b) return true;
+        }
+
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_RING_NORMAL])==1){
+            boolean b=EnvironmentUtils.getRingerMode(context)==AudioManager.RINGER_MODE_NORMAL;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&b) return false;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&!b) return true;
+        }
+
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_NET_ENABLED])==1){
+            boolean b=EnvironmentUtils.isGprsNetworkEnabled(context);
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&b) return false;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&!b) return true;
+        }
+
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_NET_DISABLED])==1){
+            boolean b=EnvironmentUtils.isGprsNetworkEnabled(context);
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&!b) return false;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&b) return true;
+        }
+
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_GPS_ENABLED])==1){
+            boolean b=EnvironmentUtils.isGpsEnabled(context);
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&b) return false;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&!b) return true;
+        }
+
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_GPS_DISABLED])==1){
+            boolean b=EnvironmentUtils.isGpsEnabled(context);
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&!b) return false;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&b) return true;
+        }
+
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_ENABLED])==1){
+            boolean b=EnvironmentUtils.isAirplaneModeOpen(context);
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&b) return false;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&!b) return true;
+        }
+
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_DISABLED])==1){
+            boolean b=EnvironmentUtils.isAirplaneModeOpen(context);
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&!b) return false;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&b) return true;
+        }
+
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        int day_of_week=calendar.get(Calendar.DAY_OF_WEEK);
+        List<Integer> selected_day_of_week=new ArrayList<>();
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_MONDAY])==1) selected_day_of_week.add(Calendar.MONDAY);
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_TUESDAY])==1) selected_day_of_week.add(Calendar.TUESDAY);
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_WEDNESDAY])==1) selected_day_of_week.add(Calendar.WEDNESDAY);
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_THURSDAY])==1) selected_day_of_week.add(Calendar.THURSDAY);
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_FRIDAY])==1) selected_day_of_week.add(Calendar.FRIDAY);
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_SATURDAY])==1) selected_day_of_week.add(Calendar.SATURDAY);
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_SUNDAY])==1) selected_day_of_week.add(Calendar.SUNDAY);
+        boolean is_today_in_selected_days=selected_day_of_week.contains(day_of_week);
+        if(is_today_in_selected_days&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR) return false;
+        if(!is_today_in_selected_days&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND) return true;
+
+        int start_time=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_START_TIME]);
+        int end_time=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_END_TIME]);
+        int current_min=calendar.get(Calendar.HOUR_OF_DAY)*60+calendar.get(Calendar.MINUTE);
+        if(start_time>=0&&end_time>=0){
+            boolean b;
+            if(end_time>start_time) b=current_min>=start_time&&current_min<=end_time;
+            else b=current_min<=start_time&&current_min>=end_time;
+            if(b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR) return false;
+            if(!b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND) return true;
+        }
+
+        int battery_less_than_percentage=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]);
+        if(battery_less_than_percentage>=0){
+            boolean b=battery_less_than_percentage<Global.BatteryReceiver.battery_percentage;
+            if(b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR) return false;
+            if(!b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND) return true;
+        }
+
+        int battery_more_than_percentage=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]);
+        if(battery_more_than_percentage>=0){
+            boolean b=battery_more_than_percentage>Global.BatteryReceiver.battery_percentage;
+            if(b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR) return false;
+            if(!b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND) return true;
+        }
+
+        int battery_lower_than_temperature=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]);
+        if(battery_lower_than_temperature>=0){
+            boolean b=battery_lower_than_temperature<Global.BatteryReceiver.battery_temperature/10;
+            if(b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR) return false;
+            if(!b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND) return true;
+        }
+
+        int battery_higher_than_temperature=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]);
+        if(battery_higher_than_temperature>=0){
+            boolean b=battery_higher_than_temperature>Global.BatteryReceiver.battery_temperature/10;
+            if(b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR) return false;
+            if(!b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND) return true;
+        }
+
+        int ex_wifi_connected=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_WIFI_CONNECTED]);
+        if(ex_wifi_connected==ExceptionConsts.EXCEPTION_WIFI_CONNECTED_TO_RANDOM_SSID){
+            boolean b=EnvironmentUtils.isWifiConnected(context,null);
+            if(b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR) return false;
+            if(!b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND) return true;
+        }else if(ex_wifi_connected>=0){
+            boolean b=EnvironmentUtils.isWifiConnected(context,ex_wifi_connected);
+            if(b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR) return false;
+            if(!b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND) return true;
+        }
+
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_WIFI_DISCONNECTED])>=0){
+            boolean b=EnvironmentUtils.isWifiConnected(context,null);
+            if(!b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR) return false;
+            if(b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND) return true;
+        }
+
+        if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND) return false;
         return true;
     }
 
