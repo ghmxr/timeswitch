@@ -12,12 +12,12 @@ import android.util.SparseArray;
 
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
-import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.triggers.Trigger;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 
 public class CustomAlarmReceiver implements Trigger {
     private static AlarmManager alarmManager;
+    private Context context;
     private TaskItem item;
     private static final SparseArray<CustomAlarmReceiver> map_alarm_receivers =new SparseArray<>();
     private final PendingIntent pi;
@@ -26,6 +26,7 @@ public class CustomAlarmReceiver implements Trigger {
 
     public CustomAlarmReceiver(Context context, @NonNull TaskItem item){
        this.item=item;
+       this.context=context;
        Intent i=new Intent(context,AlarmReceiver.class);
        i.setAction(ACTION);
        i.putExtra(EXTRA_TASK_ID,item.id);
@@ -105,10 +106,9 @@ public class CustomAlarmReceiver implements Trigger {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        TimeSwitchService service=TimeSwitchService.service;
-                        if(service!=null){
-                            new ProcessTaskItem(service,receiver.item).checkExceptionsAndRunActions();
-                        }
+                        try{
+                            new ProcessTaskItem(receiver.context,receiver.item).checkExceptionsAndRunActions();
+                        }catch (Exception e){e.printStackTrace();}
                     }
                 }).start();
             }catch (Exception e){

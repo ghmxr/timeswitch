@@ -33,12 +33,8 @@ import com.github.ghmxr.timeswitch.utils.RootUtils;
 public class SettingsActivity extends BaseActivity implements View.OnClickListener,CompoundButton.OnCheckedChangeListener{
 
     SharedPreferences settings;
-    //SharedPreferences.Editor editor;
-    public static final int MESSAGE_CHANGE_API_COMPLETE=0x10000;
 
     public static final int RESULT_CHANGED_INDICATOR_STATE =0x00010;
-
-    private AlertDialog waitDialog;
 
     boolean flag_restart_main=false;
 
@@ -88,18 +84,7 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
     }
 
     @Override
-    public void processMessage(Message msg){
-        switch(msg.what){
-            default:break;
-            case MESSAGE_CHANGE_API_COMPLETE:{
-                if(waitDialog!=null){
-                    waitDialog.cancel();
-                    waitDialog=null;
-                }
-            }
-            break;
-        }
-    }
+    public void processMessage(Message msg){}
 
     @Override
     public void onClick(View v){
@@ -130,17 +115,7 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
 
                         dialog.cancel();
                         refreshAPIValue();
-                        waitDialog=new AlertDialog.Builder(SettingsActivity.this).setView(LayoutInflater.from(SettingsActivity.this).inflate(R.layout.layout_dialog_wait,null))
-                                .setCancelable(false)
-                                .create();
-                        waitDialog.show();
-
-                        //if(Main.queue.size()>0) Main.queue.getLast().startService2Refresh();
-                        if(TimeSwitchService.service!=null) TimeSwitchService.service.refreshTaskItems();
-                        else{
-                            //Settings.this.startService(new Intent(Settings.this,TimeSwitchService.class));
-                            TimeSwitchService.startService(SettingsActivity.this);
-                        }
+                        TimeSwitchService.sendEmptyMessage(TimeSwitchService.MESSAGE_REQUEST_REFRESH_TASKS);
                     }
                 });
                 dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener(){
@@ -293,7 +268,7 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
                         @Override
                         public void onClick(View view) {
                             dialog.cancel();
-                            int result=RootUtils.executeCommand(RootUtils.COMMAND_GRANT_SECURE_PERMISSION);
+                            int result=RootUtils.executeCommand("\n");
                             Log.i("RootCommand","result is "+result);
                             if(result==RootUtils.ROOT_COMMAND_RESULT_SUCCESS){
                                 editor.putBoolean(PublicConsts.PREFERENCES_IS_SUPERUSER_MODE,true);

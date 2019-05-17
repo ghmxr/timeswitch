@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.os.BatteryManager;
 import android.os.Build;
@@ -539,14 +540,14 @@ public class MainActivity extends BaseActivity {
                                     for(int i=0;i<list.size();i++){
                                         //TimeSwitchService.list.get(i).addition_isFolded=false;
                                         try{
-                                            ProcessTaskItem.setTaskFolded(MainActivity.this, list.get(i).id,false);
+                                            ProcessTaskItem.setTaskFolded(MainActivity.this, list.get(i),false, MySQLiteOpenHelper.getCurrentTableName(MainActivity.this));
                                         }catch (Exception e){e.printStackTrace();}
                                     }
                                 }else{
                                     for(int i=0;i<list.size();i++){
                                         //TimeSwitchService.list.get(i).addition_isFolded=true;
                                         try{
-                                            ProcessTaskItem.setTaskFolded(MainActivity.this, list.get(i).id,true);
+                                            ProcessTaskItem.setTaskFolded(MainActivity.this, list.get(i),true,MySQLiteOpenHelper.getCurrentTableName(MainActivity.this));
                                         } catch (Exception e){e.printStackTrace();}
                                     }
                                 }
@@ -626,7 +627,7 @@ public class MainActivity extends BaseActivity {
                        holder.task_area.setVisibility(View.VISIBLE);
                        holder.title_arrow.setRotation(90);
                        try{
-                           ProcessTaskItem.setTaskFolded(MainActivity.this,list.get(holder.getAdapterPosition()).id,false);
+                           ProcessTaskItem.setTaskFolded(MainActivity.this,list.get(holder.getAdapterPosition()),false,MySQLiteOpenHelper.getCurrentTableName(MainActivity.this));
                        }catch (Exception e){e.printStackTrace();}
                    }else{
                        //TransitionManager.beginDelayedTransition(((ViewGroup)recyclerView));
@@ -634,7 +635,7 @@ public class MainActivity extends BaseActivity {
                        holder.task_area.setVisibility(View.GONE);
                        holder.title_arrow.setRotation(0);
                        try{
-                           ProcessTaskItem.setTaskFolded(MainActivity.this,list.get(holder.getAdapterPosition()).id,true);
+                           ProcessTaskItem.setTaskFolded(MainActivity.this,list.get(holder.getAdapterPosition()),true,MySQLiteOpenHelper.getCurrentTableName(MainActivity.this));
                        }catch (Exception e){e.printStackTrace();}
                    }
                }
@@ -692,7 +693,7 @@ public class MainActivity extends BaseActivity {
                                holder.switch_enabled.setChecked(!b);
                                return;
                            }
-                           ProcessTaskItem.setTaskEnabled(TimeSwitchService.service,list.get(holder.getAdapterPosition()).id,b);
+                           ProcessTaskItem.setTaskEnabled(TimeSwitchService.service,list.get(holder.getAdapterPosition()),b,MySQLiteOpenHelper.getCurrentTableName(MainActivity.this));
                        }catch (Exception e){
                            e.printStackTrace();
                            holder.switch_enabled.setChecked(!b);

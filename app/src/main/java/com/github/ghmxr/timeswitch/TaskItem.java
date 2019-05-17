@@ -1,7 +1,9 @@
 package com.github.ghmxr.timeswitch;
 
+import android.app.Service;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
 import com.github.ghmxr.timeswitch.data.v2.ExceptionConsts;
@@ -75,6 +77,11 @@ public class TaskItem implements Comparable<TaskItem>,Serializable{
 	 * 电池温度参数值，单位为摄氏度
 	 */
 	public int battery_temperature=35;
+
+	/**
+	 * 环境光线亮度，触发器参数
+	 */
+	public int light_brightness=0;
 
 	public String selectedAction="android.intent.action.ANSWER";
 	public String[] package_names=new String[0];
@@ -208,6 +215,9 @@ public class TaskItem implements Comparable<TaskItem>,Serializable{
 	 */
 	public void activateTask(Context context){
 		if(trigger!=null) trigger.cancel();
+		if(!(context instanceof Service)){
+			Log.e("TaskItemWarn","The context sent to this TaskItem is not a service instance and some functions may not work!!!!");
+		}
 		trigger= TriggerUtil.getTriggerInstanceForTaskItem(context,this);
 		if(trigger!=null) trigger.activate();
 	}

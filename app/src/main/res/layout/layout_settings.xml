@@ -343,6 +343,11 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:src="@drawable/drawable_arrow_right"/>
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/color_dividing_line"/>
             </RelativeLayout>
 
             <RelativeLayout

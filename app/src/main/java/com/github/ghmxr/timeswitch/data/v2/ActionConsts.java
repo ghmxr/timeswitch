@@ -2,7 +2,7 @@ package com.github.ghmxr.timeswitch.data.v2;
 
 public class ActionConsts {
 
-    public static final int ACTION_LENGTH =21;
+    public static final int ACTION_LENGTH =22;
 
     public static class ActionFirstLevelLocaleConsts{
 
@@ -44,6 +44,7 @@ public class ActionConsts {
         public static final int ACTION_STOP_APP_PACKAGES									=		18;
         public static final int ACTION_FORCE_STOP_APP_PACKAGES								=		19;
         public static final int ACTION_AUTOROTATION											=		20;
+        public static final int ACTION_FLASHLIGHT                                           =       21;
     }
 
     public static class ActionSecondLevelLocaleConsts{

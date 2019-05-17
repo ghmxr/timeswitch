@@ -1,7 +1,7 @@
 package com.github.ghmxr.timeswitch.data.v2;
 
 public class ExceptionConsts {
-    public static final int EXCEPTION_LENGTH =35;
+    public static final int EXCEPTION_LENGTH =37;
     public static final int EXCEPTION_CONNECTOR_OR								=	-1;
     public static final int EXCEPTION_CONNECTOR_AND								=	0;
     /**

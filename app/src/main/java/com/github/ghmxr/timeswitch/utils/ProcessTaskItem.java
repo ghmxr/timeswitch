@@ -1,8 +1,6 @@
 package com.github.ghmxr.timeswitch.utils;
 
 import android.app.Activity;
-import android.app.KeyguardManager;
-import android.bluetooth.BluetoothAdapter;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,7 +8,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -46,12 +43,11 @@ public class ProcessTaskItem {
     static final String TAG="ProcessTaskItem";
     private StringBuilder log_taskitem=new StringBuilder("");
     public static String last_activated_task_name="";
-    public static int notification_id=2;
+    private static int notification_id=2;
 
     public ProcessTaskItem(@NonNull Context context, TaskItem item){
         this.item=item;
         this.context=context;
-        //this.canTrigger=true;
     }
 
     public void checkExceptionsAndRunActions(){
@@ -89,35 +85,12 @@ public class ProcessTaskItem {
             }
         }
 
-        StringBuilder log_exception=new StringBuilder("");
         boolean canTrigger= true;
-        int exception_connector=-1;
         try {
-            exception_connector=Integer.parseInt(item.addition_exception_connector);
-            //Log.d("ExceptionCon",""+exception_connector);
-            if(exception_connector>=0){
-                canTrigger=processExceptions(ExceptionConsts.EXCEPTION_CONNECTOR_AND,log_exception);
-            }else{
-                canTrigger=processExceptions(ExceptionConsts.EXCEPTION_CONNECTOR_OR,log_exception);
-            }
+            canTrigger=processExceptionOfTaskItem(context,item);
             Log.d("CanTrigger",""+canTrigger);
         }catch (Exception e){
             e.printStackTrace();
-        }
-
-
-        if(canTrigger){
-            log_taskitem.append(context.getResources().getString(R.string.log_exceptions_activate));
-            if(log_exception.toString().trim().length()>0){
-                log_taskitem.append(context.getResources().getString(R.string.log_exceptions_unsatisfied));
-                log_taskitem.append(log_exception.toString());
-                log_taskitem.append(" ");
-            }
-        }else {
-            log_taskitem.append(context.getResources().getString(R.string.log_exceptions));
-            log_taskitem.append(" ");
-            log_taskitem.append(log_exception.toString());
-            log_taskitem.append(" ");
         }
 
         if(item.autoclose&&canTrigger){
@@ -183,8 +156,7 @@ public class ProcessTaskItem {
             try{activateActionOfSMS(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE]);}catch (Exception e){e.printStackTrace();}
             try{launchAppsByPackageName(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES]);}catch (Exception e){e.printStackTrace();}
             try{stopAppsByPackageName(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES]);}catch (Exception e){e.printStackTrace();}
-            try{switchTasks(0);}catch (Exception e){e.printStackTrace();}
-            try{switchTasks(1);}catch (Exception e){e.printStackTrace();}
+            try{switchTasks();}catch (Exception e){e.printStackTrace();}
 
             SharedPreferences settings=context.getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE);
             boolean isRoot=settings.getBoolean(PublicConsts.PREFERENCES_IS_SUPERUSER_MODE,PublicConsts.PREFERENCES_IS_SUPERUSER_MODE_DEFAULT);
@@ -198,780 +170,6 @@ public class ProcessTaskItem {
         }
         LogUtil.putLog(context,log_taskitem.toString());
         LogActivity.sendEmptyMessage(LogActivity.MESSAGE_REQUEST_REFRESH);
-    }
-
-    /**
-     * @deprecated
-     * process exceptions and judge if can trigger this task
-     * @param processType process type,-1 for "or" and  0 for "and"
-     * @param log_exception the log builder need to append
-     * @return true for can trigger this task ,or false
-     */
-    private boolean processExceptions(int processType, StringBuilder log_exception){
-        final int TYPE_OR=-1;
-        final int TYPE_AND=0;
-        boolean type_and_if_has_exception=false;
-        try{
-            KeyguardManager mKeyguardManager=(KeyguardManager)context.getSystemService(Context.KEYGUARD_SERVICE);
-            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_LOCKEDSCREEN])==1){
-                type_and_if_has_exception=true;
-                if(mKeyguardManager.inKeyguardRestrictedInputMode()) {
-                    if(processType==TYPE_OR){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_screen_locked));
-                        log_exception.append(" ");
-                        return false;
-                    }
-                }else{
-                    if(processType==TYPE_AND){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_screen_locked));
-                        log_exception.append(" ");
-                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                        log_exception.append(" ");
-                        return true;
-                    }
-                }
-            }
-            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_UNLOCKEDSCREEN])==1){
-                type_and_if_has_exception=true;
-                if(!mKeyguardManager.inKeyguardRestrictedInputMode()) {
-                    if(processType==TYPE_OR) {
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_screen_unlocked));
-                        log_exception.append(" ");
-                        return false;
-                    }
-                }
-                else{
-                    if(processType==TYPE_AND){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_screen_unlocked));
-                        log_exception.append(" ");
-                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                        log_exception.append(" ");
-                        return true;
-                    }
-                }
-
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            log_exception.append(e);
-            log_exception.append("\n");
-        }
-
-        try{
-            WifiManager mWifiManager=(WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_WIFI_ENABLED])==1){
-                type_and_if_has_exception=true;
-                if(mWifiManager.getWifiState()== WifiManager.WIFI_STATE_ENABLED) {
-                    if(processType==TYPE_OR){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_wifi_enabled));
-                        log_exception.append(" ");
-                        return false;
-                    }
-                }else{
-                    if(processType==TYPE_AND){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_wifi_enabled));
-                        log_exception.append(" ");
-                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                        log_exception.append(" ");
-                        return true;
-                    }
-                }
-            }
-            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_WIFI_DISABLED])==1){
-                type_and_if_has_exception=true;
-                if(mWifiManager.getWifiState()==WifiManager.WIFI_STATE_DISABLED) {
-                    if(processType==TYPE_OR){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_wifi_disabled));
-                        log_exception.append(" ");
-                        return false;
-                    }
-                }else{
-                    if(processType==TYPE_AND){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_wifi_disabled));
-                        log_exception.append(" ");
-                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                        log_exception.append(" ");
-                        return true;
-                    }
-                }
-            }
-        }catch (NumberFormatException ne){
-            ne.printStackTrace();
-            log_exception.append(ne.toString());
-            log_exception.append("\n");
-        }
-
-        /*try{
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_WIFI_CONNECTED])==1){
-                type_and_if_has_exception=true;
-                if(isWifiConnected()){
-                    if(processType==TYPE_OR){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_wifi_connected));
-                        log_exception.append(" ");
-                        return false;
-                    }
-                }else{
-                    if(processType==TYPE_AND){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_wifi_connected));
-                        log_exception.append(" ");
-                        log_exception.append(context.getResources().getString(R.string.log_exceptions_unsatisfied));
-                        log_exception.append(" ");
-                        return true;
-                    }
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }*/
-
-        /*try{
-            if(Integer.parseInt(item.exceptions[PublicConsts.EXCEPTION_WIFI_DISCONNECTED])==1){
-                type_and_if_has_exception=true;
-                if(!isWifiConnected()){
-                    if(processType==TYPE_OR){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_wifi_disconnected));
-                        log_exception.append(" ");
-                        return false;
-                    }
-                }else{
-                    if(processType==TYPE_AND){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_wifi_disconnected));
-                        log_exception.append(" ");
-                        log_exception.append(context.getResources().getString(R.string.log_exceptions_unsatisfied));
-                        log_exception.append(" ");
-                        return true;
-                    }
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }*/
-
-        try{
-            BluetoothAdapter mBluetoothAdapter=BluetoothAdapter.getDefaultAdapter();
-            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_ENABLED])==1){
-                type_and_if_has_exception=true;
-                if(mBluetoothAdapter.getState()== BluetoothAdapter.STATE_ON) {
-                    if(processType==TYPE_OR){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_bluetooth_enabled));
-                        log_exception.append(" ");
-                        return false;
-                    }
-                }else{
-                    if(processType==TYPE_AND){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_bluetooth_enabled));
-                        log_exception.append(" ");
-                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                        log_exception.append(" ");
-                        return true;
-                    }
-                }
-            }
-            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_DISABLED])==1){
-                type_and_if_has_exception=true;
-                if(mBluetoothAdapter.getState()==BluetoothAdapter.STATE_OFF) {
-                    if(processType==TYPE_OR){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_bluetooth_disabled));
-                        log_exception.append(" ");
-                        return false;
-                    }
-                }else{
-                    if(processType==TYPE_AND){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_bluetooth_disabled));
-                        log_exception.append(" ");
-                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                        log_exception.append(" ");
-                        return true;
-                    }
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            log_exception.append(e.toString());
-            log_exception.append("\n");
-        }
-
-        try{
-            AudioManager mAudioManager=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_RING_VIBRATE])==1){
-                type_and_if_has_exception=true;
-                if(mAudioManager.getRingerMode()== AudioManager.RINGER_MODE_VIBRATE) {
-                    if(processType==TYPE_OR){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_ring_vibrate));
-                        log_exception.append(" ");
-                        return false;
-                    }
-                }else{
-                    if(processType==TYPE_AND){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_ring_vibrate));
-                        log_exception.append(" ");
-                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                        log_exception.append(" ");
-                        return true;
-                    }
-                }
-            }
-
-            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_RING_OFF])==1){
-                type_and_if_has_exception=true;
-                if(mAudioManager.getRingerMode()==AudioManager.RINGER_MODE_SILENT) {
-                    if(processType==TYPE_OR){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_ring_off));
-                        log_exception.append(" ");
-                        return false;
-                    }
-                }else{
-                    if(processType==TYPE_AND){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_ring_off));
-                        log_exception.append(" ");
-                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                        log_exception.append(" ");
-                        return true;
-                    }
-                }
-            }
-
-            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_RING_NORMAL])==1){
-                type_and_if_has_exception=true;
-                if(mAudioManager.getRingerMode()==AudioManager.RINGER_MODE_NORMAL) {
-                    if(processType==TYPE_OR){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_ring_normal));
-                        log_exception.append(" ");
-                        return false;
-                    }
-                }else{
-                    if(processType==TYPE_AND){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_ring_normal));
-                        log_exception.append(" ");
-                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                        log_exception.append(" ");
-                        return true;
-                    }
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            log_taskitem.append(e.toString());
-            log_taskitem.append("\n");
-        }
-
-        try{
-            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_NET_ENABLED])==1){
-                type_and_if_has_exception=true;
-                if(EnvironmentUtils.isGprsNetworkEnabled(context)) {
-                    if(processType==TYPE_OR){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_net_enabled));
-                        log_exception.append(" ");
-                        return false;
-                    }
-                }else{
-                    if(processType==TYPE_AND){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_net_enabled));
-                        log_exception.append(" ");
-                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                        log_exception.append(" ");
-                        return true;
-                    }
-                }
-            }
-
-            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_NET_DISABLED])==1){
-                type_and_if_has_exception=true;
-                if(!EnvironmentUtils.isGprsNetworkEnabled(context)) {
-                    if(processType==TYPE_OR){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_net_disabled));
-                        log_exception.append(" ");
-                        return false;
-                    }
-                }else{
-                    if(processType==TYPE_AND){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_net_disabled));
-                        log_exception.append(" ");
-                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                        log_exception.append(" ");
-                        return true;
-                    }
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        try{
-            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_GPS_ENABLED])==1){
-                type_and_if_has_exception=true;
-                if(EnvironmentUtils.isGpsEnabled(context)) {
-                    if(processType==TYPE_OR){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_gps_on));
-                        log_exception.append(" ");
-                        return false;
-                    }
-                }else{
-                    if(processType==TYPE_AND){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_gps_on));
-                        log_exception.append(" ");
-                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                        log_exception.append(" ");
-                        return true;
-                    }
-                }
-            }
-
-            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_GPS_DISABLED])==1){
-                type_and_if_has_exception=true;
-                if(!EnvironmentUtils.isGpsEnabled(context)) {
-                    if(processType==TYPE_OR){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_gps_off));
-                        log_exception.append(" ");
-                        return false;
-                    }
-                }else{
-                    if(processType==TYPE_AND){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_gps_off));
-                        log_exception.append(" ");
-                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                        log_exception.append(" ");
-                        return true;
-                    }
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        try{
-            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_ENABLED])==1){
-                type_and_if_has_exception=true;
-                if(EnvironmentUtils.isAirplaneModeOpen(context)) {
-                    if(processType==TYPE_OR){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_airplanemode_on));
-                        log_exception.append(" ");
-                        return false;
-                    }
-                }else{
-                    if(processType==TYPE_AND){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_airplanemode_on));
-                        log_exception.append(" ");
-                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                        log_exception.append(" ");
-                        return true;
-                    }
-                }
-            }
-
-            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_DISABLED])==1){
-                type_and_if_has_exception=true;
-                if(!EnvironmentUtils.isAirplaneModeOpen(context)) {
-                    if(processType==TYPE_OR){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_airplanemode_off));
-                        log_exception.append(" ");
-                        return false;
-                    }
-
-                }else{
-                    if(processType==TYPE_AND){
-                        log_exception.append(context.getResources().getString(R.string.activity_taskgui_exception_airplanemode_off));
-                        log_exception.append(" ");
-                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                        log_exception.append(" ");
-                        return true;
-                    }
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        try{
-            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])!=-1){
-                type_and_if_has_exception=true;
-                // Log.e(TAG,"isInstant is "+BatteryReceiver.isInstant+" currentTemp is "+BatteryReceiver.Battery_temperature+" item set is "+item.battery_temperature);
-                int currentTemp=Global.BatteryReceiver.battery_temperature;
-                if(currentTemp>Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE])*10) {
-                    if(processType==TYPE_OR){
-                        log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_temperature_higher_than));
-                        log_exception.append(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]);
-                        log_exception.append("℃,current:");
-                        log_exception.append((double)currentTemp/10);
-                        log_exception.append("℃");
-                        log_exception.append(" ");
-                        return false;
-                    }
-                }else{
-                    if(processType==TYPE_AND){
-                        log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_temperature_higher_than));
-                        log_exception.append(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]);
-                        log_exception.append("℃,current:");
-                        log_exception.append((double)currentTemp/10);
-                        log_exception.append("℃");
-                        log_exception.append(" ");
-                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                        return true;
-                    }
-                }
-            }
-
-            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])!=-1){
-                type_and_if_has_exception=true;
-                int currentTemp=Global.BatteryReceiver.battery_temperature;
-                if(currentTemp<Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE])*10) {
-                    if(processType==TYPE_OR){
-                        log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_temperature_lower_than));
-                        log_exception.append(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]);
-                        log_exception.append("℃,current:");
-                        log_exception.append((double)currentTemp/10);
-                        log_exception.append("℃");
-                        log_exception.append(" ");
-                        return false;
-                    }
-                }else{
-                    if(processType==TYPE_AND){
-                        log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_temperature_lower_than));
-                        log_exception.append(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]);
-                        log_exception.append("℃,current:");
-                        log_exception.append((double)currentTemp/10);
-                        log_exception.append("℃");
-                        log_exception.append(" ");
-                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                        return true;
-                    }
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        try{
-            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])!=-1) {
-                type_and_if_has_exception=true;
-                int currentLevel=Global.BatteryReceiver.battery_percentage;
-                if(currentLevel>Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE])) {
-                    if(processType==TYPE_OR){
-                        log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_percentage_more_than));
-                        log_exception.append(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]);
-                        log_exception.append("%,current:");
-                        log_exception.append(currentLevel);
-                        log_exception.append("%");
-                        log_exception.append(" ");
-                        return false;
-                    }
-                }else{
-                    if(processType==TYPE_AND){
-                        log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_percentage_more_than));
-                        log_exception.append(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]);
-                        log_exception.append("%,current:");
-                        log_exception.append(currentLevel);
-                        log_exception.append("%");
-                        log_exception.append(" ");
-                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                        return true;
-                    }
-                }
-            }
-
-            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])!=-1){
-                type_and_if_has_exception=true;
-                int currentLevel=Global.BatteryReceiver.battery_percentage;
-                if(currentLevel<Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE])) {
-                    if(processType==TYPE_OR){
-                        log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_percentage_less_than));
-                        log_exception.append(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]);
-                        log_exception.append("%,current:");
-                        log_exception.append(currentLevel);
-                        log_exception.append("%");
-                        log_exception.append(" ");
-                        return false;
-                    }
-
-                }else{
-                    if(processType==TYPE_AND){
-                        log_exception.append(context.getResources().getString(R.string.log_exceptions_battery_percentage_less_than));
-                        log_exception.append(item.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]);
-                        log_exception.append("%,current:");
-                        log_exception.append(currentLevel);
-                        log_exception.append("%");
-                        log_exception.append(" ");
-                        log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                        return true;
-                    }
-                }
-            }
-
-            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS])>0){
-                type_and_if_has_exception=true;
-                int value=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS]);
-                if(value== ExceptionConsts.EXCEPTION_HEADSET_PLUG_OUT){
-                    if(!Global.HeadsetPlugReceiver.isHeadsetPluggedIn()){
-                        if(processType==TYPE_OR){
-                            log_exception.append(context.getResources().getString(R.string.log_exceptions_headset));
-                            log_exception.append(context.getResources().getString(R.string.log_exceptions_headset_out));
-                            log_exception.append(" ");
-                            return false;
-                        }
-                    }else{
-                        if(processType==TYPE_AND){
-                            log_exception.append(context.getResources().getString(R.string.log_exceptions_headset));
-                            log_exception.append(context.getResources().getString(R.string.log_exceptions_headset_in));
-                            log_exception.append(" ");
-                            return true;
-                        }
-                    }
-                }
-
-                if(value== ExceptionConsts.EXCEPTION_HEADSET_PLUG_IN){
-                    if(Global.HeadsetPlugReceiver.isHeadsetPluggedIn()){
-                        if(processType==TYPE_OR){
-                            log_exception.append(context.getResources().getString(R.string.log_exceptions_headset));
-                            log_exception.append(context.getResources().getString(R.string.log_exceptions_headset_in));
-                            log_exception.append(" ");
-                            return false;
-                        }
-                    }else{
-                        if(processType==TYPE_AND){
-                            log_exception.append(context.getResources().getString(R.string.log_exceptions_headset));
-                            log_exception.append(context.getResources().getString(R.string.log_exceptions_headset_out));
-                            log_exception.append(" ");
-                            return true;
-                        }
-                    }
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        try{
-            Calendar calendar=Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            int dayofweek=calendar.get(Calendar.DAY_OF_WEEK);
-            if(processType==TYPE_OR){
-                switch (dayofweek){
-                    default:break;
-                    case Calendar.SUNDAY:{
-                        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_SUNDAY])==1) {
-                            log_exception.append(context.getResources().getString(R.string.sunday));
-                            log_exception.append(" ");
-                            return false;
-                        }
-                    }
-                    break;
-                    case Calendar.MONDAY:{
-                        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_MONDAY])==1){
-                            log_exception.append(context.getResources().getString(R.string.monday));
-                            log_exception.append(" ");
-                            return false;
-                        }
-                    }
-                    break;
-                    case Calendar.TUESDAY:{
-                        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_TUESDAY])==1){
-                            log_exception.append(context.getResources().getString(R.string.tuesday));
-                            log_exception.append(" ");
-                            return false;
-                        }
-                    }
-                    break;
-                    case Calendar.WEDNESDAY:{
-                        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_WEDNESDAY])==1){
-                            log_exception.append(context.getResources().getString(R.string.wednesday));
-                            log_exception.append(" ");
-                            return false;
-                        }
-                    }
-                    break;
-                    case Calendar.THURSDAY:{
-                        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_THURSDAY])==1){
-                            log_exception.append(context.getResources().getString(R.string.thursday));
-                            log_exception.append(" ");
-                            return false;
-                        }
-                    }
-                    break;
-                    case Calendar.FRIDAY:{
-                        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_FRIDAY])==1){
-                            log_exception.append(context.getResources().getString(R.string.friday));
-                            log_exception.append(" ");
-                            return false;
-                        }
-                    }
-                    break;
-                    case Calendar.SATURDAY:{
-                        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_SATURDAY])==1){
-                            log_exception.append(context.getResources().getString(R.string.saturday));
-                            log_exception.append(" ");
-                            return false;
-                        }
-                    }
-                    break;
-
-                }
-            }
-
-            if(processType==TYPE_AND){
-                List<Integer> selected_dayofweek=new ArrayList<>();
-                if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_SUNDAY])==1) selected_dayofweek.add(Calendar.SUNDAY);
-                if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_MONDAY])==1) selected_dayofweek.add(Calendar.MONDAY);
-                if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_TUESDAY])==1) selected_dayofweek.add(Calendar.TUESDAY);
-                if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_WEDNESDAY])==1) selected_dayofweek.add(Calendar.WEDNESDAY);
-                if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_THURSDAY])==1) selected_dayofweek.add(Calendar.THURSDAY);
-                if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_FRIDAY])==1) selected_dayofweek.add(Calendar.FRIDAY);
-                if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_SATURDAY])==1) selected_dayofweek.add(Calendar.SATURDAY);
-                if(selected_dayofweek.size()>0){
-                    type_and_if_has_exception=true;
-                    switch(dayofweek){
-                        default:break;
-                        case Calendar.SUNDAY:{
-                            if(!selected_dayofweek.contains(Calendar.SUNDAY)){
-                                log_exception.append(context.getResources().getString(R.string.sunday));
-                                log_exception.append(" ");
-                                log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                                log_exception.append(" ");
-                                return true;
-                            }
-                        }
-                        break;
-                        case Calendar.MONDAY:{
-                            if(!selected_dayofweek.contains(Calendar.MONDAY)){
-                                log_exception.append(context.getResources().getString(R.string.monday));
-                                log_exception.append(" ");
-                                log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                                log_exception.append(" ");
-                                return true;
-                            }
-                        }
-                        break;
-                        case Calendar.TUESDAY:{
-                            if(!selected_dayofweek.contains(Calendar.TUESDAY)){
-                                log_exception.append(context.getResources().getString(R.string.tuesday));
-                                log_exception.append(" ");
-                                log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                                log_exception.append(" ");
-                                return true;
-                            }
-                        }
-                        break;
-                        case Calendar.WEDNESDAY:{
-                            if(!selected_dayofweek.contains(Calendar.WEDNESDAY)){
-                                log_exception.append(context.getResources().getString(R.string.wednesday));
-                                log_exception.append(" ");
-                                log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                                log_exception.append(" ");
-                                return true;
-                            }
-                        }
-                        break;
-                        case Calendar.THURSDAY:{
-                            if(!selected_dayofweek.contains(Calendar.THURSDAY)){
-                                log_exception.append(context.getResources().getString(R.string.thursday));
-                                log_exception.append(" ");
-                                log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                                log_exception.append(" ");
-                                return true;
-                            }
-                        }
-                        break;
-                        case Calendar.FRIDAY:{
-                            if(!selected_dayofweek.contains(Calendar.FRIDAY)){
-                                log_exception.append(context.getResources().getString(R.string.friday));
-                                log_exception.append(" ");
-                                log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                                log_exception.append(" ");
-                                return true;
-                            }
-                        }
-                        break;
-                        case Calendar.SATURDAY:{
-                            if(!selected_dayofweek.contains(Calendar.SATURDAY)){
-                                log_exception.append(context.getResources().getString(R.string.saturday));
-                                log_exception.append(" ");
-                                log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                                log_exception.append(" ");
-                                return true;
-                            }
-                        }
-                        break;
-                    }
-                }
-            }
-
-
-            if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_START_TIME])!=-1&&Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_END_TIME])!=-1){
-                int minuteOfDay=calendar.get(Calendar.HOUR_OF_DAY)*60+calendar.get(Calendar.MINUTE);
-                type_and_if_has_exception=true;
-                //Log.i("Minute of day now",""+minuteOfDay);
-                //Log.i("startTime",""+item.exceptions[PublicConsts.EXCEPTION_START_TIME]);
-                //Log.i("endTime",""+item.exceptions[PublicConsts.EXCEPTION_END_TIME]);
-                int startTime=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_START_TIME]);
-                int endTime=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_END_TIME]);
-                if(endTime-startTime>0){
-                    if((minuteOfDay>=startTime)&&minuteOfDay<=endTime) {
-                        if(processType==TYPE_OR){
-                            log_exception.append(context.getResources().getString(R.string.log_exceptions_period));
-                            log_exception.append(ValueUtils.format(startTime/60));
-                            log_exception.append(":");
-                            log_exception.append(ValueUtils.format(startTime%60));
-                            log_exception.append("~");
-                            log_exception.append(ValueUtils.format(endTime/60));
-                            log_exception.append(":");
-                            log_exception.append(ValueUtils.format(endTime%60));
-                            log_exception.append(" ");
-                            return false;
-                        }
-                    }else{
-                        if(processType==TYPE_AND){
-                            log_exception.append(context.getResources().getString(R.string.log_exceptions_period));
-                            log_exception.append(ValueUtils.format(startTime/60));
-                            log_exception.append(":");
-                            log_exception.append(ValueUtils.format(startTime%60));
-                            log_exception.append("~");
-                            log_exception.append(ValueUtils.format(endTime/60));
-                            log_exception.append(":");
-                            log_exception.append(ValueUtils.format(endTime%60));
-                            log_exception.append(" ");
-                            log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                            return true;
-                        }
-                    }
-                }else{
-                    if(minuteOfDay>=startTime||minuteOfDay<=endTime) {
-                        if(processType==TYPE_OR){
-                            log_exception.append(context.getResources().getString(R.string.log_exceptions_period));
-                            log_exception.append(ValueUtils.format(startTime/60));
-                            log_exception.append(":");
-                            log_exception.append(ValueUtils.format(startTime%60));
-                            log_exception.append("~");
-                            log_exception.append(ValueUtils.format(endTime/60));
-                            log_exception.append(":");
-                            log_exception.append(ValueUtils.format(endTime%60));
-                            log_exception.append(" ");
-                            return false;
-                        }
-                    }else{
-                        if(processType==TYPE_AND){
-                            log_exception.append(context.getResources().getString(R.string.log_exceptions_period));
-                            log_exception.append(ValueUtils.format(startTime/60));
-                            log_exception.append(":");
-                            log_exception.append(ValueUtils.format(startTime%60));
-                            log_exception.append("~");
-                            log_exception.append(ValueUtils.format(endTime/60));
-                            log_exception.append(":");
-                            log_exception.append(ValueUtils.format(endTime%60));
-                            log_exception.append(" ");
-                            log_exception.append(context.getResources().getString(R.string.word_unsatisfied));
-                            return true;
-                        }
-                    }
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        if(processType==TYPE_AND){
-           return !type_and_if_has_exception;
-        }
-
-        return true;
     }
 
     /**
@@ -1395,23 +593,33 @@ public class ProcessTaskItem {
 
     /**
      * 启用或者关闭指定任务
-     * @param enableOrDisable 0--enable,1--disable
      */
-    private void switchTasks(int enableOrDisable){
+    private void switchTasks(){
         SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
-        String[] switch_values=item.actions[enableOrDisable==0? ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE: ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
-        if(Integer.parseInt(switch_values[0])>=0){
-            for(String s:switch_values){
+        String[] enable_ids=item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+        String[] disable_ids=item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+        if(Integer.parseInt(enable_ids[0])>=0){
+            for(String s:enable_ids){
                 int id=Integer.parseInt(s);
                 Cursor cursor=database.rawQuery("select * from "+ MySQLiteOpenHelper.getCurrentTableName(context)+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
                 if(cursor.getCount()>0){
                     //int position=getPosition(id);
-                    setTaskEnabled(context,id,enableOrDisable==0);
+                    setTaskEnabled(context,item,true,MySQLiteOpenHelper.getCurrentTableName(context));
                 }
                 cursor.close();
             }
-            MainActivity.sendEmptyMessage(MainActivity.MESSAGE_REQUEST_UPDATE_LIST);
         }
+        if(Integer.parseInt(disable_ids[0])>=0){
+            for(String s:disable_ids){
+                int id=Integer.parseInt(s);
+                Cursor cursor=database.rawQuery("select * from "+ MySQLiteOpenHelper.getCurrentTableName(context)+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
+                if(cursor.getCount()>0){
+                    setTaskEnabled(context,item,false,MySQLiteOpenHelper.getCurrentTableName(context));
+                }
+                cursor.close();
+            }
+        }
+        MainActivity.sendEmptyMessage(MainActivity.MESSAGE_REQUEST_UPDATE_LIST);
     }
 
     /**
@@ -1430,66 +638,75 @@ public class ProcessTaskItem {
 
     /**
      * 启用或者关闭指定任务，更新list，刷新数据库
-     * @param id 任务id
+     * @param item 指定的任务项
+     * @param table_name 指定表的名称，传入null则不对数据表做更改，或者将对指定table_name中TaskItem.id的row做出修改
      */
-    public static void setTaskEnabled(Context context,int id,boolean enabled){
-        if(context==null||!(context instanceof TimeSwitchService)) {
+    public static void setTaskEnabled(@NonNull Context context,@NonNull TaskItem item,boolean enabled,@Nullable String table_name){
+        if(!(context instanceof TimeSwitchService)) {
             Log.e("invalid","an invalid type of context ,must be a type of TimeSwitchService instance!!");
             return;
         }
-
-        TaskItem item=getTaskItemOfId(TimeSwitchService.list,id);
-        if(item==null) return;
-
         if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE&&item.time<=System.currentTimeMillis()) return;
         item.isenabled=enabled;
-        SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
-        database.execSQL("update "+ MySQLiteOpenHelper.getCurrentTableName(context)
-                +" set "+SQLConsts.SQL_TASK_COLUMN_ENABLED +"="+(enabled?1:0)+
-                " where "+SQLConsts.SQL_TASK_COLUMN_ID +"="+id);
 
+        long currentTime=System.currentTimeMillis();
+        SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
+
+        if(table_name!=null){
+            database.execSQL("update "+ table_name
+                    +" set "+SQLConsts.SQL_TASK_COLUMN_ENABLED +"="+(enabled?1:0)+
+                    " where "+SQLConsts.SQL_TASK_COLUMN_ID +"="+item.id);
+        }
         if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME&&enabled){
-            long currentTime=System.currentTimeMillis();
             item.time=currentTime;
-            Cursor cursor=database.rawQuery("select * from "+ MySQLiteOpenHelper.getCurrentTableName(context)+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
-            if(cursor.moveToFirst()){
-                long[] values_read=ValueUtils.string2longArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_TRIGGER_VALUES)));
-                if(values_read.length==2){
-                    long interval_read=values_read[1];
-                    long values_put[]=new long[2];
-                    values_put[0]=currentTime;
-                    values_put[1]=interval_read;
-                    ContentValues contentValues=new ContentValues();
-                    contentValues.put(SQLConsts.SQL_TASK_COLUMN_TRIGGER_VALUES,ValueUtils.longArray2String(values_put));
-                    database.update(MySQLiteOpenHelper.getCurrentTableName(context),contentValues,SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
+            if(table_name!=null){
+                Cursor cursor=database.rawQuery("select * from "+ MySQLiteOpenHelper.getCurrentTableName(context)+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+item.id,null);
+                if(cursor.moveToNext()){
+                    long[] values_read=ValueUtils.string2longArray(PublicConsts.SPLIT_SEPARATOR_FIRST_LEVEL,cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_TRIGGER_VALUES)));
+                    if(values_read.length==2){
+                        long interval_read=values_read[1];
+                        long values_put[]=new long[2];
+                        values_put[0]=currentTime;
+                        values_put[1]=interval_read;
+                        ContentValues contentValues=new ContentValues();
+                        contentValues.put(SQLConsts.SQL_TASK_COLUMN_TRIGGER_VALUES,ValueUtils.longArray2String(PublicConsts.SEPARATOR_FIRST_LEVEL,values_put));
+                        database.update(MySQLiteOpenHelper.getCurrentTableName(context),contentValues,SQLConsts.SQL_TASK_COLUMN_ID+"="+item.id,null);
+                    }
                 }
+                cursor.close();
+            }
+        }
+
+        database.close();
+        if(enabled) item.activateTask(context); else item.cancelTask();
+    }
+
+    /**
+     * 设置指定项的任务的折叠状态，传入非null的table_name时将按照TaskItem的id值更新table_name的指定row
+     * @param item 指定的任务项
+     * @param isFolded 是否折叠
+     * @param table_name 指定表的名称，如果传入null则不对数据表中TaskItem.id的row做修改
+     */
+    public static void setTaskFolded(@NonNull Context context, @NonNull TaskItem item , boolean isFolded,@Nullable String table_name){
+        if(table_name!=null){
+            SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
+            //final String table_name= MySQLiteOpenHelper.getCurrentTableName(context);
+            Cursor cursor=database.rawQuery("select * from "+table_name+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+item.id,null);
+            if(cursor.moveToFirst()){
+                String additions_read[]=ValueUtils.string2StringArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ADDITIONS)));
+                String additions[]=new String[AdditionConsts.ADDITION_LENGTH];
+                for(int i=0;i<additions.length;i++){additions[i]=String.valueOf(-1);}
+                additions[AdditionConsts.ADDITION_TITLE_COLOR_LOCALE]=new TaskItem().addition_title_color;
+                System.arraycopy(additions_read,0,additions,0,additions_read.length);
+                additions[AdditionConsts.ADDITION_TITLE_FOLDED_VALUE_LOCALE]=isFolded?String.valueOf(0):String.valueOf(-1);
+                ContentValues content=new ContentValues();
+                content.put(SQLConsts.SQL_TASK_COLUMN_ADDITIONS,ValueUtils.stringArray2String(additions));
+                database.update(table_name,content,SQLConsts.SQL_TASK_COLUMN_ID+"="+item.id,null);
             }
             cursor.close();
             database.close();
         }
-        if(enabled) item.activateTask(context); else item.cancelTask();
-    }
-
-    public static void setTaskFolded(final Context context, int id , boolean isFolded){
-        SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
-        final String table_name= MySQLiteOpenHelper.getCurrentTableName(context);
-        Cursor cursor=database.rawQuery("select * from "+table_name+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
-        if(cursor.moveToFirst()){
-            String additions_read[]=ValueUtils.string2StringArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ADDITIONS)));
-            String additions[]=new String[AdditionConsts.ADDITION_LENGTH];
-            for(int i=0;i<additions.length;i++){additions[i]=String.valueOf(-1);}
-            additions[AdditionConsts.ADDITION_TITLE_COLOR_LOCALE]=new TaskItem().addition_title_color;
-            System.arraycopy(additions_read,0,additions,0,additions_read.length);
-            additions[AdditionConsts.ADDITION_TITLE_FOLDED_VALUE_LOCALE]=isFolded?String.valueOf(0):String.valueOf(-1);
-            ContentValues content=new ContentValues();
-            content.put(SQLConsts.SQL_TASK_COLUMN_ADDITIONS,ValueUtils.stringArray2String(additions));
-            database.update(table_name,content,SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
-        }
-        cursor.close();
-        database.close();
-        //TimeSwitchService.list.get(getPosition(id)).addition_isFolded=isFolded;
-        TaskItem item=getTaskItemOfId(TimeSwitchService.list,id);
-        if(item!=null) item.addition_isFolded=isFolded;
+        item.addition_isFolded=isFolded;
     }
 
 }

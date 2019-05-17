@@ -158,14 +158,14 @@ public class ValueUtils {
      * @param text
      * @return long[]
      */
-    public static long[] string2longArray(String text){
+    public static long[] string2longArray(String split,String text){
         if(text==null){
             return new long[0];
         }
         else{
             long[] values=null;
             try{
-                String[] svalues=text.split(PublicConsts.SPLIT_SEPARATOR_FIRST_LEVEL);
+                String[] svalues=text.split(split);
                 if(svalues.length<=0) return new long[0];
                 if(svalues.length==1){
                     values=new long[1];
@@ -194,7 +194,7 @@ public class ValueUtils {
      * @param array long[]
      * @return string
      */
-    public static String longArray2String(long[] array){
+    public static String longArray2String(String seperator,long[] array){
         StringBuilder valuesBuilder=new StringBuilder("");
         if(array==null){
             return "";
@@ -208,7 +208,7 @@ public class ValueUtils {
                 valuesBuilder.append(array[i]);
                 if(i<(array.length-1)&&array.length>1){
                     //values+=",";
-                    valuesBuilder.append(PublicConsts.SEPARATOR_FIRST_LEVEL);
+                    valuesBuilder.append(seperator);
                 }
             }
         }

@@ -146,6 +146,12 @@
 	<string name="activity_trigger_app_opened">打开指定应用时</string>
 	<string name="activity_trigger_app_closed">退出指定应用时</string>
 	<string name="activity_trigger_app_att">*此触发器仅在屏幕点亮时生效</string>
+	<string name="activity_trigger_brightness">环境亮度</string>
+	<string name="trigger_brightness_higher_than">亮度高于</string>
+	<string name="trigger_brightness_lower_than">亮度低于</string>
+	<string name="trigger_brightness_current">当前环境亮度:</string>
+	<string name="trigger_brightness_edit_hint">输入亮度值</string>
+	<string name="trigger_brightness_unit">lux(勒克斯)</string>
     <string name="dialog_app_open_select_title">打开指定应用时</string>
 	<string name="dialog_app_close_select_title">退出指定应用时</string>
 	<string name="dialog_app_select_z_att">请至少选择一项</string>
@@ -210,6 +216,13 @@
 	<string name="activity_taskgui_actions_ring_volume_alarm">闹钟:</string>
 	<string name="activity_taskgui_actions_ring_selection">铃声切换</string>
 	<string name="activity_taskgui_actions_wallpaper">更改壁纸</string>
+	<string name="action_flashlight">闪光灯</string>
+	<string name="action_flashlight_hold">打开并保持(秒)</string>
+	<string name="action_flashlight_custom">自定义数组(毫秒)</string>
+	<string name="action_flashlight_hint_hold">输入秒数</string>
+	<string name="action_flashlight_hint_custom">参数，英文逗号隔开</string>
+	<string name="action_flashlight_att">选择“打开并保持”，输入秒数将打开闪光灯并保持相应秒数；\n
+		选择“自定义数组”，需要输入"保持,间隔"类似的毫秒数组，例如"100,200,100"将会使闪光灯点亮100毫秒、关闭200毫秒、点亮100毫秒。输入相应的参数并英文逗号隔开</string>
 	<string name="activity_taskgui_actions_sms">发送短信</string>
 	<string name="activity_taskgui_actions_notification">推送通知</string>
 	<string name="activity_taskgui_actions_toast">文字Toast</string>

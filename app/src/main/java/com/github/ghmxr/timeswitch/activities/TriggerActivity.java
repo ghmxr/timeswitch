@@ -42,6 +42,7 @@ import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBatteryPercen
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBatteryTemperatureWithEnabledSelection;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForInterval;
 import com.github.ghmxr.timeswitch.ui.DialogConfirmedCallBack;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForTriggerBrightness;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.DialogForAppSelection;
 import com.github.ghmxr.timeswitch.utils.EnvironmentUtils;
 
@@ -75,6 +76,7 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
         findViewById(R.id.trigger_app_opened).setOnClickListener(this);
         findViewById(R.id.trigger_app_closed).setOnClickListener(this);
         findViewById(R.id.trigger_headset).setOnClickListener(this);
+        findViewById(R.id.trigger_brightness).setOnClickListener(this);
         //initialize the values
         item=(TaskItem) getIntent().getSerializableExtra(EXTRA_SERIALIZED_TASKITEM);
         calendar.setTimeInMillis(item.time);
@@ -178,6 +180,10 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
             case TriggerTypeConsts.TRIGGER_TYPE_NET_OFF:{
                 ((TextView)findViewById(R.id.trigger_widget_changed_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getWidgetDisplayValue(this,type));
                 //timePicker.setVisibility(View.GONE);
+            }
+            break;
+            case TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_HIGHER_THAN:case TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_LOWER_THAN:{
+                ((TextView)findViewById(R.id.trigger_brightness_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getBrightnessTriggerDisplayValue(this,item.trigger_type,item.light_brightness));
             }
             break;
         }
@@ -714,6 +720,25 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                 activateTriggerType(PublicConsts.TRIGGER_TYPE_POWER_DISCONNECTED);
             }
             break;*/
+            case R.id.trigger_brightness:{
+                if(!EnvironmentUtils.isLightSensorSupported(this)){
+                    Snackbar.make(findViewById(android.R.id.content),"May be this device doesn't support light sensor.",Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
+                final BottomDialogForTriggerBrightness dialog=new BottomDialogForTriggerBrightness(this,item.trigger_type,item.light_brightness);
+                dialog.show();
+                dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+                    @Override
+                    public void onDialogConfirmed(String result) {
+                        int value=dialog.getBrightness_set();
+                        if(value>=0&&value<Integer.MAX_VALUE){
+                            item.light_brightness=value;
+                            activateTriggerType(dialog.getSelection());
+                        }
+                    }
+                });
+            }
+            break;
         }
     }
 
@@ -779,7 +804,7 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
         ((RadioButton)findViewById(R.id.trigger_app_opened_ra)).setChecked(type== TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED);
         ((RadioButton)findViewById(R.id.trigger_app_closed_ra)).setChecked(type== TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED);
         ((RadioButton)findViewById(R.id.trigger_headset_ra)).setChecked(type== TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_IN||type== TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT);
-
+        ((RadioButton)findViewById(R.id.trigger_brightness_ra)).setChecked(type==TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_HIGHER_THAN||type==TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_LOWER_THAN);
         tv_condition_single_value.setText(unchoose);
         tv_condition_percertaintime_value.setText(unchoose);
         tv_condition_weekloop_value.setText(unchoose);
@@ -798,6 +823,7 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
         tv_app_opened.setText(unchoose);
         tv_app_closed.setText(unchoose);
         tv_headset.setText(unchoose);
+        ((TextView)findViewById(R.id.trigger_brightness_value)).setText(unchoose);
     }
 
     @Override

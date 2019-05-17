@@ -15,6 +15,7 @@ import com.github.ghmxr.timeswitch.triggers.receivers.CustomBroadcastReceiver;
 import com.github.ghmxr.timeswitch.triggers.receivers.HeadsetPlugReceiver;
 import com.github.ghmxr.timeswitch.triggers.receivers.NetworkReceiver;
 import com.github.ghmxr.timeswitch.triggers.receivers.RingModeReceiver;
+import com.github.ghmxr.timeswitch.triggers.sensors.LightSensor;
 import com.github.ghmxr.timeswitch.triggers.timers.CustomAlarmReceiver;
 import com.github.ghmxr.timeswitch.triggers.timers.CustomTimerTask;
 
@@ -83,6 +84,9 @@ public class TriggerUtil {
 
             case TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_IN: case TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT:{
                 return new HeadsetPlugReceiver(context,item);
+            }
+            case TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_HIGHER_THAN:case TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_LOWER_THAN:{
+                return new LightSensor(context,item);
             }
 
         }

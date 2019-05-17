@@ -15,6 +15,8 @@ public class TriggerTypeConsts {
     public static final int TRIGGER_TYPE_RECEIVED_BROADCAST 						=	9;
     public static final int TRIGGER_TYPE_APP_LAUNCHED								=	10;
     public static final int TRIGGER_TYPE_APP_CLOSED									=	11;
+    public static final int TRIGGER_TYPE_LIGHT_SENSOR_HIGHER_THAN                   =   12;
+    public static final int TRIGGER_TYPE_LIGHT_SENSOR_LOWER_THAN                    =   13;
     public static final int TRIGGER_TYPE_WIDGET_WIFI_ON					=		101;
     public static final int TRIGGER_TYPE_WIDGET_WIFI_OFF				=		102;
     public static final int TRIGGER_TYPE_WIDGET_BLUETOOTH_ON			=		103;

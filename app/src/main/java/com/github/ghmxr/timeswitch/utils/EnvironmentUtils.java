@@ -14,6 +14,8 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.hardware.camera2.CameraManager;
 import android.location.LocationManager;
 import android.media.AudioManager;
@@ -363,6 +365,18 @@ public class EnvironmentUtils {
     }
 
     /**
+     * 使闪光灯按照保持、关闭的循环点亮（闪烁），方法执行完成前不会返回，需要在子线程执行
+     * @param arrays 执行参数
+     */
+    public static void setTorch(Context context,long[]arrays) throws Exception{
+        if(arrays==null||arrays.length==0) return;
+        for(int i=0;i<arrays.length;i++){
+            if(i%2==0) setTorch(context,arrays[i]);
+            else Thread.sleep(arrays[i]);
+        }
+    }
+
+    /**
      * 发送短信到指定address
      * @param context context
      * @param subscriptionId 指定发送的Sim卡，null 则表示默认卡，API 21及以下版本此参数不生效
@@ -525,6 +539,17 @@ public class EnvironmentUtils {
      */
     public static boolean forceStopAppByPackageName(String package_name){
         return RootUtils.executeCommand(RootUtils.COMMAND_FORCE_STOP_PACKAGE+package_name)==RootUtils.ROOT_COMMAND_RESULT_SUCCESS;
+    }
+
+    /**
+     * 测试本机是否支持光线传感器
+     * @return true-能够获取光线传感器实例
+     */
+    public static boolean isLightSensorSupported(Context context){
+        try{
+            return ((SensorManager)context.getApplicationContext().getSystemService(Context.SENSOR_SERVICE)).getDefaultSensor(Sensor.TYPE_LIGHT)!=null;
+        }catch (Exception e){e.printStackTrace();}
+        return false;
     }
 
     /**

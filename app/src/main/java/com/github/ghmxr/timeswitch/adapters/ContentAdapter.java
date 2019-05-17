@@ -2,6 +2,7 @@ package com.github.ghmxr.timeswitch.adapters;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -226,6 +227,13 @@ public class ContentAdapter {
                     if(content_type==CONTENT_TYPE_DISPLAY_STRING_TITLE) return context.getResources().getString(R.string.activity_trigger_headset);
                     if(content_type==CONTENT_TYPE_DISPLAY_STRING_CONTENT) return context.getResources().getString(R.string.activity_trigger_headset_plug_out);
                 }
+
+                case TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_HIGHER_THAN: case TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_LOWER_THAN:{
+                    if(content_type==CONTENT_TYPE_ICON_RESOURCE_DRAWABLE_ID) return R.drawable.icon_brightness;
+                    if(content_type==CONTENT_TYPE_DISPLAY_STRING_TITLE) return context.getResources().getString(R.string.activity_trigger_brightness);
+                    if(content_type==CONTENT_TYPE_DISPLAY_STRING_CONTENT) return TriggerDisplayStrings.getBrightnessTriggerDisplayValue(context,item.trigger_type,item.light_brightness);
+                }
+                break;
             }
             return null;
         }
@@ -398,6 +406,13 @@ public class ContentAdapter {
                     }
                 }
                 return builder.toString();
+            }
+
+            public static String getBrightnessTriggerDisplayValue(Context context,int trigger_type,int value){
+                Resources resources=context.getResources();
+                if(trigger_type==TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_HIGHER_THAN) return resources.getString(R.string.trigger_brightness_higher_than)+value+resources.getString(R.string.trigger_brightness_unit);
+                if (trigger_type==TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_LOWER_THAN) return resources.getString(R.string.trigger_brightness_lower_than)+value+resources.getString(R.string.trigger_brightness_unit);
+                return "";
             }
         }
     }

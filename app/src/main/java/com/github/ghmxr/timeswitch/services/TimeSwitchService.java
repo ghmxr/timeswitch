@@ -23,7 +23,6 @@ import android.widget.RemoteViews;
 import com.github.ghmxr.timeswitch.Global;
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.activities.MainActivity;
-import com.github.ghmxr.timeswitch.activities.SettingsActivity;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.Global.BatteryReceiver;
@@ -110,14 +109,14 @@ public class TimeSwitchService extends Service {
                         if(item==null) continue;
                         item.cancelTask();
                     }
-                    list= Global.getTaskItemListFromDatabase(TimeSwitchService.this);
+                    list= Global.getTaskItemListFromDatabase(TimeSwitchService.this,null);
                     for(TaskItem item:list){
                         if(item==null) continue;
                         if(item.isenabled) item.activateTask(TimeSwitchService.this);
                     }
                     //sendEmptyMessage(TimeSwitchService.MESSAGE_REFRESH_TASKS_COMPLETE);
                     MainActivity.sendEmptyMessage(MainActivity.MESSAGE_GETLIST_COMPLETE);
-                    SettingsActivity.sendEmptyMessage(SettingsActivity.MESSAGE_CHANGE_API_COMPLETE);
+                    //SettingsActivity.sendEmptyMessage(SettingsActivity.MESSAGE_CHANGE_API_COMPLETE);
                     //Profile.sendEmptyMessage(Profile.MESSAGE_REFRESH_TABLES);
 
                     new Thread(new RefreshListRemainingTimeTask()).start();
@@ -299,12 +298,6 @@ public class TimeSwitchService extends Service {
             }
         }
     }
-
-    public static final class CustomToast{
-       public String toast_value[]=new String[3];
-       public String toast="";
-    }
-
 
     private static class RefreshListRemainingTimeTask implements Runnable{
         private boolean active=true;

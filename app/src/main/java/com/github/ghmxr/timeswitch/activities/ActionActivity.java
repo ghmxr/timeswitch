@@ -24,6 +24,7 @@ import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBrightness;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForDeviceControl;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForFlashlight;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForNotification;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForRingMode;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForToast;
@@ -77,6 +78,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
         findViewById(R.id.actions_app_close).setOnClickListener(this);
         findViewById(R.id.actions_app_force_close).setOnClickListener(this);
         findViewById(R.id.actions_autorotation).setOnClickListener(this);
+        findViewById(R.id.actions_flashlight).setOnClickListener(this);
 
         item=(TaskItem)getIntent().getSerializableExtra(EXTRA_SERIALIZED_TASKITEM);
         refreshActionStatus();
@@ -404,6 +406,11 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
                     }
                 });
                 dialog.show();
+            }
+            break;
+            case R.id.actions_flashlight:{
+                //BottomDialogForFlashlight dialog=new BottomDialogForFlashlight(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FLASHLIGHT]);
+                //dialog.show();
             }
             break;
         }

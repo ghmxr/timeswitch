@@ -15,6 +15,7 @@ import android.os.BatteryManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.github.ghmxr.timeswitch.adapters.ContentAdapter;
@@ -34,12 +35,14 @@ public class Global {
     /**
      * 通过SQLite数据库指定的表获取TaskItem列表信息（不激活TaskItem），此方法为耗时操作，可能会阻塞线程
      * @param context 传入context
+     * @param table_name 指定读取的表名称，传入null则自动读取当前已设定的表名
      * @return  对应的TaskItemList
      */
-    public static @NonNull ArrayList<TaskItem> getTaskItemListFromDatabase(Context context){
+    public static @NonNull ArrayList<TaskItem> getTaskItemListFromDatabase(Context context, @Nullable String table_name){
         try{
+            if(table_name==null) table_name=MySQLiteOpenHelper.getCurrentTableName(context);
             SQLiteDatabase database = MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
-            Cursor cursor=database.rawQuery("select * from "+ MySQLiteOpenHelper.getCurrentTableName(context),null);
+            Cursor cursor=database.rawQuery("select * from "+ table_name,null);
             ArrayList<TaskItem> list=new ArrayList<>();
             while (cursor.moveToNext()){
                 try{
@@ -83,6 +86,9 @@ public class Global {
                     }
                     if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED||item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED){
                         item.package_names=trigger_values;
+                    }
+                    if(item.trigger_type==TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_HIGHER_THAN||item.trigger_type==TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_LOWER_THAN){
+                        item.light_brightness=Integer.parseInt(trigger_values[0]);
                     }
 
                     String [] read_exceptions=ValueUtils.string2StringArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_EXCEPTIONS)));

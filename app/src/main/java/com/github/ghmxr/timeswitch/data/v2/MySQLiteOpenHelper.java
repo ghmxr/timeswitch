@@ -41,6 +41,7 @@ import java.util.List;
 public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 
 	private Context context;
+	private static String current_table_name;
 	//private static MySQLiteOpenHelper helper;
 	
 	private MySQLiteOpenHelper(Context context){
@@ -68,9 +69,24 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
      * @return 当前使用的数据库的表名
      */
     public static String getCurrentTableName(@NonNull Context context){
-         SharedPreferences settings = context.getSharedPreferences(PublicConsts.PREFERENCES_NAME, Activity.MODE_PRIVATE);
-         return settings.getString(PublicConsts.PREFERENCES_CURRENT_TABLE_NAME, SQLConsts.SQL_DATABASE_DEFAULT_TABLE_NAME);
+    	if(current_table_name==null){
+    		synchronized (MySQLiteOpenHelper.class){
+    			if(current_table_name==null)current_table_name=context.getSharedPreferences(PublicConsts.PREFERENCES_NAME, Activity.MODE_PRIVATE)
+						.getString(PublicConsts.PREFERENCES_CURRENT_TABLE_NAME, SQLConsts.SQL_DATABASE_DEFAULT_TABLE_NAME);
+			}
+		}
+		return current_table_name;
     }
+
+	/**
+	 * 设置当前使用的数据表名称
+	 * @param name 数据表名称
+	 */
+	public static synchronized void setCurrentTableName(@NonNull Context context,@NonNull String name){
+		current_table_name=name;
+    	context.getSharedPreferences(PublicConsts.PREFERENCES_NAME,Context.MODE_PRIVATE)
+				.edit().putString(PublicConsts.PREFERENCES_CURRENT_TABLE_NAME,name).apply();
+	}
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
@@ -195,6 +211,10 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 				if(triggerValues==null||triggerValues.length==0) triggerValues=new String[1];
 			}
 			break;
+			case TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_HIGHER_THAN: case TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_LOWER_THAN:{
+				triggerValues=new String[1];
+				triggerValues[0]=String.valueOf(taskitem.light_brightness);
+			}
 		}
 		values.put(SQLConsts.SQL_TASK_COLUMN_ENABLED,taskitem.isenabled?1:0);
 		values.put(SQLConsts.SQL_TASK_COLUMN_TYPE,taskitem.trigger_type);

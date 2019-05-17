@@ -383,7 +383,7 @@ public class ProfileActivity extends BaseActivity implements Runnable{
                     }else {
                         if(selected_position!=holder.getAdapterPosition()){
                             selected_position=holder.getAdapterPosition();
-                            getSharedPreferences(PublicConsts.PREFERENCES_NAME, Context.MODE_PRIVATE).edit().putString(PublicConsts.PREFERENCES_CURRENT_TABLE_NAME,item.table_name).apply();
+                            MySQLiteOpenHelper.setCurrentTableName(ProfileActivity.this,item.table_name);
                             isTableStatusChanged=true;
                             TimeSwitchService.sendEmptyMessage(TimeSwitchService.MESSAGE_REQUEST_REFRESH_TASKS);
                             notifyDataSetChanged();
