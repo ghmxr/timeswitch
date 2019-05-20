@@ -68,7 +68,9 @@ public class LightSensor implements Trigger,SensorEventListener{
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    new ProcessTaskItem(context,item).checkExceptionsAndRunActions();
+                    try{
+                        new ProcessTaskItem(context,item).checkExceptionsAndRunActions();
+                    }catch (Exception e){e.printStackTrace();}
                 }
             }).start();
         }

@@ -3,7 +3,6 @@ package com.github.ghmxr.timeswitch.utils;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.AudioManager;
@@ -45,6 +44,8 @@ public class ProcessTaskItem {
     public static String last_activated_task_name="";
     private static int notification_id=2;
 
+    public static Thread flash_light_thread;
+
     public ProcessTaskItem(@NonNull Context context, TaskItem item){
         this.item=item;
         this.context=context;
@@ -54,7 +55,6 @@ public class ProcessTaskItem {
         if(this.item==null) return;
 
         log_taskitem.append(item.name);
-        log_taskitem.append(":");
 
         SQLiteDatabase database= MySQLiteOpenHelper.getInstance(this.context).getWritableDatabase();
 
@@ -122,53 +122,35 @@ public class ProcessTaskItem {
         }
 
         if(canTrigger){
-           log_taskitem.append(" ");
            last_activated_task_name=item.name;
-           int action_wifi=-1;
-           int action_bluetooth=-1;
-           int action_ring_mode=-1;
-           int screen_brightness=-1;
-           int action_net=-1;
-           int action_gps=-1;
-           int action_airplanemode=-1;
-           int action_device_control=-1;
-           try{
-               action_wifi=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_WIFI_LOCALE]);
-               action_bluetooth=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BLUETOOTH_LOCALE]);
-               action_ring_mode=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_MODE_LOCALE]);
-               screen_brightness=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BRIGHTNESS_LOCALE]);
-               action_net=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE]);
-               action_gps=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE]);
-               action_airplanemode=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE]);
-               action_device_control=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]);
-           }catch (Exception e){
-               e.printStackTrace();
-           }
-           try{activateActionOfWifi(action_wifi);}catch (Exception e){e.printStackTrace();}
-            try{activateActionOfBluetooth(action_bluetooth);}catch (Exception e){e.printStackTrace();}
-            try{activateActionOfRingMode(action_ring_mode);}catch (Exception e){e.printStackTrace();}
+
+            try{activateActionOfWifi(Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_WIFI_LOCALE]));}catch (Exception e){e.printStackTrace();}
+            try{activateActionOfBluetooth(Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BLUETOOTH_LOCALE]));}catch (Exception e){e.printStackTrace();}
+            try{activateActionOfRingMode(Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_MODE_LOCALE]));}catch (Exception e){e.printStackTrace();}
             try{activateActionOfVolume(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE]);}catch (Exception e){e.printStackTrace();}
             try{activateActionOfSettingRingtone(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE]);}catch (Exception e){e.printStackTrace();}
-            try{activateActionOfBrightness(screen_brightness);}catch (Exception e){e.printStackTrace();}
+            try{activateActionOfBrightness(Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BRIGHTNESS_LOCALE]));}catch (Exception e){e.printStackTrace();}
             try{activateActionOfWallpaper(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SET_WALL_PAPER_LOCALE]);}catch (Exception e){e.printStackTrace();}
+            try{activateActionOfFlashlight(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FLASHLIGHT]);}catch (Exception e){e.printStackTrace();}
             try{activateActionOfVibrate(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE]);}catch (Exception e){e.printStackTrace();}
             try{activateActionOfToast(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE]);}catch (Exception e){e.printStackTrace();}
+            try{activateActionOfAutorotation(Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AUTOROTATION]));}catch (Exception e){e.printStackTrace();}
             try{activateActionOfSMS(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE]);}catch (Exception e){e.printStackTrace();}
             try{launchAppsByPackageName(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES]);}catch (Exception e){e.printStackTrace();}
             try{stopAppsByPackageName(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES]);}catch (Exception e){e.printStackTrace();}
             try{switchTasks();}catch (Exception e){e.printStackTrace();}
+            try{forceStopAppsByPackageName(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FORCE_STOP_APP_PACKAGES]);}catch (Exception e){e.printStackTrace();}
 
-            SharedPreferences settings=context.getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE);
-            boolean isRoot=settings.getBoolean(PublicConsts.PREFERENCES_IS_SUPERUSER_MODE,PublicConsts.PREFERENCES_IS_SUPERUSER_MODE_DEFAULT);
-            if(isRoot){
-                activateActionOfNet(action_net);
-                activateActionOfGps(action_gps);
-                activateActionOfAirplaneMode(action_airplanemode);
-                activateActionOfDeviceControl(action_device_control);
+            if(context.getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE).getBoolean(PublicConsts.PREFERENCES_IS_SUPERUSER_MODE,PublicConsts.PREFERENCES_IS_SUPERUSER_MODE_DEFAULT)){
+                try{activateActionOfNet(Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE]));}catch (Exception e){e.printStackTrace();}
+                try{activateActionOfGps(Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE]));}catch (Exception e){e.printStackTrace();}
+                try{activateActionOfAirplaneMode(Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE]));}catch (Exception e){e.printStackTrace();}
+                try{activateActionOfDeviceControl(Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]));}catch (Exception e){e.printStackTrace();}
             }
+
             activateActionOfNotification(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE]);
         }
-        LogUtil.putLog(context,log_taskitem.toString());
+        LogUtil.putLog(context,context.getResources().getString(R.string.notification_task_activated_title)+":"+log_taskitem.toString());
         LogActivity.sendEmptyMessage(LogActivity.MESSAGE_REQUEST_REFRESH);
     }
 
@@ -467,6 +449,27 @@ public class ProcessTaskItem {
         }
     }
 
+    private void activateActionOfFlashlight(String values){
+        final String []array=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+        final int type=Integer.parseInt(array[0]);
+        if(type<0) return;
+        if(flash_light_thread!=null) flash_light_thread.interrupt();
+        flash_light_thread=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(type==ActionConsts.ActionValueConsts.ACTION_FLASHLIGHT_TYPE_HOLD)EnvironmentUtils.setTorch(context,Integer.parseInt(array[1])*1000);
+                else if(type==ActionConsts.ActionValueConsts.ACTION_FLASHLIGHT_TYPE_CUSTOM){
+                    long[] vars=new long[array.length-1];
+                    for(int i=0;i<vars.length;i++){
+                        vars[i]=Long.parseLong(array[i+1]);
+                    }
+                    EnvironmentUtils.setTorch(context,vars);
+                }
+            }
+        });
+        flash_light_thread.start();
+    }
+
     private void activateActionOfVibrate(String values){
         String vibrate_values[]=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
         Integer frequency=Integer.parseInt(vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_FREQUENCY_LOCALE]);
@@ -557,6 +560,7 @@ public class ProcessTaskItem {
     private void activateActionOfNotification(String values){
         String notification_values[]=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
         int type=Integer.parseInt(notification_values[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_LOCALE]);
+        if(type==-1)return;
         int if_custom=Integer.parseInt(notification_values[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE]);
         if(type== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_NOT_OVERRIDE){
             if(notification_id<Integer.MAX_VALUE) notification_id++;//Can user make notification shows like that total?
@@ -693,14 +697,14 @@ public class ProcessTaskItem {
             //final String table_name= MySQLiteOpenHelper.getCurrentTableName(context);
             Cursor cursor=database.rawQuery("select * from "+table_name+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+item.id,null);
             if(cursor.moveToFirst()){
-                String additions_read[]=ValueUtils.string2StringArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ADDITIONS)));
+                String additions_read[]=ValueUtils.string2StringArray(PublicConsts.SPLIT_SEPARATOR_FIRST_LEVEL,cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ADDITIONS)));
                 String additions[]=new String[AdditionConsts.ADDITION_LENGTH];
                 for(int i=0;i<additions.length;i++){additions[i]=String.valueOf(-1);}
                 additions[AdditionConsts.ADDITION_TITLE_COLOR_LOCALE]=new TaskItem().addition_title_color;
                 System.arraycopy(additions_read,0,additions,0,additions_read.length);
                 additions[AdditionConsts.ADDITION_TITLE_FOLDED_VALUE_LOCALE]=isFolded?String.valueOf(0):String.valueOf(-1);
                 ContentValues content=new ContentValues();
-                content.put(SQLConsts.SQL_TASK_COLUMN_ADDITIONS,ValueUtils.stringArray2String(additions));
+                content.put(SQLConsts.SQL_TASK_COLUMN_ADDITIONS,ValueUtils.stringArray2String(PublicConsts.SEPARATOR_FIRST_LEVEL,additions));
                 database.update(table_name,content,SQLConsts.SQL_TASK_COLUMN_ID+"="+item.id,null);
             }
             cursor.close();

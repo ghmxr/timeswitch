@@ -41,6 +41,7 @@ import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBrightness;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForDeviceControl;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForFlashlight;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForNotification;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForRingMode;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForToast;
@@ -346,6 +347,28 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
             group.addView(view);
         }
 
+        final int action_flashlight=Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FLASHLIGHT].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[0]);
+		if(action_flashlight>=0){
+			View view=getActionItemViewForViewGroup(group,R.drawable.icon_flashlight
+			,resources.getString(R.string.action_flashlight)
+			,ContentAdapter.ActionContentAdapter.getFlashlightDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FLASHLIGHT]));
+			view.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					BottomDialogForFlashlight dialog=new BottomDialogForFlashlight(TaskGui.this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FLASHLIGHT]);
+					dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+						@Override
+						public void onDialogConfirmed(String result) {
+							taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FLASHLIGHT]=result;
+							refreshActionStatus();
+						}
+					});
+					dialog.show();
+				}
+			});
+			group.addView(view);
+		}
+
         if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[ActionConsts.ActionSecondLevelLocaleConsts.SMS_ENABLED_LOCALE])>=0){
 			View view=getActionItemViewForViewGroup(group,R.drawable.icon_sms,resources.getString(R.string.activity_taskgui_actions_sms)
 					, ContentAdapter.ActionContentAdapter.getSMSDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_SMS_LOCALE]));
@@ -568,6 +591,29 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 						@Override
 						public void onDialogConfirmed(String result) {
 							taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES]=result;
+							refreshActionStatus();
+						}
+					});
+					dialog.show();
+				}
+			});
+			group.addView(view);
+		}
+
+		if(!taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FORCE_STOP_APP_PACKAGES].equals("-1")){
+			View view=getActionItemViewForViewGroup(group,R.drawable.icon_app_force_stop,resources.getString(R.string.activity_taskgui_actions_app_force_close)
+			,ContentAdapter.ActionContentAdapter.getAppNameDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FORCE_STOP_APP_PACKAGES]));
+			view.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					DialogForAppSelection dialog=new DialogForAppSelection(TaskGui.this,resources.getString(R.string.activity_taskgui_actions_app_force_close)
+							,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FORCE_STOP_APP_PACKAGES]
+							,"#55e74c3c"
+							, resources.getString(R.string.dialog_app_force_close_att));
+					dialog.setOnDialogConfirmedCallBack(new DialogConfirmedCallBack() {
+						@Override
+						public void onDialogConfirmed(String result) {
+							taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FORCE_STOP_APP_PACKAGES]=result;
 							refreshActionStatus();
 						}
 					});

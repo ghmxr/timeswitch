@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.os.SystemClock;
 import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -36,6 +37,7 @@ import android.telecom.TelecomManager;
 import android.telephony.SmsManager;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
@@ -333,46 +335,113 @@ public class EnvironmentUtils {
     }
 
     /**
-     * 打开闪光灯并持续相应的毫秒数，此方法在闪光灯关闭前阻塞不会返回，必须在子线程执行该方法
+     * 打开闪光灯并持续相应的毫秒数，此方法在闪光灯关闭前阻塞不会返回，必须在子线程执行该方法，
+     * 此方法不会向上抛异常。
      * @param milliseconds 持续的毫秒数
      */
-    public static void setTorch(Context context,long milliseconds) throws Exception{
+    public static synchronized void setTorch(Context context,long milliseconds) {
+        if(milliseconds<20) milliseconds=20;
         if(Build.VERSION.SDK_INT<23){
-            Camera camera= Camera.open();
-            Camera.Parameters parameters=camera.getParameters();
-            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-            camera.setParameters(parameters);
+            Camera camera=null;
             try{
+                camera=Camera.open();
+                Camera.Parameters parameters=camera.getParameters();
+                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                camera.setParameters(parameters);
+                //SystemClock.sleep(milliseconds);
                 Thread.sleep(milliseconds);
-            }catch (InterruptedException e){
+            }catch (Exception e){
                 e.printStackTrace();
             }finally {
-                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-                camera.setParameters(parameters);
-                camera.release();
+                try{
+                    Camera.Parameters parameters=camera.getParameters();
+                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                    camera.setParameters(parameters);
+                }catch (Exception e){}
+                try{camera.release();}catch (Exception e){}
             }
         }else{
-            CameraManager manager=(CameraManager)context.getSystemService(Context.CAMERA_SERVICE);
-            manager.setTorchMode("0",true);
+            CameraManager manager=null;
             try{
+                manager=(CameraManager)context.getSystemService(Context.CAMERA_SERVICE);
+                manager.setTorchMode("0",true);
+                //SystemClock.sleep(milliseconds);
                 Thread.sleep(milliseconds);
-            }catch (InterruptedException e){
+            }catch (Exception e){
                 e.printStackTrace();
             }finally {
-                manager.setTorchMode("0",false);
+                try{
+                    manager.setTorchMode("0",false);
+                }catch (Exception e){e.printStackTrace();}
             }
         }
     }
 
     /**
      * 使闪光灯按照保持、关闭的循环点亮（闪烁），方法执行完成前不会返回，需要在子线程执行
+     * 此方法不会向上抛异常
      * @param arrays 执行参数
      */
-    public static void setTorch(Context context,long[]arrays) throws Exception{
+    public static synchronized void setTorch(Context context,long[]arrays){
         if(arrays==null||arrays.length==0) return;
-        for(int i=0;i<arrays.length;i++){
-            if(i%2==0) setTorch(context,arrays[i]);
-            else Thread.sleep(arrays[i]);
+        if(Build.VERSION.SDK_INT<23){
+            Camera camera=null;
+            try{
+                camera=Camera.open();
+                Camera.Parameters parameters;
+                for(int i=0;i<arrays.length;i++){
+                    if(i%2==0){
+                        //open the torch and hold the milliseconds
+                        parameters=camera.getParameters();
+                        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                        camera.setParameters(parameters);
+                        //hold on
+                        //SystemClock.sleep(arrays[i]<20?20:arrays[i]);
+                        Thread.sleep(arrays[i]<20?20:arrays[i]);
+                    }
+                    else {
+                        //close and hold on
+                        parameters=camera.getParameters();
+                        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                        camera.setParameters(parameters);
+                        //SystemClock.sleep(arrays[i]<20?20:arrays[i]);
+                        Thread.sleep(arrays[i]<20?20:arrays[i]);
+                    }
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }finally {
+                try{
+                    Camera.Parameters parameters=camera.getParameters();
+                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                    camera.setParameters(parameters);
+                }catch (Exception e){}
+                try{camera.release();}catch (Exception e){}
+            }
+        }else{
+            CameraManager manager=null;
+            try{
+                manager=(CameraManager)context.getApplicationContext().getSystemService(Context.CAMERA_SERVICE);
+                for(int i=0;i<arrays.length;i++){
+                    if(i%2==0){
+                        manager.setTorchMode("0",true);
+                        //hold on
+                        //SystemClock.sleep(arrays[i]<20?20:arrays[i]);
+                        Thread.sleep(arrays[i]<20?20:arrays[i]);
+                    }else{
+                        manager.setTorchMode("0",false);
+                        //hold on
+                        //SystemClock.sleep(arrays[i]<20?20:arrays[i]);
+                        Thread.sleep(arrays[i]<20?20:arrays[i]);
+                    }
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }finally {
+                try{
+                    manager.setTorchMode("0",false);
+                }catch (Exception e){e.printStackTrace();}
+            }
         }
     }
 

@@ -52,6 +52,12 @@
             android:text="@string/unselected"/>
 
         <RadioButton
+            android:id="@+id/dialog_action_flashlight_hold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/action_flashlight_hold"/>
+
+        <RadioButton
             android:id="@+id/dialog_action_flashlight_custom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -64,29 +70,35 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:gravity="center_horizontal">
-        <EditText
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/dialog_action_flashlight_edit"
-            android:hint="@string/action_flashlight_hint_custom"
-            android:layout_toLeftOf="@+id/dialog_action_flashlight_unit"
-            android:digits="0123456789,"/>
-        <TextView
+        <LinearLayout
+            android:id="@+id/dialog_action_flashlight_edit_area_area"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/dialog_action_flashlight_unit"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:gravity="center"
-            android:textSize="16sp"
-            android:text="ms"/>
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true">
+            <EditText
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/dialog_action_flashlight_edit"
+                android:hint="@string/action_flashlight_hint_custom"
+                android:digits="0123456789,"
+                android:singleLine="true"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/dialog_action_flashlight_unit"
+                android:textSize="16sp"
+                android:text="ms"/>
+        </LinearLayout>
+        <Button
+            android:id="@+id/dialog_action_flashlight_test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dialog_action_flashlight_edit_area_area"
+            android:layout_marginBottom="30dp"
+            android:layout_centerHorizontal="true"
+            android:text="@string/preview"/>
 
     </RelativeLayout>
-    <Button
-        android:id="@+id/dialog_action_flashlight_test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/dialog_action_flashlight_edit_area"
-        android:layout_centerHorizontal="true"
-        android:text="@string/preview"/>
+
 </RelativeLayout>

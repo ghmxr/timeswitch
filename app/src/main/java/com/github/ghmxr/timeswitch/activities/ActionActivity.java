@@ -409,8 +409,15 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             }
             break;
             case R.id.actions_flashlight:{
-                //BottomDialogForFlashlight dialog=new BottomDialogForFlashlight(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FLASHLIGHT]);
-                //dialog.show();
+                BottomDialogForFlashlight dialog=new BottomDialogForFlashlight(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FLASHLIGHT]);
+                dialog.show();
+                dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+                    @Override
+                    public void onDialogConfirmed(String result) {
+                        item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FLASHLIGHT]=result;
+                        refreshActionStatus();
+                    }
+                });
             }
             break;
         }
@@ -496,6 +503,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
         ((TextView)findViewById(R.id.actions_app_open_status)).setText(ContentAdapter.ActionContentAdapter.getAppNameDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES]));
         ((TextView)findViewById(R.id.actions_app_close_status)).setText(ContentAdapter.ActionContentAdapter.getAppNameDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES]));
         ((TextView)findViewById(R.id.actions_autorotation_status)).setText(ContentAdapter.ActionContentAdapter.getGeneralDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AUTOROTATION]));
+        ((TextView)findViewById(R.id.actions_flashlight_status)).setText(ContentAdapter.ActionContentAdapter.getFlashlightDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FLASHLIGHT]));
     }
 
     private boolean checkAndShowSnackBarOfSuperuserRequest(){

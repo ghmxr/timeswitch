@@ -63,20 +63,18 @@ public class PrivilegeTestActivity extends BaseActivity implements View.OnClickL
             }
             break;
             case R.id.privilege_flashlight:{
+                findViewById(R.id.privilege_flashlight).setEnabled(false);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        try{
-                            EnvironmentUtils.setTorch(PrivilegeTestActivity.this,1000);
-                        }catch (final Exception e){
-                            e.printStackTrace();
-                            Global.handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    showFailedToastWithErrorInfo(e.toString());
-                                }
-                            });
-                        }
+                        EnvironmentUtils.setTorch(PrivilegeTestActivity.this,1000);
+                        Global.handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                findViewById(R.id.privilege_flashlight).setEnabled(true);
+                                Toast.makeText(PrivilegeTestActivity.this,getResources().getString(R.string.privilege_flashlight_result),Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                 }).start();
             }

@@ -66,6 +66,7 @@ public class ActionConsts {
         public static final int TOAST_TYPE_LOCALE                                           =0;
         public static final int TOAST_LOCATION_X_OFFSET_LOCALE                              =1;
         public static final int TOAST_LOCATION_Y_OFFSET_LOCALE                              =2;
+        public static final int FLASHLIGHT_TYPE_LOCALE                                      =0;
     }
 
     public static class ActionValueConsts{
@@ -93,6 +94,8 @@ public class ActionConsts {
         public static final int ACTION_DEVICE_CONTROL_NONE =-1;
         public static final int ACTION_BRIGHTNESS_UNSELECTED	=-1;
         public static final int ACTION_BRIGHTNESS_AUTO			=256;
+        public static final int ACTION_FLASHLIGHT_TYPE_HOLD=0;
+        public static final int ACTION_FLASHLIGHT_TYPE_CUSTOM= 1;
     }
 
 }

@@ -886,6 +886,26 @@ public class ContentAdapter {
             return builder.toString();
         }
 
+        public static String getFlashlightDisplayValue(Context context,String values){
+            try{
+                String [] array=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+                int type=Integer.parseInt(array[0]);
+                if(type==-1) return "";
+                if(type==ActionConsts.ActionValueConsts.ACTION_FLASHLIGHT_TYPE_HOLD){
+                    return context.getResources().getString(R.string.action_flashlight_hold)+":"+array[1];
+                }
+                if(type== ActionConsts.ActionValueConsts.ACTION_FLASHLIGHT_TYPE_CUSTOM) {
+                    String set="";
+                    for(int i=1;i<array.length;i++) {
+                        set+=array[i];
+                        if(i<array.length-1) set+=",";
+                    }
+                    return context.getResources().getString(R.string.action_flashlight_custom)+":"+set;
+                }
+            }catch (Exception e){e.printStackTrace();}
+            return "";
+        }
+
         public static boolean isGeneralItemVisible(String value){
             try{
                 return Integer.parseInt(value)>=0;
@@ -1308,24 +1328,25 @@ public class ContentAdapter {
                 return "";
             }
 
+            public static String getAppForceCloseValue(Context context ,String values){
+                try{
+                    String apps=getAppPackagesDisplayValue(context,values);
+                    if(apps.length()>0){
+                        return context.getResources().getString(R.string.adapter_action_app_force_close)+apps;
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                return "";
+            }
+
             public static String getActionValue(Context context, TaskItem item){
                 try{
                     String[]actions=item.actions;
                     StringBuilder builder=new StringBuilder("");
 
-                    /*int action_wifi=Integer.parseInt(actions[PublicConsts.ACTION_WIFI_LOCALE]);
-                    if(action_wifi>=0){
-                        if(action_wifi==0) builder.append(context.getResources().getString(R.string.action_wifi_open));
-                        if(action_wifi==1) builder.append(context.getResources().getString(R.string.action_wifi_close));
-                    }*/
                     builder.append(getWifiDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_WIFI_LOCALE]));
 
-                    /*int action_bluetooth=Integer.parseInt(actions[PublicConsts.ACTION_BLUETOOTH_LOCALE]);
-                    if(action_bluetooth>=0){
-                        if(builder.toString().length()>0)builder.append(",");
-                        if(action_bluetooth==0) builder.append(context.getResources().getString(R.string.action_bluetooth_close));
-                        if(action_bluetooth==1) builder.append(context.getResources().getString(R.string.action_bluetooth_open));
-                    }*/
                     String value_bluetooth= getBluetoothDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BLUETOOTH_LOCALE]);
                     if(value_bluetooth.length()>0){
                         if(builder.toString().length()>0) builder.append(",");
@@ -1333,50 +1354,12 @@ public class ContentAdapter {
                     }
 
 
-                    /*int action_ring=Integer.parseInt(actions[PublicConsts.ACTION_RING_MODE_LOCALE]);
-                    if(action_ring>=0){
-                        if(builder.toString().length()>0) builder.append(",");
-                        if(action_ring==PublicConsts.ACTION_RING_NORMAL) builder.append(context.getResources().getString(R.string.action_ring_mode_normal));
-                        if(action_ring==PublicConsts.ACTION_RING_VIBRATE)builder.append(context.getResources().getString(R.string.action_ring_mode_vibrate));
-                        if(action_ring==PublicConsts.ACTION_RING_OFF) builder.append(context.getResources().getString(R.string.action_ring_mode_off));
-                    }*/
                     String value_ringmode= getRingModeDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_MODE_LOCALE]);
                     if(value_ringmode.length()>0){
                         if(builder.toString().length()>0) builder.append(",");
                         builder.append(value_ringmode);
                     }
 
-
-                    /*String [] action_volumes=actions[PublicConsts.ACTION_RING_VOLUME_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
-                    AudioManager audioManager=(AudioManager) context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-                    int volume_call=Integer.parseInt(action_volumes[PublicConsts.VOLUME_RING_LOCALE]);
-                    int volume_notification=Integer.parseInt(action_volumes[PublicConsts.VOLUME_NOTIFICATION_LOCALE]);
-                    int volume_media=Integer.parseInt(action_volumes[PublicConsts.VOLUME_MEDIA_LOCALE]);
-                    int volume_alarm=Integer.parseInt(action_volumes[PublicConsts.VOLUME_ALARM_LOCALE]);
-                    if(volume_call>=0) {
-                        if(builder.toString().length()>0) builder.append(",");
-                        builder.append(context.getResources().getString(R.string.activity_taskgui_actions_ring_volume_ring));
-                        builder.append((int)(((double)volume_call/audioManager.getStreamMaxVolume(AudioManager.STREAM_RING))*100));
-                        builder.append(context.getResources().getString(R.string.percentage));
-                    }
-                    if(volume_media>=0){
-                        if(builder.toString().length()>0) builder.append(",");
-                        builder.append(context.getResources().getString(R.string.activity_taskgui_actions_ring_volume_media));
-                        builder.append((int)(((double)volume_media/audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC))*100));
-                        builder.append(context.getResources().getString(R.string.percentage));
-                    }
-                    if(volume_notification>=0){
-                        if(builder.toString().length()>0) builder.append(",");
-                        builder.append(context.getResources().getString(R.string.activity_taskgui_actions_ring_volume_notification));
-                        builder.append((int)(((double)volume_notification/audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION))*100));
-                        builder.append(context.getResources().getString(R.string.percentage));
-                    }
-                    if(volume_alarm>=0){
-                        if(builder.toString().length()>0) builder.append(",");
-                        builder.append(context.getResources().getString(R.string.activity_taskgui_actions_ring_volume_alarm));
-                        builder.append((int)(((double)volume_alarm/audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM))*100));
-                        builder.append(context.getResources().getString(R.string.percentage));
-                    }*/
                     String value_volume= getRingVolumeDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE]);
                     if(value_volume.length()>0){
                         if(builder.toString().length()>0) builder.append(",");
@@ -1384,46 +1367,22 @@ public class ContentAdapter {
                     }
 
 
-                    /*String[] action_ring_selections=actions[PublicConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
-                    int action_ring_selection_call=Integer.parseInt(action_ring_selections[PublicConsts.RING_SELECTION_CALL_TYPE_LOCALE]);
-                    int action_ring_selection_notification=Integer.parseInt(action_ring_selections[PublicConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE]);
-                    //RingtoneManager ringtoneManager=RingtoneManager.
-                    if(action_ring_selection_notification>=0){
-                        if(builder.toString().length()>0) builder.append(",");
-                        builder.append(context.getResources().getString(R.string.action_set_ringtone_notification));
-                        builder.append(RingtoneManager.getRingtone(context, Uri.parse(item.uri_ring_notification)).getTitle(context));
-                    }
-                    if(action_ring_selection_call>=0){
-                        if(builder.toString().length()>0) builder.append(",");
-                        builder.append(context.getResources().getString(R.string.action_set_ringtone_phone));
-                        builder.append(RingtoneManager.getRingtone(context, Uri.parse(item.uri_ring_call)).getTitle(context));
-                    }*/
                     String value_ringselect= getRingSelectionDisplayValue(context,item);
                     if(value_ringselect.length()>0){
                         if(builder.toString().length()>0) builder.append(",");
                         builder.append(value_ringselect);
                     }
 
-                    /*String [] action_vibrate_values=actions[PublicConsts.ACTION_VIBRATE_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
-                    int vibrate_frequency=Integer.parseInt(action_vibrate_values[PublicConsts.VIBRATE_FREQUENCY_LOCALE]);
-                    if(vibrate_frequency>0){
-                        int vibrate_duration=Integer.parseInt(action_vibrate_values[PublicConsts.VIBRATE_DURATION_LOCALE]);
-                        int vibrate_interval=Integer.parseInt(action_vibrate_values[PublicConsts.VIBRATE_INTERVAL_LOCALE]);
-                        if(builder.toString().length()>0) builder.append(",");
-                        builder.append(context.getResources().getString(R.string.adapter_action_vibrate));
-                        builder.append(vibrate_frequency);
-                        builder.append(context.getResources().getString(R.string.dialog_actions_vibrate_frequency_measure));
-                        builder.append(",");
-                        builder.append(vibrate_duration);
-                        builder.append(context.getResources().getString(R.string.dialog_actions_vibrate_duration_measure));
-                        builder.append(",");
-                        builder.append(vibrate_interval);
-                        builder.append(context.getResources().getString(R.string.dialog_actions_vibrate_interval_measure));
-                    }*/
                     String value_vibrate= getVibrateDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE]);
                     if(value_vibrate.length()>0){
                         if(builder.toString().length()>0) builder.append(",");
                         builder.append(value_vibrate);
+                    }
+
+                    String value_autorotation=getGeneralDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AUTOROTATION]);
+                    if(value_autorotation.length()>0){
+                        if(builder.toString().length()>0) builder.append(",");
+                        builder.append(value_autorotation);
                     }
 
                     String values_brightness= getBrightnessDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BRIGHTNESS_LOCALE]);
@@ -1432,37 +1391,18 @@ public class ContentAdapter {
                         builder.append(values_brightness);
                     }
 
-                    /*String  action_set_wallpaper_values=actions[PublicConsts.ACTION_SET_WALL_PAPER_LOCALE];
-                    int action_wallpaper=Integer.parseInt(action_set_wallpaper_values);
-                    if(action_wallpaper>=0){
-                        if(builder.toString().length()>0) builder.append(",");
-                        builder.append(context.getResources().getString(R.string.action_set_wallpaper));
-                        builder.append(ValueUtils.getRealPathFromUri(context,Uri.parse(item.uri_wallpaper_desktop)));
-                    }*/
                     String value_wallpaper= getWallpaperDisplayValue(context,item);
                     if(value_wallpaper.length()>0){
                         if(builder.toString().length()>0)builder.append(",");
                         builder.append(value_wallpaper);
                     }
 
-                    /*String action_sms_values[]=actions[PublicConsts.ACTION_SMS_LOCALE].split(PublicConsts.SEPARATOR_SECOND_LEVEL);
-                    if(Integer.parseInt(action_sms_values[PublicConsts.SMS_ENABLED_LOCALE])>=0){
-                        if(builder.toString().length()>0) builder.append(",");
-                        builder.append(context.getResources().getString(R.string.adapter_action_sms));
-                        if(Build.VERSION.SDK_INT>=22){
-                            SubscriptionInfo subinfo= SubscriptionManager.from(context).getActiveSubscriptionInfo(Integer.parseInt(action_sms_values[PublicConsts.SMS_SUBINFO_LOCALE]));
-                            builder.append("(");
-                            builder.append(subinfo.getDisplayName());
-                            builder.append(":");
-                            builder.append(subinfo.getNumber());
-                            builder.append(")");
-                        }
-                        builder.append(context.getResources().getString(R.string.adapter_action_sms_receivers));
-                        builder.append(item.sms_address);
-                        builder.append(",");
-                        builder.append(context.getResources().getString(R.string.adapter_action_sms_message));
-                        builder.append(item.sms_message);
-                    }*/
+                    String value_flashlight=getFlashlightDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FLASHLIGHT]);
+                    if(value_flashlight.length()>0){
+                        if(builder.toString().length()>0)builder.append(",");
+                        builder.append(value_flashlight);
+                    }
+
                     String value_sms= getSMSDisplayValue(context,item);
                     if(value_sms.length()>0){
                         if(builder.toString().length()>0) builder.append(",");
@@ -1527,6 +1467,12 @@ public class ContentAdapter {
                     if(value_app_close.length()>0){
                         if(builder.toString().length()>0) builder.append(",");
                         builder.append(value_app_close);
+                    }
+
+                    String value_app_force_close=getAppForceCloseValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FORCE_STOP_APP_PACKAGES]);
+                    if(value_app_force_close.length()>0){
+                        if(builder.toString().length()>0) builder.append(",");
+                        builder.append(value_app_force_close);
                     }
 
                     String returnValue=builder.toString();

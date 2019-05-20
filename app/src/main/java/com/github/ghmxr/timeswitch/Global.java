@@ -20,6 +20,7 @@ import android.util.Log;
 
 import com.github.ghmxr.timeswitch.adapters.ContentAdapter;
 import com.github.ghmxr.timeswitch.data.v2.AdditionConsts;
+import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.data.v2.SQLConsts;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.data.v2.MySQLiteOpenHelper;
@@ -54,7 +55,7 @@ public class Global {
                     item.isenabled=(cursor.getInt(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ENABLED))==1);
                     item.trigger_type = cursor.getInt(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_TYPE));
 
-                    String[] trigger_values= ValueUtils.string2StringArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_TRIGGER_VALUES)));
+                    String[] trigger_values= ValueUtils.string2StringArray(PublicConsts.SPLIT_SEPARATOR_FIRST_LEVEL,cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_TRIGGER_VALUES)));
                     if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE){   //0£¨½öÒ»´Î£©--{trigger_value};
                         item.time=Long.parseLong(trigger_values[0]);
                     }
@@ -91,10 +92,10 @@ public class Global {
                         item.light_brightness=Integer.parseInt(trigger_values[0]);
                     }
 
-                    String [] read_exceptions=ValueUtils.string2StringArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_EXCEPTIONS)));
+                    String [] read_exceptions=ValueUtils.string2StringArray(PublicConsts.SPLIT_SEPARATOR_FIRST_LEVEL,cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_EXCEPTIONS)));
                     System.arraycopy(read_exceptions,0,item.exceptions,0,read_exceptions.length);
 
-                    String [] read_actions=ValueUtils.string2StringArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ACTIONS)));
+                    String [] read_actions=ValueUtils.string2StringArray(PublicConsts.SPLIT_SEPARATOR_FIRST_LEVEL,cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ACTIONS)));
                     System.arraycopy(read_actions,0,item.actions,0,read_actions.length);
 
                     item.uri_ring_notification=cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_URI_RING_NOTIFICATION));
@@ -110,7 +111,7 @@ public class Global {
                     String initial_additions[]=new String[AdditionConsts.ADDITION_LENGTH];
                     for(int i=0;i<initial_additions.length;i++) initial_additions[i]=String.valueOf(-1);
 
-                    String read_additions[] =ValueUtils.string2StringArray(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ADDITIONS)));
+                    String read_additions[] =ValueUtils.string2StringArray(PublicConsts.SPLIT_SEPARATOR_FIRST_LEVEL,cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ADDITIONS)));
                     System.arraycopy(read_additions,0,initial_additions,0,read_additions.length);
 
                     item.notify=(Integer.parseInt(initial_additions[AdditionConsts.ADDITION_NOTIFY])==1);

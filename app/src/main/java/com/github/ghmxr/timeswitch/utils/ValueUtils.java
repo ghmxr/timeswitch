@@ -216,30 +216,31 @@ public class ValueUtils {
     }
 
     /**
-     * 将String数组转换为英文逗号隔开的字符串。
+     * 将String数组转换为指定符号隔开的字符串。
      * @param array 字符串数组
-     * @return 英文逗号隔开的字符串
+     * @param seperator 指定符号
+     * @return 指定符号隔开的字符串
      */
-    public static String stringArray2String(String[] array){
+    public static String stringArray2String(String seperator,String[] array){
         StringBuilder builder=new StringBuilder("");
         if(array==null||array.length==0) return "";
         for(int i=0;i<array.length;i++){
             builder.append(array[i]);
-            if(i<(array.length-1)) builder.append(PublicConsts.SEPARATOR_FIRST_LEVEL);
+            if(i<(array.length-1)) builder.append(seperator);
         }
         return builder.toString();
     }
 
     /**
-     * 将由英文逗号隔开的字符串转换为字符串数组
-     * @param value 由英文逗号隔开的字符串
+     * 将由指定符号隔开的字符串转换为字符串数组
+     * @param value 由指定符号隔开的字符串
      * @return 字符串数组
      */
-    public static String[] string2StringArray(String value){
+    public static String[] string2StringArray(String split,String value){
         if(value==null||value.equals("")) return new String[0];
         String [] values;
         try{
-            values=value.split(PublicConsts.SPLIT_SEPARATOR_FIRST_LEVEL);
+            values=value.split(split);
         }catch (Exception e){
             e.printStackTrace();
             return new String[0];

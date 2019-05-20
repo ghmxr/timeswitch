@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Widget Trigger</string>
+    <string name="app_name">部件触发器</string>
 	<string name="activity_add_title">添加</string>
 	<string name="activity_add_name_mask">新建任务</string>
 	<string name="activity_edit_title">编辑</string>
@@ -223,6 +223,8 @@
 	<string name="action_flashlight_hint_custom">参数，英文逗号隔开</string>
 	<string name="action_flashlight_att">选择“打开并保持”，输入秒数将打开闪光灯并保持相应秒数；\n
 		选择“自定义数组”，需要输入"保持,间隔"类似的毫秒数组，例如"100,200,100"将会使闪光灯点亮100毫秒、关闭200毫秒、点亮100毫秒。输入相应的参数并英文逗号隔开</string>
+	<string name="unit_millisecond">毫秒</string>
+	<string name="unit_second">秒</string>
 	<string name="activity_taskgui_actions_sms">发送短信</string>
 	<string name="activity_taskgui_actions_notification">推送通知</string>
 	<string name="activity_taskgui_actions_toast">文字Toast</string>
@@ -364,6 +366,7 @@
 	<string name="adapter_action_toast_message">Toast内容:</string>
 	<string name="adapter_action_app_open">运行应用:</string>
 	<string name="adapter_action_app_close">关闭应用:</string>
+	<string name="adapter_action_app_force_close">强制关闭应用:</string>
 	<string name="adapter_action_task_enable">启用任务:</string>
 	<string name="adapter_action_task_disable">关闭任务:</string>
 	<string name="adapter_action_notification_override_last">推送通知(覆盖上一个):</string>
@@ -396,6 +399,7 @@
 	<string name="privilege_button_app_detail">跳转至本应用详情页</string>
 	<string name="privilege_result_success">测试成功</string>
 	<string name="privilege_result_failed">测试失败</string>
+	<string name="privilege_flashlight_result">闪光灯亮了吗？亮了就表示ok</string>
 	<string name="monday">周一</string>
 	<string name="tuesday">周二</string>
 	<string name="wednesday">周三</string>
