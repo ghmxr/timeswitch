@@ -121,6 +121,13 @@
 
         <service android:name=".services.AppLaunchingDetectionService"/>
 
+        <service android:name=".services.NotificationMonitorService"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService"/>
+            </intent-filter>
+        </service>
+
         <receiver android:name=".triggers.timers.CustomAlarmReceiver$AlarmReceiver"
             android:exported="false">
             <intent-filter>
@@ -140,6 +147,7 @@
                 <action android:name="com.github.ghmxr.timeswitch.action.sms_delivered"/>
             </intent-filter>
         </receiver>
+        <receiver android:name=".utils.ProcessTaskItem$FlashlightReceiver"/>
 
     </application>
 

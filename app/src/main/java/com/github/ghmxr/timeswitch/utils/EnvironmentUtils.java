@@ -10,7 +10,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.WallpaperManager;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
@@ -26,7 +26,6 @@ import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.os.SystemClock;
 import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -37,14 +36,13 @@ import android.telecom.TelecomManager;
 import android.telephony.SmsManager;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.Global;
 import com.github.ghmxr.timeswitch.R;
-import com.github.ghmxr.timeswitch.data.v2.ExceptionConsts;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.receivers.SMSReceiver;
 
@@ -52,6 +50,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -80,6 +79,28 @@ public class EnvironmentUtils {
             try{
                 return Build.VERSION.SDK_INT<19||((AppOpsManager)context.getSystemService(Context.APP_OPS_SERVICE)).checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS,android.os.Process.myUid(),context.getPackageName())==AppOpsManager.MODE_ALLOWED;
             }catch (Exception e){e.printStackTrace();}
+            return false;
+        }
+
+        public static boolean isReadingNotificationPermissionGranted(Context context){
+            try{
+                String pkgName = context.getPackageName();
+                final String flat = Settings.Secure.getString(context.getContentResolver(), "enabled_notification_listeners");
+                if (!TextUtils.isEmpty(flat)) {
+                    final String[] names = flat.split(":");
+                    for (int i = 0; i < names.length; i++) {
+                        final ComponentName cn = ComponentName.unflattenFromString(names[i]);
+                        if (cn != null) {
+                            if (TextUtils.equals(pkgName, cn.getPackageName())) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             return false;
         }
     }
@@ -149,6 +170,21 @@ public class EnvironmentUtils {
                 public void onClick(View v) {
                     activity.startActivity(new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS));
                     Toast.makeText(activity,activity.getResources().getString(R.string.permission_request_notification_policy_toast),Toast.LENGTH_SHORT).show();
+                }
+            });
+            snackbar.show();
+            return false;
+        }
+
+        public static boolean checkAndShowNotificationReadingRequestSnackbar(final Activity activity,String att,String action){
+            if(Build.VERSION.SDK_INT<18)return false;
+            if(SpecialPermissionCheckUtil.isReadingNotificationPermissionGranted(activity)) return true;
+            Snackbar snackbar=Snackbar.make(activity.findViewById(android.R.id.content),att,Snackbar.LENGTH_SHORT);
+            snackbar.setAction(action, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    activity.startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"));
+                    Toast.makeText(activity,activity.getResources().getString(R.string.permission_request_reading_notification_toast),Toast.LENGTH_SHORT).show();
                 }
             });
             snackbar.show();
@@ -335,8 +371,7 @@ public class EnvironmentUtils {
     }
 
     /**
-     * 打开闪光灯并持续相应的毫秒数，此方法在闪光灯关闭前阻塞不会返回，必须在子线程执行该方法，
-     * 此方法不会向上抛异常。
+     * 打开闪光灯并持续相应的毫秒数，执行完成前保持阻塞不会返回
      * @param milliseconds 持续的毫秒数
      */
     public static synchronized void setTorch(Context context,long milliseconds) {

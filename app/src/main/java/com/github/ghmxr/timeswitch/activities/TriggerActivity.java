@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -77,6 +78,14 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
         findViewById(R.id.trigger_app_closed).setOnClickListener(this);
         findViewById(R.id.trigger_headset).setOnClickListener(this);
         findViewById(R.id.trigger_brightness).setOnClickListener(this);
+        if(Build.VERSION.SDK_INT>=18){
+            findViewById(R.id.trigger_received_notification).setVisibility(View.VISIBLE);
+            findViewById(R.id.trigger_received_notification).setOnClickListener(this);
+        }else {
+            findViewById(R.id.trigger_received_notification).setVisibility(View.GONE);
+            findViewById(R.id.trigger_received_notification).setOnClickListener(null);
+        }
+
         //initialize the values
         item=(TaskItem) getIntent().getSerializableExtra(EXTRA_SERIALIZED_TASKITEM);
         calendar.setTimeInMillis(item.time);
@@ -141,6 +150,10 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
             case TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED:{
                 ((TextView)findViewById(R.id.trigger_app_closed_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getAppNameDisplayValue(this,item.package_names));
                 //timePicker.setVisibility(View.GONE);
+            }
+            break;
+            case TriggerTypeConsts.TRIGGER_TYPE_RECEIVED_NOTIFICATION:{
+                ((TextView)findViewById(R.id.trigger_received_notification_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getAppNameDisplayValue(this,item.package_names));
             }
             break;
             case TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_IN:{
@@ -507,10 +520,9 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                         try{
                             if(result.equals("-1")) return;
                             item.package_names=result.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-                            refreshTriggerDisplayValues(v_id==R.id.trigger_app_opened?TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED:TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED);
-                            //if(v_id==R.id.trigger_app_opened){
-                            ((TextView)findViewById(v_id==R.id.trigger_app_opened?R.id.trigger_app_opened_value:R.id.trigger_app_closed_value)).setText(ContentAdapter.ActionContentAdapter.getAppNameDisplayValue(TriggerActivity.this,result));
-                            //}
+                            //refreshTriggerDisplayValues(v_id==R.id.trigger_app_opened?TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED:TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED);
+                            //((TextView)findViewById(v_id==R.id.trigger_app_opened?R.id.trigger_app_opened_value:R.id.trigger_app_closed_value)).setText(ContentAdapter.ActionContentAdapter.getAppNameDisplayValue(TriggerActivity.this,result));
+                            activateTriggerType(v_id==R.id.trigger_app_opened?TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED:TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED);
                         }catch (Exception e){item.package_names=new String[0];}
 
                     }
@@ -739,6 +751,25 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                 });
             }
             break;
+            case R.id.trigger_received_notification:{
+                if(!EnvironmentUtils.PermissionRequestUtil.checkAndShowNotificationReadingRequestSnackbar(this,getResources().getString(R.string.permission_request_reading_notification_toast)
+                        ,getResources().getString(R.string.permission_grant_action_att))){
+                    return;
+                }
+                DialogForAppSelection dialog=new DialogForAppSelection(this,getResources().getString(R.string.activity_trigger_received_notification),item.package_names,null,"");
+                dialog.setOnDialogConfirmedCallBack(new DialogConfirmedCallBack() {
+                    @Override
+                    public void onDialogConfirmed(String result) {
+                        try{
+                            if(result.equals("-1")) return;
+                            item.package_names=result.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+                            activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_RECEIVED_NOTIFICATION);
+                        }catch (Exception e){item.package_names=new String[0];}
+                    }
+                });
+                dialog.show();
+            }
+            break;
         }
     }
 
@@ -805,6 +836,7 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
         ((RadioButton)findViewById(R.id.trigger_app_closed_ra)).setChecked(type== TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED);
         ((RadioButton)findViewById(R.id.trigger_headset_ra)).setChecked(type== TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_IN||type== TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT);
         ((RadioButton)findViewById(R.id.trigger_brightness_ra)).setChecked(type==TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_HIGHER_THAN||type==TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_LOWER_THAN);
+        ((RadioButton)findViewById(R.id.trigger_received_notification_ra)).setChecked(type==TriggerTypeConsts.TRIGGER_TYPE_RECEIVED_NOTIFICATION);
         tv_condition_single_value.setText(unchoose);
         tv_condition_percertaintime_value.setText(unchoose);
         tv_condition_weekloop_value.setText(unchoose);
@@ -824,6 +856,7 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
         tv_app_closed.setText(unchoose);
         tv_headset.setText(unchoose);
         ((TextView)findViewById(R.id.trigger_brightness_value)).setText(unchoose);
+        ((TextView)findViewById(R.id.trigger_received_notification_value)).setText(unchoose);
     }
 
     @Override

@@ -36,6 +36,7 @@ public class PrivilegeTestActivity extends BaseActivity implements View.OnClickL
         findViewById(R.id.privilege_usage_page).setOnClickListener(this);
         findViewById(R.id.privilege_write_settings_page).setOnClickListener(this);
         findViewById(R.id.privilege_app_detail).setOnClickListener(this);
+        findViewById(R.id.privilege_read_notification_page).setOnClickListener(this);
     }
 
     @Override
@@ -167,6 +168,10 @@ public class PrivilegeTestActivity extends BaseActivity implements View.OnClickL
             break;
             case R.id.privilege_app_detail:{
                 EnvironmentUtils.PermissionRequestUtil.showAppDetailPageOfThisApplication(this);
+            }
+            break;
+            case R.id.privilege_read_notification_page:{
+                startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"));
             }
             break;
         }

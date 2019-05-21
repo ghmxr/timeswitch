@@ -63,6 +63,11 @@
             android:layout_height="wrap_content"
             android:text="@string/privilege_button_usage_page"/>
         <Button
+            android:id="@+id/privilege_read_notification_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/privilege_button_read_notification_page"/>
+        <Button
             android:id="@+id/privilege_write_settings_page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

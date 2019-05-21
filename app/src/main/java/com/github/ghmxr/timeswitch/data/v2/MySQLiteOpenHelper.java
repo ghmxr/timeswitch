@@ -206,7 +206,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 				triggerValues[0]=String.valueOf(taskitem.wifiIds);
 			}
 			break;
-			case TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED: case TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED:{
+			case TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED: case TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED: case TriggerTypeConsts.TRIGGER_TYPE_RECEIVED_NOTIFICATION:{
 				triggerValues=taskitem.package_names;
 				if(triggerValues==null||triggerValues.length==0) triggerValues=new String[1];
 			}

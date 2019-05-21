@@ -234,6 +234,12 @@ public class ContentAdapter {
                     if(content_type==CONTENT_TYPE_DISPLAY_STRING_CONTENT) return TriggerDisplayStrings.getBrightnessTriggerDisplayValue(context,item.trigger_type,item.light_brightness);
                 }
                 break;
+                case TriggerTypeConsts.TRIGGER_TYPE_RECEIVED_NOTIFICATION:{
+                    if(content_type==CONTENT_TYPE_ICON_RESOURCE_DRAWABLE_ID)return R.drawable.icon_notification;
+                    if(content_type==CONTENT_TYPE_DISPLAY_STRING_TITLE) return context.getResources().getString(R.string.activity_trigger_received_notification);
+                    if(content_type==CONTENT_TYPE_DISPLAY_STRING_CONTENT) return TriggerDisplayStrings.getAppNameDisplayValue(context,item.package_names);
+                }
+                break;
             }
             return null;
         }

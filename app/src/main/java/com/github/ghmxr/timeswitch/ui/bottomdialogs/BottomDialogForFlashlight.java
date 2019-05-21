@@ -59,7 +59,7 @@ public class BottomDialogForFlashlight extends BottomDialog implements View.OnCl
         setOnCancelListener(new OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                if(testThread!=null) testThread.interrupt();
+                if(testThread!=null)testThread.interrupt();
             }
         });
     }
@@ -123,33 +123,24 @@ public class BottomDialogForFlashlight extends BottomDialog implements View.OnCl
             break;
             case R.id.dialog_action_flashlight_test:{
                 preview.setEnabled(false);
-                setCancelable(false);
                 testThread=new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        try{
-                            if(type==ActionConsts.ActionValueConsts.ACTION_FLASHLIGHT_TYPE_HOLD){
-                                EnvironmentUtils.setTorch(getContext(),Integer.parseInt(editText.getText().toString().trim())*1000);
-                            }else if(type== ActionConsts.ActionValueConsts.ACTION_FLASHLIGHT_TYPE_CUSTOM){
-                                long[] array=ValueUtils.string2longArray(",",editText.getText().toString().trim());
-                                EnvironmentUtils.setTorch(getContext(),array);
-                            }
-                        }catch (Exception e){
-                            e.printStackTrace();
-                            EnvironmentUtils.showToast(getContext(),null,e.toString());
-                        }finally {
-                            Global.handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    preview.setEnabled(true);
-                                    setCancelable(true);
-                                }
-                            });
+                        if(type==ActionConsts.ActionValueConsts.ACTION_FLASHLIGHT_TYPE_HOLD){
+                            EnvironmentUtils.setTorch(getContext(),Integer.parseInt(editText.getText().toString().trim())*1000);
+                        }else if(type== ActionConsts.ActionValueConsts.ACTION_FLASHLIGHT_TYPE_CUSTOM){
+                            long[] array=ValueUtils.string2longArray(",",editText.getText().toString().trim());
+                            EnvironmentUtils.setTorch(getContext(),array);
                         }
+                        Global.handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                preview.setEnabled(true);
+                            }
+                        });
                     }
                 });
                 testThread.start();
-
             }
             break;
         }

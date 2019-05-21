@@ -1,15 +1,23 @@
 package com.github.ghmxr.timeswitch.utils;
 
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.os.Build;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import com.github.ghmxr.timeswitch.Global;
@@ -449,25 +457,61 @@ public class ProcessTaskItem {
         }
     }
 
-    private void activateActionOfFlashlight(String values){
-        final String []array=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-        final int type=Integer.parseInt(array[0]);
-        if(type<0) return;
-        if(flash_light_thread!=null) flash_light_thread.interrupt();
-        flash_light_thread=new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if(type==ActionConsts.ActionValueConsts.ACTION_FLASHLIGHT_TYPE_HOLD)EnvironmentUtils.setTorch(context,Integer.parseInt(array[1])*1000);
-                else if(type==ActionConsts.ActionValueConsts.ACTION_FLASHLIGHT_TYPE_CUSTOM){
-                    long[] vars=new long[array.length-1];
-                    for(int i=0;i<vars.length;i++){
-                        vars[i]=Long.parseLong(array[i+1]);
-                    }
-                    EnvironmentUtils.setTorch(context,vars);
-                }
+    public static class FlashlightReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context,Intent intent){
+            if(flash_light_thread!=null){
+                Log.d("Noti","inter");
+                flash_light_thread.interrupt();
+                flash_light_thread=null;
             }
-        });
-        flash_light_thread.start();
+        }
+    }
+
+    private void activateActionOfFlashlight(final String values){
+        synchronized (ProcessTaskItem.class){
+            if(flash_light_thread!=null) {
+                flash_light_thread.interrupt();
+                flash_light_thread=null;
+                SystemClock.sleep(1000);
+            }
+            final NotificationManager manager=(NotificationManager)context.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            if(manager==null)return;
+            NotificationCompat.Builder builder;
+            if(Build.VERSION.SDK_INT>=26){
+                NotificationChannel channel=new NotificationChannel("channel_flashlight","FlashLight", NotificationManager.IMPORTANCE_HIGH);
+                manager.createNotificationChannel(channel);
+                builder=new NotificationCompat.Builder(context,"channel_flashlight");
+            }else{
+                builder=new NotificationCompat.Builder(context);
+            }
+            builder.setSmallIcon(R.drawable.icon_flashlight);
+            builder.setContentTitle(context.getResources().getString(R.string.notification_flashlight_title));
+            builder.setContentText(context.getResources().getString(R.string.notification_flashlight_message));
+            builder.setOngoing(true);
+            builder.setContentIntent(PendingIntent.getBroadcast(context,1,new Intent(context,FlashlightReceiver.class),PendingIntent.FLAG_UPDATE_CURRENT));
+            builder.setFullScreenIntent(PendingIntent.getActivity(context,1,new Intent(),PendingIntent.FLAG_UPDATE_CURRENT),true);
+            manager.notify(110,builder.build());
+            flash_light_thread=new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    final String []array=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+                    final int type=Integer.parseInt(array[0]);
+                    if(type<0) return;
+                    if(type==ActionConsts.ActionValueConsts.ACTION_FLASHLIGHT_TYPE_HOLD)EnvironmentUtils.setTorch(context,Integer.parseInt(array[1])*1000);
+                    else if(type==ActionConsts.ActionValueConsts.ACTION_FLASHLIGHT_TYPE_CUSTOM){
+                        long[] vars=new long[array.length-1];
+                        for(int i=0;i<vars.length;i++){
+                            vars[i]=Long.parseLong(array[i+1]);
+                        }
+                        EnvironmentUtils.setTorch(context,vars);
+                    }
+                    manager.cancel(110);
+                }
+            });
+            flash_light_thread.start();
+        }
+
     }
 
     private void activateActionOfVibrate(String values){
@@ -563,7 +607,7 @@ public class ProcessTaskItem {
         if(type==-1)return;
         int if_custom=Integer.parseInt(notification_values[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE]);
         if(type== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_NOT_OVERRIDE){
-            if(notification_id<Integer.MAX_VALUE) notification_id++;//Can user make notification shows like that total?
+            if(notification_id<102) notification_id++;
             else notification_id=2;
         }
         String title,message;

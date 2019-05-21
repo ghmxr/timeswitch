@@ -85,7 +85,7 @@ public class Global {
                             item.wifiIds="";
                         }else item.wifiIds=String.valueOf(trigger_values[0]);
                     }
-                    if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED||item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED){
+                    if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED||item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED||item.trigger_type==TriggerTypeConsts.TRIGGER_TYPE_RECEIVED_NOTIFICATION){
                         item.package_names=trigger_values;
                     }
                     if(item.trigger_type==TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_HIGHER_THAN||item.trigger_type==TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_LOWER_THAN){
