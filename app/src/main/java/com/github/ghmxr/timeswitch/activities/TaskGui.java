@@ -1079,6 +1079,21 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			group.addView(view);
 		}
 
+		int wifi_status_head=Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[0]);
+		if(wifi_status_head!=-1){
+			final View view=getExceptionItemViewForViewGroup(group,R.drawable.icon_wifi_connected,getResources().getString(R.string.exception_wifi_status)
+					,ContentAdapter.ExceptionContentAdapter.getExceptionValueOfWifiStatus(this,taskitem.exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS]));
+			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS]=String.valueOf(-1);
+					checkAndPlayTransitionAnimation();
+					group.removeView(view);
+				}
+			});
+			group.addView(view);
+		}
+
 		((TextView)findViewById(R.id.layout_taskgui_area_exception_att)).setText(Integer.parseInt(taskitem.addition_exception_connector)==0?
 				getResources().getString(R.string.activity_taskgui_att_exception_and)
 				:getResources().getString(R.string.activity_taskgui_att_exception_or));

@@ -17,7 +17,6 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import com.github.ghmxr.timeswitch.Global;
@@ -96,6 +95,7 @@ public class ProcessTaskItem {
         boolean canTrigger= true;
         try {
             canTrigger=processExceptionOfTaskItem(context,item);
+            Log.d("processType",item.addition_exception_connector.equals("-1")?"OR":"AND");
             Log.d("CanTrigger",""+canTrigger);
         }catch (Exception e){
             e.printStackTrace();
@@ -280,9 +280,12 @@ public class ProcessTaskItem {
         if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_FRIDAY])==1) selected_day_of_week.add(Calendar.FRIDAY);
         if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_SATURDAY])==1) selected_day_of_week.add(Calendar.SATURDAY);
         if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_SUNDAY])==1) selected_day_of_week.add(Calendar.SUNDAY);
-        boolean is_today_in_selected_days=selected_day_of_week.contains(day_of_week);
-        if(is_today_in_selected_days&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR) return false;
-        if(!is_today_in_selected_days&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND) return true;
+
+        if(selected_day_of_week.size()>0){
+            boolean is_today_in_selected_days=selected_day_of_week.contains(day_of_week);
+            if(is_today_in_selected_days&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR) return false;
+            if(!is_today_in_selected_days&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND) return true;
+        }
 
         int start_time=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_START_TIME]);
         int end_time=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_END_TIME]);
@@ -323,21 +326,24 @@ public class ProcessTaskItem {
             if(!b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND) return true;
         }
 
-        int ex_wifi_connected=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_WIFI_CONNECTED]);
-        if(ex_wifi_connected==ExceptionConsts.EXCEPTION_WIFI_CONNECTED_TO_RANDOM_SSID){
-            boolean b=EnvironmentUtils.isWifiConnected(context,null);
-            if(b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR) return false;
-            if(!b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND) return true;
-        }else if(ex_wifi_connected>=0){
-            boolean b=EnvironmentUtils.isWifiConnected(context,ex_wifi_connected);
-            if(b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR) return false;
-            if(!b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND) return true;
-        }
-
-        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_WIFI_DISCONNECTED])>=0){
+        int ex_wifi_status=Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[0]);
+        if(ex_wifi_status==ExceptionConsts.EXCEPTION_WIFI_VALUE_DISCONNECTED){
             boolean b=EnvironmentUtils.isWifiConnected(context,null);
             if(!b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR) return false;
             if(b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND) return true;
+        }else if(ex_wifi_status==ExceptionConsts.EXCEPTION_WIFI_VALUE_CONNECTED_TO_RANDOM_SSID){
+            boolean b=EnvironmentUtils.isWifiConnected(context,null);
+            if(b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR) return false;
+            if(!b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND)return true;
+        }else if(ex_wifi_status>=0){
+            boolean b=false;
+            int[]ids=ValueUtils.string2intArray(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL,item.exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS]);
+            for(int id:ids) if(EnvironmentUtils.isWifiConnected(context,id)){
+                b=true;
+                break;
+            }
+            if(b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR) return false;
+            if(!b&&process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND) return true;
         }
 
         if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND) return false;

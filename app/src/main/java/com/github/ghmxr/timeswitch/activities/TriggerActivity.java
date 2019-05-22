@@ -39,6 +39,7 @@ import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.adapters.ContentAdapter;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
+import com.github.ghmxr.timeswitch.ui.DialogForWifiInfoSelection;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBatteryPercentageWithEnabledSelection;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBatteryTemperatureWithEnabledSelection;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForInterval;
@@ -46,6 +47,7 @@ import com.github.ghmxr.timeswitch.ui.DialogConfirmedCallBack;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForTriggerBrightness;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.DialogForAppSelection;
 import com.github.ghmxr.timeswitch.utils.EnvironmentUtils;
+import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 public class TriggerActivity extends BaseActivity implements View.OnClickListener{
     private TaskItem item;
@@ -442,69 +444,38 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                 });
             }
             break;
-            case R.id.trigger_wifi_connected: case R.id.trigger_wifi_disconnected:{
-                //trigger_type=PublicConsts.TRIGGER_TYPE_WIFI_CONNECTED;
-                if(v_id==R.id.trigger_wifi_connected) activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_WIFI_CONNECTED);
-                else if(v_id==R.id.trigger_wifi_disconnected) activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_WIFI_DISCONNECTED);
-
-                final WifiManager wifiManager=(WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                if(wifiManager==null){
-                    Log.e("Triggers","WifiManager is null !!");
-                    ((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getWifiConnectionDisplayValue(TriggerActivity.this,item.wifiIds));
+            case R.id.trigger_wifi_connected: {
+                activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_WIFI_CONNECTED);
+                if(Global.NetworkReceiver.wifiList2.size()==0){
+                    Snackbar.make(findViewById(android.R.id.content),getResources().getString(R.string.activity_trigger_wifi_open_att),Snackbar.LENGTH_SHORT).show();
                     return;
                 }
-
-                if(Global.NetworkReceiver.wifiList==null){
-                    Snackbar snackbar=Snackbar.make(findViewById(R.id.trigger_root),getResources().getString(R.string.activity_trigger_wifi_open_att),Snackbar.LENGTH_SHORT);
-                    if(v_id==R.id.trigger_wifi_connected)((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getWifiConnectionDisplayValue(TriggerActivity.this,item.wifiIds));
-                    else if(v_id==R.id.trigger_wifi_disconnected)((TextView)findViewById(R.id.trigger_wifi_disconnected_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getWifiConnectionDisplayValue(TriggerActivity.this,item.wifiIds));
-                    snackbar.setAction(getResources().getString(R.string.snackbar_action_open_wifi), new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            wifiManager.setWifiEnabled(true);
-                        }
-                    });
-                    snackbar.show();
-                    return;
-                }
-
-                //List<WifiConfiguration> list=wifiManager.getConfiguredNetworks();
-
-                View dialogview=LayoutInflater.from(this).inflate(R.layout.layout_dialog_with_listview,null);
-                ListView wifi_list=dialogview.findViewById(R.id.layout_dialog_listview);
-                final WifiInfoListAdapter adapter=new WifiInfoListAdapter(Global.NetworkReceiver.wifiList, item.wifiIds);
-                //Log.d("wifi ssids ",wifi_ssidinfo);
-                wifi_list.setAdapter(adapter);
-                wifi_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                DialogForWifiInfoSelection dialog=new DialogForWifiInfoSelection(this,ValueUtils.string2intArray(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL,item.wifiIds));
+                dialog.setOnDialogConfirmedListener(new DialogForWifiInfoSelection.DialogConfirmedListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        adapter.onItemClicked(i);
+                    public void onDialogConfirmed(int[] ids) {
+                        item.wifiIds= ValueUtils.intArray2String(PublicConsts.SEPARATOR_SECOND_LEVEL,ids);
+                        activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_WIFI_CONNECTED);
                     }
                 });
-                new AlertDialog.Builder(this)
-                        .setTitle(getResources().getString(R.string.activity_trigger_wifi_dialog_att))
-                        .setView(dialogview)
-                        .setPositiveButton(getResources().getString(R.string.dialog_button_positive), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                item.wifiIds =adapter.getSelectedIDs();
-                                if(v_id==R.id.trigger_wifi_connected) {
-                                    activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_WIFI_CONNECTED);
-                                    ((TextView)findViewById(R.id.trigger_wifi_connected_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getWifiConnectionDisplayValue(TriggerActivity.this,item.wifiIds));
-                                }
-                                else if(v_id==R.id.trigger_wifi_disconnected) {
-                                    activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_WIFI_DISCONNECTED);
-                                    ((TextView)findViewById(R.id.trigger_wifi_disconnected_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getWifiConnectionDisplayValue(TriggerActivity.this,item.wifiIds));
-                                }
-                            }
-                        })
-                        .setNegativeButton(getResources().getString(R.string.dialog_button_negative), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-                        })
-                        .show();
+                dialog.show();
+            }
+            break;
+            case R.id.trigger_wifi_disconnected:{
+                activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_WIFI_DISCONNECTED);
+                if(Global.NetworkReceiver.wifiList2.size()==0){
+                    Snackbar.make(findViewById(android.R.id.content),getResources().getString(R.string.activity_trigger_wifi_open_att),Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
+                DialogForWifiInfoSelection dialog=new DialogForWifiInfoSelection(this,ValueUtils.string2intArray(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL,item.wifiIds));
+                dialog.setOnDialogConfirmedListener(new DialogForWifiInfoSelection.DialogConfirmedListener() {
+                    @Override
+                    public void onDialogConfirmed(int[] ids) {
+                        item.wifiIds= ValueUtils.intArray2String(PublicConsts.SEPARATOR_SECOND_LEVEL,ids);
+                        activateTriggerType(TriggerTypeConsts.TRIGGER_TYPE_WIFI_DISCONNECTED);
+                    }
+                });
+                dialog.show();
             }
             break;
             case R.id.trigger_app_opened: case R.id.trigger_app_closed:{
@@ -926,76 +897,6 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
         public String getSelectedAction(){
             return intent_list.get(selectedPosition);
         }
-    }
-
-    private class WifiInfoListAdapter extends BaseAdapter{
-        private List<Global.NetworkReceiver.WifiConfigInfo> list;
-        private boolean[] isSelected;
-        public WifiInfoListAdapter(List<Global.NetworkReceiver.WifiConfigInfo> list, String selected_ids) {
-            if(list==null||selected_ids==null) return;
-            this.list=list;
-            isSelected=new boolean[list.size()];
-            if(selected_ids.equals("")) return;
-            try{
-                String[] ids=selected_ids.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-                for(String id:ids){
-                    for(int i=0;i<list.size();i++){
-                        if(list.get(i).networkID==Integer.parseInt(id)) {
-                            isSelected[i]=true;
-                            break;
-                        }
-                    }
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-
-        }
-
-        @Override
-        public int getCount() {
-            return list==null?0:list.size();
-        }
-
-        @Override
-        public Object getItem(int i) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            if(list==null) return null;
-            if(view==null){
-                view=LayoutInflater.from(TriggerActivity.this).inflate(R.layout.item_wifiinfo,viewGroup,false);
-            }
-
-            ((TextView)view.findViewById(R.id.item_wifiinfo_ssid)).setText(list.get(i).SSID);
-            ((CheckBox)view.findViewById(R.id.item_wifiinfo_cb)).setChecked(isSelected[i]);
-
-            return view;
-        }
-
-        public void onItemClicked(int position){
-            isSelected[position]=!isSelected[position];
-            notifyDataSetChanged();
-        }
-
-        public String getSelectedIDs(){
-            String ids="";
-            for(int i=0;i<isSelected.length;i++){
-                if(isSelected[i]) {
-                    if(!ids.equals("")) ids+=PublicConsts.SEPARATOR_SECOND_LEVEL;
-                    ids+=list.get(i).networkID;
-                }
-            }
-            return ids;
-        }
-
     }
 
 }

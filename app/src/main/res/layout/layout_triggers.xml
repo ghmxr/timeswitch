@@ -73,7 +73,8 @@
                         android:layout_height="wrap_content"
                         android:text="88:88"
                         android:textColor="@color/color_activity_taskgui_value"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:singleLine="true"/>
 
 
                 </LinearLayout>
@@ -134,7 +135,8 @@
                         android:layout_height="wrap_content"
                         android:text="每 3 小时"
                         android:textColor="@color/color_activity_taskgui_value"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:singleLine="true"/>
 
 
                 </LinearLayout>
@@ -194,7 +196,8 @@
                         android:layout_height="wrap_content"
                         android:text="周一 二"
                         android:textColor="@color/color_activity_taskgui_value"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:singleLine="true"/>
 
                 </LinearLayout>
 
@@ -253,7 +256,8 @@
                         android:layout_height="wrap_content"
                         android:text="小于20%"
                         android:textColor="@color/color_activity_taskgui_value"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:singleLine="true"/>
 
                 </LinearLayout>
 
@@ -312,7 +316,8 @@
                         android:layout_height="wrap_content"
                         android:text="大于40℃"
                         android:textColor="@color/color_activity_taskgui_value"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:singleLine="true"/>
 
                 </LinearLayout>
 
@@ -372,7 +377,8 @@
                         android:text="未选择"
                         android:textColor="@color/color_activity_taskgui_value"
                         android:textSize="12sp"
-                        android:layout_marginRight="50dp"/>
+                        android:layout_marginRight="50dp"
+                        android:singleLine="true"/>
 
                 </LinearLayout>
 
@@ -432,7 +438,8 @@
                         android:text="未选择"
                         android:textColor="@color/color_activity_taskgui_value"
                         android:textSize="12sp"
-                        android:layout_marginRight="50dp"/>
+                        android:layout_marginRight="50dp"
+                        android:singleLine="true"/>
 
                 </LinearLayout>
 
@@ -492,7 +499,8 @@
                         android:text="未选择"
                         android:textColor="@color/color_activity_taskgui_value"
                         android:textSize="12sp"
-                        android:layout_marginRight="50dp"/>
+                        android:layout_marginRight="50dp"
+                        android:singleLine="true"/>
 
                 </LinearLayout>
 
@@ -552,7 +560,8 @@
                         android:text="未选择"
                         android:textColor="@color/color_activity_taskgui_value"
                         android:textSize="12sp"
-                        android:layout_marginRight="50dp"/>
+                        android:layout_marginRight="50dp"
+                        android:singleLine="true"/>
 
                 </LinearLayout>
 
@@ -795,7 +804,8 @@
                         android:text="未选择"
                         android:textColor="@color/color_activity_taskgui_value"
                         android:textSize="12sp"
-                        android:layout_marginRight="50dp"/>
+                        android:layout_marginRight="50dp"
+                        android:singleLine="true"/>
 
                 </LinearLayout>
 
@@ -856,7 +866,8 @@
                         android:text="未选择"
                         android:textColor="@color/color_activity_taskgui_value"
                         android:textSize="12sp"
-                        android:layout_marginRight="50dp"/>
+                        android:layout_marginRight="50dp"
+                        android:singleLine="true"/>
 
                 </LinearLayout>
 
@@ -916,7 +927,8 @@
                         android:text="未选择"
                         android:textColor="@color/color_activity_taskgui_value"
                         android:textSize="12sp"
-                        android:layout_marginRight="50dp"/>
+                        android:layout_marginRight="50dp"
+                        android:singleLine="true"/>
 
                 </LinearLayout>
 
@@ -977,7 +989,8 @@
                         android:text="未选择"
                         android:textColor="@color/color_activity_taskgui_value"
                         android:textSize="12sp"
-                        android:layout_marginRight="50dp"/>
+                        android:layout_marginRight="50dp"
+                        android:singleLine="true"/>
 
                 </LinearLayout>
 
@@ -1037,7 +1050,8 @@
                         android:text="未选择"
                         android:textColor="@color/color_activity_taskgui_value"
                         android:textSize="12sp"
-                        android:layout_marginRight="50dp"/>
+                        android:layout_marginRight="50dp"
+                        android:singleLine="true"/>
 
                 </LinearLayout>
 
@@ -1097,7 +1111,8 @@
                         android:text="android broadcast"
                         android:textColor="@color/color_activity_taskgui_value"
                         android:textSize="12sp"
-                        android:layout_marginRight="50dp"/>
+                        android:layout_marginRight="50dp"
+                        android:singleLine="true"/>
 
                 </LinearLayout>
 

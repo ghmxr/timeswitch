@@ -16,7 +16,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.os.BatteryManager;
 import android.os.Build;
@@ -280,6 +279,7 @@ public class MainActivity extends BaseActivity {
             case MESSAGE_REQUEST_UPDATE_LIST:{
                 try{
                     recyclerView.getAdapter().notifyDataSetChanged();
+                    findViewById(R.id.main_no_task_att).setVisibility(((ListAdapter)recyclerView.getAdapter()).getList().size()>0?View.GONE:View.VISIBLE);
                 }catch (Exception e){e.printStackTrace();}
             }
             break;
@@ -327,6 +327,7 @@ public class MainActivity extends BaseActivity {
         this.menu.getItem(MENU_DESELCT_ALL).setVisible(true);
         this.menu.getItem(MENU_PROFILE).setVisible(false);
         this.menu.getItem(MENU_SETTINGS).setVisible(false);
+        menu.getItem(MENU_SERVICE_CONTROL).setVisible(false);
         setFabVisibility(false);
     }
 
@@ -340,6 +341,7 @@ public class MainActivity extends BaseActivity {
         this.menu.getItem(MENU_DESELCT_ALL).setVisible(false);
         this.menu.getItem(MENU_PROFILE).setVisible(true);
         this.menu.getItem(MENU_SETTINGS).setVisible(true);
+        menu.getItem(MENU_SERVICE_CONTROL).setVisible(true);
         setFabVisibility(true);
     }
 
@@ -464,13 +466,13 @@ public class MainActivity extends BaseActivity {
                 setServiceEnabled(!isEnabled);
             }
             case R.id.action_selectall:{
-                //listview_adapter.selectAll();
-                menu.getItem(MENU_DELETE).setEnabled(true);
+                //menu.getItem(MENU_DELETE).setEnabled(true);
+                ((ListAdapter)recyclerView.getAdapter()).setAll(true);
             }
             break;
             case R.id.action_deselectall:{
-                //listview_adapter.deselectAll();
-                this.menu.getItem(MENU_DELETE).setEnabled(false);
+                //this.menu.getItem(MENU_DELETE).setEnabled(false);
+                ((ListAdapter)recyclerView.getAdapter()).setAll(false);
             }
             break;
             case R.id.action_delete_selected:{
@@ -737,6 +739,13 @@ public class MainActivity extends BaseActivity {
        private void closeMultiSelectMode(){
             this.isMultiSelectMode=false;
             itemTouchHelper.attachToRecyclerView(recyclerView);
+            notifyDataSetChanged();
+       }
+
+       private void setAll(boolean selected){
+            for(int i=0;i<isSelected.length;i++){
+                isSelected[i]=selected;
+            }
             notifyDataSetChanged();
        }
 

@@ -21,95 +21,22 @@ import java.util.regex.PatternSyntaxException;
 public class ValueUtils {
 
     /**
-     * 将一个布尔数组转换为由0（对应false）和1（对应true）并由英文逗号隔开的字符串。
-     * @param array 要转换的布尔数组
-     * @return  转换完成的字符串
-     */
-    public static String booleanArray2String(boolean [] array){
-        StringBuilder values=new StringBuilder("");
-        if(array==null){
-            return "";
-        }
-        if(array.length<=0){
-            return "";
-        }
-        for(int i=0;i<array.length;i++){
-            if(array[i]){
-                values.append(1);
-            }
-            else{
-                values.append(0);
-            }
-            if(i<(array.length-1)&&array.length>1) values.append(PublicConsts.SEPARATOR_FIRST_LEVEL);
-        }
-
-        return values.toString();
-    }
-
-    /**
-     * 将字符串转换为布尔数组，传入的内容为数字0和1组成的并由英文逗号隔开的字符串，例如： 0,0,1,1  则返回 {false,false,true,true}   。
-     * 如果传入的字符串无法完成转换则会返回一个长度为0的新布尔数组实例
-     * @param text 要转换的字符串值
-     * @return 转换完成的布尔数组
-     */
-
-    public static boolean [] string2booleanArray(String text){
-        boolean[] array=null;
-        if(text==null){
-            return new boolean[0];
-        }
-
-        String[] sarray;
-
-        try{
-            sarray=text.split(PublicConsts.SPLIT_SEPARATOR_FIRST_LEVEL);
-            if(sarray.length<=0) return new boolean[0];
-            if(sarray.length==1){
-                array=new boolean [1];
-                if(Integer.parseInt(sarray[0])==1) array[0]=true;
-                return array;
-            }
-            array=new boolean[sarray.length];
-            for(int i=0;i<array.length;i++){
-                if(Integer.parseInt(sarray[i])==1){
-                    array[i]=true;
-                }
-            }
-        }catch(PatternSyntaxException pe){
-            pe.printStackTrace();
-        }catch (NumberFormatException ne){
-            ne.printStackTrace();
-        }
-
-        if(array==null){
-            return new boolean[0];
-        }
-        return array;
-
-    }
-
-    /**
-     * 将int数组转换为string类型，并由英文逗号隔开。
+     * 将int数组转换为string类型，并由sep。
      * 例如 {0,1,2} 则转换为 "0,1,2"
      * @param array int[]
      * @return string
      */
 
-    public static String intArray2String(int[] array){
+    public static String intArray2String(String sep,int[] array){
         StringBuilder valuesBuilder=new StringBuilder("");
-        if(array==null){
+        if(array==null||array.length==0){
             return "";
         }
         else{
-            if(array.length<=0){
-                return "";
-            }
             for(int i=0;i<array.length;i++){
-                //values+=""+array[i];
                 valuesBuilder.append(array[i]);
                 if(i<(array.length-1)&&array.length>1){
-                    //values+=",";
-                    valuesBuilder.append(PublicConsts.SEPARATOR_FIRST_LEVEL);
+                    valuesBuilder.append(sep);
                 }
             }
         }
@@ -117,39 +44,21 @@ public class ValueUtils {
     }
 
     /**
-     * 将由英文逗号隔开的数字字符串转换为int数组
+     * 将由split隔开的数字字符串转换为int数组
      * 例如  "0,1,2" 转换为  {0,1,2}
      * @param text
      * @return int[]
      */
-    public static int[] string2intArray(String text){
-        if(text==null){
-            return new int[0];
-        }
-        else{
-            int[] values=null;
-            try{
-                String[] svalues=text.split(PublicConsts.SPLIT_SEPARATOR_FIRST_LEVEL);
-                if(svalues.length<=0) return new int[0];
-                if(svalues.length==1){
-                    values=new int[1];
-                    values[0]=Integer.parseInt(svalues[0]);
-                    return values;
-                }
-                values=new int[svalues.length];
-                for(int i=0;i<svalues.length;i++){
-                    values[i]=Integer.parseInt(svalues[i]);
-                }
-            }catch(PatternSyntaxException pe){
-                pe.printStackTrace();
-            }catch(NumberFormatException ne){
-                ne.printStackTrace();
+    public static int[] string2intArray(String split,String text){
+        try{
+            String[] svalues=text.split(split);
+            int[] values=new int[svalues.length];
+            for(int i=0;i<svalues.length;i++){
+                values[i]=Integer.parseInt(svalues[i]);
             }
-
-            if(values==null) return new int[0];
-            return  values;
-
-        }
+            return values;
+        }catch (Exception e){e.printStackTrace();}
+        return new int[0];
     }
 
     /**
@@ -159,33 +68,15 @@ public class ValueUtils {
      * @return long[]
      */
     public static long[] string2longArray(String split,String text){
-        if(text==null){
-            return new long[0];
-        }
-        else{
-            long[] values=null;
-            try{
-                String[] svalues=text.split(split);
-                if(svalues.length<=0) return new long[0];
-                if(svalues.length==1){
-                    values=new long[1];
-                    values[0]=Long.parseLong(svalues[0]);
-                    return values;
-                }
-                values=new long[svalues.length];
-                for(int i=0;i<svalues.length;i++){
-                    values[i]=Long.parseLong(svalues[i]);
-                }
-            }catch(PatternSyntaxException pe){
-                pe.printStackTrace();
-            }catch(NumberFormatException ne){
-                ne.printStackTrace();
+        try {
+            String[] svalues=text.split(split);
+            long[] values=new long[svalues.length];
+            for(int i=0;i<svalues.length;i++){
+                values[i]=Long.parseLong(svalues[i]);
             }
-
-            if(values==null) return new long[0];
-            return  values;
-
-        }
+            return values;
+        }catch (Exception e){e.printStackTrace();}
+        return new long[0];
     }
 
     /**
@@ -196,18 +87,13 @@ public class ValueUtils {
      */
     public static String longArray2String(String seperator,long[] array){
         StringBuilder valuesBuilder=new StringBuilder("");
-        if(array==null){
+        if(array==null||array.length==0){
             return "";
         }
         else{
-            if(array.length<=0){
-                return "";
-            }
             for(int i=0;i<array.length;i++){
-                //values+=""+array[i];
                 valuesBuilder.append(array[i]);
                 if(i<(array.length-1)&&array.length>1){
-                    //values+=",";
                     valuesBuilder.append(seperator);
                 }
             }

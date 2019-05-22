@@ -27,6 +27,7 @@ import com.github.ghmxr.timeswitch.data.v2.MySQLiteOpenHelper;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -194,7 +195,7 @@ public class Global {
      */
     public static class NetworkReceiver extends BroadcastReceiver{
 
-        public static final ArrayList<WifiConfigInfo> wifiList=new ArrayList<>();
+        public static final ArrayList<WifiConfiguration> wifiList2=new ArrayList<>();
         public static WifiInfo connectedWifiInfo;
 
         @Override
@@ -204,16 +205,12 @@ public class Global {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        synchronized (wifiList){
+                        synchronized (wifiList2){
                             try{
-                                wifiList.clear();
                                 final WifiManager wifiManager=(WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                                for(WifiConfiguration w:wifiManager.getConfiguredNetworks()){
-                                    WifiConfigInfo wifi_info = new WifiConfigInfo();
-                                    wifi_info.networkID=w.networkId;
-                                    wifi_info.SSID= ValueUtils.toDisplaySSIDString(w.SSID);
-                                    wifiList.add(wifi_info);
-                                }
+                                List<WifiConfiguration> temp=wifiManager.getConfiguredNetworks();
+                                wifiList2.clear();
+                                wifiList2.addAll(temp);
                             }catch (Exception e){e.printStackTrace();}
                         }
                     }
@@ -236,11 +233,6 @@ public class Global {
                     connectedWifiInfo=wifiInfo;
                 }
             }
-        }
-
-        public static class WifiConfigInfo{
-            public int networkID=0;
-            public String SSID="";
         }
     }
 

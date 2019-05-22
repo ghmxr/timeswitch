@@ -32,7 +32,7 @@ public class NotificationReceiver implements Trigger,NotificationMonitorService.
 
     @Override
     public void activate() {
-        NotificationMonitorService.registerNotificationReceiver(context,this);
+        NotificationMonitorService.registerNotificationReceiver(this);
     }
 
     @Override

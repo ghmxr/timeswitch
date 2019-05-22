@@ -10,7 +10,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.WallpaperManager;
 import android.bluetooth.BluetoothAdapter;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
@@ -32,11 +31,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.telecom.TelecomManager;
 import android.telephony.SmsManager;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
@@ -50,7 +49,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -84,7 +82,7 @@ public class EnvironmentUtils {
 
         public static boolean isReadingNotificationPermissionGranted(Context context){
             try{
-                String pkgName = context.getPackageName();
+                /*String pkgName = context.getPackageName();
                 final String flat = Settings.Secure.getString(context.getContentResolver(), "enabled_notification_listeners");
                 if (!TextUtils.isEmpty(flat)) {
                     final String[] names = flat.split(":");
@@ -97,7 +95,8 @@ public class EnvironmentUtils {
                         }
                     }
                 }
-                return false;
+                return false;*/
+                return NotificationManagerCompat.getEnabledListenerPackages(context).contains(context.getPackageName());
             }catch (Exception e){
                 e.printStackTrace();
             }

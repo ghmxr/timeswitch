@@ -871,6 +871,57 @@
                     android:layout_alignParentBottom="true"/>
             </RelativeLayout>
 
+            <RelativeLayout
+                android:id="@+id/exceptions_wifi_status"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginBottom="10dp"
+                android:clickable="true"
+                android:background="?attr/selectableItemBackground">
+
+                <ImageView
+                    android:id="@+id/exceptions_wifi_status_img"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/icon_wifi_connected"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/exceptions_wifi_status_img"
+                    android:layout_marginLeft="15dp">
+                    <TextView
+                        android:id="@+id/exceptions_wifi_status_att"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="@color/color_text_normal"
+                        android:text="@string/exception_wifi_status" />
+                    <TextView
+                        android:id="@+id/exceptions_wifi_status_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:text="@string/unselected"/>
+                </LinearLayout>
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/drawable_arrow_right"/>
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="#dddddd"
+                    android:layout_alignParentBottom="true"/>
+            </RelativeLayout>
+
         </com.github.ghmxr.timeswitch.ui.CustomLinearLayout>
     </ScrollView>
 

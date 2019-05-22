@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.net.wifi.WifiConfiguration;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -354,15 +355,15 @@ public class ContentAdapter {
                 if(context==null||ssids==null) return "";
                 if(ssids.length()==0||ssids.trim().equals("")) return context.getResources().getString(R.string.activity_trigger_wifi_no_ssid_assigned);
                // WifiManager wifiManager=(WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                if(Global.NetworkReceiver.wifiList==null|| Global.NetworkReceiver.wifiList.size()<=0) return context.getResources().getString(R.string.activity_trigger_wifi_assigned_ssid);
+                if(Global.NetworkReceiver.wifiList2.size()==0) return context.getResources().getString(R.string.activity_trigger_wifi_assigned_ssid);
                 StringBuilder display=new StringBuilder("");
                 //List<WifiConfiguration> list=wifiManager.getConfiguredNetworks();
                // if(list==null||list.size()<=0) return "";
                 String ssid_array [] =ssids.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
                 for(String s:ssid_array){
-                    for(Global.NetworkReceiver.WifiConfigInfo w: Global.NetworkReceiver.wifiList){
+                    for(WifiConfiguration w: Global.NetworkReceiver.wifiList2){
                         try{
-                           if(Integer.parseInt(s)==w.networkID){
+                           if(Integer.parseInt(s)==w.networkId){
                                if(!display.toString().equals("")) display.append(" , ");
                                display.append(w.SSID);
                            }
@@ -595,6 +596,13 @@ public class ContentAdapter {
                     builder.append(context.getResources().getString(R.string.degree_celsius));
                 }
 
+                if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[0])!=-1){
+                    if(builder.toString().length()>0)builder.append(",");
+                    builder.append(context.getResources().getString(R.string.exception_wifi_status));
+                    builder.append(":");
+                    builder.append(getExceptionValueOfWifiStatus(context,exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS]));
+                }
+
                 String returnValue=builder.toString();
                 if(returnValue.equals("")) return context.getResources().getString(R.string.word_nothing);
 
@@ -606,6 +614,32 @@ public class ContentAdapter {
             }catch (Exception e){
                 e.printStackTrace();
             }
+            return "";
+        }
+
+        public static String getExceptionValueOfWifiStatus(Context context,String values){
+            try{
+                StringBuilder builder=new StringBuilder("");
+                String ssid_array [] =values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+                int head = Integer.parseInt(ssid_array[0]);
+                if(head==-1) return context.getResources().getString(R.string.unselected);
+                if(head==ExceptionConsts.EXCEPTION_WIFI_VALUE_DISCONNECTED) return context.getResources().getString(R.string.exception_wifi_status_disconnected);
+                if(head==ExceptionConsts.EXCEPTION_WIFI_VALUE_CONNECTED_TO_RANDOM_SSID) return context.getResources().getString(R.string.activity_trigger_wifi_no_ssid_assigned);
+                for(String s:ssid_array){
+                    for(WifiConfiguration w: Global.NetworkReceiver.wifiList2){
+                        try{
+                            if(Integer.parseInt(s)==w.networkId){
+                                if(!builder.toString().equals("")) builder.append(" , ");
+                                builder.append(w.SSID);
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                if(builder.toString().equals("")) return context.getResources().getString(R.string.activity_trigger_wifi_assigned_ssid);
+                return builder.toString();
+            }catch (Exception e){e.printStackTrace();}
             return "";
         }
     }

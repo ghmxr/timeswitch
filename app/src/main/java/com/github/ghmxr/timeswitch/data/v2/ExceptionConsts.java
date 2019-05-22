@@ -1,7 +1,7 @@
 package com.github.ghmxr.timeswitch.data.v2;
 
 public class ExceptionConsts {
-    public static final int EXCEPTION_LENGTH =37;
+    public static final int EXCEPTION_LENGTH =36;
     public static final int EXCEPTION_CONNECTOR_OR								=	-1;
     public static final int EXCEPTION_CONNECTOR_AND								=	0;
     /**
@@ -57,7 +57,7 @@ public class ExceptionConsts {
     //public static final int EXCEPTION_HEADSET_STATUS								=	30;
     //the locales 30~34 is not used now and the initial value is 0.
     //the following initial values are -1.from the locale 35 and on.
-    public static final int EXCEPTION_WIFI_CONNECTED								=	35;
-    public static final int EXCEPTION_WIFI_CONNECTED_TO_RANDOM_SSID                 =   -2;
-    public static final int EXCEPTION_WIFI_DISCONNECTED								=	36;
+    public static final int EXCEPTION_WIFI_STATUS   								=	35;
+    public static final int EXCEPTION_WIFI_VALUE_DISCONNECTED                       =   -9;
+    public static final int EXCEPTION_WIFI_VALUE_CONNECTED_TO_RANDOM_SSID           =   -10;
 }

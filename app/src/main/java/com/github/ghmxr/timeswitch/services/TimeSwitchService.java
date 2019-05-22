@@ -27,6 +27,7 @@ import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.Global.BatteryReceiver;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
+import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
@@ -57,7 +58,9 @@ public class TimeSwitchService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(intent==null||intent.getAction()==null||!intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) return;
-
+            int state=intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,-1);
+            if(state==WifiManager.WIFI_STATE_ENABLED) LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_wifi_enabled));
+            else if(state==WifiManager.WIFI_STATE_DISABLED) LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_wifi_disabled));
         }
     };
 
@@ -154,6 +157,11 @@ public class TimeSwitchService extends Service {
         switch (msg.what){
             case MESSAGE_REQUEST_REFRESH_TASKS:{
                 refreshTaskItems();
+                if(getSharedPreferences(PublicConsts.PREFERENCES_NAME,Context.MODE_PRIVATE).getInt(PublicConsts.PREFERENCES_SERVICE_TYPE,PublicConsts.PREFERENCES_SERVICE_TYPE_DEFAULT)==PublicConsts.PREFERENCES_SERVICE_TYPE_FOREGROUND){
+                    makeThisForeground();
+                }else{
+                    makeThisBackground();
+                }
             }
             break;
         }

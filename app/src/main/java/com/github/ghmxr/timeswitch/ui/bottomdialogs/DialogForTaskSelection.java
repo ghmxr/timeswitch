@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.TaskItem;
+import com.github.ghmxr.timeswitch.adapters.ContentAdapter;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.ui.DialogConfirmedCallBack;
@@ -96,45 +97,10 @@ public class DialogForTaskSelection implements DialogInterface.OnClickListener{
         @Override
         public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
             TaskItem item=list.get(position);
-            int imgRes=R.drawable.ic_launcher;
             Resources resources=context.getResources();
-            switch (item.trigger_type){
-                default:break;
-                case TriggerTypeConsts.TRIGGER_TYPE_SINGLE:imgRes=R.drawable.icon_repeat_single;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME:imgRes=R.drawable.icon_repeat_percertaintime;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK:imgRes=R.drawable.icon_repeat_weekloop;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE:imgRes=R.drawable.icon_battery_high;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE:imgRes=R.drawable.icon_battery_low;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE: case TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE:
-                    imgRes=R.drawable.icon_temperature;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_RECEIVED_BROADCAST:imgRes=R.drawable.icon_broadcast;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_WIFI_ON:imgRes=R.drawable.icon_wifi_on;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF:imgRes=R.drawable.icon_wifi_off;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON:imgRes=R.drawable.icon_bluetooth_on;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF:imgRes=R.drawable.icon_bluetooth_off;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_MODE_OFF:imgRes=R.drawable.icon_ring_off;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_MODE_VIBRATE:imgRes=R.drawable.icon_ring_vibrate;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_RING_NORMAL:imgRes=R.drawable.icon_ring_normal;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_ON:imgRes=R.drawable.icon_airplanemode_on;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AIRPLANE_MODE_OFF:imgRes=R.drawable.icon_airplanemode_off;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AP_ENABLED:imgRes=R.drawable.icon_ap_on;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_AP_DISABLED:imgRes=R.drawable.icon_ap_off;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_NET_ON:imgRes=R.drawable.icon_cellular_on;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_NET_OFF:imgRes=R.drawable.icon_cellular_off;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIFI_CONNECTED:imgRes=R.drawable.icon_wifi_connected;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:imgRes=R.drawable.icon_wifi_disconnected;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_SCREEN_ON:imgRes=R.drawable.icon_screen_on;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_SCREEN_OFF:imgRes=R.drawable.icon_screen_off;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_POWER_CONNECTED:imgRes=R.drawable.icon_power_connected;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_POWER_DISCONNECTED:imgRes=R.drawable.icon_power_disconnected;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_IN: case TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT:{
-                    imgRes=R.drawable.icon_headset;
-                }
-                break;
-                case TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED:imgRes=R.drawable.icon_app_launch;break;
-                case TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED:imgRes=R.drawable.icon_app_stop;break;
-            }
-            holder.icon.setImageResource(imgRes);
+            Integer img_res=(Integer) ContentAdapter.TriggerContentAdapter.getContentForTriggerType(context, ContentAdapter.TriggerContentAdapter.CONTENT_TYPE_ICON_RESOURCE_DRAWABLE_ID,item);
+            if(img_res==null) img_res=R.drawable.ic_launcher;
+            holder.icon.setImageResource(img_res);
             holder.title.setText(item.name);
             holder.title.setTextColor(Color.parseColor(item.addition_title_color));
             holder.description.setText(item.isenabled?resources.getString(R.string.opened):

@@ -15,14 +15,19 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.ghmxr.timeswitch.Global;
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.TaskItem;
+import com.github.ghmxr.timeswitch.adapters.ContentAdapter;
 import com.github.ghmxr.timeswitch.data.v2.ExceptionConsts;
+import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
+import com.github.ghmxr.timeswitch.ui.DialogForWifiInfoSelection;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBatteryPercentageWithEnabledSelection;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBatteryTemperatureWithEnabledSelection;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForPeriod;
 import com.github.ghmxr.timeswitch.ui.DialogConfirmedCallBack;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForWifiStatus;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 /**
@@ -69,6 +74,7 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
         findViewById(R.id.exceptions_day_of_week).setOnClickListener(this);
         findViewById(R.id.exceptions_period).setOnClickListener(this);
         findViewById(R.id.exceptions_headset).setOnClickListener(this);
+        findViewById(R.id.exceptions_wifi_status).setOnClickListener(this);
 
         if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE||item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK){
             findViewById(R.id.exceptions_period).setVisibility(View.GONE);
@@ -106,6 +112,7 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
         refreshDayOfWeekView();
         refreshPeriodView();
         refreshHeadsetStatusView();
+        refreshWifiStatusView();
     }
 
     @Override
@@ -480,6 +487,51 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
 
             }
             break;
+            case R.id.exceptions_wifi_status:{
+                final int []values=ValueUtils.string2intArray(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL,item.exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS]);
+                BottomDialogForWifiStatus dialog=new BottomDialogForWifiStatus(this,values.length>0?values[0]:-1);
+                dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+                    @Override
+                    public void onDialogConfirmed(String result) {
+                        int value=Integer.parseInt(result);
+                        switch (value){
+                            default:break;
+                            case -1:{
+                                item.exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS]=String.valueOf(-1);
+                                refreshWifiStatusView();
+                            }
+                            break;
+                            case ExceptionConsts.EXCEPTION_WIFI_VALUE_DISCONNECTED:{
+                                item.exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS]=String.valueOf(ExceptionConsts.EXCEPTION_WIFI_VALUE_DISCONNECTED);
+                                refreshWifiStatusView();
+                            }
+                            break;
+                            case ExceptionConsts.EXCEPTION_WIFI_VALUE_CONNECTED_TO_RANDOM_SSID:{
+                                item.exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS]=String.valueOf(ExceptionConsts.EXCEPTION_WIFI_VALUE_CONNECTED_TO_RANDOM_SSID);
+                                refreshWifiStatusView();
+                                if(Global.NetworkReceiver.wifiList2.size()==0){
+                                    Snackbar.make(findViewById(android.R.id.content),getResources().getString(R.string.activity_trigger_wifi_open_att),Snackbar.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                DialogForWifiInfoSelection dialog1=new DialogForWifiInfoSelection(ExceptionActivity.this,values);
+                                dialog1.setOnDialogConfirmedListener(new DialogForWifiInfoSelection.DialogConfirmedListener() {
+                                    @Override
+                                    public void onDialogConfirmed(int[] ids) {
+                                        if(ids==null||ids.length==0) {
+                                            item.exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS]=String.valueOf(ExceptionConsts.EXCEPTION_WIFI_VALUE_CONNECTED_TO_RANDOM_SSID);
+                                        }else item.exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS]=ValueUtils.intArray2String(PublicConsts.SEPARATOR_SECOND_LEVEL,ids);
+                                        refreshWifiStatusView();
+                                    }
+                                });
+                                dialog1.show();
+                            }
+                            break;
+                        }
+                    }
+                });
+                dialog.show();
+            }
+            break;
         }
     }
 
@@ -594,6 +646,10 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
             ne.printStackTrace();
         }
 
+    }
+
+    private void refreshWifiStatusView(){
+        ((TextView)findViewById(R.id.exceptions_wifi_status_value)).setText(ContentAdapter.ExceptionContentAdapter.getExceptionValueOfWifiStatus(ExceptionActivity.this,item.exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS]));
     }
 
 }
