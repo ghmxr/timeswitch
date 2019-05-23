@@ -473,7 +473,10 @@ public class ProcessTaskItem {
         }
     }
 
-    private void activateActionOfFlashlight(final String values){
+    private void activateActionOfFlashlight(String values){
+        final String []array=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+        final int type=Integer.parseInt(array[0]);
+        if(type<0)return;
         synchronized (ProcessTaskItem.class){
             if(flash_light_thread!=null) {
                 flash_light_thread.interrupt();
@@ -500,9 +503,6 @@ public class ProcessTaskItem {
             flash_light_thread=new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    final String []array=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-                    final int type=Integer.parseInt(array[0]);
-                    if(type<0) return;
                     if(type==ActionConsts.ActionValueConsts.ACTION_FLASHLIGHT_TYPE_HOLD)EnvironmentUtils.setTorch(context,Integer.parseInt(array[1])*1000);
                     else if(type==ActionConsts.ActionValueConsts.ACTION_FLASHLIGHT_TYPE_CUSTOM){
                         long[] vars=new long[array.length-1];
