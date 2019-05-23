@@ -126,12 +126,18 @@ public class BottomDialogForFlashlight extends BottomDialog implements View.OnCl
                 testThread=new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        if(type==ActionConsts.ActionValueConsts.ACTION_FLASHLIGHT_TYPE_HOLD){
-                            EnvironmentUtils.setTorch(getContext(),Integer.parseInt(editText.getText().toString().trim())*1000);
-                        }else if(type== ActionConsts.ActionValueConsts.ACTION_FLASHLIGHT_TYPE_CUSTOM){
-                            long[] array=ValueUtils.string2longArray(",",editText.getText().toString().trim());
-                            EnvironmentUtils.setTorch(getContext(),array);
+                        try{
+                            if(type==ActionConsts.ActionValueConsts.ACTION_FLASHLIGHT_TYPE_HOLD){
+                                EnvironmentUtils.setTorch(getContext(),Integer.parseInt(editText.getText().toString().trim())*1000);
+                            }else if(type== ActionConsts.ActionValueConsts.ACTION_FLASHLIGHT_TYPE_CUSTOM){
+                                long[] array=ValueUtils.string2longArray(",",editText.getText().toString().trim());
+                                EnvironmentUtils.setTorch(getContext(),array);
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            EnvironmentUtils.showToast(getContext(),null,e.toString());
                         }
+
                         Global.handler.post(new Runnable() {
                             @Override
                             public void run() {

@@ -70,6 +70,8 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 	private static final int REQUEST_CODE_SET_WALLPAPER=4;
 	private static final int REQUEST_CODE_SMS=5;
 
+	boolean isTaskNameEdited=false;
+
 	private final View.OnClickListener listener_on_exception_item_clicked=new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -654,15 +656,13 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 					public void onClick(View v) {
 						String name=edittext.getText().toString().trim();
 						if(name.length()<=0||name.equals("")){
-							//Toast.makeText(TaskGui.this,"输入任务名称",Toast.LENGTH_SHORT).show();
-							Snackbar.make(v,getResources().getString(R.string.dialog_task_name_invalid),Snackbar.LENGTH_SHORT).show();
-							//return;
+							Toast.makeText(TaskGui.this,getResources().getString(R.string.dialog_task_name_invalid),Toast.LENGTH_SHORT).show();
+							//Snackbar.make(v,getResources().getString(R.string.dialog_task_name_invalid),Snackbar.LENGTH_SHORT).show();
 						}
 						else{
-							taskitem.name=name;//TaskGui.this.taskname=name;
+							taskitem.name=name;
 							dialog.cancel();
-							//String taskname=taskitem.name;
-							//if(taskname.length()>24) taskname=taskname.substring(0,24)+"...";
+							isTaskNameEdited=true;
 							((TextView)findViewById(R.id.layout_taskgui_area_name_text)).setText(taskitem.name);
 						}
 					}
@@ -1052,6 +1052,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 					taskitem.exceptions[ExceptionConsts.EXCEPTION_SATURDAY]=String.valueOf(0);
 					taskitem.exceptions[ExceptionConsts.EXCEPTION_SUNDAY]=String.valueOf(0);
 					//refreshExceptionViews();
+					checkAndPlayTransitionAnimation();
                     group.removeView(view);
 				}
 			});
@@ -1131,7 +1132,9 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				if(resultCode==RESULT_OK){
 					taskitem=(TaskItem) data.getSerializableExtra(EXTRA_SERIALIZED_TASKITEM);
 					refreshTriggerDisplayValue();
-
+					if(!isTaskNameEdited)taskitem.name=(String)ContentAdapter.TriggerContentAdapter.getContentForTriggerType(this,ContentAdapter.TriggerContentAdapter.CONTENT_TYPE_DISPLAY_STRING_TITLE,taskitem)+" "+
+							(String)ContentAdapter.TriggerContentAdapter.getContentForTriggerType(this, ContentAdapter.TriggerContentAdapter.CONTENT_TYPE_DISPLAY_STRING_CONTENT,taskitem);
+					((TextView)findViewById(R.id.layout_taskgui_area_name_text)).setText(taskitem.name);
 					if(taskitem.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE) setAutoCloseAreaEnabled(false);
 					else {
 						setAutoCloseAreaEnabled(!((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autodelete_cb)).isChecked());
@@ -1244,64 +1247,4 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
     	return view;
 	}
 
-    private class BroadcastSelectionAdapter extends BaseAdapter{
-		List<String> intent_list=new ArrayList<>();
-		int selectedPosition=0;
-		private BroadcastSelectionAdapter(@Nullable String selectedAction){
-			intent_list.add(Intent.ACTION_ANSWER);
-			intent_list.add(Intent.ACTION_BATTERY_LOW);
-			intent_list.add(Intent.ACTION_MEDIA_BAD_REMOVAL);
-			intent_list.add(Intent.ACTION_PACKAGE_REMOVED);
-			intent_list.add(Intent.ACTION_POWER_CONNECTED);
-			intent_list.add(Intent.ACTION_POWER_DISCONNECTED);
-			intent_list.add(WifiManager.WIFI_STATE_CHANGED_ACTION);
-			intent_list.add(Intent.ACTION_PACKAGE_CHANGED);
-			intent_list.add(Intent.ACTION_SCREEN_OFF);
-			intent_list.add(Intent.ACTION_SCREEN_ON);
-			intent_list.add(Intent.ACTION_PACKAGE_REMOVED);
-			intent_list.add(Intent.ACTION_PACKAGE_ADDED);
-			intent_list.add(ConnectivityManager.CONNECTIVITY_ACTION);
-			if(selectedAction==null) return;
-			for(int i=0;i<intent_list.size();i++){
-				if(selectedAction.equals(intent_list.get(i))) {
-					selectedPosition=i;
-					break;
-				}
-			}
-		}
-		@Override
-		public int getCount() {
-			return intent_list.size();
-		}
-
-		@Override
-		public Object getItem(int i) {
-			return null;
-		}
-
-		@Override
-		public long getItemId(int i) {
-			return i;
-		}
-
-		@Override
-		public View getView(int i, View view, ViewGroup viewGroup) {
-			if(view==null){
-				view=LayoutInflater.from(TaskGui.this).inflate(R.layout.item_broadcast_intent,viewGroup,false);
-			}
-			((RadioButton)view.findViewById(R.id.item_broadcast_ra)).setText(intent_list.get(i));
-			((RadioButton)view.findViewById(R.id.item_broadcast_ra)).setChecked(i==selectedPosition);
-			return view;
-		}
-
-		public void onItemClicked(int position){
-			selectedPosition=position;
-			notifyDataSetChanged();
-		}
-
-		public String getSelectedAction(){
-			return intent_list.get(selectedPosition);
-		}
-	}
-		
 }

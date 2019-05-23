@@ -76,7 +76,7 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
         findViewById(R.id.exceptions_headset).setOnClickListener(this);
         findViewById(R.id.exceptions_wifi_status).setOnClickListener(this);
 
-        if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE||item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK){
+        /*if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE||item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK){
             findViewById(R.id.exceptions_period).setVisibility(View.GONE);
             findViewById(R.id.exceptions_day_of_week).setVisibility(View.GONE);
         }
@@ -85,7 +85,7 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
         }
         if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_MORE_THAN_PERCENTAGE||item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LESS_THAN_PERCENTAGE){
             findViewById(R.id.exceptions_battery_percentage).setVisibility(View.GONE);
-        }
+        }*/
 
         try{
             ((CheckBox)findViewById(R.id.exceptions_screen_locked_cb)).setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_LOCKEDSCREEN])==1);

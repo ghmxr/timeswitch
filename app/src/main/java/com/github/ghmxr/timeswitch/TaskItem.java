@@ -81,7 +81,7 @@ public class TaskItem implements Comparable<TaskItem>,Serializable{
 	/**
 	 * 环境光线亮度，触发器参数
 	 */
-	public int light_brightness=0;
+	public int light_brightness=300;
 
 	public String selectedAction="android.intent.action.ANSWER";
 	public String[] package_names=new String[0];

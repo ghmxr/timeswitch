@@ -824,7 +824,6 @@
                 android:id="@+id/exceptions_period"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:layout_marginBottom="10dp"
                 android:clickable="true"
                 android:background="?attr/selectableItemBackground">
 
@@ -906,6 +905,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
+                        android:singleLine="true"
                         android:text="@string/unselected"/>
                 </LinearLayout>
                 <ImageView

@@ -638,7 +638,7 @@ public class ContentAdapter {
                     }
                 }
                 if(builder.toString().equals("")) return context.getResources().getString(R.string.activity_trigger_wifi_assigned_ssid);
-                return builder.toString();
+                return context.getResources().getString(R.string.activity_trigger_wifi_assigned_ssid)+":"+builder.toString();
             }catch (Exception e){e.printStackTrace();}
             return "";
         }
@@ -1134,16 +1134,18 @@ public class ContentAdapter {
                             }catch (Exception e){
                                 e.printStackTrace();
                             }
-                            builder.append("(");
-                            try{
-                                builder.append(subinfo.getDisplayName());
-                                builder.append(":");
-                                builder.append(subinfo.getNumber());
-                            }catch (Exception e){
-                                e.printStackTrace();
-                                builder.append("");
+                            if(subinfo!=null){
+                                builder.append("(");
+                                try{
+                                    builder.append(subinfo.getDisplayName());
+                                    builder.append(":");
+                                    builder.append(subinfo.getNumber());
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                    builder.append("");
+                                }
+                                builder.append(")");
                             }
-                            builder.append(")");
                         }
                         builder.append(context.getResources().getString(R.string.adapter_action_sms_receivers));
                         builder.append(addresses);
@@ -1440,6 +1442,8 @@ public class ContentAdapter {
                     String value_flashlight=getFlashlightDisplayValue(context,actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FLASHLIGHT]);
                     if(value_flashlight.length()>0){
                         if(builder.toString().length()>0)builder.append(",");
+                        builder.append(context.getResources().getString(R.string.action_flashlight));
+                        builder.append(":");
                         builder.append(value_flashlight);
                     }
 

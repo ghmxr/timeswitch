@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
+import com.github.ghmxr.timeswitch.activities.LogActivity;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 
 /**
@@ -16,5 +17,6 @@ public class LogUtil {
         SharedPreferences.Editor editor=context.getSharedPreferences(PublicConsts.PREFERENCES_LOGS_NAME, Activity.MODE_PRIVATE).edit();
         editor.putString(String.valueOf(System.currentTimeMillis()),log);
         editor.apply();
+        LogActivity.sendEmptyMessage(LogActivity.MESSAGE_REQUEST_REFRESH);
     }
 }

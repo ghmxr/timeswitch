@@ -37,6 +37,7 @@ public class EditTaskActivity extends TaskGui {
     public void initialVariables() {
         taskitem=(TaskItem) getIntent().getSerializableExtra(EXTRA_SERIALIZED_TASKITEM);
         checkString=taskitem.toString();
+        isTaskNameEdited=true;
     }
 
     @Override

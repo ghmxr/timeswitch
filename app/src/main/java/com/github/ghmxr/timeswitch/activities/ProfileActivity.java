@@ -171,6 +171,7 @@ public class ProfileActivity extends BaseActivity implements Runnable{
                             }
                         }
                         new Thread(ProfileActivity.this).start();
+                        isTableStatusChanged=true;
                     }
                 }).start();
             }
@@ -347,8 +348,7 @@ public class ProfileActivity extends BaseActivity implements Runnable{
             this.list=list;
             isSelected=new boolean[list.size()];
             for(int i=0;i<list.size();i++){
-                if(list.get(i).table_name.equals(getSharedPreferences(PublicConsts.PREFERENCES_NAME,Context.MODE_PRIVATE)
-                        .getString(PublicConsts.PREFERENCES_CURRENT_TABLE_NAME,SQLConsts.SQL_DATABASE_DEFAULT_TABLE_NAME))) selected_position=i;
+                if(list.get(i).table_name.equals(MySQLiteOpenHelper.getCurrentTableName(ProfileActivity.this))) selected_position=i;
             }
         }
         @NonNull
@@ -456,7 +456,7 @@ public class ProfileActivity extends BaseActivity implements Runnable{
                                         .setPositiveButton(getResources().getString(R.string.dialog_button_positive), new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialogInterface, int i) {
-                                                if(getSharedPreferences(PublicConsts.PREFERENCES_NAME,Context.MODE_PRIVATE).getString(PublicConsts.PREFERENCES_CURRENT_TABLE_NAME,SQLConsts.SQL_DATABASE_DEFAULT_TABLE_NAME).equals(item.table_name)) isTableStatusChanged=true;
+                                                if(MySQLiteOpenHelper.getCurrentTableName(ProfileActivity.this).equals(item.table_name)) isTableStatusChanged=true;
                                                 recyclerView.setAdapter(null);
                                                 wait_dialog=getWaitDialogInstance();
                                                 wait_dialog.show();

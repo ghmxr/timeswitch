@@ -413,10 +413,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 	public static void deleteTable(Context context,final String table_name){
 		SharedPreferences settings=context.getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE);
 		final SharedPreferences.Editor editor=settings.edit();
-		if(settings.getString(PublicConsts.PREFERENCES_CURRENT_TABLE_NAME,SQLConsts.SQL_DATABASE_DEFAULT_TABLE_NAME).equals(table_name)){
-			editor.putString(PublicConsts.PREFERENCES_CURRENT_TABLE_NAME,SQLConsts.SQL_DATABASE_DEFAULT_TABLE_NAME);
-			editor.apply();
-		}
+		MySQLiteOpenHelper.setCurrentTableName(context,SQLConsts.SQL_DATABASE_DEFAULT_TABLE_NAME);
 		SQLiteDatabase database=getInstance(context).getWritableDatabase();
 		if(!table_name.equals(SQLConsts.SQL_DATABASE_DEFAULT_TABLE_NAME)) {
 			database.execSQL("drop table "+table_name+" ;");

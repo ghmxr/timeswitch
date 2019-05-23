@@ -46,7 +46,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -191,17 +193,18 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        /*myHandler.post(new Runnable() {
+        myHandler.post(new Runnable() {
             @Override
             public void run() {
                 if(ifRefresh){
                     myHandler.postDelayed(this,500);
-                    if(listview_adapter!=null) listview_adapter.refreshAllCertainTimeTaskItems();
-                    //Log.d("Thread_refrfesh_B","Thread sleep!!!");
+                    try{
+                        ((ListAdapter)recyclerView.getAdapter()).refreshAllCertainTimeDisplays();
+                    }catch (Exception e){}
                 }
 
             }
-        }); */
+        });
 
         setServiceEnabled(settings.getBoolean(PublicConsts.PREFERENCE_SERVICE_ENABLED,PublicConsts.PREFERENCE_SERVICE_ENABLED_DEFAULT));
         findViewById(R.id.att_start_service).setOnClickListener(new View.OnClickListener() {
@@ -465,6 +468,7 @@ public class MainActivity extends BaseActivity {
 
                 setServiceEnabled(!isEnabled);
             }
+            break;
             case R.id.action_selectall:{
                 //menu.getItem(MENU_DELETE).setEnabled(true);
                 ((ListAdapter)recyclerView.getAdapter()).setAll(true);
@@ -576,6 +580,7 @@ public class MainActivity extends BaseActivity {
         private boolean [] isSelected;
         private boolean isMultiSelectMode=false;
         private final List<TaskItem> list;
+        private HashMap<Integer,TextView> tvs=new HashMap<>();
         ListAdapter(@NonNull List<TaskItem> list){
             this.list=list;
             isSelected=new boolean[list.size()];
@@ -609,6 +614,12 @@ public class MainActivity extends BaseActivity {
                holder.root.setVisibility(View.GONE);
                return;
            }
+
+            try{
+                Collection<TextView> values=tvs.values();
+                values.remove(holder.tv_trigger);
+            }catch (Exception e){}
+           if(item.trigger_type==TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME) tvs.put(holder.getAdapterPosition(),holder.tv_trigger);
 
            holder.tv_name.setText(item.name);
            int color_value = Color.parseColor(item.addition_title_color);
@@ -804,6 +815,11 @@ public class MainActivity extends BaseActivity {
             intent.putExtra(EditTaskActivity.EXTRA_SERIALIZED_TASKITEM,list.get(position));
             intent.setClass(MainActivity.this, EditTaskActivity.class);
             startActivityForResult(intent,REQUEST_CODE_ACTIVITY_EDIT);
+        }
+
+        private void refreshAllCertainTimeDisplays(){
+            Object [] keys=tvs.keySet().toArray();
+            for(Object i:keys)tvs.get(i).setText(list.get((Integer) i).display_trigger);
         }
     }
 

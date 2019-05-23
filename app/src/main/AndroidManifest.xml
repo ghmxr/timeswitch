@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.github.ghmxr.timeswitch"
-    android:versionCode="13"
-    android:versionName="Build 13">
+    android:versionCode="14"
+    android:versionName="Build 14">
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -22,7 +22,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <uses-permission android:name="android.permission.SEND_SMS"/>
     <uses-permission android:name="android.permission.FLASHLIGHT"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" android:maxSdkVersion="22"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="19"/>
     <uses-permission android:name="android.permission.GET_TASKS" android:maxSdkVersion="20"/>
@@ -112,7 +112,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".activities.About"
+            android:name=".activities.AboutActivity"
             android:label="@string/title_activity_about"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"/>

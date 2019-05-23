@@ -5,10 +5,13 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
+import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Build;
@@ -27,6 +30,8 @@ import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.Global.BatteryReceiver;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
+import com.github.ghmxr.timeswitch.triggers.receivers.APReceiver;
+import com.github.ghmxr.timeswitch.utils.EnvironmentUtils;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
@@ -54,13 +59,74 @@ public class TimeSwitchService extends Service {
     private final Global.NetworkReceiver networkReceiver=new Global.NetworkReceiver();
     private final Global.HeadsetPlugReceiver headsetPlugReceiver=new Global.HeadsetPlugReceiver();
 
-    private final BroadcastReceiver log_wifi_receiver=new BroadcastReceiver() {
+    private final BroadcastReceiver log_receiver=new BroadcastReceiver() {
+        private boolean lock_network=true;
+        private boolean lock_gps=true;
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent==null||intent.getAction()==null||!intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) return;
-            int state=intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,-1);
-            if(state==WifiManager.WIFI_STATE_ENABLED) LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_wifi_enabled));
-            else if(state==WifiManager.WIFI_STATE_DISABLED) LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_wifi_disabled));
+            if(intent==null||intent.getAction()==null)return;
+            switch (intent.getAction()){
+                default:break;
+                case WifiManager.WIFI_STATE_CHANGED_ACTION:{
+                    int state=intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,-1);
+                    if(state==WifiManager.WIFI_STATE_ENABLED) LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_wifi_enabled));
+                    else if(state==WifiManager.WIFI_STATE_DISABLED) LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_wifi_disabled));
+                }
+                break;
+                case BluetoothAdapter.ACTION_STATE_CHANGED:{
+                    int state=intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,-1);
+                    if(state==BluetoothAdapter.STATE_ON) LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_bluetooth_enabled));
+                    else if(state==BluetoothAdapter.STATE_OFF) LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_bluetooth_disabled));
+                }
+                break;
+                case AudioManager.RINGER_MODE_CHANGED_ACTION:{
+                    int state=intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE,-1);
+                    if(state==AudioManager.RINGER_MODE_NORMAL) LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_audio_mode_normal));
+                    else if(state==AudioManager.RINGER_MODE_SILENT) LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_audio_mode_silent));
+                    else if(state==AudioManager.RINGER_MODE_VIBRATE) LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_audio_mode_vibrate));
+                }
+                break;
+                case ConnectivityManager.CONNECTIVITY_ACTION:{
+                    ConnectivityManager manager=(ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
+                    if(manager==null)return;
+                    if(intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY,false)
+                            &&!manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected())
+                    {
+                        lock_network=false;
+                        LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_network_on));return;
+                    }
+                    if(!intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY,false)&&!manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected()&&!lock_network)
+                    {
+                        lock_network=true;
+                        LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_network_off));
+                    }
+                }
+                break;
+                case PublicConsts.ACTION_SMS_SENT:LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_sms_sent2));break;
+                case Intent.ACTION_AIRPLANE_MODE_CHANGED:{
+                    boolean enabled=intent.getBooleanExtra("state",false);
+                    LogUtil.putLog(TimeSwitchService.this,getResources().getString(enabled?R.string.log_airplane_mode_on:R.string.log_airplane_mode_off));
+                }
+                break;
+                case "android.location.MODE_CHANGED":{
+                    boolean enabled=EnvironmentUtils.isGpsEnabled(context);
+                    if(enabled&&!lock_gps){
+                        lock_gps=true;
+                        LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_gps_enabled));
+                    }
+                    else if(!enabled&&lock_gps){
+                        lock_gps=false;
+                        LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_gps_disabled));
+                    }
+                }
+                break;
+                case APReceiver.ACTION_AP_STATE_CHANGED:{
+                    int state=intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,-1);
+                    if(state==APReceiver.AP_STATE_ENABLED)LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_ap_enabled));
+                    else if(state==APReceiver.AP_STATE_DISABLED)LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_ap_disabled));
+                }
+                break;
+            }
         }
     };
 
@@ -88,6 +154,18 @@ public class TimeSwitchService extends Service {
         }catch (Exception e){e.printStackTrace();}
         try{
             registerReceiver(headsetPlugReceiver,new IntentFilter("android.intent.action.HEADSET_PLUG"));
+        }catch (Exception e){e.printStackTrace();}
+        try{
+            IntentFilter filter=new IntentFilter();
+            filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+            filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+            filter.addAction(AudioManager.RINGER_MODE_CHANGED_ACTION);
+            filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+            filter.addAction(PublicConsts.ACTION_SMS_SENT);
+            filter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+            filter.addAction("android.location.MODE_CHANGED");
+            filter.addAction(APReceiver.ACTION_AP_STATE_CHANGED);
+            registerReceiver(log_receiver,filter);
         }catch (Exception e){e.printStackTrace();}
     }
 
@@ -194,6 +272,10 @@ public class TimeSwitchService extends Service {
 
         try{
             unregisterReceiver(headsetPlugReceiver);
+        }catch (Exception e){e.printStackTrace();}
+
+        try{
+            unregisterReceiver(log_receiver);
         }catch (Exception e){e.printStackTrace();}
 
         mHandler=null;

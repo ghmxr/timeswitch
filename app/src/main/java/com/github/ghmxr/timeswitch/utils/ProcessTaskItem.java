@@ -159,7 +159,6 @@ public class ProcessTaskItem {
             activateActionOfNotification(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE]);
         }
         LogUtil.putLog(context,context.getResources().getString(R.string.notification_task_activated_title)+":"+log_taskitem.toString());
-        LogActivity.sendEmptyMessage(LogActivity.MESSAGE_REQUEST_REFRESH);
     }
 
     /**
@@ -485,7 +484,7 @@ public class ProcessTaskItem {
             if(manager==null)return;
             NotificationCompat.Builder builder;
             if(Build.VERSION.SDK_INT>=26){
-                NotificationChannel channel=new NotificationChannel("channel_flashlight","FlashLight", NotificationManager.IMPORTANCE_HIGH);
+                NotificationChannel channel=new NotificationChannel("channel_flashlight","FlashLight", NotificationManager.IMPORTANCE_DEFAULT);
                 manager.createNotificationChannel(channel);
                 builder=new NotificationCompat.Builder(context,"channel_flashlight");
             }else{
@@ -496,7 +495,7 @@ public class ProcessTaskItem {
             builder.setContentText(context.getResources().getString(R.string.notification_flashlight_message));
             builder.setOngoing(true);
             builder.setContentIntent(PendingIntent.getBroadcast(context,1,new Intent(context,FlashlightReceiver.class),PendingIntent.FLAG_UPDATE_CURRENT));
-            builder.setFullScreenIntent(PendingIntent.getActivity(context,1,new Intent(),PendingIntent.FLAG_UPDATE_CURRENT),true);
+            builder.setFullScreenIntent(PendingIntent.getActivity(context,1,new Intent(),PendingIntent.FLAG_UPDATE_CURRENT),false);
             manager.notify(110,builder.build());
             flash_light_thread=new Thread(new Runnable() {
                 @Override

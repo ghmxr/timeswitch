@@ -38,6 +38,8 @@
             android:layout_height="wrap_content"
             android:text="Description"
             android:textSize="12sp"
+            android:singleLine="true"
+            android:layout_marginRight="30dp"
             android:visibility="gone"/>
 
     </LinearLayout>

@@ -159,7 +159,7 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
             }
             break;
             case R.id.settings_about:{
-                Intent i=new Intent(this,About.class);
+                Intent i=new Intent(this,AboutActivity.class);
                 i.putExtra(EXTRA_TITLE_COLOR,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
                 startActivity(i);
             }

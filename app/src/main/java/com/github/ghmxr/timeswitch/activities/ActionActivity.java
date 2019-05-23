@@ -504,6 +504,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
         ((TextView)findViewById(R.id.actions_app_close_status)).setText(ContentAdapter.ActionContentAdapter.getAppNameDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES]));
         ((TextView)findViewById(R.id.actions_autorotation_status)).setText(ContentAdapter.ActionContentAdapter.getGeneralDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AUTOROTATION]));
         ((TextView)findViewById(R.id.actions_flashlight_status)).setText(ContentAdapter.ActionContentAdapter.getFlashlightDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FLASHLIGHT]));
+        ((TextView)findViewById(R.id.actions_app_force_close_status)).setText(ContentAdapter.ActionContentAdapter.getAppNameDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FORCE_STOP_APP_PACKAGES]));
     }
 
     private boolean checkAndShowSnackBarOfSuperuserRequest(){

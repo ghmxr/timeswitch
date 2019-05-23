@@ -16,7 +16,7 @@ import com.github.ghmxr.timeswitch.R;
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
  */
-public class About extends BaseActivity {
+public class AboutActivity extends BaseActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,7 +45,7 @@ public class About extends BaseActivity {
                     startActivity(i);
                 }catch (Exception e){
                     e.printStackTrace();
-                    Toast.makeText(About.this,e.toString(),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AboutActivity.this,e.toString(),Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -57,7 +57,7 @@ public class About extends BaseActivity {
                 }
                 catch (Exception e){
                     e.printStackTrace();
-                    Toast.makeText(About.this,e.toString(),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AboutActivity.this,e.toString(),Toast.LENGTH_SHORT).show();
                 }
             }
         });

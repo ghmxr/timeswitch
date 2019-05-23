@@ -80,13 +80,14 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
         findViewById(R.id.trigger_app_closed).setOnClickListener(this);
         findViewById(R.id.trigger_headset).setOnClickListener(this);
         findViewById(R.id.trigger_brightness).setOnClickListener(this);
-        if(Build.VERSION.SDK_INT>=18){
+        /*if(Build.VERSION.SDK_INT>=18){
             findViewById(R.id.trigger_received_notification).setVisibility(View.VISIBLE);
             findViewById(R.id.trigger_received_notification).setOnClickListener(this);
         }else {
             findViewById(R.id.trigger_received_notification).setVisibility(View.GONE);
             findViewById(R.id.trigger_received_notification).setOnClickListener(null);
-        }
+        }*/
+        findViewById(R.id.trigger_received_notification).setOnClickListener(this);
 
         //initialize the values
         item=(TaskItem) getIntent().getSerializableExtra(EXTRA_SERIALIZED_TASKITEM);
@@ -484,7 +485,7 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                         ,getResources().getString(R.string.permission_grant_action_att))) return;
 
                 DialogForAppSelection dialog=new DialogForAppSelection(this,v_id==R.id.trigger_app_opened?getResources().getString(R.string.activity_trigger_app_opened)
-                        :getResources().getString(R.string.activity_trigger_app_closed),item.package_names,v_id==R.id.trigger_app_opened?null:"#55e74c3c","");
+                        :getResources().getString(R.string.activity_trigger_app_closed),item.package_names,v_id==R.id.trigger_app_opened?null:"#55e74c3c",getResources().getString(R.string.activity_trigger_app_att));
                 dialog.setOnDialogConfirmedCallBack(new DialogConfirmedCallBack() {
                     @Override
                     public void onDialogConfirmed(String result) {
@@ -723,11 +724,15 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
             }
             break;
             case R.id.trigger_received_notification:{
+                if(Build.VERSION.SDK_INT<18){
+                    Snackbar.make(findViewById(android.R.id.content),getResources().getString(R.string.notification_listener_unsupported),Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
                 if(!EnvironmentUtils.PermissionRequestUtil.checkAndShowNotificationReadingRequestSnackbar(this,getResources().getString(R.string.permission_request_reading_notification_toast)
                         ,getResources().getString(R.string.permission_grant_action_att))){
                     return;
                 }
-                DialogForAppSelection dialog=new DialogForAppSelection(this,getResources().getString(R.string.activity_trigger_received_notification),item.package_names,null,"");
+                DialogForAppSelection dialog=new DialogForAppSelection(this,getResources().getString(R.string.activity_trigger_received_notification),item.package_names,null,getResources().getString(R.string.dialog_app_select_notification_trigger));
                 dialog.setOnDialogConfirmedCallBack(new DialogConfirmedCallBack() {
                     @Override
                     public void onDialogConfirmed(String result) {
