@@ -36,7 +36,8 @@ public abstract class BaseBroadcastReceiver extends BroadcastReceiver implements
             @Override
             public void run() {
                 try{
-                    new ProcessTaskItem(context,item).checkExceptionsAndRunActions();
+                    //new ProcessTaskItem(context,item).checkExceptionsAndRunActions();
+                    ProcessTaskItem.checkExceptionsAndRunActions(context,item);
                 }catch (Exception e){e.printStackTrace();}
             }
         }).start();

@@ -36,7 +36,7 @@ public class CustomAlarmReceiver implements Trigger {
            synchronized (CustomAlarmReceiver.class){
                if(alarmManager==null){
                    try{
-                       alarmManager=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+                       alarmManager=(AlarmManager)context.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
                    }catch (Exception e){e.printStackTrace();}
                }
            }
@@ -93,7 +93,7 @@ public class CustomAlarmReceiver implements Trigger {
     public static class AlarmReceiver extends BroadcastReceiver{
 
         @Override
-        public void onReceive(Context context,Intent intent) {
+        public void onReceive(final Context context, Intent intent) {
             if(intent==null||intent.getAction()==null||!intent.getAction().equals(ACTION)) return;
             try{
                 final CustomAlarmReceiver receiver= map_alarm_receivers.get(intent.getIntExtra(EXTRA_TASK_ID,-1));
@@ -107,7 +107,8 @@ public class CustomAlarmReceiver implements Trigger {
                     @Override
                     public void run() {
                         try{
-                            new ProcessTaskItem(receiver.context,receiver.item).checkExceptionsAndRunActions();
+                            //new ProcessTaskItem(receiver.context,receiver.item).checkExceptionsAndRunActions();
+                            ProcessTaskItem.checkExceptionsAndRunActions(receiver.context,receiver.item);
                         }catch (Exception e){e.printStackTrace();}
                     }
                 }).start();

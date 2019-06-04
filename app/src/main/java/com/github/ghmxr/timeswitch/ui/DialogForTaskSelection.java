@@ -1,4 +1,4 @@
-package com.github.ghmxr.timeswitch.ui.bottomdialogs;
+package com.github.ghmxr.timeswitch.ui;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -19,8 +19,6 @@ import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.adapters.ContentAdapter;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
-import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
-import com.github.ghmxr.timeswitch.ui.DialogConfirmedCallBack;
 
 import java.util.List;
 

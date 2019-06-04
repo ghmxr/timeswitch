@@ -7,7 +7,6 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -45,7 +44,7 @@ import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBatteryTemper
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForInterval;
 import com.github.ghmxr.timeswitch.ui.DialogConfirmedCallBack;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForTriggerBrightness;
-import com.github.ghmxr.timeswitch.ui.bottomdialogs.DialogForAppSelection;
+import com.github.ghmxr.timeswitch.ui.DialogForAppSelection;
 import com.github.ghmxr.timeswitch.utils.EnvironmentUtils;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
@@ -394,7 +393,7 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                 if(item.trigger_type==TriggerTypeConsts.TRIGGER_TYPE_BATTERY_HIGHER_THAN_TEMPERATURE) selection_first=0;
                 else if(item.trigger_type==TriggerTypeConsts.TRIGGER_TYPE_BATTERY_LOWER_THAN_TEMPERATURE) selection_first=1;
                 final BottomDialogForBatteryTemperatureWithEnabledSelection.BottomDialogForBatteryTemperatureWithoutEnabledSelection dialog=
-                        new BottomDialogForBatteryTemperatureWithEnabledSelection.BottomDialogForBatteryTemperatureWithoutEnabledSelection(this,selection_first,item.battery_percentage);
+                        new BottomDialogForBatteryTemperatureWithEnabledSelection.BottomDialogForBatteryTemperatureWithoutEnabledSelection(this,selection_first,item.battery_temperature);
                 dialog.show();
                 dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
                     @Override

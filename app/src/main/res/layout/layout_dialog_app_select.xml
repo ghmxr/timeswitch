@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <android.support.v7.widget.SearchView
+        android:id="@+id/dialog_app_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        app:iconifiedByDefault="false"
+        app:queryHint="Search"/>
     <LinearLayout
         android:id="@+id/dialog_app_wait"
         android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_below="@+id/dialog_app_search">
         <ProgressBar
             android:layout_width="45dp"
             android:layout_height="45dp"
@@ -20,6 +33,7 @@
         android:id="@+id/dialog_app_list_area"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/dialog_app_search"
         android:visibility="gone">
         <TextView
             android:id="@+id/dialog_app_att"
@@ -30,14 +44,8 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
             android:textColor="@color/color_activity_taskgui_att"
-            android:textSize="14sp"/>
-        <ListView
-            android:id="@+id/dialog_app_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_below="@+id/dialog_app_att"
-            android:visibility="gone"/>
+            android:textSize="12sp"/>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/dialog_app_recyclerview"
             android:layout_width="match_parent"

@@ -45,7 +45,8 @@ public class NotificationReceiver implements Trigger,NotificationMonitorService.
             @Override
             public void run() {
                 try{
-                    new ProcessTaskItem(context,item).checkExceptionsAndRunActions();
+                    //new ProcessTaskItem(context,item).checkExceptionsAndRunActions();
+                    ProcessTaskItem.checkExceptionsAndRunActions(context,item);
                 }catch (Exception e){e.printStackTrace();}
             }
         }).start();

@@ -33,8 +33,8 @@ import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForVolume;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogWith2Selections;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogWith3Selections;
 import com.github.ghmxr.timeswitch.ui.DialogConfirmedCallBack;
-import com.github.ghmxr.timeswitch.ui.bottomdialogs.DialogForAppSelection;
-import com.github.ghmxr.timeswitch.ui.bottomdialogs.DialogForTaskSelection;
+import com.github.ghmxr.timeswitch.ui.DialogForAppSelection;
+import com.github.ghmxr.timeswitch.ui.DialogForTaskSelection;
 import com.github.ghmxr.timeswitch.utils.EnvironmentUtils;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 

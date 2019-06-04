@@ -395,7 +395,7 @@ public class MainActivity extends BaseActivity {
             e.printStackTrace();
         }
         try{
-            while (queue.size()>0) queue.getLast().finish();
+            while (queue!=null&&queue.size()>0) queue.getLast().finish();
         }catch (Exception e){e.printStackTrace();}
     }
 
