@@ -213,7 +213,7 @@ public class TaskItem implements Comparable<TaskItem>,Serializable{
 	 * 启用此触发任务
 	 * @param context 传入对应的service来维持运行状态
 	 */
-	public void activateTask(Context context){
+	public synchronized void activateTask(Context context){
 		if(trigger!=null) trigger.cancel();
 		if(!(context instanceof Service)){
 			Log.e("TaskItemWarn","The context sent to this TaskItem is not a service instance and some functions may not work!!!!");
@@ -222,7 +222,7 @@ public class TaskItem implements Comparable<TaskItem>,Serializable{
 		if(trigger!=null) trigger.activate();
 	}
 
-	public void cancelTask(){
+	public synchronized void cancelTask(){
 		if(trigger!=null) {
 			trigger.cancel();
 			trigger=null;

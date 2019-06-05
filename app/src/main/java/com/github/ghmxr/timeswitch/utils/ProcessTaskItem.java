@@ -233,9 +233,11 @@ public class ProcessTaskItem {
             }catch (Exception e){
                 e.printStackTrace();
             }
-            try{
-                TimeSwitchService.list.remove(item);
-            }catch (Exception e){e.printStackTrace();}
+            synchronized (TimeSwitchService.class){
+                try{
+                    TimeSwitchService.list.remove(item);
+                }catch (Exception e){e.printStackTrace();}
+            }
             MainActivity.sendEmptyMessage(MainActivity.MESSAGE_REQUEST_UPDATE_LIST);
         }
 

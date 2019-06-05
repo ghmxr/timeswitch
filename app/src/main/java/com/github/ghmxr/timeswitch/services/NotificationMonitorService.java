@@ -19,24 +19,32 @@ public class NotificationMonitorService extends NotificationListenerService{
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
         super.onNotificationPosted(sbn);
-        for(NotificationListener listener:callbacks){
-            listener.onNotificationPosted(sbn);
+        synchronized (callbacks){
+            for(NotificationListener listener:callbacks){
+                listener.onNotificationPosted(sbn);
+            }
         }
     }
 
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
         super.onNotificationRemoved(sbn);
-        for(NotificationListener listener:callbacks){
-            listener.onNotificationRemoved(sbn);
+        synchronized (callbacks){
+            for(NotificationListener listener:callbacks){
+                listener.onNotificationRemoved(sbn);
+            }
         }
     }
 
     public static void registerNotificationReceiver(NotificationListener listener){
-        if(!callbacks.contains(listener)) callbacks.addLast(listener);
+        synchronized (callbacks){
+            if(!callbacks.contains(listener)) callbacks.addLast(listener);
+        }
     }
 
     public static void unregisterNotificationReceiver(NotificationListener listener){
-        if(callbacks.contains(listener)) callbacks.remove(listener);
+        synchronized (callbacks){
+            if(callbacks.contains(listener)) callbacks.remove(listener);
+        }
     }
 }

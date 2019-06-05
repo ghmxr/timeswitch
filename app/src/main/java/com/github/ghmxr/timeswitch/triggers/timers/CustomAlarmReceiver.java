@@ -45,7 +45,7 @@ public class CustomAlarmReceiver implements Trigger {
 
 
     @Override
-    public void activate() {
+    public synchronized void activate() {
         if(alarmManager==null) return;
         if (item.trigger_type == TriggerTypeConsts.TRIGGER_TYPE_SINGLE) {  //触发仅一次的模式
             if (Build.VERSION.SDK_INT >= 19) {
@@ -83,7 +83,7 @@ public class CustomAlarmReceiver implements Trigger {
     }
 
     @Override
-    public void cancel() {
+    public synchronized void cancel() {
         try{
             alarmManager.cancel(pi);
             map_alarm_receivers.remove(item.id);

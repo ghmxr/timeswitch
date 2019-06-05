@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+/**
+ * @deprecated
+ */
 public class AppLaunchDetectionReceiver extends BaseBroadcastReceiver{
     static final LinkedList<AppLaunchDetectionReceiver> app_detecting_receivers=new LinkedList<>();
     private Map<String,Boolean> packageLock=new HashMap<>();
@@ -57,14 +60,16 @@ public class AppLaunchDetectionReceiver extends BaseBroadcastReceiver{
 
     @Override
     public void activate() {
-        try{
-            if(!app_detecting_receivers.contains(this)) app_detecting_receivers.add(this);
-            AppLaunchingDetectionService.startService(context);
-        }catch (Exception e){e.printStackTrace();}
-        try{
-            context.registerReceiver(this,new IntentFilter(AppLaunchingDetectionService.ACTION_LAUNCH_INFO_CHANGED));
-        }catch (Exception e){
-            e.printStackTrace();
+        synchronized (app_detecting_receivers){
+            try{
+                if(!app_detecting_receivers.contains(this)) app_detecting_receivers.add(this);
+                AppLaunchingDetectionService.startService(context);
+            }catch (Exception e){e.printStackTrace();}
+            try{
+                context.registerReceiver(this,new IntentFilter(AppLaunchingDetectionService.ACTION_LAUNCH_INFO_CHANGED));
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 

@@ -24,6 +24,7 @@ import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.data.v2.SQLConsts;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.data.v2.MySQLiteOpenHelper;
+import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import java.util.ArrayList;
@@ -149,22 +150,31 @@ public class Global {
     }
 
     /**
-     * 根据list中各item的位置刷新item中的order并更新至数据库
+     * 根据list中各item的位置刷新item中的order并更新至数据库，由TimeSwitchService.class同步
      * @param list 已排好序的list
      */
-    public static void refreshTaskItemListOrders(Context context,List<TaskItem> list){
-        if(list==null) return;
-        for(int i=0;i<list.size();i++){
-            list.get(i).order=i;
-        }
-        SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
-        final String table_name=MySQLiteOpenHelper.getCurrentTableName(context);
-        for(TaskItem item:list){
-            ContentValues contentValues=new ContentValues();
-            contentValues.put(SQLConsts.SQL_TASK_COLUMN_ORDER,item.order);
-            database.update(table_name,contentValues,SQLConsts.SQL_TASK_COLUMN_ID+"="+item.id,null);
-        }
-        database.close();
+    public static void refreshTaskItemListOrders(final Context context,final List<TaskItem> list){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (TimeSwitchService.class){
+                    try{
+                        if(list==null) return;
+                        for(int i=0;i<list.size();i++){
+                            list.get(i).order=i;
+                        }
+                        SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
+                        final String table_name=MySQLiteOpenHelper.getCurrentTableName(context);
+                        for(TaskItem item:list){
+                            ContentValues contentValues=new ContentValues();
+                            contentValues.put(SQLConsts.SQL_TASK_COLUMN_ORDER,item.order);
+                            database.update(table_name,contentValues,SQLConsts.SQL_TASK_COLUMN_ID+"="+item.id,null);
+                        }
+                        database.close();
+                    }catch (Exception e){e.printStackTrace();}
+                }
+            }
+        }).start();
     }
 
     public static class BatteryReceiver extends BroadcastReceiver{

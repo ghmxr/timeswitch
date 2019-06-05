@@ -43,7 +43,7 @@ import java.util.ArrayList;
  */
 public class TimeSwitchService extends Service {
 
-    public static ArrayList <TaskItem> list =new ArrayList<>();
+    public static ArrayList <TaskItem> list =new ArrayList<>();//Guarded by TimeSwitchService.class
 
     public static TimeSwitchService service;
 

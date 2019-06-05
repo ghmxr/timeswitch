@@ -8,7 +8,7 @@ import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.triggers.receivers.APReceiver;
 import com.github.ghmxr.timeswitch.triggers.receivers.AirplaneModeReceiver;
-import com.github.ghmxr.timeswitch.triggers.receivers.AppLaunchDetectionReceiver;
+import com.github.ghmxr.timeswitch.triggers.receivers.AppLaunchDetectionReceiver2;
 import com.github.ghmxr.timeswitch.triggers.receivers.BatteryReceiver;
 import com.github.ghmxr.timeswitch.triggers.receivers.BluetoothReceiver;
 import com.github.ghmxr.timeswitch.triggers.receivers.CustomBroadcastReceiver;
@@ -63,7 +63,7 @@ public class TriggerUtil {
             }
 
             case TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED: case TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED:{
-                return new AppLaunchDetectionReceiver(context,item);
+                return new AppLaunchDetectionReceiver2(context,item);
             }
 
             case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_ON: case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_BLUETOOTH_OFF:{

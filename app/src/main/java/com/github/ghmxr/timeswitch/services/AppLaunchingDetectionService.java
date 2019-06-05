@@ -13,12 +13,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.IBinder;
+import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,6 +31,7 @@ import java.util.List;
 public class AppLaunchingDetectionService extends Service{
 
     public static AppLaunchingDetectionService service;
+    private static final List<AppLaunchingDetectionCallback> callbacks=new ArrayList<>();
 
     private BroadcastReceiver screen_receiver=new BroadcastReceiver() {
         @Override
@@ -41,6 +45,34 @@ public class AppLaunchingDetectionService extends Service{
             }
         }
     };
+
+    /**
+     * 此接口在接收应用打开关闭轮询检测回调时不在主线程
+     */
+    public interface AppLaunchingDetectionCallback{
+        /**
+         * 此方法在接收应用打开关闭轮询检测回调时不在主线程
+         */
+        void onAppOpened(String package_name);
+        /**
+         * 此方法在接收应用打开关闭轮询检测回调时不在主线程
+         */
+        void onAppClosed(String package_name);
+    }
+
+    public static void registerCallback(@NonNull Context context,@NonNull AppLaunchingDetectionCallback callback){
+        synchronized (callbacks){
+            startService(context);
+            if(!callbacks.contains(callback)) callbacks.add(callback);
+        }
+    }
+
+    public static void unregisterCallback(@NonNull AppLaunchingDetectionCallback callback){
+        synchronized (callbacks){
+            if(callbacks.contains(callback)) callbacks.remove(callback);
+            if(callbacks.size()==0&&service!=null) service.stopSelf();
+        }
+    }
 
     public static String ACTION_LAUNCH_INFO_CHANGED= PublicConsts.PACKAGE_NAME+"action.PACKAGE_LAUNCH_INFO_CHANGED";
     /**
@@ -154,13 +186,24 @@ public class AppLaunchingDetectionService extends Service{
         }
     }
 
+    /**
+     * @deprecated use {@link #callAllCallbacks(String, boolean)}instead and this method is invalid now
+     */
     private void sendAppLaunchedBroadcast(String packageName,boolean isLaunched){
-        Intent i=new Intent();
+        /*Intent i=new Intent();
         i.setAction(ACTION_LAUNCH_INFO_CHANGED);
         i.putExtra(EXTRA_PACKAGE_NAME,packageName);
         i.putExtra(EXTRA_IF_RUNNING,isLaunched);
         sendBroadcast(i);
-        Log.d("AppStatus",packageName+" is "+(isLaunched?"LAUNCHED":"CLOSED"));
+        Log.d("AppStatus",packageName+" is "+(isLaunched?"LAUNCHED":"CLOSED"));*/
+    }
+
+    private void callAllCallbacks(String package_name,boolean isLaunched){
+        Log.d("AppStatus",package_name+" is "+(isLaunched?"LAUNCHED":"CLOSED"));
+        for(AppLaunchingDetectionCallback callback:callbacks){
+            if(isLaunched) callback.onAppOpened(package_name);
+            else callback.onAppClosed(package_name);
+        }
     }
 
     private class DetectingLoopingTask implements Runnable{
@@ -178,21 +221,26 @@ public class AppLaunchingDetectionService extends Service{
                     String lastPackageName="";
                     //String lastClosedPackageName="";
                     while(flag){
-                        try{
-                            long startTime=queryTime-1000;
-                            if(startTime<0) startTime=0;
-                            UsageEvents events=manager.queryEvents(startTime,System.currentTimeMillis());
-                            queryTime=System.currentTimeMillis();
-                            while(events.hasNextEvent()){
-                                UsageEvents.Event event=new UsageEvents.Event();
-                                events.getNextEvent(event);
-                                if(event.getEventType()==UsageEvents.Event.MOVE_TO_FOREGROUND){
-                                    if(!event.getPackageName().equals(lastPackageName)){
-                                        if(!lastPackageName.equals(""))sendAppLaunchedBroadcast(lastPackageName,false);
-                                        lastPackageName=event.getPackageName();
-                                        sendAppLaunchedBroadcast(event.getPackageName(),true);
+                        synchronized (callbacks){
+                            try{
+                                long startTime=queryTime-1000;
+                                if(startTime<0) startTime=0;
+                                UsageEvents events=manager.queryEvents(startTime,System.currentTimeMillis());
+                                queryTime=System.currentTimeMillis();
+                                while(events.hasNextEvent()){
+                                    UsageEvents.Event event=new UsageEvents.Event();
+                                    events.getNextEvent(event);
+                                    if(event.getEventType()==UsageEvents.Event.MOVE_TO_FOREGROUND){
+                                        if(!event.getPackageName().equals(lastPackageName)){
+                                            if(!lastPackageName.equals("")){
+                                                sendAppLaunchedBroadcast(lastPackageName,false);
+                                                callAllCallbacks(lastPackageName,false);
+                                            }
+                                            lastPackageName=event.getPackageName();
+                                            sendAppLaunchedBroadcast(event.getPackageName(),true);
+                                            callAllCallbacks(event.getPackageName(),true);
+                                        }
                                     }
-                                }
                             /*if(event.getEventType()==UsageEvents.Event.MOVE_TO_BACKGROUND){
                                 if(!event.getPackageName().equals(lastPackageName)){
                                     //lastPackageName="";
@@ -201,65 +249,77 @@ public class AppLaunchingDetectionService extends Service{
                                 }
                             }*/
 
+                                }
+                                //Log.d("AppLDService","Loop sleep!!!!!!");
+                                //Thread.sleep(1000);
+                            }catch (Exception e){
+                                e.printStackTrace();
                             }
-                            //Log.d("AppLDService","Loop sleep!!!!!!");
-                            Thread.sleep(1000);
-                        }catch (Exception e){
-                            e.printStackTrace();
                         }
+                        SystemClock.sleep(1000);
                     }
                 }else if(Build.VERSION.SDK_INT>=21){
                     ActivityManager manager=(ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
                     if(manager==null) return;
                     String currentRunningPackageName="";
                     while (flag){
-                        try{
-                            List<ActivityManager.RunningAppProcessInfo> infos=manager.getRunningAppProcesses();
-                            Field processStateField=ActivityManager.RunningAppProcessInfo.class.getDeclaredField("processState");
-                            for(ActivityManager.RunningAppProcessInfo info:infos){
-                                if(info.importance== ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND&&processStateField.getInt(info)==2){
-                                    //Log.d("AppStatus",info.processName+" FOREGROUND");
-                                    if(!currentRunningPackageName.equals(info.pkgList[0])){
-                                        if(!currentRunningPackageName.equals("")){
-                                            sendAppLaunchedBroadcast(currentRunningPackageName,false);
+                        synchronized (callbacks){
+                            try{
+                                List<ActivityManager.RunningAppProcessInfo> infos=manager.getRunningAppProcesses();
+                                Field processStateField=ActivityManager.RunningAppProcessInfo.class.getDeclaredField("processState");
+                                for(ActivityManager.RunningAppProcessInfo info:infos){
+                                    if(info.importance== ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND&&processStateField.getInt(info)==2){
+                                        //Log.d("AppStatus",info.processName+" FOREGROUND");
+                                        if(!currentRunningPackageName.equals(info.pkgList[0])){
+                                            if(!currentRunningPackageName.equals("")){
+                                                sendAppLaunchedBroadcast(currentRunningPackageName,false);
+                                                callAllCallbacks(currentRunningPackageName,false);
+                                            }
+                                            currentRunningPackageName=info.pkgList[0];
+                                            sendAppLaunchedBroadcast(info.pkgList[0],true);
+                                            callAllCallbacks(info.pkgList[0],true);
                                         }
-                                        currentRunningPackageName=info.pkgList[0];
-                                        sendAppLaunchedBroadcast(info.pkgList[0],true);
+                                        break;
                                     }
-                                    break;
                                 }
+                                //Log.d("AppLDService","Loop sleep!!!!!!");
+                                //Thread.sleep(1000);
+                            }catch (Exception e){
+                                e.printStackTrace();
                             }
-                            //Log.d("AppLDService","Loop sleep!!!!!!");
-                            Thread.sleep(1000);
-                        }catch (Exception e){
-                            e.printStackTrace();
                         }
+                        SystemClock.sleep(1000);
                     }
                 }else if(Build.VERSION.SDK_INT>=14){
                     ActivityManager manager=(ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
                     if(manager==null) return;
                     String currentRunningPackageName="";
                     while (flag){
-                        try{
-                            List<ActivityManager.RunningTaskInfo> infos=manager.getRunningTasks(1);
-                            for(ActivityManager.RunningTaskInfo info:infos){
-                                String package_name=info.topActivity.getPackageName();
-                                //Log.d("RunningInfo",package_name);
-                                if(!package_name.equals(currentRunningPackageName)){
-                                    if(!currentRunningPackageName.equals("")) {
-                                        sendAppLaunchedBroadcast(currentRunningPackageName,false);
-                                        //Log.d("AppStatus",currentRunningPackageName+" is CLOSED");
+                        synchronized (callbacks){
+                            try{
+                                List<ActivityManager.RunningTaskInfo> infos=manager.getRunningTasks(1);
+                                for(ActivityManager.RunningTaskInfo info:infos){
+                                    String package_name=info.topActivity.getPackageName();
+                                    //Log.d("RunningInfo",package_name);
+                                    if(!package_name.equals(currentRunningPackageName)){
+                                        if(!currentRunningPackageName.equals("")) {
+                                            sendAppLaunchedBroadcast(currentRunningPackageName,false);
+                                            callAllCallbacks(currentRunningPackageName,false);
+                                            //Log.d("AppStatus",currentRunningPackageName+" is CLOSED");
+                                        }
+                                        currentRunningPackageName=package_name;
+                                        sendAppLaunchedBroadcast(package_name,true);
+                                        callAllCallbacks(package_name,true);
+                                        //Log.d("AppStatus",package_name+" is LAUNCHED");
                                     }
-                                    currentRunningPackageName=package_name;
-                                    sendAppLaunchedBroadcast(package_name,true);
-                                    //Log.d("AppStatus",package_name+" is LAUNCHED");
                                 }
+                                //Log.d("AppLDService","Loop sleep!!!!!!");
+                                //Thread.sleep(1000);
+                            }catch (Exception e){
+                                e.printStackTrace();
                             }
-                            //Log.d("AppLDService","Loop sleep!!!!!!");
-                            Thread.sleep(1000);
-                        }catch (Exception e){
-                            e.printStackTrace();
                         }
+                        SystemClock.sleep(1000);
                     }
 
                 }
