@@ -315,13 +315,13 @@ public class ProcessTaskItem {
         }
 
         if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_ENABLED])==1){
-            boolean b=EnvironmentUtils.isBluetoothEnabled(context);
+            boolean b=EnvironmentUtils.isBluetoothEnabled();
             if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&b) return false;
             if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&!b) return true;
         }
 
         if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_DISABLED])==1){
-            boolean b=EnvironmentUtils.isBluetoothEnabled(context);
+            boolean b=EnvironmentUtils.isBluetoothEnabled();
             if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&!b) return false;
             if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&b) return true;
         }

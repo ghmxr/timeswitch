@@ -710,7 +710,7 @@ public class EnvironmentUtils {
     /**
      * À¶ÑÀÊÇ·ñ¿ªÆô
      */
-    public static boolean isBluetoothEnabled(Context context){
+    public static boolean isBluetoothEnabled(){
         try{
             return BluetoothAdapter.getDefaultAdapter().isEnabled();
         }catch (Exception e){e.printStackTrace();}
