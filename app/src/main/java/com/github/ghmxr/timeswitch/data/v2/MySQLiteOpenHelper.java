@@ -330,26 +330,35 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 			int id_this_row=cursor1.getInt(cursor1.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ID));
 			String [] action_values=ValueUtils.string2StringArray(PublicConsts.SPLIT_SEPARATOR_FIRST_LEVEL
 					,cursor1.getString(cursor1.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ACTIONS)));
-			String ids_enable[]=action_values[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE]
+			String [] ids_enable=action_values[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE]
 					.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-			String ids_disable[]=action_values[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE]
+			String [] ids_disable=action_values[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE]
 					.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+			boolean flag_update=false;
 			if(ids_enable.length>0&&Integer.parseInt(ids_enable[0])>=0){
 				List<String> list_id_enable=new ArrayList<>(Arrays.asList(ids_enable));
-				list_id_enable.remove(String.valueOf(id_of_delete_row));
-				//Log.d("removeID",String.valueOf(id_of_delete_row));
-				ids_enable=new String[list_id_enable.size()];
-				for(int i=0;i<list_id_enable.size();i++)ids_enable[i]=list_id_enable.get(i);
-				//Log.d("after-removed",Arrays.toString(ids_enable));
+				if(list_id_enable.contains(String.valueOf(id_of_delete_row))){
+					flag_update=true;
+					list_id_enable.remove(String.valueOf(id_of_delete_row));
+					//Log.d("removeID",String.valueOf(id_of_delete_row));
+					ids_enable=new String[list_id_enable.size()];
+					for(int i=0;i<list_id_enable.size();i++)ids_enable[i]=list_id_enable.get(i);
+					//Log.d("after-removed",Arrays.toString(ids_enable));
+				}
 			}
 			if(ids_disable.length>0&&Integer.parseInt(ids_disable[0])>=0){
 				List<String> list_id_disable=new ArrayList<>(Arrays.asList(ids_disable));
-				list_id_disable.remove(String.valueOf(id_of_delete_row));
-				//Log.d("removeID",String.valueOf(id_of_delete_row));
-				ids_disable=new String[list_id_disable.size()];
-				for(int i=0;i<list_id_disable.size();i++)ids_disable[i]=list_id_disable.get(i);
-				//Log.d("after-removed",Arrays.toString(ids_disable));
+				if(list_id_disable.contains(String.valueOf(id_of_delete_row))){
+					flag_update=true;
+					list_id_disable.remove(String.valueOf(id_of_delete_row));
+					//Log.d("removeID",String.valueOf(id_of_delete_row));
+					ids_disable=new String[list_id_disable.size()];
+					for(int i=0;i<list_id_disable.size();i++)ids_disable[i]=list_id_disable.get(i);
+					//Log.d("after-removed",Arrays.toString(ids_disable));
+				}
 			}
+
+			if(!flag_update) continue;
 
 			if(ids_enable.length==0||ids_enable[0].equals(String.valueOf(-1))){
 				ids_enable=new String[1];
