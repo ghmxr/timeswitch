@@ -74,12 +74,13 @@ public class EditTaskActivity extends TaskGui {
                 Snackbar.make(findViewById(R.id.layout_taskgui_root),getResources().getString(R.string.dialog_profile_delete_confirm),Snackbar.LENGTH_SHORT).show();
                 return false;
             }
-            SQLiteDatabase database= MySQLiteOpenHelper.getInstance(this).getWritableDatabase();
+
             try{
-                MySQLiteOpenHelper.deleteRow(database,MySQLiteOpenHelper.getCurrentTableName(this),taskitem.id);
+                MySQLiteOpenHelper.deleteRow(this,MySQLiteOpenHelper.getCurrentTableName(this),taskitem.id);
                 setResult(RESULT_OK);
                 finish();
             }catch (Exception e){
+                e.printStackTrace();
                 Toast.makeText(this,e.toString(),Toast.LENGTH_SHORT).show();
             }
         }

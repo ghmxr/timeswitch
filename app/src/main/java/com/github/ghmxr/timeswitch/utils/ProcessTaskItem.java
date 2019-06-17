@@ -125,7 +125,7 @@ public class ProcessTaskItem {
             try{
                 item.cancelTask();
                 //int rows=database.delete(MySQLiteOpenHelper.getCurrentTableName(this.context),SQLConsts.SQL_TASK_COLUMN_ID +"="+item.id,null);
-                MySQLiteOpenHelper.deleteRow(database,MySQLiteOpenHelper.getCurrentTableName(context),item.id);
+                MySQLiteOpenHelper.deleteRow(context,MySQLiteOpenHelper.getCurrentTableName(context),item.id);
                 //Log.i(TAG,"receiver deleted "+rows+" rows");
             }catch (Exception e){
                 e.printStackTrace();
@@ -228,7 +228,7 @@ public class ProcessTaskItem {
             try{
                 item.cancelTask();
                 //int rows=database.delete(MySQLiteOpenHelper.getCurrentTableName(this.context),SQLConsts.SQL_TASK_COLUMN_ID +"="+item.id,null);
-                MySQLiteOpenHelper.deleteRow(database,MySQLiteOpenHelper.getCurrentTableName(context),item.id);
+                MySQLiteOpenHelper.deleteRow(context,MySQLiteOpenHelper.getCurrentTableName(context),item.id);
                 //Log.i(TAG,"receiver deleted "+rows+" rows");
             }catch (Exception e){
                 e.printStackTrace();

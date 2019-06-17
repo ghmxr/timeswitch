@@ -82,7 +82,11 @@ public class DialogForTaskSelection implements DialogInterface.OnClickListener{
             isSelected=new boolean[list.size()];
             if(selected_color!=null) this.selectable_color=selected_color;
             for(int i=0;i<list.size();i++){
-                for(String s:selected_ids) if(Integer.parseInt(s)==list.get(i).id) {isSelected[i]=true;break;}
+                for(String s:selected_ids) {
+                    try{
+                        if(Integer.parseInt(s)==list.get(i).id) {isSelected[i]=true;break;}
+                    }catch (Exception e){e.printStackTrace();}
+                }
             }
         }
 

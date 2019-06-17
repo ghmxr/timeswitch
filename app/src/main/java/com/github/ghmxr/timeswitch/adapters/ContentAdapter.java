@@ -3,6 +3,8 @@ package com.github.ghmxr.timeswitch.adapters;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -18,7 +20,9 @@ import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
 import com.github.ghmxr.timeswitch.data.v2.ExceptionConsts;
+import com.github.ghmxr.timeswitch.data.v2.MySQLiteOpenHelper;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
+import com.github.ghmxr.timeswitch.data.v2.SQLConsts;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
@@ -1269,18 +1273,23 @@ public class ContentAdapter {
                 return getNotificationDisplayValue(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NOTIFICATION_LOCALE],item.notification_title,item.notification_message);
             }
 
-            public static String getTaskNamesDisplayValue(String values){
+            public static String getTaskNamesDisplayValue(Context context,String values){
                 try{
                     String [] ids=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
                     if(Integer.parseInt(ids[0])<0) return "";
                     StringBuilder builder=new StringBuilder("");
+                    SQLiteDatabase database= MySQLiteOpenHelper.getInstance(context).getReadableDatabase();
                     for(int i=0;i<ids.length;i++){
-                        //int position=ProcessTaskItem.getPosition(Integer.parseInt(ids[i]));
-                        //if(position>=0) builder.append(TimeSwitchService.list.get(position).name);
-                        TaskItem item= ProcessTaskItem.getTaskItemOfId(TimeSwitchService.list,Integer.parseInt(ids[i]));
-                        if(item!=null) builder.append(item.name);
+                        //TaskItem item= ProcessTaskItem.getTaskItemOfId(TimeSwitchService.list,Integer.parseInt(ids[i]));
+                        int id=Integer.parseInt(ids[i]);
+                        if(id<0)continue;
+                        Cursor cursor=database.rawQuery("select * from "+MySQLiteOpenHelper.getCurrentTableName(context)+" where "+ SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
+                        cursor.moveToFirst();
+                        builder.append(cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_NAME)));
                         if(i<ids.length-1) builder.append(",");
+                        cursor.close();
                     }
+                    database.close();
                     return builder.toString();
                 }catch (Exception e){
                     e.printStackTrace();
@@ -1290,7 +1299,7 @@ public class ContentAdapter {
 
             public static String getEnableTasksDisplayValue(Context context,String values){
                 try{
-                    String tasknames=getTaskNamesDisplayValue(values);
+                    String tasknames=getTaskNamesDisplayValue(context,values);
                     if(tasknames.length()>0){
                         String displayValue="";
                         displayValue+=context.getResources().getString(R.string.adapter_action_task_enable);
@@ -1305,7 +1314,7 @@ public class ContentAdapter {
 
             public static String getDisableTasksDisplayValue(Context context,String values){
                 try{
-                    String tasknames=getTaskNamesDisplayValue(values);
+                    String tasknames=getTaskNamesDisplayValue(context,values);
                     if(tasknames.length()>0){
                         String displayValue="";
                         displayValue+=context.getResources().getString(R.string.adapter_action_task_disable);

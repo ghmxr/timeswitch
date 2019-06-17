@@ -31,7 +31,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -297,14 +299,16 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 
 	/**
 	 * 删除指定表的指定行
-	 * @param db 数据库实例
+	 * @param context 数据库实例
 	 * @param table_name 要操作的数据表
 	 * @param id 要删除的行
 	 */
-	public static void deleteRow(final SQLiteDatabase db,final String table_name,final int id) {
+	public static void deleteRow(Context context,final String table_name,final int id) {
+		SQLiteDatabase db=getInstance(context).getWritableDatabase();
 		Cursor cursor_looked=db.rawQuery("select * from "+table_name+" where "+SQLConsts.SQL_TASK_COLUMN_ID+" = "+id,null);
 		cursor_looked.moveToNext();
 		int order_of_delete_row=cursor_looked.getInt(cursor_looked.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ORDER));
+		int id_of_delete_row=cursor_looked.getInt(cursor_looked.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ID));
 		cursor_looked.close();
 
 		//do delete the row
@@ -319,6 +323,52 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 			db.update(table_name,contentValues,SQLConsts.SQL_TASK_COLUMN_ID+" = "+id_this_row,null);
 		}
 		cursor.close();
+
+		//do delete the values related to this task
+		Cursor cursor1=db.rawQuery("select * from "+table_name,null);
+		while (cursor1.moveToNext()){
+			int id_this_row=cursor1.getInt(cursor1.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ID));
+			String [] action_values=ValueUtils.string2StringArray(PublicConsts.SPLIT_SEPARATOR_FIRST_LEVEL
+					,cursor1.getString(cursor1.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ACTIONS)));
+			String ids_enable[]=action_values[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE]
+					.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+			String ids_disable[]=action_values[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE]
+					.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+			if(ids_enable.length>0&&Integer.parseInt(ids_enable[0])>=0){
+				List<String> list_id_enable=new ArrayList<>(Arrays.asList(ids_enable));
+				list_id_enable.remove(String.valueOf(id_of_delete_row));
+				//Log.d("removeID",String.valueOf(id_of_delete_row));
+				ids_enable=new String[list_id_enable.size()];
+				for(int i=0;i<list_id_enable.size();i++)ids_enable[i]=list_id_enable.get(i);
+				//Log.d("after-removed",Arrays.toString(ids_enable));
+			}
+			if(ids_disable.length>0&&Integer.parseInt(ids_disable[0])>=0){
+				List<String> list_id_disable=new ArrayList<>(Arrays.asList(ids_disable));
+				list_id_disable.remove(String.valueOf(id_of_delete_row));
+				//Log.d("removeID",String.valueOf(id_of_delete_row));
+				ids_disable=new String[list_id_disable.size()];
+				for(int i=0;i<list_id_disable.size();i++)ids_disable[i]=list_id_disable.get(i);
+				//Log.d("after-removed",Arrays.toString(ids_disable));
+			}
+
+			if(ids_enable.length==0||ids_enable[0].equals(String.valueOf(-1))){
+				ids_enable=new String[1];
+				ids_enable[0]=String.valueOf(-1);
+			}
+			if(ids_disable.length==0||ids_disable[0].equals(String.valueOf(-1))){
+				ids_disable=new String[1];
+				ids_disable[0]=String.valueOf(-1);
+			}
+
+			action_values[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE]=ValueUtils.stringArray2String(PublicConsts.SEPARATOR_SECOND_LEVEL,ids_enable);
+			action_values[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE]=ValueUtils.stringArray2String(PublicConsts.SEPARATOR_SECOND_LEVEL,ids_disable);
+			ContentValues contentValues=new ContentValues();
+			contentValues.put(SQLConsts.SQL_TASK_COLUMN_ACTIONS,ValueUtils.stringArray2String(PublicConsts.SEPARATOR_FIRST_LEVEL,action_values));
+			db.update(table_name,contentValues,SQLConsts.SQL_TASK_COLUMN_ID+"="+id_this_row,null);
+		}
+		cursor1.close();
+
+		db.close();
 	}
 	public static class SqlTableItem{
 		public String table_name="";

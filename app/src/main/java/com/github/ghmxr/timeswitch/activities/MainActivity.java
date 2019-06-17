@@ -501,7 +501,7 @@ public class MainActivity extends BaseActivity {
                                 if(isSelected[i]){
                                     TaskItem item=((ListAdapter)recyclerView.getAdapter()).getList().get(i);
                                     item.cancelTask();
-                                    MySQLiteOpenHelper.deleteRow(MySQLiteOpenHelper.getInstance(MainActivity.this).getWritableDatabase(),MySQLiteOpenHelper.getCurrentTableName(MainActivity.this),item.id);
+                                    MySQLiteOpenHelper.deleteRow(MainActivity.this,MySQLiteOpenHelper.getCurrentTableName(MainActivity.this),item.id);
                                 }
                             }
                             sendEmptyMessage(MESSAGE_DELETE_SELECTED_ITEMS_COMPLETE);
