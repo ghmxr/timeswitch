@@ -10,10 +10,8 @@ import android.provider.MediaStore;
 import android.view.View;
 
 import com.github.ghmxr.timeswitch.R;
-import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 
 import java.util.Calendar;
-import java.util.regex.PatternSyntaxException;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch

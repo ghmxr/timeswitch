@@ -17,7 +17,7 @@ import java.util.TimerTask;
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
  */
 public class CustomTimerTask implements Trigger{
-    private static Timer timer=new Timer();
+    private static final Timer timer=new Timer();
     private MyTimerTask timer_task;
     private Context context;
     static final String TAG="TimerTask(Executor)";
@@ -29,9 +29,13 @@ public class CustomTimerTask implements Trigger{
         this.context=context;
         this.item=item;
         if(pm==null){
-            try{
-                pm=(PowerManager)context.getSystemService(Context.POWER_SERVICE);
-            }catch (Exception e){e.printStackTrace();}
+            synchronized (CustomTimerTask.class){
+                if(pm==null){
+                    try{
+                        pm=(PowerManager)context.getApplicationContext().getSystemService(Context.POWER_SERVICE);
+                    }catch (Exception e){e.printStackTrace();}
+                }
+            }
         }
     }
 

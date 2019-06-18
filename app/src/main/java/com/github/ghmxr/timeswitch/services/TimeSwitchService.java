@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Build;
@@ -60,8 +61,9 @@ public class TimeSwitchService extends Service {
     private final Global.HeadsetPlugReceiver headsetPlugReceiver=new Global.HeadsetPlugReceiver();
 
     private final BroadcastReceiver log_receiver=new BroadcastReceiver() {
-        private boolean lock_network=true;
+        private boolean lock_network=false;
         private boolean lock_gps=true;
+        private boolean lock_wifi_status=false;
         @Override
         public void onReceive(Context context, Intent intent) {
             if(intent==null||intent.getAction()==null)return;
@@ -71,6 +73,18 @@ public class TimeSwitchService extends Service {
                     int state=intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,-1);
                     if(state==WifiManager.WIFI_STATE_ENABLED) LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_wifi_enabled));
                     else if(state==WifiManager.WIFI_STATE_DISABLED) LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_wifi_disabled));
+                }
+                break;
+                case WifiManager.NETWORK_STATE_CHANGED_ACTION:{
+                    WifiInfo info=intent.getParcelableExtra(WifiManager.EXTRA_WIFI_INFO);
+                    if(info!=null&&info.getNetworkId()>=0&&!lock_wifi_status){
+                        lock_wifi_status=true;
+                        LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_wifi_connected)+"(SSID:"+info.getSSID()+")");
+                    }
+                    if((info==null||info.getNetworkId()<0)&&lock_wifi_status){
+                        lock_wifi_status=false;
+                        LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_wifi_disconnected));
+                    }
                 }
                 break;
                 case BluetoothAdapter.ACTION_STATE_CHANGED:{
@@ -90,14 +104,14 @@ public class TimeSwitchService extends Service {
                     ConnectivityManager manager=(ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
                     if(manager==null)return;
                     if(intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY,false)
-                            &&!manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected())
-                    {
-                        lock_network=false;
-                        LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_network_on));return;
-                    }
-                    if(!intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY,false)&&!manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected()&&!lock_network)
+                            &&!manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected()&&!lock_network)
                     {
                         lock_network=true;
+                        LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_network_on));return;
+                    }
+                    if(!intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY,false)&&!manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected()&&lock_network)
+                    {
+                        lock_network=false;
                         LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_network_off));
                     }
                 }
@@ -158,6 +172,7 @@ public class TimeSwitchService extends Service {
         try{
             IntentFilter filter=new IntentFilter();
             filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+            filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
             filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
             filter.addAction(AudioManager.RINGER_MODE_CHANGED_ACTION);
             filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);

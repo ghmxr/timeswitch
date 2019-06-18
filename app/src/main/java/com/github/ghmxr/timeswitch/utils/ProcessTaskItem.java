@@ -42,132 +42,11 @@ import java.util.List;
  */
 public class ProcessTaskItem {
 
-    private TaskItem item;
-    private Context context;
-    //private boolean canTrigger;
     static final String TAG="ProcessTaskItem";
-    private StringBuilder log_taskitem=new StringBuilder("");
     public static String last_activated_task_name="";
     private static int notification_id=2;
 
-    public static Thread flash_light_thread;
-
-    /**
-     * @deprecated
-     * use {@link #checkExceptionsAndRunActions(Context,TaskItem)}instead
-     */
-    public ProcessTaskItem(@NonNull Context context, TaskItem item){
-        this.item=item;
-        this.context=context;
-    }
-
-    /**
-     * @deprecated
-     * use {@link #checkExceptionsAndRunActions(Context,TaskItem)}instead
-     */
-    public void checkExceptionsAndRunActions(){
-        if(this.item==null) return;
-
-        log_taskitem.append(item.name);
-
-        SQLiteDatabase database= MySQLiteOpenHelper.getInstance(this.context).getWritableDatabase();
-
-        if(item.trigger_type == TriggerTypeConsts.TRIGGER_TYPE_SINGLE){
-            //do close the item
-            item.isenabled=false;
-            ContentValues values=new ContentValues();
-            values.put(SQLConsts.SQL_TASK_COLUMN_ENABLED,0);
-            database.update(MySQLiteOpenHelper.getCurrentTableName(this.context),values,SQLConsts.SQL_TASK_COLUMN_ID +"="+item.id,null);
-
-            //refresh the list in Main;
-            MainActivity.sendEmptyMessage(MainActivity.MESSAGE_REQUEST_UPDATE_LIST);
-        }
-
-        if(item.trigger_type == TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK){
-            Calendar c=Calendar.getInstance();
-            c.setTimeInMillis(System.currentTimeMillis());
-            int day_of_week=c.get(Calendar.DAY_OF_WEEK);
-            switch (day_of_week){
-                default:break;
-                case Calendar.MONDAY:if(!item.week_repeat[PublicConsts.WEEK_MONDAY]) return; break;
-                case Calendar.TUESDAY:if(!item.week_repeat[PublicConsts.WEEK_TUESDAY]) return; break;
-                case Calendar.WEDNESDAY:if(!item.week_repeat[PublicConsts.WEEK_WEDNESDAY]) return; break;
-                case Calendar.THURSDAY:if(!item.week_repeat[PublicConsts.WEEK_THURSDAY]) return; break;
-                case Calendar.FRIDAY:if(!item.week_repeat[PublicConsts.WEEK_FRIDAY]) return; break;
-                case Calendar.SATURDAY:if(!item.week_repeat[PublicConsts.WEEK_SATURDAY]) return; break;
-                case Calendar.SUNDAY:if(!item.week_repeat[PublicConsts.WEEK_SUNDAY]) return; break;
-            }
-        }
-
-        boolean canTrigger= true;
-        try {
-            canTrigger=processExceptionOfTaskItem(context,item);
-            Log.d("processType",item.addition_exception_connector.equals("-1")?"OR":"AND");
-            Log.d("CanTrigger",""+canTrigger);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        if(item.autoclose&&canTrigger){
-            item.cancelTask();
-            item.isenabled=false;
-            try{
-                ContentValues values=new ContentValues();
-                values.put(SQLConsts.SQL_TASK_COLUMN_ENABLED,0);
-                database.update(MySQLiteOpenHelper.getCurrentTableName(this.context),values,SQLConsts.SQL_TASK_COLUMN_ID +"="+item.id,null);
-                MainActivity.sendEmptyMessage(MainActivity.MESSAGE_REQUEST_UPDATE_LIST);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-        //do if delete this taskitem
-        if(item.autodelete&&canTrigger){
-            try{
-                item.cancelTask();
-                //int rows=database.delete(MySQLiteOpenHelper.getCurrentTableName(this.context),SQLConsts.SQL_TASK_COLUMN_ID +"="+item.id,null);
-                MySQLiteOpenHelper.deleteRow(context,MySQLiteOpenHelper.getCurrentTableName(context),item.id);
-                //Log.i(TAG,"receiver deleted "+rows+" rows");
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-            try{
-                TimeSwitchService.list.remove(item);
-            }catch (Exception e){e.printStackTrace();}
-            MainActivity.sendEmptyMessage(MainActivity.MESSAGE_REQUEST_UPDATE_LIST);
-        }
-
-        if(canTrigger){
-           last_activated_task_name=item.name;
-
-            try{activateActionOfWifi(context,Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_WIFI_LOCALE]));}catch (Exception e){e.printStackTrace();}
-            try{activateActionOfBluetooth(context,Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BLUETOOTH_LOCALE]));}catch (Exception e){e.printStackTrace();}
-            try{activateActionOfRingMode(context,Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_MODE_LOCALE]));}catch (Exception e){e.printStackTrace();}
-            try{activateActionOfVolume(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_VOLUME_LOCALE]);}catch (Exception e){e.printStackTrace();}
-            try{activateActionOfSettingRingtone(context,item);}catch (Exception e){e.printStackTrace();}
-            try{activateActionOfBrightness(context,Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_BRIGHTNESS_LOCALE]));}catch (Exception e){e.printStackTrace();}
-            try{activateActionOfWallpaper(context,item);}catch (Exception e){e.printStackTrace();}
-            try{activateActionOfFlashlight(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FLASHLIGHT]);}catch (Exception e){e.printStackTrace();}
-            try{activateActionOfVibrate(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE]);}catch (Exception e){e.printStackTrace();}
-            try{activateActionOfToast(context,item);}catch (Exception e){e.printStackTrace();}
-            try{activateActionOfAutorotation(context,Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AUTOROTATION]));}catch (Exception e){e.printStackTrace();}
-            try{activateActionOfSMS(context,item);}catch (Exception e){e.printStackTrace();}
-            try{launchAppsByPackageName(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES]);}catch (Exception e){e.printStackTrace();}
-            try{stopAppsByPackageName(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_STOP_APP_PACKAGES]);}catch (Exception e){e.printStackTrace();}
-            try{switchTasks(context,item);}catch (Exception e){e.printStackTrace();}
-            try{forceStopAppsByPackageName(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FORCE_STOP_APP_PACKAGES]);}catch (Exception e){e.printStackTrace();}
-
-            if(context.getSharedPreferences(PublicConsts.PREFERENCES_NAME,Activity.MODE_PRIVATE).getBoolean(PublicConsts.PREFERENCES_IS_SUPERUSER_MODE,PublicConsts.PREFERENCES_IS_SUPERUSER_MODE_DEFAULT)){
-                try{activateActionOfNet(Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE]));}catch (Exception e){e.printStackTrace();}
-                try{activateActionOfGps(Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_GPS_LOCALE]));}catch (Exception e){e.printStackTrace();}
-                try{activateActionOfAirplaneMode(Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AIRPLANE_MODE_LOCALE]));}catch (Exception e){e.printStackTrace();}
-                try{activateActionOfDeviceControl(Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]));}catch (Exception e){e.printStackTrace();}
-            }
-
-            activateActionOfNotification(context,item);
-            LogUtil.putLog(context,context.getResources().getString(R.string.notification_task_activated_title)+":"+log_taskitem.toString());
-        }
-
-    }
+    private static Thread flash_light_thread;
 
     public static synchronized void checkExceptionsAndRunActions(@NonNull Context context,@NonNull TaskItem item){
         if(!(context instanceof TimeSwitchService)){
@@ -532,26 +411,6 @@ public class ProcessTaskItem {
         }
     }
 
-    /**
-     * @deprecated
-     */
-    private void activateActionOfSettingRingtone(String values){
-        String ring_selection_values[]=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-        int ring_notification_selection= Integer.parseInt(ring_selection_values[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE]);
-        int ring_phone_selection=Integer.parseInt(ring_selection_values[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_CALL_TYPE_LOCALE]);
-
-        if(ring_notification_selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM ||ring_notification_selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_MEDIA)
-        {
-            EnvironmentUtils.setRingtone(context,RingtoneManager.TYPE_NOTIFICATION,item.uri_ring_notification);
-            //RingtoneManager.setActualDefaultRingtoneUri(context,RingtoneManager.TYPE_NOTIFICATION ,Uri.parse(item.uri_ring_notification));
-        }
-        if(ring_phone_selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM ||ring_phone_selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_MEDIA)
-        {
-            EnvironmentUtils.setRingtone(context,RingtoneManager.TYPE_RINGTONE,item.uri_ring_call);
-            //RingtoneManager.setActualDefaultRingtoneUri(context,RingtoneManager.TYPE_RINGTONE,Uri.parse(item.uri_ring_call));
-        }
-    }
-
     private static void activateActionOfSettingRingtone(Context context,TaskItem item){
         String ring_selection_values[]=item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_RING_SELECTION_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
         int ring_notification_selection= Integer.parseInt(ring_selection_values[ActionConsts.ActionSecondLevelLocaleConsts.RING_SELECTION_NOTIFICATION_TYPE_LOCALE]);
@@ -577,24 +436,6 @@ public class ProcessTaskItem {
                 EnvironmentUtils.setBrightness(context,false,screen_brightness);
             }
 
-        }
-    }
-
-    /**
-     * @deprecated
-     * use {@link #activateActionOfWallpaper(Context,TaskItem)} instead
-     */
-    private void activateActionOfWallpaper(String values){
-        int value=Integer.parseInt(values);
-        if(value>=0){
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try{
-                        EnvironmentUtils.setWallPaper(context,item.uri_wallpaper_desktop);
-                    }catch (Exception e){e.printStackTrace();}
-                }
-            }).start();
         }
     }
 
@@ -677,23 +518,6 @@ public class ProcessTaskItem {
         if(frequency>0) EnvironmentUtils.vibrate(context,frequency,duration,interval);
     }
 
-    /**
-     * @deprecated
-     */
-    private void activateActionOfToast(String values){
-        String [] toast_values=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-        int type=Integer.parseInt(toast_values[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_TYPE_LOCALE]);
-        if(type>=0){
-            int[] offsets=null;
-            if(type==ActionConsts.ActionValueConsts.TOAST_TYPE_CUSTOM){
-                offsets=new int[2];
-                offsets[0]=Integer.parseInt(toast_values[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_LOCATION_X_OFFSET_LOCALE]);
-                offsets[1]=Integer.parseInt(toast_values[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_LOCATION_Y_OFFSET_LOCALE]);
-            }
-            EnvironmentUtils.showToast(context,offsets,item.toast);
-        }
-    }
-
     private static void activateActionOfToast(Context context,TaskItem item){
         String []toast_values=item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_TOAST_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
         int type=Integer.parseInt(toast_values[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_TYPE_LOCALE]);
@@ -710,21 +534,6 @@ public class ProcessTaskItem {
 
     private static void activateActionOfAutorotation(Context context,int value){
         if(value>=0) EnvironmentUtils.setIfAutorotation(context,value==1);
-    }
-
-    /**
-     * @deprecated
-     */
-    private void activateActionOfSMS(String values){
-        String sms_values[]=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
-        if(Integer.parseInt(sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_ENABLED_LOCALE])>=0){
-            Integer subid=null;
-            int subid_int=Integer.parseInt(sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_SUBINFO_LOCALE]);
-            if(Build.VERSION.SDK_INT>=22&&subid_int>=0) subid=subid_int;
-            EnvironmentUtils.sendSMSMessage(context,subid,item.sms_address.split(PublicConsts.SEPARATOR_SMS_RECEIVERS),item.sms_message
-                    ,Integer.parseInt(sms_values[ActionConsts.ActionSecondLevelLocaleConsts.SMS_RESULT_TOAST_LOCALE])>=0);
-
-        }
     }
 
     private static void activateActionOfSMS(Context context,TaskItem item){
@@ -786,29 +595,6 @@ public class ProcessTaskItem {
                 EnvironmentUtils.restartDevice();
             }break;
         }
-    }
-
-    /**
-     * @deprecated
-     */
-    private void activateActionOfNotification(String values){
-        String notification_values[]=values.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-        int type=Integer.parseInt(notification_values[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_LOCALE]);
-        if(type==-1)return;
-        int if_custom=Integer.parseInt(notification_values[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE]);
-        if(type== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_NOT_OVERRIDE){
-            if(notification_id<102) notification_id++;
-            else notification_id=2;
-        }
-        String title,message;
-        if(if_custom==ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_CONTENT_CUSTOM){
-            title=item.notification_title;
-            message=item.notification_message;
-        }else {
-            title=context.getResources().getString(R.string.notification_task_activated_title);
-            message=log_taskitem.toString();
-        }
-        EnvironmentUtils.sendNotification(context,notification_id,title,message);
     }
 
     private static void activateActionOfNotification(Context context,TaskItem item){

@@ -29,139 +29,115 @@ public class NetworkReceiver extends BaseBroadcastReceiver{
 
         int type=item.trigger_type;
 
-        if(intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)){
-            NetworkInfo info=intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-            WifiInfo wifiInfo=null;
-            WifiManager wifiManager=(WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            if(wifiManager!=null) wifiInfo=wifiManager.getConnectionInfo();
-
-            if(type== TriggerTypeConsts.TRIGGER_TYPE_WIFI_CONNECTED){
-
-                if(info.getDetailedState().equals(NetworkInfo.DetailedState.CONNECTED)
-                        &&info.getType()==ConnectivityManager.TYPE_WIFI
-                        &&info.isConnected()){
-
-                    if(item.wifiIds==null||item.wifiIds.trim().equals("")){
-                        runActions();
-                        return;
-                    }else{
-                        if(wifiInfo==null) return;
-                        try{
-                            String [] ids=item.wifiIds.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-                            for(String s:ids){
-                                if(Integer.parseInt(s)==wifiInfo.getNetworkId()){
-                                    runActions();
-                                    return;
-                                }
-                            }
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                    }
-                }
-
-                if(info.getDetailedState().equals(NetworkInfo.DetailedState.DISCONNECTED)
-                        &&info.getType()==ConnectivityManager.TYPE_WIFI
-                        &&!info.isConnected()){
-                    mLock=false;
-                    return;
-                }
-
-            }
-
-            if(type== TriggerTypeConsts.TRIGGER_TYPE_WIFI_DISCONNECTED){
-
-                if(info.getDetailedState().equals(NetworkInfo.DetailedState.DISCONNECTED)
-                        &&info.getType()==ConnectivityManager.TYPE_WIFI
-                        &&!info.isConnected()){
-                    if(item.wifiIds==null||item.wifiIds.trim().equals("")){
-                        runActions();
-                        return;
-                    }else{
-
-                        if(Global.NetworkReceiver.connectedWifiInfo==null) {
-
+        switch (intent.getAction()){
+            default:break;
+            case WifiManager.NETWORK_STATE_CHANGED_ACTION:{
+                WifiInfo wifiInfo=intent.getParcelableExtra(WifiManager.EXTRA_WIFI_INFO);
+                if(type==TriggerTypeConsts.TRIGGER_TYPE_WIFI_CONNECTED){
+                    if(wifiInfo!=null&&wifiInfo.getNetworkId()>=0){
+                        if(item.wifiIds==null||item.wifiIds.trim().equals("")){
+                            runActions();
                             return;
-                        }
-                        try{
-                            String ids[]=item.wifiIds.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
-
-                            for(String s:ids){
-                                if(Integer.parseInt(s)== Global.NetworkReceiver.connectedWifiInfo.getNetworkId()){
-                                    runActions();
-                                    return;
+                        }else{
+                            try{
+                                String [] ids=item.wifiIds.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+                                for(String s:ids){
+                                    if(Integer.parseInt(s)==wifiInfo.getNetworkId()){
+                                        runActions();
+                                        return;
+                                    }
                                 }
+                            }catch (Exception e){
+                                e.printStackTrace();
                             }
-                        }catch (Exception e){
-                            e.printStackTrace();
                         }
+                    }
+                    if(wifiInfo==null||wifiInfo.getNetworkId()<0){
+                        mLock=false;
+                        return;
                     }
                 }
 
-                if(info.getDetailedState().equals(NetworkInfo.DetailedState.CONNECTED)
-                        &&info.getType()==ConnectivityManager.TYPE_WIFI
-                        &&info.isConnected()){
-                    mLock=false;
+                if(type==TriggerTypeConsts.TRIGGER_TYPE_WIFI_DISCONNECTED){
+                    if(wifiInfo==null||wifiInfo.getNetworkId()<0){
+                        if(item.wifiIds==null||item.wifiIds.trim().equals("")){
+                            runActions();
+                            return;
+                        }else{
+                            WifiInfo last=Global.NetworkReceiver.connectedWifiInfo;
+                            if(last==null) {
+                                return;
+                            }
+                            try{
+                                String ids[]=item.wifiIds.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+                                for(String s:ids){
+                                    if(Integer.parseInt(s)== last.getNetworkId()){
+                                        runActions();
+                                        return;
+                                    }
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    if(wifiInfo!=null&&wifiInfo.getNetworkId()>=0){
+                        mLock=false;
+                        return;
+                    }
+                }
+            }
+            break;
+            case ConnectivityManager.CONNECTIVITY_ACTION:{
+                ConnectivityManager manager=(ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                if(manager==null)return;
+                NetworkInfo info=manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+                boolean isConnected=(!intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY,false))&&info.isConnected();
+
+                if(type==TriggerTypeConsts.TRIGGER_TYPE_NET_ON){
+                    if(isConnected){
+                        runActions();
+                    }else{
+                        mLock=false;
+                    }
                     return;
                 }
 
+                if(type==TriggerTypeConsts.TRIGGER_TYPE_NET_OFF){
+                    if(!isConnected)runActions();
+                    else mLock=false;
+                    return;
+                }
             }
+            break;
+            case WifiManager.WIFI_STATE_CHANGED_ACTION:{
+                //Log.d("wifi state ",""+intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,-1));
+                if(type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_WIFI_ON){
+                    if(intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,-1)==(WifiManager.WIFI_STATE_ENABLED)){
+                        runActions();
+                        return;
+                    }
+                    if(intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,-1)==WifiManager.WIFI_STATE_DISABLED){
+                        mLock=false;
+                        return;
+                    }
+                }
+
+                if(type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF){
+                    if(intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,-1)==WifiManager.WIFI_STATE_DISABLED){
+                        runActions();
+                        return;
+
+                    }
+                    if(intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,-1)==WifiManager.WIFI_STATE_ENABLED){
+                        mLock=false;
+                        return;
+                    }
+                }
+            }
+            break;
         }
-
-        if(intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)){
-            ConnectivityManager manager=(ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            if (manager==null) return;
-            NetworkInfo info=manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-            if(info==null) return;
-            if(type== TriggerTypeConsts.TRIGGER_TYPE_NET_ON){
-                if(info.isConnected()){
-                    runActions();
-                    return;
-                }
-                if(!info.isConnected()){
-                    mLock=false;
-                    return;
-                }
-            }
-
-            if(type== TriggerTypeConsts.TRIGGER_TYPE_NET_OFF){
-                if(!info.isConnected()){
-                    runActions();
-                    return;
-                }
-                if(info.isConnected()){
-                    mLock=false;
-                    return;
-                }
-            }
-        }
-
-        if(intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)){
-            //Log.d("wifi state ",""+intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,-1));
-            if(type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_WIFI_ON){
-                if(intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,-1)==(WifiManager.WIFI_STATE_ENABLED)){
-                    runActions();
-                    return;
-                }
-                if(intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,-1)==WifiManager.WIFI_STATE_DISABLED){
-                    mLock=false;
-                    return;
-                }
-            }
-
-            if(type== TriggerTypeConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF){
-                if(intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,-1)==WifiManager.WIFI_STATE_DISABLED){
-                    runActions();
-                    return;
-
-                }
-                if(intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,-1)==WifiManager.WIFI_STATE_ENABLED){
-                    mLock=false;
-                    return;
-                }
-            }
-        }
-
     }
 
     @Override

@@ -28,7 +28,6 @@ import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -211,16 +210,21 @@ public class Global {
         @Override
         public void onReceive(final Context context, Intent intent) {
             if(intent==null||intent.getAction()==null) return;
-            if(intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)&&intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,-1)==WifiManager.WIFI_STATE_ENABLED){
+            if((intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)&&intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,-1)==WifiManager.WIFI_STATE_ENABLED)
+                    ||(intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)&&intent.getParcelableExtra(WifiManager.EXTRA_WIFI_INFO)!=null
+                    &&((WifiInfo)intent.getParcelableExtra(WifiManager.EXTRA_WIFI_INFO)).getNetworkId()>=0)){
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         synchronized (wifiList2){
                             try{
                                 final WifiManager wifiManager=(WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                                if(wifiManager==null)return;
                                 List<WifiConfiguration> temp=wifiManager.getConfiguredNetworks();
-                                wifiList2.clear();
-                                wifiList2.addAll(temp);
+                                if(temp!=null){
+                                    wifiList2.clear();
+                                    wifiList2.addAll(temp);
+                                }
                             }catch (Exception e){e.printStackTrace();}
                         }
                     }

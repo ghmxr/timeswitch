@@ -11,7 +11,6 @@ import android.widget.TimePicker;
 
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.ui.CustomTimePicker;
-import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialog;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 /**

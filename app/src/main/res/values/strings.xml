@@ -413,6 +413,8 @@
 	<string name="privilege_flashlight_result">闪光灯亮了吗？亮了就表示ok</string>
 	<string name="log_wifi_enabled">系统:WiFi已打开</string>
 	<string name="log_wifi_disabled">系统:WiFi已关闭</string>
+	<string name="log_wifi_connected">系统:WiFi已连接</string>
+	<string name="log_wifi_disconnected">系统:WiFi已断开</string>
 	<string name="log_bluetooth_enabled">系统:蓝牙已打开</string>
 	<string name="log_bluetooth_disabled">系统:蓝牙已关闭</string>
 	<string name="log_audio_mode_vibrate">系统:振动模式已打开</string>
@@ -498,7 +500,7 @@
     <string name="popup_profile_delete">删除</string>
 	<string name="popup_profile_export">导出</string>
     <string name="title_activity_about">关于</string>
-	<string name="activity_about_content_title">部件触发器 (Build 14)</string>
+	<string name="activity_about_content_title">部件触发器 (Build 15)</string>
     <string name="large_text">
         这是一个通过设置一些触发条件来自动触发并执行一些任务的APP。应用在运行时会自动创建后台服务并维持运行状态。\n\n
 
@@ -514,10 +516,9 @@
 		开源地址:\n
 		https://github.com/ghmxr/timeswitch \n\n\n
 
-		<b>Build 14 更新日志：\n
-			新增部分新的触发器、触发例外规则和触发行为；\n
-			首页任务支持拖动排序；\n
-			优化部分操作流程；\n
+		<b>Build 15 更新日志：\n
+			解决首页任务拖动排序卡顿；\n
+			修复部分已知问题；\n
 		</b>\n\n
 
 
