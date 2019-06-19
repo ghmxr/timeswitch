@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
@@ -31,6 +32,7 @@ import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.Global.BatteryReceiver;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
+import com.github.ghmxr.timeswitch.receivers.SMSReceiver;
 import com.github.ghmxr.timeswitch.triggers.receivers.APReceiver;
 import com.github.ghmxr.timeswitch.utils.EnvironmentUtils;
 import com.github.ghmxr.timeswitch.utils.LogUtil;
@@ -103,20 +105,25 @@ public class TimeSwitchService extends Service {
                 case ConnectivityManager.CONNECTIVITY_ACTION:{
                     ConnectivityManager manager=(ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
                     if(manager==null)return;
-                    if(intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY,false)
-                            &&!manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected()&&!lock_network)
+                    NetworkInfo networkInfo=manager.getActiveNetworkInfo();
+                    boolean isMobileNetworkConnected=networkInfo!=null&&networkInfo.getType()==ConnectivityManager.TYPE_MOBILE;
+                    if(isMobileNetworkConnected&&!lock_network)
                     {
                         lock_network=true;
                         LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_network_on));return;
                     }
-                    if(!intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY,false)&&!manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected()&&lock_network)
+                    if(!isMobileNetworkConnected&&lock_network)
                     {
                         lock_network=false;
                         LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_network_off));
                     }
                 }
                 break;
-                case PublicConsts.ACTION_SMS_SENT:LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_sms_sent2));break;
+                case PublicConsts.ACTION_SMS_SENT:{
+                    String address=intent.getStringExtra(SMSReceiver.EXTRA_SENT_ADDRESS);
+                    LogUtil.putLog(TimeSwitchService.this,getResources().getString(R.string.log_sms_sent2)+" "+address);
+                }
+                break;
                 case Intent.ACTION_AIRPLANE_MODE_CHANGED:{
                     boolean enabled=intent.getBooleanExtra("state",false);
                     LogUtil.putLog(TimeSwitchService.this,getResources().getString(enabled?R.string.log_airplane_mode_on:R.string.log_airplane_mode_off));

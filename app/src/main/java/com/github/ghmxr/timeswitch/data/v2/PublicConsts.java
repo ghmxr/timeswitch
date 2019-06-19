@@ -15,7 +15,13 @@ public class PublicConsts {
 	public static final String SEPARATOR_SMS_RECEIVERS =",";
 
 	//internal variables ,can changed for other uses.
+	/**
+	 * 通过intent.getStringExtra("address")来获取intent中的address信息
+	 */
 	public static final String ACTION_SMS_SENT=PACKAGE_NAME+".action.sms_sent";
+	/**
+	 * 通过intent.getStringExtra("address")来获取intent中的address信息
+	 */
 	public static final String ACTION_SMS_DELIVERED=PACKAGE_NAME+".action.sms_delivered";
 
 

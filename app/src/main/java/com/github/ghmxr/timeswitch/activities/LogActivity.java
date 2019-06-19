@@ -1,14 +1,15 @@
 package com.github.ghmxr.timeswitch.activities;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.github.ghmxr.timeswitch.R;
@@ -30,6 +32,7 @@ import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +48,14 @@ public class LogActivity extends BaseActivity {
 
     public static final int MESSAGE_REQUEST_REFRESH     =0x20001;
 
+    private long filter_start_time=-1;
+    private long filter_end_time=-1;
+    private Filter filter_selection=Filter.ALL;
+
+    private enum Filter{
+        ALL,TODAY,THREE_DAYS,ONE_WEEK
+    }
+
     @Override
     public void onCreate(Bundle myBundle){
         super.onCreate(myBundle);
@@ -54,7 +65,7 @@ public class LogActivity extends BaseActivity {
         try{getSupportActionBar().setDisplayHomeAsUpEnabled(true);}catch (Exception e){e.printStackTrace();}
         setToolBarAndStatusBarColor(toolbar,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
         swr=findViewById(R.id.log_swipe);
-        swr.setColorSchemeResources(R.color.colorPrimary);
+        swr.setColorSchemeColors(Color.parseColor(getIntent().getStringExtra(EXTRA_TITLE_COLOR)));
         swr.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -85,7 +96,11 @@ public class LogActivity extends BaseActivity {
                             }catch (Exception e){
                                 e.printStackTrace();
                             }
-                            loglist.add(item);
+                            if(filter_start_time>=0&&filter_end_time>=0){
+                                if(item.log_time>=filter_start_time&&item.log_time<=filter_end_time)loglist.add(item);
+                            }else{
+                                loglist.add(item);
+                            }
                         }
                         Collections.sort(loglist);
                         myHandler.post(new Runnable() {
@@ -180,6 +195,90 @@ public class LogActivity extends BaseActivity {
             break;
             case android.R.id.home:{
                 finish();
+            }
+            break;
+            case R.id.actions_log_filter:{
+                final AlertDialog dialog=new AlertDialog.Builder(this)
+                        .setTitle(getResources().getString(R.string.activity_log_filter_title))
+                        .setView(R.layout.layout_dialog_filter)
+                        .show();
+                RadioButton ra_all=dialog.findViewById(R.id.log_filter_all);
+                RadioButton ra_today=dialog.findViewById(R.id.log_filter_today);
+                RadioButton ra_three_days=dialog.findViewById(R.id.log_filter_three_days);
+                RadioButton ra_one_week=dialog.findViewById(R.id.log_filter_one_week);
+
+                ra_all.setChecked(filter_selection==Filter.ALL);
+                ra_today.setChecked(filter_selection==Filter.TODAY);
+                ra_three_days.setChecked(filter_selection==Filter.THREE_DAYS);
+                ra_one_week.setChecked(filter_selection==Filter.ONE_WEEK);
+
+                ra_all.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.cancel();
+                        filter_selection=Filter.ALL;
+                        filter_start_time=-1;
+                        filter_end_time=-1;
+                        refreshLogs();
+                    }
+                });
+                ra_today.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.cancel();
+                        filter_selection=Filter.TODAY;
+                        Calendar calendar=Calendar.getInstance();
+                        calendar.set(Calendar.HOUR_OF_DAY,0);
+                        calendar.set(Calendar.MINUTE,0);
+                        calendar.set(Calendar.SECOND,0);
+                        filter_start_time=calendar.getTimeInMillis();
+                        calendar.set(Calendar.HOUR_OF_DAY,23);
+                        calendar.set(Calendar.MINUTE,59);
+                        calendar.set(Calendar.SECOND,59);
+                        filter_end_time=calendar.getTimeInMillis();
+                        refreshLogs();
+                    }
+                });
+                ra_three_days.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.cancel();
+                        filter_selection=Filter.THREE_DAYS;
+                        Calendar calendar=Calendar.getInstance();
+                        long current=System.currentTimeMillis();
+                        calendar.setTimeInMillis(current-2*24*60*60*1000);
+                        calendar.set(Calendar.HOUR_OF_DAY,0);
+                        calendar.set(Calendar.MINUTE,0);
+                        calendar.set(Calendar.SECOND,0);
+                        filter_start_time=calendar.getTimeInMillis();
+                        calendar.setTimeInMillis(current);
+                        calendar.set(Calendar.HOUR_OF_DAY,23);
+                        calendar.set(Calendar.MINUTE,59);
+                        calendar.set(Calendar.SECOND,59);
+                        filter_end_time=calendar.getTimeInMillis();
+                        refreshLogs();
+                    }
+                });
+                ra_one_week.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.cancel();
+                        filter_selection=Filter.ONE_WEEK;
+                        Calendar calendar=Calendar.getInstance();
+                        long current=System.currentTimeMillis();
+                        calendar.setTimeInMillis(current-6*24*60*60*1000);
+                        calendar.set(Calendar.HOUR_OF_DAY,0);
+                        calendar.set(Calendar.MINUTE,0);
+                        calendar.set(Calendar.SECOND,0);
+                        filter_start_time=calendar.getTimeInMillis();
+                        calendar.setTimeInMillis(current);
+                        calendar.set(Calendar.HOUR_OF_DAY,23);
+                        calendar.set(Calendar.MINUTE,59);
+                        calendar.set(Calendar.SECOND,59);
+                        filter_end_time=calendar.getTimeInMillis();
+                        refreshLogs();
+                    }
+                });
             }
             break;
         }

@@ -496,13 +496,14 @@ public class EnvironmentUtils {
         }
         ArrayList<String> msgs=manager.divideMessage(message);
         for(String address:addresses){
+            Intent i_sent=new Intent(PublicConsts.ACTION_SMS_SENT);
             Intent i_delivered=new Intent(PublicConsts.ACTION_SMS_DELIVERED);
-            i_delivered.putExtra(SMSReceiver.EXTRA_IF_SHOW_RECEIPT_TOAST,if_need_receipt);
+            i_sent.putExtra(SMSReceiver.EXTRA_SENT_ADDRESS,address);
             i_delivered.putExtra(SMSReceiver.EXTRA_SENT_ADDRESS,address);
-            PendingIntent pi_receipt=PendingIntent.getBroadcast(context,0,i_delivered,PendingIntent.FLAG_UPDATE_CURRENT);
-            PendingIntent pi_sent=PendingIntent.getBroadcast(context,0,new Intent(PublicConsts.ACTION_SMS_SENT),PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pi_sent=PendingIntent.getBroadcast(context,0,i_sent,PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pi_delivered=PendingIntent.getBroadcast(context,0,i_delivered,PendingIntent.FLAG_UPDATE_CURRENT);
             for(String s:msgs){
-                manager.sendTextMessage(address,null,s,pi_sent,pi_receipt);
+                manager.sendTextMessage(address,null,s,pi_sent,if_need_receipt?pi_delivered:null);
             }
         }
     }

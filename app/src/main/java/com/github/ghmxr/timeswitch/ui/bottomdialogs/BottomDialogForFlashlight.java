@@ -123,6 +123,7 @@ public class BottomDialogForFlashlight extends BottomDialog implements View.OnCl
             break;
             case R.id.dialog_action_flashlight_test:{
                 preview.setEnabled(false);
+                if(testThread!=null) testThread.interrupt();
                 testThread=new Thread(new Runnable() {
                     @Override
                     public void run() {

@@ -92,8 +92,8 @@ public class NetworkReceiver extends BaseBroadcastReceiver{
             case ConnectivityManager.CONNECTIVITY_ACTION:{
                 ConnectivityManager manager=(ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
                 if(manager==null)return;
-                NetworkInfo info=manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-                boolean isConnected=(!intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY,false))&&info.isConnected();
+                NetworkInfo info=manager.getActiveNetworkInfo();
+                boolean isConnected=info!=null&&info.getType()==ConnectivityManager.TYPE_MOBILE;
 
                 if(type==TriggerTypeConsts.TRIGGER_TYPE_NET_ON){
                     if(isConnected){

@@ -11,6 +11,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
+        android:focusable="false"
         app:iconifiedByDefault="false"
         app:queryHint="Search"/>
     <LinearLayout

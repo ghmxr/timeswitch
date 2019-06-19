@@ -10,6 +10,11 @@
 	<string name="activity_taskgui_sms_title">发送短信</string>
 	<string name="activity_settings_title">设置</string>
     <string name="activity_log">日志</string>
+	<string name="activity_log_filter_title">筛选</string>
+	<string name="activity_log_filter_all">全部</string>
+	<string name="activity_log_filter_today">今天</string>
+	<string name="activity_log_filter_three_days">近三天</string>
+	<string name="activity_log_filter_one_week">近一周</string>
 	<string name="activity_profile">切换列表</string>
 	<string name="activity_main_att">当前任务为空</string>
 	<string name="activity_main_service_disabled_att">服务已停止运行</string>
@@ -422,7 +427,7 @@
 	<string name="log_audio_mode_normal">系统:正常响铃模式已打开</string>
 	<string name="log_network_on">系统:移动数据网络已连接</string>
 	<string name="log_network_off">系统:移动数据网络已断开</string>
-	<string name="log_sms_sent2">系统:本应用发送了一条短信息</string>
+	<string name="log_sms_sent2">系统:本应用发送了一条短信息至</string>
 	<string name="log_airplane_mode_on">系统:飞行模式已打开</string>
 	<string name="log_airplane_mode_off">系统:飞行模式已关闭</string>
 	<string name="log_gps_enabled">系统:GPS已打开</string>

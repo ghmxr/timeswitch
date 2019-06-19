@@ -489,7 +489,7 @@ public class ProcessTaskItem {
             builder.setContentText(context.getResources().getString(R.string.notification_flashlight_message));
             builder.setOngoing(true);
             builder.setContentIntent(PendingIntent.getBroadcast(context,1,new Intent(context,FlashlightReceiver.class),PendingIntent.FLAG_UPDATE_CURRENT));
-            builder.setFullScreenIntent(PendingIntent.getActivity(context,1,new Intent(),PendingIntent.FLAG_UPDATE_CURRENT),false);
+            //builder.setFullScreenIntent(PendingIntent.getActivity(context,1,new Intent(),PendingIntent.FLAG_UPDATE_CURRENT),false);
             manager.notify(110,builder.build());
             flash_light_thread=new Thread(new Runnable() {
                 @Override
@@ -512,7 +512,7 @@ public class ProcessTaskItem {
 
     private static void activateActionOfVibrate(Context context,String values){
         String vibrate_values[]=values.split(PublicConsts.SEPARATOR_SECOND_LEVEL);
-        Integer frequency=Integer.parseInt(vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_FREQUENCY_LOCALE]);
+        int frequency=Integer.parseInt(vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_FREQUENCY_LOCALE]);
         long duration=Long.parseLong(vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_DURATION_LOCALE]);
         long interval=Long.parseLong(vibrate_values[ActionConsts.ActionSecondLevelLocaleConsts.VIBRATE_INTERVAL_LOCALE]);
         if(frequency>0) EnvironmentUtils.vibrate(context,frequency,duration,interval);
