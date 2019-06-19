@@ -3,28 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/actions_log_filter"
-        android:orderInCategory="10"
-        app:showAsAction="ifRoom"
+        android:orderInCategory="0"
+        android:showAsAction="ifRoom"
         android:icon="@drawable/icon_filter"
         android:title="@string/activity_log_filter_title"/>
     <item
         android:id="@+id/actions_log_ascend"
         android:orderInCategory="100"
-        app:showAsAction="never"
+        android:showAsAction="never"
         android:icon="@drawable/ic_ascend"
         android:title="@string/action_ascend"/>
 
     <item
         android:id="@+id/actions_log_descend"
         android:orderInCategory="200"
-        app:showAsAction="never"
+        android:showAsAction="never"
         android:icon="@drawable/ic_descend"
         android:title="@string/action_descend"/>
 
     <item
         android:id="@+id/actions_log_clear"
         android:orderInCategory="300"
-        app:showAsAction="ifRoom"
+        android:showAsAction="never"
         android:title="@string/action_clean_logs"
         android:icon="@android:drawable/ic_menu_delete"/>
 

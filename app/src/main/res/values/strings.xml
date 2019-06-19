@@ -26,7 +26,7 @@
 	<string name="activity_action_app_close_msg">*注意:此操作为强制结束应用的进程</string>
 	<string name="activity_trigger_wifi_dialog_att">指定SSID</string>
 	<string name="activity_trigger_wifi_no_ssid_assigned">任何WiFi网络</string>
-	<string name="activity_trigger_wifi_assigned_ssid">连接至指定的WiFi网络</string>
+	<string name="activity_trigger_wifi_assigned_ssid">指定的WiFi网络</string>
 	<string name="activity_trigger_wifi_open_att">打开WiFi开关来查看SSID选项</string>
 	<string name="activity_trigger_app_usage_att">此触发器需要授权获取使用情况权限</string>
 	<string name="snackbar_action_open_wifi">打开WiFi</string>
@@ -422,9 +422,9 @@
 	<string name="log_wifi_disconnected">系统:WiFi已断开</string>
 	<string name="log_bluetooth_enabled">系统:蓝牙已打开</string>
 	<string name="log_bluetooth_disabled">系统:蓝牙已关闭</string>
-	<string name="log_audio_mode_vibrate">系统:振动模式已打开</string>
-	<string name="log_audio_mode_silent">系统:静音模式已打开</string>
-	<string name="log_audio_mode_normal">系统:正常响铃模式已打开</string>
+	<string name="log_audio_mode_vibrate">系统:当前为振动模式</string>
+	<string name="log_audio_mode_silent">系统:当前为静音模式</string>
+	<string name="log_audio_mode_normal">系统:当前为正常响铃模式</string>
 	<string name="log_network_on">系统:移动数据网络已连接</string>
 	<string name="log_network_off">系统:移动数据网络已断开</string>
 	<string name="log_sms_sent2">系统:本应用发送了一条短信息至</string>
@@ -523,6 +523,7 @@
 
 		<b>Build 15 更新日志：\n
 			解决首页任务拖动排序卡顿；\n
+			新增日志筛选功能、应用选择对话框搜索功能；\n
 			修复部分已知问题；\n
 		</b>\n\n
 

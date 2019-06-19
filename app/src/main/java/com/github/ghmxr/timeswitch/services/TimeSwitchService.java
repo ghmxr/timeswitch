@@ -64,7 +64,7 @@ public class TimeSwitchService extends Service {
 
     private final BroadcastReceiver log_receiver=new BroadcastReceiver() {
         private boolean lock_network=false;
-        private boolean lock_gps=true;
+        private boolean lock_gps=false;
         private boolean lock_wifi_status=false;
         @Override
         public void onReceive(Context context, Intent intent) {
