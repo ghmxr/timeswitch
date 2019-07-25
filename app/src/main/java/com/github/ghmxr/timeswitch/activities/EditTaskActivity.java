@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.MySQLiteOpenHelper;
+import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
@@ -33,6 +34,10 @@ public class EditTaskActivity extends TaskGui {
     @Override
     public void initialVariables() {
         taskitem=(TaskItem) getIntent().getSerializableExtra(EXTRA_SERIALIZED_TASKITEM);
+        if(taskitem.trigger_type!= TriggerTypeConsts.TRIGGER_TYPE_SINGLE&&taskitem.trigger_type!=TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME
+        &&taskitem.trigger_type!=TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK){
+            taskitem.time=System.currentTimeMillis()+10*60*1000;
+        }
         checkString=taskitem.toString();
         isTaskNameEdited=true;
     }

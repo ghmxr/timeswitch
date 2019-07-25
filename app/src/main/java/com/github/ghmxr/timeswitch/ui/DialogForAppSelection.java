@@ -118,6 +118,7 @@ public class DialogForAppSelection implements View.OnClickListener{
                             @Override
                             public void onClick(View v) {
                                 ((AppListAdapter)((RecyclerView)dialog.findViewById(R.id.dialog_app_recyclerview)).getAdapter()).deselectall();
+                                selected_package_names_list.clear();
                             }
                         });
                         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {

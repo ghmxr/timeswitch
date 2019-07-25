@@ -45,6 +45,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -579,10 +580,12 @@ public class MainActivity extends BaseActivity {
    private class ListAdapter extends RecyclerView.Adapter<ViewHolder>{
         private boolean [] isSelected;
         private boolean isMultiSelectMode=false;
-        private final List<TaskItem> list;
+        private WeakReference<List<TaskItem>>reference;
+        //private final List<TaskItem> list;
         private HashMap<Integer,TextView> tvs=new HashMap<>();
         ListAdapter(@NonNull List<TaskItem> list){
-            this.list=list;
+            //this.list=list;
+            reference=new WeakReference<>(list);
             isSelected=new boolean[list.size()];
             RelativeLayout area=findViewById(R.id.main_no_task_att);
             if(area!=null) area.setVisibility(list.size()>0?View.GONE:View.VISIBLE);
@@ -596,7 +599,8 @@ public class MainActivity extends BaseActivity {
 
         @Override
        public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-           if(holder.getAdapterPosition()>=list.size()) {
+            if(reference.get()==null)return;
+           if(holder.getAdapterPosition()>=reference.get().size()) {
                holder.root.setVisibility(View.INVISIBLE);
                return;
            }else {
@@ -605,7 +609,8 @@ public class MainActivity extends BaseActivity {
 
            TaskItem item=null;
            try{
-               item=list.get(position);
+               //item=list.get(position);
+               item=reference.get().get(position);
            }catch (Exception e){
                e.printStackTrace();
            }
@@ -619,7 +624,7 @@ public class MainActivity extends BaseActivity {
                 Collection<TextView> values=tvs.values();
                 values.remove(holder.tv_trigger);
             }catch (Exception e){}
-           if(item.trigger_type==TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME) tvs.put(holder.getAdapterPosition(),holder.tv_trigger);
+           if(item.trigger_type==TriggerTypeConsts.TRIGGER_TYPE_LOOP_BY_CERTAIN_TIME) tvs.put(reference.get().get(holder.getAdapterPosition()).id,holder.tv_trigger);
 
            holder.tv_name.setText(item.name);
            int color_value = Color.parseColor(item.addition_title_color);
@@ -640,7 +645,7 @@ public class MainActivity extends BaseActivity {
                        holder.task_area.setVisibility(View.VISIBLE);
                        holder.title_arrow.setRotation(90);
                        try{
-                           ProcessTaskItem.setTaskFolded(MainActivity.this,list.get(holder.getAdapterPosition()),false,MySQLiteOpenHelper.getCurrentTableName(MainActivity.this));
+                           ProcessTaskItem.setTaskFolded(MainActivity.this,reference.get().get(holder.getAdapterPosition()),false,MySQLiteOpenHelper.getCurrentTableName(MainActivity.this));
                        }catch (Exception e){e.printStackTrace();}
                    }else{
                        //TransitionManager.beginDelayedTransition(((ViewGroup)recyclerView));
@@ -648,7 +653,7 @@ public class MainActivity extends BaseActivity {
                        holder.task_area.setVisibility(View.GONE);
                        holder.title_arrow.setRotation(0);
                        try{
-                           ProcessTaskItem.setTaskFolded(MainActivity.this,list.get(holder.getAdapterPosition()),true,MySQLiteOpenHelper.getCurrentTableName(MainActivity.this));
+                           ProcessTaskItem.setTaskFolded(MainActivity.this,reference.get().get(holder.getAdapterPosition()),true,MySQLiteOpenHelper.getCurrentTableName(MainActivity.this));
                        }catch (Exception e){e.printStackTrace();}
                    }
                }
@@ -694,8 +699,9 @@ public class MainActivity extends BaseActivity {
                switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                    @Override
                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                       if(reference.get()==null)return;
                        try{
-                           if(b&&list.get(holder.getAdapterPosition()).trigger_type == TriggerTypeConsts.TRIGGER_TYPE_SINGLE&&(list.get(holder.getAdapterPosition()).time<System.currentTimeMillis())){
+                           if(b&&reference.get().get(holder.getAdapterPosition()).trigger_type == TriggerTypeConsts.TRIGGER_TYPE_SINGLE&&(reference.get().get(holder.getAdapterPosition()).time<System.currentTimeMillis())){
                                Snackbar.make(fab,getResources().getString(R.string.activity_main_toast_task_invalid),Snackbar.LENGTH_SHORT)
                                        .setAction(getResources().getString(R.string.activity_main_toast_task_invalid_action), new View.OnClickListener() {
                                            @Override
@@ -706,7 +712,7 @@ public class MainActivity extends BaseActivity {
                                holder.switch_enabled.setChecked(!b);
                                return;
                            }
-                           ProcessTaskItem.setTaskEnabled(TimeSwitchService.service,list.get(holder.getAdapterPosition()),b,MySQLiteOpenHelper.getCurrentTableName(MainActivity.this));
+                           ProcessTaskItem.setTaskEnabled(TimeSwitchService.service,reference.get().get(holder.getAdapterPosition()),b,MySQLiteOpenHelper.getCurrentTableName(MainActivity.this));
                        }catch (Exception e){
                            e.printStackTrace();
                            holder.switch_enabled.setChecked(!b);
@@ -735,12 +741,14 @@ public class MainActivity extends BaseActivity {
 
        @Override
        public int getItemCount() {
-           return list.size()+2;
+            if(reference.get()==null)return 0;
+           return reference.get().size()+2;
        }
 
         private void openMultiSelectMode(int position){
+            if(reference.get()==null)return;
             this.isMultiSelectMode=true;
-            isSelected=new boolean[list.size()];
+            isSelected=new boolean[reference.get().size()];
             isSelected[position]=true;
             itemTouchHelper.attachToRecyclerView(null);
             notifyDataSetChanged();
@@ -783,22 +791,23 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                if(reference.get()==null)return false;
                 int fromPosition = viewHolder.getAdapterPosition();
 
                 int toPosition = target.getAdapterPosition();
 
-                if(toPosition>=list.size()) return false;
+                if(toPosition>=reference.get().size()) return false;
 
                 if (fromPosition < toPosition) {
                     for (int i = fromPosition; i < toPosition; i++) {
-                        Collections.swap(list, i, i + 1);
+                        Collections.swap(reference.get(), i, i + 1);
                     }
                 } else {
                     for (int i = fromPosition; i > toPosition; i--) {
-                        Collections.swap(list, i, i - 1);
+                        Collections.swap(reference.get(), i, i - 1);
                     }
                 }
-                Global.refreshTaskItemListOrders(MainActivity.this,list);
+                Global.refreshTaskItemListOrders(MainActivity.this,reference.get());
                 recyclerView.getAdapter().notifyItemMoved(fromPosition, toPosition);
                 return true;
             }
@@ -808,18 +817,23 @@ public class MainActivity extends BaseActivity {
 
             }
         } );
-        public List<TaskItem>getList(){return list;}
+        public List<TaskItem>getList(){return reference.get();}
 
         private void startEditTaskActivity(int position){
+            if(reference.get()==null)return;
             Intent intent = new Intent();
-            intent.putExtra(EditTaskActivity.EXTRA_SERIALIZED_TASKITEM,list.get(position));
+            intent.putExtra(EditTaskActivity.EXTRA_SERIALIZED_TASKITEM,reference.get().get(position));
             intent.setClass(MainActivity.this, EditTaskActivity.class);
             startActivityForResult(intent,REQUEST_CODE_ACTIVITY_EDIT);
         }
 
         private void refreshAllCertainTimeDisplays(){
+            if(reference.get()==null)return;
             Object [] keys=tvs.keySet().toArray();
-            for(Object i:keys)tvs.get(i).setText(list.get((Integer) i).display_trigger);
+            for(Object i:keys){
+                TaskItem item=ProcessTaskItem.getTaskItemOfId(reference.get(),(Integer)i);
+                tvs.get(i).setText(item!=null?item.display_trigger:"");
+            }
         }
     }
 

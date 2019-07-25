@@ -146,10 +146,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 	@Override
 	public void finish(){
 		super.finish();
-		if(queue.contains(this)) queue.remove(this);
+		queue.remove(this);
 		if(queue.size()==0) {
 			myHandler=null;
 			queue=null;
+			runGcOnNewThread();
 		}
 
 	}
@@ -158,13 +159,17 @@ public abstract class BaseActivity extends AppCompatActivity {
 	public void onDestroy(){
 		super.onDestroy();
 		if(queue==null||queue.size()==0) {
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					System.gc();
-				}
-			}).start();
+			runGcOnNewThread();
 		}
+	}
+
+	private void runGcOnNewThread(){
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				System.gc();
+			}
+		}).start();
 	}
 
 	public static class MyHandler extends Handler{

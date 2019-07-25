@@ -20,6 +20,7 @@ import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.adapters.ContentAdapter;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class DialogForTaskSelection implements DialogInterface.OnClickListener{
@@ -72,13 +73,15 @@ public class DialogForTaskSelection implements DialogInterface.OnClickListener{
 
     public static class MiniTaskListAdapter extends RecyclerView.Adapter<MiniTaskListAdapter.ViewHolder> {
         private Context context;
-        private List<TaskItem> list;
+        //private List<TaskItem> list;
+        private WeakReference<List<TaskItem>>reference;
         private boolean[] isSelected;
         private String selectable_color="#553aaf85";
 
         public MiniTaskListAdapter(Context context, List<TaskItem> list,String[] selected_ids,@Nullable String selected_color){
             this.context=context;
-            this.list=list;
+            //this.list=list;
+            reference=new WeakReference<>(list);
             isSelected=new boolean[list.size()];
             if(selected_color!=null) this.selectable_color=selected_color;
             for(int i=0;i<list.size();i++){
@@ -98,7 +101,8 @@ public class DialogForTaskSelection implements DialogInterface.OnClickListener{
 
         @Override
         public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-            TaskItem item=list.get(position);
+            if(reference.get()==null)return;
+            TaskItem item=reference.get().get(position);
             Resources resources=context.getResources();
             Integer img_res=(Integer) ContentAdapter.TriggerContentAdapter.getContentForTriggerType(context, ContentAdapter.TriggerContentAdapter.CONTENT_TYPE_ICON_RESOURCE_DRAWABLE_ID,item);
             if(img_res==null) img_res=R.drawable.ic_launcher;
@@ -121,11 +125,13 @@ public class DialogForTaskSelection implements DialogInterface.OnClickListener{
 
         @Override
         public int getItemCount() {
-            return list.size();
+            if(reference.get()==null)return 0;
+            return reference.get().size();
         }
 
         public void deselectAll(){
-            isSelected=new boolean[list.size()];
+            if(reference.get()==null)return;
+            isSelected=new boolean[reference.get().size()];
             notifyDataSetChanged();
         }
 
@@ -133,10 +139,11 @@ public class DialogForTaskSelection implements DialogInterface.OnClickListener{
          * @return id:id:id,or -1
          */
         public String getSelectedIds(){
+            if(reference.get()==null)return String.valueOf(-1);
             StringBuilder builder=new StringBuilder("");
             for(int i=0;i<isSelected.length;i++){
                 if(isSelected[i]) {
-                    builder.append(list.get(i).id);
+                    builder.append(reference.get().get(i).id);
                     builder.append(PublicConsts.SEPARATOR_SECOND_LEVEL);
                 }
             }
