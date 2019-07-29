@@ -11,7 +11,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
@@ -132,6 +134,7 @@ public class ProcessTaskItem {
             try{activateActionOfFlashlight(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FLASHLIGHT]);}catch (Exception e){e.printStackTrace();}
             try{activateActionOfVibrate(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE]);}catch (Exception e){e.printStackTrace();}
             try{activateActionOfToast(context,item);}catch (Exception e){e.printStackTrace();}
+            try{activateActionOfPlay(context,item);}catch (Exception e){e.printStackTrace();}
             try{activateActionOfAutorotation(context,Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AUTOROTATION]));}catch (Exception e){e.printStackTrace();}
             try{activateActionOfSMS(context,item);}catch (Exception e){e.printStackTrace();}
             try{launchAppsByPackageName(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES]);}catch (Exception e){e.printStackTrace();}
@@ -529,6 +532,13 @@ public class ProcessTaskItem {
                 offsets[1]=Integer.parseInt(toast_values[ActionConsts.ActionSecondLevelLocaleConsts.TOAST_LOCATION_Y_OFFSET_LOCALE]);
             }
             EnvironmentUtils.showToast(context,offsets,item.toast);
+        }
+    }
+
+    private static void activateActionOfPlay(Context context,TaskItem item){
+        int selection=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_PLAY_AUDIO]);
+        if(selection>=0){
+            EnvironmentUtils.playAudioFileFromUri(context, Uri.parse(item.uri_play));
         }
     }
 

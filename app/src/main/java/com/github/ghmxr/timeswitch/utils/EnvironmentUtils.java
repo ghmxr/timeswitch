@@ -10,6 +10,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.WallpaperManager;
 import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
@@ -18,6 +19,7 @@ import android.hardware.SensorManager;
 import android.hardware.camera2.CameraManager;
 import android.location.LocationManager;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -42,6 +44,7 @@ import android.widget.Toast;
 
 import com.github.ghmxr.timeswitch.Global;
 import com.github.ghmxr.timeswitch.R;
+import com.github.ghmxr.timeswitch.adapters.ContentAdapter;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.receivers.SMSReceiver;
 
@@ -504,6 +507,61 @@ public class EnvironmentUtils {
             PendingIntent pi_delivered=PendingIntent.getBroadcast(context,0,i_delivered,PendingIntent.FLAG_UPDATE_CURRENT);
             for(String s:msgs){
                 manager.sendTextMessage(address,null,s,pi_sent,if_need_receipt?pi_delivered:null);
+            }
+        }
+    }
+
+    private static MediaPlayer mediaPlayer;
+    public static synchronized void playAudioFileFromUri(@NonNull Context context,@NonNull Uri uri){
+        if(mediaPlayer!=null){
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer=null;
+        }
+        mediaPlayer=MediaPlayer.create(context,uri);
+        mediaPlayer.setLooping(false);
+
+        final NotificationManager manager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if(manager==null)return;
+        manager.cancel(111);
+        NotificationCompat.Builder builder;
+        if(Build.VERSION.SDK_INT>=26){
+            NotificationChannel channel=new NotificationChannel("channel_sound","sound", NotificationManager.IMPORTANCE_DEFAULT);
+            manager.createNotificationChannel(channel);
+            builder=new NotificationCompat.Builder(context,"channel_sound");
+        }else{
+            builder=new NotificationCompat.Builder(context);
+        }
+        builder.setSmallIcon(R.drawable.icon_play);
+        builder.setContentTitle(context.getResources().getString(R.string.notification_sound_title));
+        builder.setContentText(context.getResources().getString(R.string.notification_sound_message));
+        builder.setOngoing(true);
+        builder.setContentIntent(PendingIntent.getBroadcast(context,1,new Intent(context,MediaPlayerReceiver.class),PendingIntent.FLAG_UPDATE_CURRENT));
+        manager.notify(111,builder.build());
+
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer m) {
+                mediaPlayer.release();
+                mediaPlayer=null;
+                manager.cancel(111);
+            }
+        });
+        mediaPlayer.start();
+    }
+
+    public static class MediaPlayerReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context,Intent intent){
+            synchronized (EnvironmentUtils.class){
+                if(mediaPlayer!=null){
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                    mediaPlayer=null;
+                }
+                NotificationManager manager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+                if(manager==null)return;
+                manager.cancel(111);
             }
         }
     }

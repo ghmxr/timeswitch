@@ -950,6 +950,16 @@ public class ContentAdapter {
             return "";
         }
 
+        public static String getPlayDisplayValue(Context context,TaskItem item){
+            try{
+                if(Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_PLAY_AUDIO])<0||item.uri_play==null||item.uri_play.equals(""))return "";
+                return RingtoneManager.getRingtone(context,Uri.parse(item.uri_play)).getTitle(context);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return "";
+        }
+
         public static boolean isGeneralItemVisible(String value){
             try{
                 return Integer.parseInt(value)>=0;
@@ -1466,6 +1476,14 @@ public class ContentAdapter {
                     if(value_toast.length()>0){
                         if(builder.toString().length()>0) builder.append(",");
                         builder.append(value_toast);
+                    }
+
+                    String value_play=getPlayDisplayValue(context,item);
+                    if(value_play.length()>0){
+                        if(builder.toString().length()>0) builder.append(",");
+                        builder.append(context.getResources().getString(R.string.activity_taskgui_actions_play));
+                        builder.append(":");
+                        builder.append(value_play);
                     }
 
                     String value_notification= getNotificationDisplayValue(context,item);

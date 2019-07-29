@@ -236,9 +236,13 @@
 	<string name="unit_second">秒</string>
 	<string name="notification_flashlight_title">闪光灯正在运行</string>
 	<string name="notification_flashlight_message">点击这里立即关闭闪光灯</string>
+	<string name="notification_sound_title">正在播放声音</string>
+	<string name="notification_sound_message">点击这里立即停止播放</string>
 	<string name="activity_taskgui_actions_sms">发送短信</string>
 	<string name="activity_taskgui_actions_notification">推送通知</string>
 	<string name="activity_taskgui_actions_toast">文字Toast</string>
+	<string name="activity_taskgui_actions_play">播放声音</string>
+	<string name="activity_taskgui_action_play_att">请选择合适长度的音频文件</string>
 	<string name="activity_taskgui_actions_net">移动数据</string>
 	<string name="activity_taskgui_actions_gps">定位服务</string>
 	<string name="activity_taskgui_actions_airplane_mode">飞行模式</string>

@@ -13,7 +13,7 @@ public class SQLConsts {
 	/**
 	 * 数据库版本
 	 */
-	public static final int SQL_DATABASE_VERSION							= 3;
+	public static final int SQL_DATABASE_VERSION							= 4;
 	
 	/**
 	 * 数据库默认任务列表的table名称
@@ -75,6 +75,8 @@ public class SQLConsts {
 	public static final String SQL_TASK_COLUMN_URI_RING_NOTIFICATION	="uri_audio1";
 
 	public static final String SQL_TASK_COLUMN_URI_RING_CALL 			="uri_audio2";
+
+	public static final String SQL_TASK_COLUMN_URI_PLAY				="uri_audio3";
 
 	public static final String SQL_TASK_COLUMN_URI_WALLPAPER_DESKTOP		="uri_img1";
 

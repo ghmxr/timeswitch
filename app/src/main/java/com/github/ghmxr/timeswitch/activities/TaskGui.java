@@ -7,9 +7,11 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.SwitchCompat;
@@ -20,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +35,7 @@ import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialog;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBrightness;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForDeviceControl;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForFlashlight;
@@ -62,6 +66,8 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 	private static final int REQUEST_CODE_ACTION_RINGTONE=3;
 	private static final int REQUEST_CODE_SET_WALLPAPER=4;
 	private static final int REQUEST_CODE_SMS=5;
+	private static final int REQUEST_CODE_PLAY_FROM_SYSTEM=6;
+	private static final int REQUEST_CODE_PLAY_FROM_MEDIA=7;
 
 	boolean isTaskNameEdited=false;
 
@@ -423,6 +429,54 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
             });
 		    group.addView(view);
         }
+
+		if(Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_PLAY_AUDIO])>=0){
+			View view=getActionItemViewForViewGroup(group,R.drawable.icon_play,getResources().getString(R.string.activity_taskgui_actions_play)
+			,ContentAdapter.ActionContentAdapter.getPlayDisplayValue(TaskGui.this,taskitem));
+			view.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					Toast.makeText(TaskGui.this,getResources().getString(R.string.activity_taskgui_action_play_att),Toast.LENGTH_SHORT).show();
+					final int selection=Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_PLAY_AUDIO]);
+					final BottomDialog dialog=new BottomDialog(TaskGui.this);
+					dialog.setContentView(R.layout.layout_dialog_ring_selection);
+					dialog.show();
+					((RadioButton)dialog.findViewById(R.id.dialog_ring_unselected_rb)).setChecked(taskitem.uri_play==null||taskitem.uri_play.equals("")||selection==-1);
+					((RadioButton)dialog.findViewById(R.id.dialog_ring_system_rb)).setChecked(selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM);
+					((RadioButton)dialog.findViewById(R.id.dialog_ring_media_rb)).setChecked(selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_MEDIA);
+					dialog.findViewById(R.id.dialog_ring_unselected).setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_PLAY_AUDIO]=String.valueOf(-1);
+							refreshActionStatus();
+							dialog.cancel();
+						}
+					});
+					dialog.findViewById(R.id.dialog_ring_system).setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							dialog.cancel();
+							Intent intent=new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+							intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT,false);
+							intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT,false);
+							intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE,RingtoneManager.TYPE_ALL);
+							if(taskitem.uri_play!=null&&selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM)intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,Uri.parse(taskitem.uri_play));
+							startActivityForResult(intent,REQUEST_CODE_PLAY_FROM_SYSTEM);
+						}
+					});
+					dialog.findViewById(R.id.dialog_ring_media).setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							dialog.cancel();
+							Intent intent=new Intent(Intent.ACTION_PICK, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
+							startActivityForResult(intent,REQUEST_CODE_PLAY_FROM_MEDIA);
+						}
+					});
+					dialog.show();
+				}
+			});
+			group.addView(view);
+		}
 
         int action_net=Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_NET_LOCALE]);
 		if(action_net>=0){
@@ -1169,6 +1223,24 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			case REQUEST_CODE_SMS:{
 				if(resultCode==RESULT_OK){
 					taskitem=(TaskItem)data.getSerializableExtra(EXTRA_SERIALIZED_TASKITEM);
+					refreshActionStatus();
+				}
+			}
+			break;
+			case REQUEST_CODE_PLAY_FROM_SYSTEM:{
+				if(resultCode==RESULT_OK){
+					taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_PLAY_AUDIO]=String.valueOf(ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM);
+					Uri uri=data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+					if(uri!=null)taskitem.uri_play=uri.toString();
+					refreshActionStatus();
+				}
+			}
+			break;
+			case REQUEST_CODE_PLAY_FROM_MEDIA:{
+				if(resultCode==RESULT_OK){
+					taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_PLAY_AUDIO]=String.valueOf(ActionConsts.ActionValueConsts.RING_TYPE_FROM_MEDIA);
+					Uri uri=data.getData();
+					if(uri!=null)taskitem.uri_play=uri.toString();
 					refreshActionStatus();
 				}
 			}

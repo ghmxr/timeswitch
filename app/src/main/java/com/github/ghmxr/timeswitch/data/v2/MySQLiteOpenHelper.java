@@ -106,6 +106,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 				+SQLConsts.SQL_TASK_COLUMN_ADDITIONS+" text ,"
 				+SQLConsts.SQL_TASK_COLUMN_URI_RING_NOTIFICATION+" text ,"
 				+SQLConsts.SQL_TASK_COLUMN_URI_RING_CALL +" text ,"
+				+SQLConsts.SQL_TASK_COLUMN_URI_PLAY +" text ,"
 				+SQLConsts.SQL_TASK_COLUMN_URI_WALLPAPER_DESKTOP+" text ,"
 				+SQLConsts.SQL_TASK_COLUMN_NOTIFICATION_TITLE+" text ,"
 				+SQLConsts.SQL_TASK_COLUMN_NOTIFICATION_MESSAGE+" text ,"
@@ -120,11 +121,11 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 		// TODO Auto-generated method stub
 		Log.i("MySqliteOpenHelper","oldVersion is "+oldVersion+" , newVersion is "+newVersion);
 		if(newVersion==oldVersion) return;
+		final String sql_lookup_table_names="select name from "+ "sqlite_master"+" where type='table' order by name";
+		Cursor cursor=db.rawQuery(sql_lookup_table_names,null);
 		switch (oldVersion){
 			default:break;
 			case 2:{   //添加order字段，并将关键字id值从0开始排列，id值初始等于order
-				String sql_lookup_table_names="select name from "+ "sqlite_master"+" where type='table' order by name";
-				Cursor cursor=db.rawQuery(sql_lookup_table_names,null);
 				while (cursor.moveToNext()){
 					String table_name=cursor.getString(0);
 					if(table_name.contains(SQLConsts.SQL_DATABASE_TABLE_NAME_FONT)) {
@@ -141,10 +142,19 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 						cursor1.close();
 					}
 				}
-				cursor.close();
+				cursor.moveToFirst();
 			}
-
+			case 3:{//添加uri_audio3字段
+				while (cursor.moveToNext()){
+					String table_name=cursor.getString(0);
+					if(table_name.contains(SQLConsts.SQL_DATABASE_TABLE_NAME_FONT)) {
+						db.execSQL("alter table "+table_name +" add column "+SQLConsts.SQL_TASK_COLUMN_URI_PLAY+" text");
+					}
+				}
+				cursor.moveToFirst();
+			}
 		}
+		cursor.close();
 	}
 
 	/**
@@ -224,6 +234,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 		values.put(SQLConsts.SQL_TASK_COLUMN_URI_RING_NOTIFICATION,taskitem.uri_ring_notification);
 		values.put(SQLConsts.SQL_TASK_COLUMN_URI_RING_CALL,taskitem.uri_ring_call);
 		values.put(SQLConsts.SQL_TASK_COLUMN_URI_WALLPAPER_DESKTOP,taskitem.uri_wallpaper_desktop);
+		values.put(SQLConsts.SQL_TASK_COLUMN_URI_PLAY,taskitem.uri_play);
 		values.put(SQLConsts.SQL_TASK_COLUMN_NOTIFICATION_TITLE,taskitem.notification_title);
 		values.put(SQLConsts.SQL_TASK_COLUMN_NOTIFICATION_MESSAGE,taskitem.notification_message);
 		values.put(SQLConsts.SQL_TASK_COLUMN_TOAST,taskitem.toast);
@@ -388,7 +399,6 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 	 * 将一个数据表写成一个json文件到path，此方法为耗时操作
 	 * @param table 要导出的表名
 	 * @param path 要写入的path（须包含文件名）
-	 * @throws Exception 运行过程中可能会抛出的异常
 	 */
 	public static void saveTable2File(Context context, String table,String path) throws Exception{
 		SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
@@ -408,6 +418,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 			jsonObject.put(SQLConsts.SQL_TASK_COLUMN_URI_RING_NOTIFICATION,cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_URI_RING_NOTIFICATION)));
 			jsonObject.put(SQLConsts.SQL_TASK_COLUMN_URI_RING_CALL,cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_URI_RING_CALL)));
 			jsonObject.put(SQLConsts.SQL_TASK_COLUMN_URI_WALLPAPER_DESKTOP,cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_URI_WALLPAPER_DESKTOP)));
+			jsonObject.put(SQLConsts.SQL_TASK_COLUMN_URI_PLAY,cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_URI_PLAY)));
 			jsonObject.put(SQLConsts.SQL_TASK_COLUMN_NOTIFICATION_TITLE,cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_NOTIFICATION_TITLE)));
 			jsonObject.put(SQLConsts.SQL_TASK_COLUMN_NOTIFICATION_MESSAGE,cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_NOTIFICATION_MESSAGE)));
 			jsonObject.put(SQLConsts.SQL_TASK_COLUMN_TOAST,cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_TOAST)));
@@ -497,7 +508,6 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 	 * 从一个文件读取并将内容导入至一个新的table
 	 * @param context context
 	 * @param file 指定要读取的文件
-	 * @throws Exception 可能抛出的异常
 	 */
 	public static void readFile2Table(Context context,File file) throws Exception{
 		SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
@@ -552,6 +562,12 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 			}catch (JSONException e){
 				e.printStackTrace();
 				Log.e("TaskOrder","May be this Json Array does not contain the order value");
+			}
+			try{
+				contentValues.put(SQLConsts.SQL_TASK_COLUMN_URI_PLAY,jsonObject.getString(SQLConsts.SQL_TASK_COLUMN_URI_PLAY));
+			}catch (JSONException e){
+				e.printStackTrace();
+				Log.e("Uri_Play","May be this Json Array does not contain the uri_play value");
 			}
 			database.insert(newTableName,null,contentValues);
 		}

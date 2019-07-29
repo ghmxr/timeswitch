@@ -3,16 +3,19 @@ package com.github.ghmxr.timeswitch.activities;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +25,7 @@ import com.github.ghmxr.timeswitch.adapters.ContentAdapter;
 import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialog;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBrightness;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForDeviceControl;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForFlashlight;
@@ -47,6 +51,8 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
     private static final int REQUEST_CODE_RING_CHANGED=1;
     private static final int REQUEST_CODE_WALLPAPER_CHANGED=2;
     private static final int REQUEST_CODE_SMS_SET=3;
+    private static final int REQUEST_CODE_PLAY_FROM_SYSTEM=4;
+    private static final int REQUEST_CODE_PLAY_FROM_MEDIA=5;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,6 +85,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
         findViewById(R.id.actions_app_force_close).setOnClickListener(this);
         findViewById(R.id.actions_autorotation).setOnClickListener(this);
         findViewById(R.id.actions_flashlight).setOnClickListener(this);
+        findViewById(R.id.actions_play).setOnClickListener(this);
 
         item=(TaskItem)getIntent().getSerializableExtra(EXTRA_SERIALIZED_TASKITEM);
         refreshActionStatus();
@@ -420,6 +427,46 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
                 });
             }
             break;
+            case R.id.actions_play:{
+                Toast.makeText(this,getResources().getString(R.string.activity_taskgui_action_play_att),Toast.LENGTH_SHORT).show();
+                final int selection=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_PLAY_AUDIO]);
+                final BottomDialog dialog=new BottomDialog(this);
+                dialog.setContentView(R.layout.layout_dialog_ring_selection);
+                dialog.show();
+                ((RadioButton)dialog.findViewById(R.id.dialog_ring_unselected_rb)).setChecked(item.uri_play==null||item.uri_play.equals("")||selection==-1);
+                ((RadioButton)dialog.findViewById(R.id.dialog_ring_system_rb)).setChecked(selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM);
+                ((RadioButton)dialog.findViewById(R.id.dialog_ring_media_rb)).setChecked(selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_MEDIA);
+                dialog.findViewById(R.id.dialog_ring_unselected).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_PLAY_AUDIO]=String.valueOf(-1);
+                        refreshActionStatus();
+                        dialog.cancel();
+                    }
+                });
+                dialog.findViewById(R.id.dialog_ring_system).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.cancel();
+                        Intent intent=new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+                        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT,false);
+                        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT,false);
+                        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE,RingtoneManager.TYPE_ALL);
+                        if(item.uri_play!=null&&selection== ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM)intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,Uri.parse(item.uri_play));
+                        startActivityForResult(intent,REQUEST_CODE_PLAY_FROM_SYSTEM);
+                    }
+                });
+                dialog.findViewById(R.id.dialog_ring_media).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.cancel();
+                        Intent intent=new Intent(Intent.ACTION_PICK, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(intent,REQUEST_CODE_PLAY_FROM_MEDIA);
+                    }
+                });
+
+            }
+            break;
         }
     }
 
@@ -479,6 +526,24 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
                 }
             }
             break;
+            case REQUEST_CODE_PLAY_FROM_SYSTEM:{
+                if(resultCode==RESULT_OK){
+                    item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_PLAY_AUDIO]=String.valueOf(ActionConsts.ActionValueConsts.RING_TYPE_FROM_SYSTEM);
+                    Uri uri=data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+                    if(uri!=null)item.uri_play=uri.toString();
+                    refreshActionStatus();
+                }
+            }
+            break;
+            case REQUEST_CODE_PLAY_FROM_MEDIA:{
+                if(resultCode==RESULT_OK){
+                    item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_PLAY_AUDIO]=String.valueOf(ActionConsts.ActionValueConsts.RING_TYPE_FROM_MEDIA);
+                    Uri uri=data.getData();
+                    if(uri!=null)item.uri_play=uri.toString();
+                    refreshActionStatus();
+                }
+            }
+            break;
         }
     }
 
@@ -505,6 +570,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
         ((TextView)findViewById(R.id.actions_autorotation_status)).setText(ContentAdapter.ActionContentAdapter.getGeneralDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AUTOROTATION]));
         ((TextView)findViewById(R.id.actions_flashlight_status)).setText(ContentAdapter.ActionContentAdapter.getFlashlightDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FLASHLIGHT]));
         ((TextView)findViewById(R.id.actions_app_force_close_status)).setText(ContentAdapter.ActionContentAdapter.getAppNameDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FORCE_STOP_APP_PACKAGES]));
+        ((TextView)findViewById(R.id.actions_play_status)).setText(ContentAdapter.ActionContentAdapter.getPlayDisplayValue(this,item));
     }
 
     private boolean checkAndShowSnackBarOfSuperuserRequest(){

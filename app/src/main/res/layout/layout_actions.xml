@@ -769,6 +769,63 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/actions_play"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true">
+
+                <ImageView
+                    android:id="@+id/actions_play_icon"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="25dp"
+                    android:src="@drawable/icon_play" />
+
+                <TextView
+                    android:id="@+id/actions_play_att"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@+id/actions_play_icon"
+                    android:text="@string/activity_taskgui_actions_play"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:id="@+id/actions_play_arrow"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/drawable_arrow_right" />
+
+                <TextView
+                    android:id="@+id/actions_play_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="3dp"
+                    android:layout_toLeftOf="@+id/actions_play_arrow"
+                    android:layout_toRightOf="@+id/actions_play_att"
+                    android:gravity="end"
+                    android:singleLine="true"
+                    android:textSize="12sp" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginLeft="25dp"
+                    android:background="#dddddd" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:id="@+id/actions_net"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"

@@ -99,6 +99,7 @@ public class TaskItem implements Comparable<TaskItem>,Serializable{
 	public String uri_ring_notification="";
 	public String uri_ring_call ="";
 	public String uri_wallpaper_desktop="";
+	public String uri_play="";
 	public String sms_address="";
 	public String sms_message="";
 	public String notification_title="";

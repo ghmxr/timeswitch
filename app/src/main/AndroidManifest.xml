@@ -148,7 +148,7 @@
             </intent-filter>
         </receiver>
         <receiver android:name=".utils.ProcessTaskItem$FlashlightReceiver"/>
-
+        <receiver android:name=".utils.EnvironmentUtils$MediaPlayerReceiver"/>
     </application>
 
 </manifest>
