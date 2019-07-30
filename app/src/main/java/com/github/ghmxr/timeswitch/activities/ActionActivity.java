@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -86,6 +87,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
         findViewById(R.id.actions_autorotation).setOnClickListener(this);
         findViewById(R.id.actions_flashlight).setOnClickListener(this);
         findViewById(R.id.actions_play).setOnClickListener(this);
+        findViewById(R.id.actions_clean_notification).setOnClickListener(this);
 
         item=(TaskItem)getIntent().getSerializableExtra(EXTRA_SERIALIZED_TASKITEM);
         refreshActionStatus();
@@ -467,6 +469,68 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
 
             }
             break;
+            case R.id.actions_clean_notification:{
+                if(!EnvironmentUtils.PermissionRequestUtil.checkAndShowNotificationReadingRequestSnackbar(this,
+                        getResources().getString(R.string.activity_taskgui_action_clean_notification_permission)
+                        ,getResources().getString(R.string.permission_grant_action_att))) return;
+                int selection=0;
+                //String [] package_names=null;
+                final String value=item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_CLEAN_NOTIFICATION];
+                try{
+                    selection=Integer.parseInt(value);
+                }catch (NumberFormatException ne){
+                    try{
+                        //package_names=value.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+                    }catch (Exception e){}
+                }
+
+                final BottomDialogWith3Selections dialog=new BottomDialogWith3Selections(this,getResources().getString(R.string.activity_taskgui_action_clean_notification),selection,R.drawable.icon_notification_clear_all
+                        ,R.drawable.icon_robot,R.drawable.icon_unselected,getResources().getString(R.string.activity_taskgui_action_clean_notfication_all)
+                        ,getResources().getString(R.string.activity_taskgui_action_clean_notification_package)
+                        ,getResources().getString(R.string.unselected));
+
+                dialog.show();
+                dialog.findViewById(R.id.selection_area_unselected).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_CLEAN_NOTIFICATION]=String.valueOf(-1);
+                        refreshActionStatus();
+                        dialog.cancel();
+                    }
+                });
+                dialog.findViewById(R.id.selection_area_open).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_CLEAN_NOTIFICATION]=String.valueOf(ActionConsts.ActionValueConsts.ACTION_CLEAN_NOTIFICATION_ALL);
+                        refreshActionStatus();
+                        dialog.cancel();
+                    }
+                });
+                dialog.findViewById(R.id.selection_area_close).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.cancel();
+                        String[]package_names=null;
+                        try{
+                            package_names=value.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+                        }catch (Exception e){}
+                        DialogForAppSelection dialog1=new DialogForAppSelection(ActionActivity.this
+                                ,getResources().getString(R.string.activity_taskgui_action_clean_notification_package)
+                        ,package_names==null?new String[0]:package_names,null,"");
+                        dialog1.show();
+                        dialog1.setOnDialogConfirmedCallBack(new DialogConfirmedCallBack() {
+                            @Override
+                            public void onDialogConfirmed(String result) {
+                                if(result.equals(String.valueOf(-1)))return;
+                                //result.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+                                item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_CLEAN_NOTIFICATION]=result;
+                                refreshActionStatus();
+                            }
+                        });
+                    }
+                });
+            }
+            break;
         }
     }
 
@@ -571,6 +635,7 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
         ((TextView)findViewById(R.id.actions_flashlight_status)).setText(ContentAdapter.ActionContentAdapter.getFlashlightDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FLASHLIGHT]));
         ((TextView)findViewById(R.id.actions_app_force_close_status)).setText(ContentAdapter.ActionContentAdapter.getAppNameDisplayValue(this,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_FORCE_STOP_APP_PACKAGES]));
         ((TextView)findViewById(R.id.actions_play_status)).setText(ContentAdapter.ActionContentAdapter.getPlayDisplayValue(this,item));
+        ((TextView)findViewById(R.id.actions_clean_notification_status)).setText(ContentAdapter.ActionContentAdapter.getCleaningNotificationValue(this,item));
     }
 
     private boolean checkAndShowSnackBarOfSuperuserRequest(){

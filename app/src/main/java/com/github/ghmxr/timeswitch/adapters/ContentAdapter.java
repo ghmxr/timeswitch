@@ -960,6 +960,24 @@ public class ContentAdapter {
             return "";
         }
 
+        public static String getCleaningNotificationValue(Context context,TaskItem item){
+            try{
+                String value=item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_CLEAN_NOTIFICATION];
+                try{
+                    int selection=Integer.parseInt(value);
+                    if(selection<0)return "";
+                    if(selection==ActionConsts.ActionValueConsts.ACTION_CLEAN_NOTIFICATION_ALL){
+                        return context.getResources().getString(R.string.activity_taskgui_action_clean_notfication_all);
+                    }
+                }catch (NumberFormatException ne){
+                    try{
+                        return getAppNameDisplayValue(context,value);
+                    }catch (Exception ee){}
+                }
+            }catch (Exception e){e.printStackTrace();}
+            return "";
+        }
+
         public static boolean isGeneralItemVisible(String value){
             try{
                 return Integer.parseInt(value)>=0;
@@ -1484,6 +1502,14 @@ public class ContentAdapter {
                         builder.append(context.getResources().getString(R.string.activity_taskgui_actions_play));
                         builder.append(":");
                         builder.append(value_play);
+                    }
+
+                    String value_clean_notification=getCleaningNotificationValue(context,item);
+                    if(value_clean_notification.length()>0){
+                        if(builder.toString().length()>0)builder.append(",");
+                        builder.append(context.getResources().getString(R.string.activity_taskgui_action_clean_notification));
+                        builder.append(":");
+                        builder.append(value_clean_notification);
                     }
 
                     String value_notification= getNotificationDisplayValue(context,item);

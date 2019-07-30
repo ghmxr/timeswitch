@@ -32,6 +32,7 @@ import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.data.v2.SQLConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
+import com.github.ghmxr.timeswitch.services.NotificationMonitorService;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 
 import java.util.ArrayList;
@@ -135,6 +136,7 @@ public class ProcessTaskItem {
             try{activateActionOfVibrate(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_VIBRATE_LOCALE]);}catch (Exception e){e.printStackTrace();}
             try{activateActionOfToast(context,item);}catch (Exception e){e.printStackTrace();}
             try{activateActionOfPlay(context,item);}catch (Exception e){e.printStackTrace();}
+            try{activateActionOfCleaningNotification(item);}catch (Exception e){e.printStackTrace();}
             try{activateActionOfAutorotation(context,Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_AUTOROTATION]));}catch (Exception e){e.printStackTrace();}
             try{activateActionOfSMS(context,item);}catch (Exception e){e.printStackTrace();}
             try{launchAppsByPackageName(context,item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_LAUNCH_APP_PACKAGES]);}catch (Exception e){e.printStackTrace();}
@@ -539,6 +541,28 @@ public class ProcessTaskItem {
         int selection=Integer.parseInt(item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_PLAY_AUDIO]);
         if(selection>=0){
             EnvironmentUtils.playAudioFileFromUri(context, Uri.parse(item.uri_play));
+        }
+    }
+
+    private static void activateActionOfCleaningNotification(TaskItem item){
+        int selection=0;
+        String value=item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_CLEAN_NOTIFICATION];
+        String []  package_names=null;
+        try{
+            selection=Integer.parseInt(value);
+            if(selection<0)return;
+        }catch (NumberFormatException ne){
+            try{
+                package_names=value.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+            }catch (Exception e){}
+        }
+        if(selection== ActionConsts.ActionValueConsts.ACTION_CLEAN_NOTIFICATION_ALL){
+            NotificationMonitorService.removeAllRemovableNotification();
+            return;
+        }
+        if(package_names==null)return;
+        for(String s:package_names){
+            NotificationMonitorService.removeNotification(s);
         }
     }
 

@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +53,7 @@ import com.github.ghmxr.timeswitch.ui.DialogForColor;
 import com.github.ghmxr.timeswitch.ui.DialogForTaskSelection;
 import com.github.ghmxr.timeswitch.utils.DisplayDensity;
 import com.github.ghmxr.timeswitch.data.v2.MySQLiteOpenHelper;
+import com.github.ghmxr.timeswitch.utils.EnvironmentUtils;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 /**
@@ -473,6 +475,81 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 						}
 					});
 					dialog.show();
+				}
+			});
+			group.addView(view);
+		}
+
+		int action_notification=0;
+		try{
+			action_notification=Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_CLEAN_NOTIFICATION]);
+		}catch (Exception e){}
+		if(action_notification>=0){
+			View view=getActionItemViewForViewGroup(group,R.drawable.icon_clean,
+					getResources().getString(R.string.activity_taskgui_action_clean_notification)
+			,ContentAdapter.ActionContentAdapter.getCleaningNotificationValue(this,taskitem));
+			view.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					if(!EnvironmentUtils.PermissionRequestUtil.checkAndShowNotificationReadingRequestSnackbar(TaskGui.this,
+							getResources().getString(R.string.activity_taskgui_action_clean_notification_permission)
+							,getResources().getString(R.string.permission_grant_action_att))) return;
+					int selection=0;
+					//String [] package_names=null;
+					final String value=taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_CLEAN_NOTIFICATION];
+					try{
+						selection=Integer.parseInt(value);
+					}catch (NumberFormatException ne){
+						try{
+							//package_names=value.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+						}catch (Exception e){}
+					}
+
+					final BottomDialogWith3Selections dialog=new BottomDialogWith3Selections(TaskGui.this,getResources().getString(R.string.activity_taskgui_action_clean_notification),selection,R.drawable.icon_notification_clear_all
+							,R.drawable.icon_robot,R.drawable.icon_unselected,getResources().getString(R.string.activity_taskgui_action_clean_notfication_all)
+							,getResources().getString(R.string.activity_taskgui_action_clean_notification_package)
+							,getResources().getString(R.string.unselected));
+
+					dialog.show();
+					dialog.findViewById(R.id.selection_area_unselected).setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_CLEAN_NOTIFICATION]=String.valueOf(-1);
+							refreshActionStatus();
+							dialog.cancel();
+						}
+					});
+					dialog.findViewById(R.id.selection_area_open).setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_CLEAN_NOTIFICATION]=String.valueOf(ActionConsts.ActionValueConsts.ACTION_CLEAN_NOTIFICATION_ALL);
+							refreshActionStatus();
+							dialog.cancel();
+						}
+					});
+					dialog.findViewById(R.id.selection_area_close).setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							dialog.cancel();
+							String[]package_names=null;
+							try{
+								package_names=value.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+							}catch (Exception e){}
+							DialogForAppSelection dialog1=new DialogForAppSelection(TaskGui.this
+									,getResources().getString(R.string.activity_taskgui_action_clean_notification_package)
+									,package_names==null?new String[0]:package_names,null,"");
+							dialog1.show();
+							dialog1.setOnDialogConfirmedCallBack(new DialogConfirmedCallBack() {
+								@Override
+								public void onDialogConfirmed(String result) {
+									if(result.equals(String.valueOf(-1)))return;
+									//result.split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
+									taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_CLEAN_NOTIFICATION]=result;
+									refreshActionStatus();
+								}
+							});
+						}
+					});
 				}
 			});
 			group.addView(view);

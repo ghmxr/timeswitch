@@ -243,6 +243,10 @@
 	<string name="activity_taskgui_actions_toast">文字Toast</string>
 	<string name="activity_taskgui_actions_play">播放声音</string>
 	<string name="activity_taskgui_action_play_att">请选择合适长度的音频文件</string>
+	<string name="activity_taskgui_action_clean_notification">清理通知</string>
+	<string name="activity_taskgui_action_clean_notification_package">指定应用</string>
+	<string name="activity_taskgui_action_clean_notfication_all">全部</string>
+	<string name="activity_taskgui_action_clean_notification_permission">此触发行为需要授权读取通知权限</string>
 	<string name="activity_taskgui_actions_net">移动数据</string>
 	<string name="activity_taskgui_actions_gps">定位服务</string>
 	<string name="activity_taskgui_actions_airplane_mode">飞行模式</string>
