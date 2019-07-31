@@ -11,6 +11,7 @@ import com.github.ghmxr.timeswitch.triggers.receivers.AirplaneModeReceiver;
 import com.github.ghmxr.timeswitch.triggers.receivers.AppLaunchDetectionReceiver2;
 import com.github.ghmxr.timeswitch.triggers.receivers.BatteryReceiver;
 import com.github.ghmxr.timeswitch.triggers.receivers.BluetoothReceiver;
+import com.github.ghmxr.timeswitch.triggers.receivers.CallStateReceiver;
 import com.github.ghmxr.timeswitch.triggers.receivers.CustomBroadcastReceiver;
 import com.github.ghmxr.timeswitch.triggers.receivers.HeadsetPlugReceiver;
 import com.github.ghmxr.timeswitch.triggers.receivers.NetworkReceiver;
@@ -90,6 +91,10 @@ public class TriggerUtil {
                 return new LightSensor(context,item);
             }
             case TriggerTypeConsts.TRIGGER_TYPE_RECEIVED_NOTIFICATION:return new NotificationReceiver(context,item);
+            case TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_CONNECTED:case TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_FINISHED:
+            case TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_INCOMING:{
+                return new CallStateReceiver(context,item);
+            }
 
         }
         return null;

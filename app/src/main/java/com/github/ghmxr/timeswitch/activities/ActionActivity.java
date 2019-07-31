@@ -12,7 +12,6 @@ import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -470,6 +469,10 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
             }
             break;
             case R.id.actions_clean_notification:{
+                if(Build.VERSION.SDK_INT<18){
+                    Snackbar.make(findViewById(android.R.id.content),getResources().getString(R.string.notification_listener_unsupported),Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
                 if(!EnvironmentUtils.PermissionRequestUtil.checkAndShowNotificationReadingRequestSnackbar(this,
                         getResources().getString(R.string.activity_taskgui_action_clean_notification_permission)
                         ,getResources().getString(R.string.permission_grant_action_att))) return;
@@ -509,6 +512,11 @@ public class ActionActivity extends BaseActivity implements View.OnClickListener
                 dialog.findViewById(R.id.selection_area_close).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        if(Build.VERSION.SDK_INT<21){
+                            Toast.makeText(ActionActivity.this,getResources().getString(R.string.activity_taskgui_action_clean_notification_package_att)
+                                    ,Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                         dialog.cancel();
                         String[]package_names=null;
                         try{

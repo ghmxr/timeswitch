@@ -83,8 +83,18 @@ public class TaskItem implements Comparable<TaskItem>,Serializable{
 	 */
 	public int light_brightness=300;
 
+	/**
+	 * 自定义广播接收器参数
+	 */
 	public String selectedAction="android.intent.action.ANSWER";
+	/**
+	 * 打开/关闭指定应用的包名
+	 */
 	public String[] package_names=new String[0];
+	/**
+	 * 通话状态号码
+	 */
+	public String [] call_state_numbers=new String[0];
 
 	/**
 	 * 触发例外

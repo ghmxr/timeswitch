@@ -77,7 +77,7 @@ public class ChangeRingtoneActivity extends BaseActivity implements View.OnClick
                 finish();
             }
             break;
-            case R.id.action_ring_selection_confirm:{
+            case R.id.action_menu_single_confirm:{
                 finish();
             }
             break;
@@ -98,7 +98,7 @@ public class ChangeRingtoneActivity extends BaseActivity implements View.OnClick
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        new MenuInflater(this).inflate(R.menu.ringselection,menu);
+        new MenuInflater(this).inflate(R.menu.menu_single_confirm,menu);
         menu.getItem(0).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         return super.onCreateOptionsMenu(menu);
     }

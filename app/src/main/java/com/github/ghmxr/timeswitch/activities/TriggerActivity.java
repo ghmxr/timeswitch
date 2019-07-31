@@ -49,9 +49,9 @@ import com.github.ghmxr.timeswitch.utils.EnvironmentUtils;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 public class TriggerActivity extends BaseActivity implements View.OnClickListener{
+    private static final int REQUEST_CODE_CALL_STATUS=0;
     private TaskItem item;
     Calendar calendar=Calendar.getInstance();
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +79,7 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
         findViewById(R.id.trigger_app_closed).setOnClickListener(this);
         findViewById(R.id.trigger_headset).setOnClickListener(this);
         findViewById(R.id.trigger_brightness).setOnClickListener(this);
+        findViewById(R.id.trigger_call_status).setOnClickListener(this);
         /*if(Build.VERSION.SDK_INT>=18){
             findViewById(R.id.trigger_received_notification).setVisibility(View.VISIBLE);
             findViewById(R.id.trigger_received_notification).setOnClickListener(this);
@@ -199,6 +200,11 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
             break;
             case TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_HIGHER_THAN:case TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_LOWER_THAN:{
                 ((TextView)findViewById(R.id.trigger_brightness_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getBrightnessTriggerDisplayValue(this,item.trigger_type,item.light_brightness));
+            }
+            break;
+            case TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_CONNECTED:case TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_FINISHED:
+            case TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_INCOMING:{
+                ((TextView)findViewById(R.id.trigger_call_status_value)).setText(ContentAdapter.TriggerContentAdapter.TriggerDisplayStrings.getCallStateTriggerDisplayValue(this,item));
             }
             break;
         }
@@ -745,6 +751,13 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
                 dialog.show();
             }
             break;
+            case R.id.trigger_call_status:{
+                Intent intent=new Intent(this,CallStatusActivity.class);
+                intent.putExtra(EXTRA_TITLE_COLOR,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
+                intent.putExtra(EXTRA_SERIALIZED_TASKITEM,item);
+                startActivityForResult(intent,REQUEST_CODE_CALL_STATUS);
+            }
+            break;
         }
     }
 
@@ -784,6 +797,7 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
         TextView tv_app_opened=findViewById(R.id.trigger_app_opened_value);
         TextView tv_app_closed=findViewById(R.id.trigger_app_closed_value);
         TextView tv_headset=findViewById(R.id.trigger_headset_value);
+        TextView tv_call_staus=findViewById(R.id.trigger_call_status_value);
 
         String unchoose=this.getResources().getString(R.string.activity_taskgui_att_unchoose);
 
@@ -812,6 +826,8 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
         ((RadioButton)findViewById(R.id.trigger_headset_ra)).setChecked(type== TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_IN||type== TriggerTypeConsts.TRIGGER_TYPE_HEADSET_PLUG_OUT);
         ((RadioButton)findViewById(R.id.trigger_brightness_ra)).setChecked(type==TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_HIGHER_THAN||type==TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_LOWER_THAN);
         ((RadioButton)findViewById(R.id.trigger_received_notification_ra)).setChecked(type==TriggerTypeConsts.TRIGGER_TYPE_RECEIVED_NOTIFICATION);
+        ((RadioButton)findViewById(R.id.trigger_call_status_ra)).setChecked(type==TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_CONNECTED
+        ||type==TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_FINISHED||type==TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_INCOMING);
         tv_condition_single_value.setText(unchoose);
         tv_condition_percertaintime_value.setText(unchoose);
         tv_condition_weekloop_value.setText(unchoose);
@@ -830,8 +846,23 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
         tv_app_opened.setText(unchoose);
         tv_app_closed.setText(unchoose);
         tv_headset.setText(unchoose);
+        tv_call_staus.setText(unchoose);
         ((TextView)findViewById(R.id.trigger_brightness_value)).setText(unchoose);
         ((TextView)findViewById(R.id.trigger_received_notification_value)).setText(unchoose);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            default:break;
+            case REQUEST_CODE_CALL_STATUS:{
+                if(data==null)return;
+                item=(TaskItem) data.getSerializableExtra(EXTRA_SERIALIZED_TASKITEM);
+                activateTriggerType(item.trigger_type);
+            }
+            break;
+        }
     }
 
     @Override

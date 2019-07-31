@@ -189,6 +189,7 @@ public class TimeSwitchService extends Service {
             filter.addAction(APReceiver.ACTION_AP_STATE_CHANGED);
             registerReceiver(log_receiver,filter);
         }catch (Exception e){e.printStackTrace();}
+        CallStateInvoker.activate(this);
     }
 
     @Override

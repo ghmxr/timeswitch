@@ -225,6 +225,13 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 				triggerValues=new String[1];
 				triggerValues[0]=String.valueOf(taskitem.light_brightness);
 			}
+			break;
+			case TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_CONNECTED:case TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_FINISHED:
+			case TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_INCOMING:{
+				triggerValues=taskitem.call_state_numbers;
+				if(triggerValues==null||triggerValues.length==0)triggerValues=new String[1];
+			}
+			break;
 		}
 		values.put(SQLConsts.SQL_TASK_COLUMN_ENABLED,taskitem.isenabled?1:0);
 		values.put(SQLConsts.SQL_TASK_COLUMN_TYPE,taskitem.trigger_type);

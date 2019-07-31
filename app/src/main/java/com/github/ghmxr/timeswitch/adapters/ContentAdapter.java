@@ -245,6 +245,13 @@ public class ContentAdapter {
                     if(content_type==CONTENT_TYPE_DISPLAY_STRING_CONTENT) return TriggerDisplayStrings.getAppNameDisplayValue(context,item.package_names);
                 }
                 break;
+                case TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_CONNECTED:case TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_FINISHED:
+                case TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_INCOMING:{
+                    if(content_type==CONTENT_TYPE_ICON_RESOURCE_DRAWABLE_ID) return R.drawable.icon_call;
+                    if(content_type==CONTENT_TYPE_DISPLAY_STRING_TITLE) return context.getResources().getString(R.string.activity_call_status);
+                    if(content_type==CONTENT_TYPE_DISPLAY_STRING_CONTENT) return TriggerDisplayStrings.getCallStateTriggerDisplayValue(context,item);
+                }
+                break;
             }
             return null;
         }
@@ -423,6 +430,36 @@ public class ContentAdapter {
                 Resources resources=context.getResources();
                 if(trigger_type==TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_HIGHER_THAN) return resources.getString(R.string.trigger_brightness_higher_than)+value+resources.getString(R.string.trigger_brightness_unit);
                 if (trigger_type==TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_LOWER_THAN) return resources.getString(R.string.trigger_brightness_lower_than)+value+resources.getString(R.string.trigger_brightness_unit);
+                return "";
+            }
+
+            public static String getCallStateTriggerDisplayValue(Context context,TaskItem item){
+                try{
+                    StringBuilder builder=new StringBuilder();
+                    switch (item.trigger_type){
+                        default:break;
+                        case TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_INCOMING:{
+                            builder.append(context.getResources().getString(R.string.activity_call_status_incoming_call));
+                        }
+                        break;
+                        case TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_CONNECTED:{
+                            builder.append(context.getResources().getString(R.string.activity_call_status_connected));
+                        }
+                        break;
+                        case TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_FINISHED:{
+                            builder.append(context.getResources().getString(R.string.activity_call_status_finished));
+                        }
+                        break;
+                    }
+                    StringBuilder builder1=new StringBuilder();
+                    for(String s: item.call_state_numbers){
+                        builder1.append(s);
+                        builder1.append(",");
+                    }
+                    if(builder1.toString().endsWith(","))builder1.deleteCharAt(builder1.lastIndexOf(","));
+                    if(builder1.toString().length()>0)builder.append(":");
+                    return builder.toString()+builder1.toString();
+                }catch (Exception e){e.printStackTrace();}
                 return "";
             }
         }

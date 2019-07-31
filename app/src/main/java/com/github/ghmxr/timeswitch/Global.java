@@ -25,6 +25,7 @@ import com.github.ghmxr.timeswitch.data.v2.SQLConsts;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.data.v2.MySQLiteOpenHelper;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
+import com.github.ghmxr.timeswitch.triggers.Trigger;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import java.util.ArrayList;
@@ -91,6 +92,11 @@ public class Global {
                     }
                     if(item.trigger_type==TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_HIGHER_THAN||item.trigger_type==TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_LOWER_THAN){
                         item.light_brightness=Integer.parseInt(trigger_values[0]);
+                    }
+
+                    if(item.trigger_type==TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_INCOMING||item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_CONNECTED
+                    ||item.trigger_type==TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_FINISHED){
+                        item.call_state_numbers=trigger_values;
                     }
 
                     String [] read_exceptions=ValueUtils.string2StringArray(PublicConsts.SPLIT_SEPARATOR_FIRST_LEVEL,cursor.getString(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_EXCEPTIONS)));

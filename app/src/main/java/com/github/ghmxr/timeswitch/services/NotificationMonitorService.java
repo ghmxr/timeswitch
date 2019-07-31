@@ -12,7 +12,7 @@ public class NotificationMonitorService extends NotificationListenerService{
 
     private static NotificationMonitorService service;
     private static final LinkedList<NotificationListener> callbacks=new LinkedList<>();
-    private static final LinkedList<StatusBarNotification> sbns=new LinkedList<>();
+    //private static final LinkedList<StatusBarNotification> sbns=new LinkedList<>();
 
     public interface NotificationListener{
         void onNotificationPosted(StatusBarNotification sbn);
@@ -28,7 +28,7 @@ public class NotificationMonitorService extends NotificationListenerService{
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
         super.onNotificationPosted(sbn);
-        sbns.add(sbn);
+        //sbns.add(sbn);
         synchronized (callbacks){
             for(NotificationListener listener:callbacks){
                 listener.onNotificationPosted(sbn);
@@ -39,7 +39,7 @@ public class NotificationMonitorService extends NotificationListenerService{
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
         super.onNotificationRemoved(sbn);
-        sbns.remove(sbn);
+        //sbns.remove(sbn);
         synchronized (callbacks){
             for(NotificationListener listener:callbacks){
                 listener.onNotificationRemoved(sbn);
@@ -62,16 +62,18 @@ public class NotificationMonitorService extends NotificationListenerService{
     @TargetApi(21)
     public static synchronized void removeNotification(@NonNull String package_name){
         NotificationMonitorService notificationMonitorService=service;
-        if(service==null)return;
-        for(StatusBarNotification sbn:sbns){
+        if(notificationMonitorService==null)return;
+        StatusBarNotification[] exists=notificationMonitorService.getActiveNotifications();
+        if(exists==null)return;
+        for(StatusBarNotification sbn:exists){
             if(sbn.getPackageName().equals(package_name))notificationMonitorService.cancelNotification(sbn.getKey());
         }
     }
 
     public static synchronized void removeAllRemovableNotification(){
         NotificationMonitorService notificationMonitorService=service;
-        if(service==null)return;
-        service.cancelAllNotifications();
+        if(notificationMonitorService==null)return;
+        notificationMonitorService.cancelAllNotifications();
     }
 
     @Override

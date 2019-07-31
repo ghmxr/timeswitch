@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/call_status_incoming"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="@string/activity_call_status_incoming_call"/>
+        <RadioButton
+            android:id="@+id/call_status_connected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="@string/activity_call_status_connected"/>
+        <RadioButton
+            android:id="@+id/call_status_finished"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="@string/activity_call_status_finished"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
+            android:layout_marginLeft="20dp"
+            android:textSize="14sp"
+            android:textColor="@color/color_activity_taskgui_att"
+            android:text="@string/activity_call_status_att"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center_vertical">
+
+            <EditText
+                android:id="@+id/call_status_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/call_status_address"
+                android:layout_marginLeft="35dp"
+                android:layout_marginRight="15dp"
+                android:hint="@string/activity_call_number_hint"
+                android:digits="01234567890+-,"
+                android:inputType="number"/>
+            <ImageView
+                android:id="@+id/call_status_address"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/icon_contact"
+                android:clickable="true"
+                android:layout_marginRight="15dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"/>
+        </RelativeLayout>
+    </LinearLayout>
+</ScrollView>

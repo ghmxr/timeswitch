@@ -245,6 +245,7 @@
 	<string name="activity_taskgui_action_play_att">请选择合适长度的音频文件</string>
 	<string name="activity_taskgui_action_clean_notification">清理通知</string>
 	<string name="activity_taskgui_action_clean_notification_package">指定应用</string>
+	<string name="activity_taskgui_action_clean_notification_package_att">此功能暂未适配Android 5.0以下版本</string>
 	<string name="activity_taskgui_action_clean_notfication_all">全部</string>
 	<string name="activity_taskgui_action_clean_notification_permission">此触发行为需要授权读取通知权限</string>
 	<string name="activity_taskgui_actions_net">移动数据</string>
@@ -277,6 +278,12 @@
 	<string name="activity_sms_result_toast">显示发送回执Toast</string>
 	<string name="activity_sms_toast_permission_read_phone_state_att">无法读取Sim卡，请检查权限(读取手机状态)</string>
 	<string name="activity_sms_no_address">没有收件人号码，再按一次舍弃修改并退出</string>
+	<string name="activity_call_status">通话/来电状态</string>
+	<string name="activity_call_status_incoming_call">来电时</string>
+	<string name="activity_call_status_connected">电话接通时</string>
+	<string name="activity_call_status_finished">挂断时</string>
+	<string name="activity_call_status_att">输入联系人号码进行筛选过滤，或者留空不做过滤</string>
+	<string name="activity_call_number_hint">输入号码，英文逗号隔开</string>
 	<string name="activity_edit_no_position">无法获取此任务信息</string>
     <string name="activity_settings_basic_att">基础选项</string>
     <string name="activity_settings_api_att">计时器API</string>
