@@ -29,6 +29,7 @@
             android:id="@+id/layout_taskgui_area_exception_att"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/color_black"
             android:text="Exception"
             android:textSize="14sp" />
 

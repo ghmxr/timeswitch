@@ -125,6 +125,7 @@ public class EnvironmentUtils {
                 @TargetApi(21)
                 public void onClick(View v) {
                     activity.startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
+                    Toast.makeText(activity,activity.getResources().getString(R.string.permission_request_usage_toast),Toast.LENGTH_SHORT).show();
                 }
             });
             snackbar.show();

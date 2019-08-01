@@ -192,6 +192,7 @@ public class TimeSwitchService extends Service {
             filter.addAction(APReceiver.ACTION_AP_STATE_CHANGED);
             registerReceiver(log_receiver,filter);
         }catch (Exception e){e.printStackTrace();}
+        CallStateInvoker.activate(this);
     }
 
     @Override
@@ -302,6 +303,7 @@ public class TimeSwitchService extends Service {
         try{
             unregisterReceiver(log_receiver);
         }catch (Exception e){e.printStackTrace();}
+        CallStateInvoker.stop();
 
         mHandler=null;
         service=null;
@@ -475,34 +477,22 @@ public class TimeSwitchService extends Service {
 
         /**
          * 激活电话状态监听回调器
+         * 此方法必须在主UI线程调用
          */
         private static void activate(final Context context){
-            if(invoker!=null)return ;
-            Global.handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if(invoker==null){
-                        invoker=new CallStateInvoker(context);
-                    }
-                }
-            });
+            if(invoker!=null) return;
+            invoker=new CallStateInvoker(context);
         }
 
         /**
          * 停止电话状态监听回调器
+         * 此方法须在主UI线程调用
          */
         private static void stop(){
             callbacks.clear();
             if(invoker==null)return;
-            Global.handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if(invoker!=null){
-                        invoker.removeVariables();
-                        invoker=null;
-                    }
-                }
-            });
+            invoker.removeVariables();
+            invoker=null;
         }
 
         private CallStateInvoker(@NonNull Context context){
@@ -526,11 +516,10 @@ public class TimeSwitchService extends Service {
         }
 
         /**
-         * 注册电话状态监听回调
+         * 注册电话状态监听回调，此回调器在TimeswitchService生命周期内生效
          * @param callback 回调接口
          */
-        public static synchronized void registerCallback(Context context,CallStateChangedCallback callback){
-            activate(context);
+        public static synchronized void registerCallback(CallStateChangedCallback callback){
             if(!callbacks.contains(callback))callbacks.add(callback);
         }
 
@@ -540,7 +529,6 @@ public class TimeSwitchService extends Service {
          */
         public static synchronized void unregisterCallback(CallStateChangedCallback callback){
             callbacks.remove(callback);
-            if(callbacks.size()==0)stop();
         }
     }
 }

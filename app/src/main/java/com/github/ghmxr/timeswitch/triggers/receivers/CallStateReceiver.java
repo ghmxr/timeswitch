@@ -15,7 +15,7 @@ public class CallStateReceiver implements Trigger , TimeSwitchService.CallStateI
 
     private Context context;
     private TaskItem item;
-    private boolean mLock=true;
+    private boolean mLock=false;
 
 
     public CallStateReceiver(@NonNull Context context, @NonNull TaskItem item) {
@@ -96,7 +96,7 @@ public class CallStateReceiver implements Trigger , TimeSwitchService.CallStateI
     @Override
     public void activate() {
         try{
-            TimeSwitchService.CallStateInvoker.registerCallback(context,this);
+            TimeSwitchService.CallStateInvoker.registerCallback(this);
         }catch (Exception e){e.printStackTrace();}
     }
 

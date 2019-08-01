@@ -25,7 +25,6 @@ import com.github.ghmxr.timeswitch.data.v2.SQLConsts;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.data.v2.MySQLiteOpenHelper;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
-import com.github.ghmxr.timeswitch.triggers.Trigger;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import java.util.ArrayList;
@@ -33,7 +32,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class Global {
-    public static Handler handler=new Handler(Looper.getMainLooper());
+    public static final Handler handler=new Handler(Looper.getMainLooper());
 
     /**
      * 通过SQLite数据库指定的表获取TaskItem列表信息（不激活TaskItem），此方法为耗时操作，可能会阻塞线程

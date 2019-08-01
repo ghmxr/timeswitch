@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -16,6 +17,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -752,6 +754,18 @@ public class TriggerActivity extends BaseActivity implements View.OnClickListene
             }
             break;
             case R.id.trigger_call_status:{
+                if(Build.VERSION.SDK_INT>=23&&PermissionChecker.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG)!=PermissionChecker.PERMISSION_GRANTED){
+                    requestPermissions(new String[]{Manifest.permission.READ_CALL_LOG},0);
+                    Snackbar snackbar=Snackbar.make(findViewById(android.R.id.content),getResources().getString(R.string.permission_request_read_call_logs),Snackbar.LENGTH_SHORT);
+                    snackbar.setAction(getResources().getString(R.string.permission_grant_action_att), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            EnvironmentUtils.PermissionRequestUtil.showAppDetailPageOfThisApplication(TriggerActivity.this);
+                        }
+                    });
+                    snackbar.show();
+                    return;
+                }
                 Intent intent=new Intent(this,CallStatusActivity.class);
                 intent.putExtra(EXTRA_TITLE_COLOR,getIntent().getStringExtra(EXTRA_TITLE_COLOR));
                 intent.putExtra(EXTRA_SERIALIZED_TASKITEM,item);

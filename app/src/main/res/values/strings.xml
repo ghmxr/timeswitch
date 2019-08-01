@@ -364,6 +364,7 @@
 	<string name="permission_request_notification_policy_title">勿扰模式权限</string>
 	<string name="permission_request_notification_policy_message">此操作需要授权打开勿扰模式权限。</string>
 	<string name="permission_request_notification_policy_toast">请为部件触发器授权勿扰模式权限</string>
+	<string name="permission_request_usage_toast">请为部件触发器授予使用情况统计权限</string>
 	<string name="notification_listener_unsupported">此功能暂未适配API18以下版本</string>
 	<string name="permission_request_reading_notification_att">此操作需要获取读取通知权限</string>
 	<string name="permission_request_reading_notification_toast">请为部件触发器授权读取通知权限</string>
@@ -374,6 +375,7 @@
 	<string name="permission_request_sms_send_message">此操作需要授权发送短信权限。</string>
 	<string name="permission_request_read_external_storage">此操作需要授权读取媒体存储</string>
 	<string name="permission_request_read_contacts">此操作需要授权读取联系人</string>
+	<string name="permission_request_read_call_logs">此触发器需要授权读取通话记录权限</string>
 	<string name="permission_grant_action_att">立即授权</string>
 	<string name="permission_denied">PermissionDenied:未授权</string>
 	<string name="att_change_wallpaper">正在尝试切换壁纸，这可能会花费一点时间</string>
