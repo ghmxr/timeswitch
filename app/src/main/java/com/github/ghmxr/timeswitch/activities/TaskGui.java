@@ -14,6 +14,7 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.ghmxr.timeswitch.Global;
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.adapters.ContentAdapter;
 import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
@@ -35,15 +37,20 @@ import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
+import com.github.ghmxr.timeswitch.ui.DialogForWifiInfoSelection;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialog;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBatteryPercentageWithEnabledSelection;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBatteryTemperatureWithEnabledSelection;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForBrightness;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForDeviceControl;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForFlashlight;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForNotification;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForPeriod;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForRingMode;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForToast;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForVibrate;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForVolume;
+import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogForWifiStatus;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogWith2Selections;
 import com.github.ghmxr.timeswitch.ui.bottomdialogs.BottomDialogWith3Selections;
 import com.github.ghmxr.timeswitch.ui.DialogConfirmedCallBack;
@@ -873,7 +880,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		checkAndPlayTransitionAnimation();
 		Resources resources=getResources();
 		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_LOCKEDSCREEN])==1){
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_screen_off,resources.getString(R.string.activity_taskgui_exception_screen_locked),null);
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_screen_off,resources.getString(R.string.activity_taskgui_exception_screen_locked),null,listener_on_exception_item_clicked);
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -886,7 +893,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			group.addView(view);
 		}
 		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_UNLOCKEDSCREEN])==1){
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_screen_on,resources.getString(R.string.activity_taskgui_exception_screen_unlocked),null);
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_screen_on,resources.getString(R.string.activity_taskgui_exception_screen_unlocked),null,listener_on_exception_item_clicked);
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -899,7 +906,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			group.addView(view);
 		}
 		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_RING_VIBRATE])==1){
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_ring_vibrate,resources.getString(R.string.activity_taskgui_exception_ring_vibrate),null);
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_ring_vibrate,resources.getString(R.string.activity_taskgui_exception_ring_vibrate),null,listener_on_exception_item_clicked);
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -912,7 +919,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			group.addView(view);
 		}
 		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_RING_OFF])==1){
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_ring_off,resources.getString(R.string.activity_taskgui_exception_ring_off),null);
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_ring_off,resources.getString(R.string.activity_taskgui_exception_ring_off),null,listener_on_exception_item_clicked);
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -925,7 +932,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			group.addView(view);
 		}
 		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_RING_NORMAL])==1){
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_ring_normal,resources.getString(R.string.activity_taskgui_exception_ring_normal),null);
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_ring_normal,resources.getString(R.string.activity_taskgui_exception_ring_normal),null,listener_on_exception_item_clicked);
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -938,7 +945,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			group.addView(view);
 		}
 		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_WIFI_ENABLED])==1){
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_wifi_on,resources.getString(R.string.activity_taskgui_exception_wifi_enabled),null);
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_wifi_on,resources.getString(R.string.activity_taskgui_exception_wifi_enabled),null,listener_on_exception_item_clicked);
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -951,7 +958,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			group.addView(view);
 		}
 		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_WIFI_DISABLED])==1){
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_wifi_off,resources.getString(R.string.activity_taskgui_exception_wifi_disabled),null);
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_wifi_off,resources.getString(R.string.activity_taskgui_exception_wifi_disabled),null,listener_on_exception_item_clicked);
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -964,7 +971,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			group.addView(view);
 		}
 		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_ENABLED])==1){
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_bluetooth_on,resources.getString(R.string.activity_taskgui_exception_bluetooth_enabled),null);
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_bluetooth_on,resources.getString(R.string.activity_taskgui_exception_bluetooth_enabled),null,listener_on_exception_item_clicked);
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -977,7 +984,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			group.addView(view);
 		}
 		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_BLUETOOTH_DISABLED])==1){
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_bluetooth_off,resources.getString(R.string.activity_taskgui_exception_bluetooth_disabled),null);
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_bluetooth_off,resources.getString(R.string.activity_taskgui_exception_bluetooth_disabled),null,listener_on_exception_item_clicked);
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -990,7 +997,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			group.addView(view);
 		}
 		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_NET_ENABLED])==1){
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_cellular_on,resources.getString(R.string.activity_taskgui_exception_net_enabled),null);
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_cellular_on,resources.getString(R.string.activity_taskgui_exception_net_enabled),null,listener_on_exception_item_clicked);
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -1003,7 +1010,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			group.addView(view);
 		}
 		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_NET_DISABLED])==1){
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_cellular_off,resources.getString(R.string.activity_taskgui_exception_net_disabled),null);
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_cellular_off,resources.getString(R.string.activity_taskgui_exception_net_disabled),null,listener_on_exception_item_clicked);
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -1016,7 +1023,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			group.addView(view);
 		}
 		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_GPS_ENABLED])==1){
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_location_on,resources.getString(R.string.activity_taskgui_exception_gps_on),null);
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_location_on,resources.getString(R.string.activity_taskgui_exception_gps_on),null,listener_on_exception_item_clicked);
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -1029,7 +1036,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			group.addView(view);
 		}
 		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_GPS_DISABLED])==1){
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_location_off,resources.getString(R.string.activity_taskgui_exception_gps_off),null);
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_location_off,resources.getString(R.string.activity_taskgui_exception_gps_off),null,listener_on_exception_item_clicked);
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -1042,7 +1049,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			group.addView(view);
 		}
 		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_ENABLED])==1){
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_airplanemode_on,resources.getString(R.string.activity_taskgui_exception_airplanemode_on),null);
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_airplanemode_on,resources.getString(R.string.activity_taskgui_exception_airplanemode_on),null,listener_on_exception_item_clicked);
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -1055,7 +1062,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			group.addView(view);
 		}
 		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_DISABLED])==1){
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_airplanemode_off,resources.getString(R.string.activity_taskgui_exception_airplanemode_off),null);
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_airplanemode_off,resources.getString(R.string.activity_taskgui_exception_airplanemode_off),null,listener_on_exception_item_clicked);
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -1068,8 +1075,56 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			group.addView(view);
 		}
 		int headset_status=Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS]);
+		final View.OnClickListener listener_headset_clicked=new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				try{
+					int headset_selection=Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS]);
+					final AlertDialog dialog=new AlertDialog.Builder(TaskGui.this)
+							.setTitle(getResources().getString(R.string.activity_taskgui_exception_headset))
+							.setIcon(R.drawable.icon_headset)
+							.setView(LayoutInflater.from(TaskGui.this).inflate(R.layout.layout_dialog_with_three_single_choices,null))
+							.show();
+					RadioButton button_unselected=dialog.findViewById(R.id.dialog3_choice_first);
+					RadioButton button_plugged=dialog.findViewById(R.id.dialog3_choice_second);
+					RadioButton button_unplugged=dialog.findViewById(R.id.dialog3_choice_third);
+					button_unselected.setText(getResources().getString(R.string.word_unselected));
+					button_plugged.setText(getResources().getString(R.string.activity_taskgui_exception_headset_in));
+					button_unplugged.setText(getResources().getString(R.string.activity_taskgui_exception_headset_out));
+					button_unselected.setChecked(headset_selection==0);
+					button_plugged.setChecked(headset_selection== ExceptionConsts.EXCEPTION_HEADSET_PLUG_IN);
+					button_unplugged.setChecked(headset_selection== ExceptionConsts.EXCEPTION_HEADSET_PLUG_OUT);
+					button_unselected.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							taskitem.exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS]=String.valueOf(0);
+							dialog.cancel();
+							refreshExceptionViews();
+						}
+					});
+					button_unplugged.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							taskitem.exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS]=String.valueOf(ExceptionConsts.EXCEPTION_HEADSET_PLUG_OUT);
+							dialog.cancel();
+							refreshExceptionViews();
+						}
+					});
+					button_plugged.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							taskitem.exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS]=String.valueOf(ExceptionConsts.EXCEPTION_HEADSET_PLUG_IN);
+							dialog.cancel();
+							refreshExceptionViews();
+						}
+					});
+				}catch (Exception e){
+					e.printStackTrace();
+				}
+			}
+		};
 		if(headset_status==ExceptionConsts.EXCEPTION_HEADSET_PLUG_IN){
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_headset,resources.getString(R.string.activity_taskgui_exception_headset),resources.getString(R.string.activity_taskgui_exception_headset_in));
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_headset,resources.getString(R.string.activity_taskgui_exception_headset),resources.getString(R.string.activity_taskgui_exception_headset_in),listener_headset_clicked);
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -1082,7 +1137,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			group.addView(view);
 		}
 		if(headset_status==ExceptionConsts.EXCEPTION_HEADSET_PLUG_OUT){
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_headset,resources.getString(R.string.activity_taskgui_exception_headset),resources.getString(R.string.activity_taskgui_exception_headset_out));
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_headset,resources.getString(R.string.activity_taskgui_exception_headset),resources.getString(R.string.activity_taskgui_exception_headset_out),listener_headset_clicked);
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -1094,9 +1149,38 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			});
 			group.addView(view);
 		}
+		final View.OnClickListener listener_on_battery_percentage_clicked=new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				int ex_more_than=Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]);
+				int ex_less_than=Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]);
+				int selection_first=0;
+				if(ex_less_than>=0) selection_first=1;
+				int selection_second=50;
+				if(ex_more_than>=0) selection_second=ex_more_than;
+				else if(ex_less_than>=0) selection_second=ex_less_than;
+				final BottomDialogForBatteryPercentageWithEnabledSelection dialog=new BottomDialogForBatteryPercentageWithEnabledSelection(TaskGui.this,(ex_more_than>=0||ex_less_than>=0),selection_first,selection_second);
+				dialog.show();
+				dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+					@Override
+					public void onDialogConfirmed(String result) {
+						if(result.equals("-1")){
+							taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]=String.valueOf(-1);
+							taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]=String.valueOf(-1);
+						}else{
+							//String[]results=result.split(",");
+							//int selection=Integer.parseInt(results[0]);
+							taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]=dialog.getFirstSelectionValue()==0?String.valueOf(dialog.getSecondSelectionValue()):String.valueOf(-1);
+							taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]=dialog.getFirstSelectionValue()==1?String.valueOf(dialog.getSecondSelectionValue()):String.valueOf(-1);
+						}
+						refreshExceptionViews();
+					}
+				});
+			}
+		};
 		int battery_more_than_percentage=Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE]);
 		if(battery_more_than_percentage>=0){
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_battery,resources.getString(R.string.activity_taskgui_exceptions_battery_percentage),resources.getString(R.string.dialog_battery_compare_more_than)+battery_more_than_percentage+"%");
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_battery,resources.getString(R.string.activity_taskgui_exceptions_battery_percentage),resources.getString(R.string.dialog_battery_compare_more_than)+battery_more_than_percentage+"%",listener_on_battery_percentage_clicked);
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -1111,7 +1195,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 
 		int battery_less_than_percentage=Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LESS_THAN_PERCENTAGE]);
 		if(battery_less_than_percentage>=0){
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_battery_low,resources.getString(R.string.activity_taskgui_exceptions_battery_percentage),resources.getString(R.string.dialog_battery_compare_less_than)+battery_less_than_percentage+"%");
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_battery_low,resources.getString(R.string.activity_taskgui_exceptions_battery_percentage),resources.getString(R.string.dialog_battery_compare_less_than)+battery_less_than_percentage+"%",listener_on_battery_percentage_clicked);
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -1124,9 +1208,39 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			group.addView(view);
 		}
 
+		final View.OnClickListener listener_on_battery_temperature_clicked=new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				int ex_higher_than=Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]);
+				int ex_lower_than=Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]);
+				int selection_first=0;
+				if(ex_lower_than>=0) selection_first=1;
+				int selection_second=45;
+				if(ex_higher_than>=0) selection_second=ex_higher_than;
+				else if(ex_lower_than>=0) selection_second=ex_lower_than;
+				final BottomDialogForBatteryTemperatureWithEnabledSelection dialog=new BottomDialogForBatteryTemperatureWithEnabledSelection(TaskGui.this,(ex_lower_than>=0||ex_higher_than>=0),selection_first,selection_second);
+				dialog.show();
+				dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+					@Override
+					public void onDialogConfirmed(String result) {
+						if(result.equals("-1")){
+							taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]=String.valueOf(-1);
+							taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]=String.valueOf(-1);
+						}else {
+							//String[]results=result.split(",");
+							//int selection=Integer.parseInt(results[0]);
+							taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]=dialog.getFirstSelectionValue()==0?String.valueOf(dialog.getSecondSelectionValue()):String.valueOf(-1);
+							taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]=dialog.getFirstSelectionValue()==1?String.valueOf(dialog.getSecondSelectionValue()):String.valueOf(-1);
+						}
+						refreshExceptionViews();
+					}
+				});
+			}
+		};
+
 		int battery_higher_than_temperature=Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE]);
 		if(battery_higher_than_temperature>=0){
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_temperature,resources.getString(R.string.activity_taskgui_exceptions_battery_temperature),resources.getString(R.string.dialog_battery_compare_higher_than)+battery_higher_than_temperature+"℃");
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_temperature,resources.getString(R.string.activity_taskgui_exceptions_battery_temperature),resources.getString(R.string.dialog_battery_compare_higher_than)+battery_higher_than_temperature+"℃",listener_on_battery_temperature_clicked);
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -1141,7 +1255,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 
 		int battery_lower_than_temperature=Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE]);
 		if(battery_lower_than_temperature>=0){
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_temperature,resources.getString(R.string.activity_taskgui_exceptions_battery_temperature),resources.getString(R.string.dialog_battery_compare_lower_than)+battery_lower_than_temperature+"℃");
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_temperature,resources.getString(R.string.activity_taskgui_exceptions_battery_temperature),resources.getString(R.string.dialog_battery_compare_lower_than)+battery_lower_than_temperature+"℃",listener_on_battery_temperature_clicked);
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -1163,7 +1277,67 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		value.append(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_SATURDAY])==1?getResources().getString(R.string.saturday)+' ':"");
 		value.append(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_SUNDAY])==1?getResources().getString(R.string.sunday)+" ":"");
 		if(!value.toString().equals("")){
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_repeat_weekloop,resources.getString(R.string.activity_taskgui_exceptions_day_of_week),value.toString());
+			final View view= getExceptionItemViewForViewGroup(group, R.drawable.icon_repeat_weekloop, resources.getString(R.string.activity_taskgui_exceptions_day_of_week), value.toString(), new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					View dialogview=LayoutInflater.from(TaskGui.this).inflate(R.layout.layout_dialog_weekloop,null);
+					final CheckBox cb_mon=dialogview.findViewById(R.id.layout_dialog_weekloop_cb_mon);
+					final CheckBox cb_tue=dialogview.findViewById(R.id.layout_dialog_weekloop_cb_tue);
+					final CheckBox cb_wed=dialogview.findViewById(R.id.layout_dialog_weekloop_cb_wed);
+					final CheckBox cb_thu=dialogview.findViewById(R.id.layout_dialog_weekloop_cb_thu);
+					final CheckBox cb_fri=dialogview.findViewById(R.id.layout_dialog_weekloop_cb_fri);
+					final CheckBox cb_sat=dialogview.findViewById(R.id.layout_dialog_weekloop_cb_sat);
+					final CheckBox cb_sun=dialogview.findViewById(R.id.layout_dialog_weekloop_cb_sun);
+
+					try{
+						cb_mon.setChecked(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_MONDAY])==1);
+						cb_tue.setChecked(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_TUESDAY])==1);
+						cb_wed.setChecked(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_WEDNESDAY])==1);
+						cb_thu.setChecked(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_THURSDAY])==1);
+						cb_fri.setChecked(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_FRIDAY])==1);
+						cb_sat.setChecked(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_SATURDAY])==1);
+						cb_sun.setChecked(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_SUNDAY])==1);
+					}catch (NumberFormatException ne){
+						ne.printStackTrace();
+					}
+
+					final AlertDialog dialog=new AlertDialog.Builder(TaskGui.this)
+							.setTitle(getResources().getString(R.string.dialog_exceptions_day_of_week_title))
+							.setView(dialogview)
+							.setPositiveButton(getResources().getString(R.string.dialog_button_positive), null)
+							.setNegativeButton(getResources().getString(R.string.dialog_button_negative), null).create();
+					dialog.show();
+					dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							if(!cb_mon.isChecked()||!cb_tue.isChecked()||!cb_wed.isChecked()
+									||!cb_thu.isChecked()||!cb_fri.isChecked()||!cb_sat.isChecked()
+									||!cb_sun.isChecked()){
+								taskitem.exceptions[ExceptionConsts.EXCEPTION_MONDAY]=cb_mon.isChecked()?String.valueOf(1):String.valueOf(0);
+								taskitem.exceptions[ExceptionConsts.EXCEPTION_TUESDAY]=cb_tue.isChecked()?String.valueOf(1):String.valueOf(0);
+								taskitem.exceptions[ExceptionConsts.EXCEPTION_WEDNESDAY]=cb_wed.isChecked()?String.valueOf(1):String.valueOf(0);
+								taskitem.exceptions[ExceptionConsts.EXCEPTION_THURSDAY]=cb_thu.isChecked()?String.valueOf(1):String.valueOf(0);
+								taskitem.exceptions[ExceptionConsts.EXCEPTION_FRIDAY]=cb_fri.isChecked()?String.valueOf(1):String.valueOf(0);
+								taskitem.exceptions[ExceptionConsts.EXCEPTION_SATURDAY]=cb_sat.isChecked()?String.valueOf(1):String.valueOf(0);
+								taskitem.exceptions[ExceptionConsts.EXCEPTION_SUNDAY]=cb_sun.isChecked()?String.valueOf(1):String.valueOf(0);
+								dialog.cancel();
+								refreshExceptionViews();
+							}
+							else{
+								Snackbar.make(view,getResources().getString(R.string.dialog_exceptions_day_of_week_all_selected),Snackbar.LENGTH_SHORT).show();
+								return;
+							}
+
+						}
+					});
+					dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							dialog.cancel();
+						}
+					});
+				}
+			});
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -1189,7 +1363,37 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 							+ ValueUtils.format(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_START_TIME])%60)
 							+"~"+ ValueUtils.format(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_END_TIME])/60)+":"
 							+ ValueUtils.format(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_END_TIME])%60);
-			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_repeat_percertaintime,resources.getString(R.string.activity_taskgui_exceptions_period),display);
+			final View view= getExceptionItemViewForViewGroup(group, R.drawable.icon_repeat_percertaintime, resources.getString(R.string.activity_taskgui_exceptions_period), display, new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					BottomDialogForPeriod dialog=new BottomDialogForPeriod(TaskGui.this);
+					boolean isEnabled=false;
+					int startHour=0;
+					int startMin=0;
+					int endHour=0;
+					int endMin=0;
+					try{
+						isEnabled=Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_START_TIME])!=-1&&Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_END_TIME])!=-1;
+						startHour=isEnabled?Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_START_TIME])/60:18;
+						startMin=isEnabled?Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_START_TIME])%60:0;
+						endHour=isEnabled?Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_END_TIME])/60:8;
+						endMin=isEnabled?Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_END_TIME])%60:0;
+					}catch (NumberFormatException ne){
+						ne.printStackTrace();
+					}
+					dialog.setVariables(isEnabled,startHour,startMin,endHour,endMin);
+					dialog.setTitle(getResources().getString(R.string.dialog_exceptions_period_title));
+					dialog.show();
+					dialog.setOnDialogConfirmedListener(new BottomDialogForPeriod.OnDialogConfirmedListener() {
+						@Override
+						public void onConfirmed(boolean isEnabled, int start_hour, int start_minute, int end_hour, int end_minute) {
+							taskitem.exceptions[ExceptionConsts.EXCEPTION_START_TIME]=isEnabled?String.valueOf(start_hour*60+start_minute):String.valueOf(-1);
+							taskitem.exceptions[ExceptionConsts.EXCEPTION_END_TIME]=isEnabled?String.valueOf(end_hour*60+end_minute):String.valueOf(-1);
+							refreshExceptionViews();
+						}
+					});
+				}
+			});
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -1205,8 +1409,55 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 
 		int wifi_status_head=Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL)[0]);
 		if(wifi_status_head!=-1){
-			final View view=getExceptionItemViewForViewGroup(group,R.drawable.icon_wifi_connected,getResources().getString(R.string.exception_wifi_status)
-					,ContentAdapter.ExceptionContentAdapter.getExceptionValueOfWifiStatus(this,taskitem.exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS]));
+			final View view=getExceptionItemViewForViewGroup(group, R.drawable.icon_wifi_connected, getResources().getString(R.string.exception_wifi_status)
+					, ContentAdapter.ExceptionContentAdapter.getExceptionValueOfWifiStatus(this, taskitem.exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS])
+					, new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							final int []values=ValueUtils.string2intArray(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL,taskitem.exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS]);
+							BottomDialogForWifiStatus dialog=new BottomDialogForWifiStatus(TaskGui.this,values.length>0?values[0]:-1);
+							dialog.setOnDialogConfirmedListener(new DialogConfirmedCallBack() {
+								@Override
+								public void onDialogConfirmed(String result) {
+									int value=Integer.parseInt(result);
+									switch (value){
+										default:break;
+										case -1:{
+											taskitem.exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS]=String.valueOf(-1);
+											refreshExceptionViews();
+										}
+										break;
+										case ExceptionConsts.EXCEPTION_WIFI_VALUE_DISCONNECTED:{
+											taskitem.exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS]=String.valueOf(ExceptionConsts.EXCEPTION_WIFI_VALUE_DISCONNECTED);
+											refreshExceptionViews();
+										}
+										break;
+										case ExceptionConsts.EXCEPTION_WIFI_VALUE_CONNECTED_TO_RANDOM_SSID:{
+											taskitem.exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS]=String.valueOf(ExceptionConsts.EXCEPTION_WIFI_VALUE_CONNECTED_TO_RANDOM_SSID);
+											refreshExceptionViews();
+											if(Global.NetworkReceiver.wifiList2.size()==0){
+												Snackbar.make(findViewById(android.R.id.content),getResources().getString(R.string.activity_trigger_wifi_open_att),Snackbar.LENGTH_SHORT).show();
+												return;
+											}
+											DialogForWifiInfoSelection dialog1=new DialogForWifiInfoSelection(TaskGui.this,values);
+											dialog1.setOnDialogConfirmedListener(new DialogForWifiInfoSelection.DialogConfirmedListener() {
+												@Override
+												public void onDialogConfirmed(int[] ids) {
+													if(ids==null||ids.length==0) {
+														taskitem.exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS]=String.valueOf(ExceptionConsts.EXCEPTION_WIFI_VALUE_CONNECTED_TO_RANDOM_SSID);
+													}else taskitem.exceptions[ExceptionConsts.EXCEPTION_WIFI_STATUS]=ValueUtils.intArray2String(PublicConsts.SEPARATOR_SECOND_LEVEL,ids);
+													refreshExceptionViews();
+												}
+											});
+											dialog1.show();
+										}
+										break;
+									}
+								}
+							});
+							dialog.show();
+						}
+					});
 			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -1357,7 +1608,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 	 * @param description 描述，可为空
 	 * @return  添加的view 实例
 	 */
-    public View getExceptionItemViewForViewGroup(ViewGroup group, int icon_res, @NonNull String title , @Nullable String description){
+    public View getExceptionItemViewForViewGroup(ViewGroup group, int icon_res, @NonNull String title , @Nullable String description,View.OnClickListener listener){
 		View view=LayoutInflater.from(this).inflate(R.layout.layout_taskgui_item_exception,group,false);
 		((ImageView)view.findViewById(R.id.layout_taskgui_area_exception_icon)).setImageResource(icon_res);
 		((TextView)view.findViewById(R.id.layout_taskgui_area_exception_att)).setText(title);
@@ -1368,7 +1619,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			tv_description.setVisibility(View.VISIBLE);
 			tv_description.setText(description);
 		}
-		view.findViewById(R.id.layout_exception_item).setOnClickListener(listener_on_exception_item_clicked);
+		view.findViewById(R.id.layout_exception_item).setOnClickListener(listener);
 		return view;
 	}
 	/**

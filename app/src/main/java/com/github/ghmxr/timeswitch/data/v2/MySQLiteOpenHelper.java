@@ -174,7 +174,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 
 		values.put(SQLConsts.SQL_TASK_COLUMN_NAME,taskitem.name);
 
-		String[] triggerValues=new String[1];
+		String[] triggerValues=new String[0];
 		switch (taskitem.trigger_type){
 			default:break;
 			case TriggerTypeConsts.TRIGGER_TYPE_SINGLE:{
@@ -218,7 +218,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED: case TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED: case TriggerTypeConsts.TRIGGER_TYPE_RECEIVED_NOTIFICATION:{
 				triggerValues=taskitem.package_names;
-				if(triggerValues==null||triggerValues.length==0) triggerValues=new String[1];
+				if(triggerValues==null||triggerValues.length==0) triggerValues=new String[0];
 			}
 			break;
 			case TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_HIGHER_THAN: case TriggerTypeConsts.TRIGGER_TYPE_LIGHT_SENSOR_LOWER_THAN:{
@@ -229,7 +229,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 			case TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_CONNECTED:case TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_FINISHED:
 			case TriggerTypeConsts.TRIGGER_TYPE_CALL_STATE_INCOMING:{
 				triggerValues=taskitem.call_state_numbers;
-				if(triggerValues==null||triggerValues.length==0)triggerValues=new String[1];
+				if(triggerValues==null||triggerValues.length==0)triggerValues=new String[0];
 			}
 			break;
 		}

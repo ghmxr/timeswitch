@@ -452,7 +452,7 @@ public class ContentAdapter {
                         break;
                     }
                     StringBuilder builder1=new StringBuilder();
-                    for(String s: item.call_state_numbers){
+                    for(String s:item.call_state_numbers){
                         builder1.append(s);
                         builder1.append(",");
                     }

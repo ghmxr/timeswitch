@@ -1,8 +1,16 @@
 package com.github.ghmxr.timeswitch.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
+import android.provider.ContactsContract;
+import android.support.annotation.Nullable;
+import android.support.v4.content.PermissionChecker;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,7 +22,9 @@ import android.widget.RadioButton;
 import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
+import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
+import com.github.ghmxr.timeswitch.utils.EnvironmentUtils;
 
 public class CallStatusActivity extends BaseActivity implements View.OnClickListener {
     private TaskItem item;
@@ -79,7 +89,14 @@ public class CallStatusActivity extends BaseActivity implements View.OnClickList
             }
             break;
             case R.id.call_status_address:{
+                if(Build.VERSION.SDK_INT>=23&& PermissionChecker.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)!=PermissionChecker.PERMISSION_GRANTED){
+                    requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},1);
 
+                    EnvironmentUtils.PermissionRequestUtil.showSnackbarWithActionOfAppdetailPage(this,getResources().getString(R.string.permission_request_read_contacts)
+                            ,getResources().getString(R.string.permission_grant_action_att));
+                    return;
+                }
+                startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), 0);
             }
             break;
         }
@@ -107,6 +124,51 @@ public class CallStatusActivity extends BaseActivity implements View.OnClickList
     public boolean onCreateOptionsMenu(Menu menu) {
         new MenuInflater(this).inflate(R.menu.menu_single_confirm,menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            default:break;
+            case 0:{
+                if(resultCode==RESULT_OK){
+                    if(data==null) return;
+                    Uri uri=data.getData();
+                    if(uri==null) return;
+                    try{
+                        Cursor cursor = getContentResolver().query(uri,
+                                new String[] { ContactsContract.Contacts._ID,ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME },
+                                null, null, null);
+                        if(cursor==null) {
+                            Log.e("Cursor ","cursor is null");
+                            return;
+                        }
+                        while (cursor.moveToNext()) {
+                            String id = cursor.getString(0);
+                            Cursor phone=getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                                    null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + id,null,null);
+                            if(phone==null) continue;
+                            while (phone.moveToNext()){
+                                String number=phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                                String edit_read=editText.getText().toString();
+                                if(edit_read.length()>0){
+                                    if(!editText.getText().toString().endsWith(",")) editText.setText(edit_read+"," +number);
+                                    else editText.setText(edit_read+number);
+                                }
+                                else editText.setText(number);
+                            }
+                            phone.close();
+                            //String name = cursor.getString(1);
+                        }
+                        cursor.close();
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+            break;
+        }
     }
 
     @Override

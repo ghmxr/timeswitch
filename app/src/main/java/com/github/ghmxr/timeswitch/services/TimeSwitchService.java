@@ -22,6 +22,8 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -40,6 +42,7 @@ import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 import com.github.ghmxr.timeswitch.utils.ValueUtils;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * @author mxremail@qq.com  https://github.com/ghmxr/timeswitch
@@ -189,7 +192,6 @@ public class TimeSwitchService extends Service {
             filter.addAction(APReceiver.ACTION_AP_STATE_CHANGED);
             registerReceiver(log_receiver,filter);
         }catch (Exception e){e.printStackTrace();}
-        CallStateInvoker.activate(this);
     }
 
     @Override
@@ -458,6 +460,87 @@ public class TimeSwitchService extends Service {
                    }catch (Exception e){e.printStackTrace();}
                }
            }
+        }
+    }
+
+    public static class CallStateInvoker extends PhoneStateListener {
+
+        private static CallStateInvoker invoker;
+        private final TelephonyManager manager;
+        private static final LinkedList<CallStateChangedCallback> callbacks=new LinkedList<>();
+
+        public interface CallStateChangedCallback{
+            void onCallStateChanged(int state, String phoneNumber);
+        }
+
+        /**
+         * 激活电话状态监听回调器
+         */
+        private static void activate(final Context context){
+            if(invoker!=null)return ;
+            Global.handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if(invoker==null){
+                        invoker=new CallStateInvoker(context);
+                    }
+                }
+            });
+        }
+
+        /**
+         * 停止电话状态监听回调器
+         */
+        private static void stop(){
+            callbacks.clear();
+            if(invoker==null)return;
+            Global.handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if(invoker!=null){
+                        invoker.removeVariables();
+                        invoker=null;
+                    }
+                }
+            });
+        }
+
+        private CallStateInvoker(@NonNull Context context){
+            manager=(TelephonyManager)context.getApplicationContext().getSystemService(TELEPHONY_SERVICE);
+            if(manager==null)return;
+            manager.listen(this,PhoneStateListener.LISTEN_CALL_STATE);
+        }
+
+        private void removeVariables(){
+            if(manager==null)return;
+            manager.listen(this,PhoneStateListener.LISTEN_NONE);
+        }
+
+        @Override
+        public void onCallStateChanged(int state, String phoneNumber) {
+            super.onCallStateChanged(state, phoneNumber);
+            //Log.e("callcall",""+state+"  "+phoneNumber);//来电1，接听2，挂断0，电话号码为连续数字例如13011121113
+            for(CallStateChangedCallback callback:callbacks){
+                callback.onCallStateChanged(state,phoneNumber);
+            }
+        }
+
+        /**
+         * 注册电话状态监听回调
+         * @param callback 回调接口
+         */
+        public static synchronized void registerCallback(Context context,CallStateChangedCallback callback){
+            activate(context);
+            if(!callbacks.contains(callback))callbacks.add(callback);
+        }
+
+        /**
+         * 取消注册电话状态监听回调
+         * @param callback 要取消的回调接口
+         */
+        public static synchronized void unregisterCallback(CallStateChangedCallback callback){
+            callbacks.remove(callback);
+            if(callbacks.size()==0)stop();
         }
     }
 }
