@@ -530,6 +530,18 @@ public class ContentAdapter {
                     if(builder.toString().length()>0) builder.append(",");
                     builder.append(context.getResources().getString(R.string.activity_taskgui_exception_airplanemode_off));
                 }
+                if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_IS_IN_CALL_COMING_STATE])==1){
+                    if(builder.toString().length()>0) builder.append(",");
+                    builder.append(context.getResources().getString(R.string.activity_taskgui_exception_incall_ring));
+                }
+                if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_IS_IN_CALL_CONNECTED_STATE])==1){
+                    if(builder.toString().length()>0) builder.append(",");
+                    builder.append(context.getResources().getString(R.string.activity_taskgui_exception_incall_connected));
+                }
+                if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_IS_NOT_IN_CALL_STATE])==1){
+                    if(builder.toString().length()>0) builder.append(",");
+                    builder.append(context.getResources().getString(R.string.activity_taskgui_exception_incall_disconnected));
+                }
                 if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS])>0){
                     if(builder.toString().length()>0) builder.append(",");
                     if(Integer.parseInt(exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS])== ExceptionConsts.EXCEPTION_HEADSET_PLUG_OUT){

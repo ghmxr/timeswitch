@@ -470,6 +470,7 @@ public class TimeSwitchService extends Service {
         private static CallStateInvoker invoker;
         private final TelephonyManager manager;
         private static final LinkedList<CallStateChangedCallback> callbacks=new LinkedList<>();
+        private static int state=0;
 
         public interface CallStateChangedCallback{
             void onCallStateChanged(int state, String phoneNumber);
@@ -509,6 +510,7 @@ public class TimeSwitchService extends Service {
         @Override
         public void onCallStateChanged(int state, String phoneNumber) {
             super.onCallStateChanged(state, phoneNumber);
+            CallStateInvoker.state=state;
             //Log.e("callcall",""+state+"  "+phoneNumber);//来电1，接听2，挂断0，电话号码为连续数字例如13011121113
             for(CallStateChangedCallback callback:callbacks){
                 callback.onCallStateChanged(state,phoneNumber);
@@ -529,6 +531,14 @@ public class TimeSwitchService extends Service {
          */
         public static synchronized void unregisterCallback(CallStateChangedCallback callback){
             callbacks.remove(callback);
+        }
+
+        /**
+         * 获取当前电话状态。
+         * @return 电话状态，来电1，接听2，挂断0
+         */
+        public static int getCallState(){
+            return state;
         }
     }
 }

@@ -19,6 +19,7 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.github.ghmxr.timeswitch.Global;
@@ -280,6 +281,27 @@ public class ProcessTaskItem {
             boolean b=EnvironmentUtils.isAirplaneModeOpen(context);
             if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&!b) return false;
             if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&b) return true;
+        }
+
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_IS_IN_CALL_COMING_STATE])==1){
+            flag=true;
+            boolean b= TimeSwitchService.CallStateInvoker.getCallState()== TelephonyManager.CALL_STATE_RINGING;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&b) return false;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&!b)return true;
+        }
+
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_IS_IN_CALL_CONNECTED_STATE])==1){
+            flag=true;
+            boolean b=TimeSwitchService.CallStateInvoker.getCallState()==TelephonyManager.CALL_STATE_OFFHOOK;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&b)return false;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&!b)return true;
+        }
+
+        if(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_IS_NOT_IN_CALL_STATE])==1){
+            flag=true;
+            boolean b= TimeSwitchService.CallStateInvoker.getCallState()==TelephonyManager.CALL_STATE_IDLE;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_OR&&b)return false;
+            if(process_type==ExceptionConsts.EXCEPTION_CONNECTOR_AND&&!b)return true;
         }
 
         Calendar calendar=Calendar.getInstance();

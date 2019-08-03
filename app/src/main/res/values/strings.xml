@@ -208,6 +208,9 @@
 	<string name="activity_taskgui_exception_headset_out">断开时</string>
 	<string name="activity_taskgui_exception_airplanemode_on">飞行模式为打开状态</string>
 	<string name="activity_taskgui_exception_airplanemode_off">飞行模式为关闭状态</string>
+	<string name="activity_taskgui_exception_incall_ring">在来电(响铃)状态</string>
+	<string name="activity_taskgui_exception_incall_connected">在通话状态</string>
+	<string name="activity_taskgui_exception_incall_disconnected">挂断状态(未在来电或通话状态)</string>
 	<string name="activity_taskgui_exceptions_battery_percentage">电池电量</string>
 	<string name="activity_taskgui_exceptions_battery_temperature">电池温度</string>
 	<string name="activity_taskgui_exceptions_day_of_week">指定一周的某天</string>
@@ -539,7 +542,9 @@
 		https://github.com/ghmxr/timeswitch \n\n\n
 
 		<b>Build 17 更新日志：\n
-			修复：触发行为“设备控制”选项选择操作时状态显示错乱的问题。\n
+			修复：触发行为“设备控制”选项选择操作时状态显示错乱以及设置无效的问题；\n
+			新增：判断当前来电/通话状态(触发例外规则)；\n
+			改动：当通过返回键正常退出应用时，将不会出现在最近任务栏。\n
 		</b>\n\n
 		<b>Build 16 更新日志：\n
 			修复：“按指定时间重复”类型任务拖放时触发指示器刷新错误的问题；\n

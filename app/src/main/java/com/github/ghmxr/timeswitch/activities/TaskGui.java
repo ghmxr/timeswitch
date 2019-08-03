@@ -1074,6 +1074,45 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 			});
 			group.addView(view);
 		}
+		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_IS_IN_CALL_COMING_STATE])==1){
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_call,resources.getString(R.string.activity_taskgui_exception_incall_ring),null,listener_on_exception_item_clicked);
+			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_IS_IN_CALL_COMING_STATE]=String.valueOf(0);
+					//refreshExceptionViews();
+					checkAndPlayTransitionAnimation();
+					group.removeView(view);
+				}
+			});
+			group.addView(view);
+		}
+		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_IS_IN_CALL_CONNECTED_STATE])==1){
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_call_incall,resources.getString(R.string.activity_taskgui_exception_incall_connected),null,listener_on_exception_item_clicked);
+			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_IS_IN_CALL_CONNECTED_STATE]=String.valueOf(0);
+					//refreshExceptionViews();
+					checkAndPlayTransitionAnimation();
+					group.removeView(view);
+				}
+			});
+			group.addView(view);
+		}
+		if(Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_IS_NOT_IN_CALL_STATE])==1){
+			final View view= getExceptionItemViewForViewGroup(group,R.drawable.icon_call_end,resources.getString(R.string.activity_taskgui_exception_incall_disconnected),null,listener_on_exception_item_clicked);
+			view.findViewById(R.id.layout_taskgui_exception_cancel).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					taskitem.exceptions[ExceptionConsts.EXCEPTION_IS_NOT_IN_CALL_STATE]=String.valueOf(0);
+					//refreshExceptionViews();
+					checkAndPlayTransitionAnimation();
+					group.removeView(view);
+				}
+			});
+			group.addView(view);
+		}
 		int headset_status=Integer.parseInt(taskitem.exceptions[ExceptionConsts.EXCEPTION_HEADSET_STATUS]);
 		final View.OnClickListener listener_headset_clicked=new View.OnClickListener() {
 			@Override

@@ -74,7 +74,9 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
         findViewById(R.id.exceptions_period).setOnClickListener(this);
         findViewById(R.id.exceptions_headset).setOnClickListener(this);
         findViewById(R.id.exceptions_wifi_status).setOnClickListener(this);
-
+        findViewById(R.id.exceptions_incall_coming).setOnClickListener(this);
+        findViewById(R.id.exceptions_incall_connected).setOnClickListener(this);
+        findViewById(R.id.exceptions_incall_finished).setOnClickListener(this);
         /*if(item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE||item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_LOOP_WEEK){
             findViewById(R.id.exceptions_period).setVisibility(View.GONE);
             findViewById(R.id.exceptions_day_of_week).setVisibility(View.GONE);
@@ -102,6 +104,9 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
             ((CheckBox)findViewById(R.id.exceptions_gps_off_cb)).setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_GPS_DISABLED])==1);
             ((CheckBox)findViewById(R.id.exceptions_airplanemode_on_cb)).setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_ENABLED])==1);
             ((CheckBox)findViewById(R.id.exceptions_airplanemode_off_cb)).setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_DISABLED])==1);
+            ((CheckBox)findViewById(R.id.exceptions_incall_coming_cb)).setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_IS_IN_CALL_COMING_STATE])==1);
+            ((CheckBox)findViewById(R.id.exceptions_incall_connected_cb)).setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_IS_IN_CALL_CONNECTED_STATE])==1);
+            ((CheckBox)findViewById(R.id.exceptions_incall_finished_cb)).setChecked(Integer.parseInt(item.exceptions[ExceptionConsts.EXCEPTION_IS_NOT_IN_CALL_STATE])==1);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -288,6 +293,48 @@ public class ExceptionActivity extends BaseActivity implements View.OnClickListe
                 if(cb_airplane_mode_off.isChecked()) cb_airplane_mode_on.setChecked(false);
                 item.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_ENABLED]=(cb_airplane_mode_on.isChecked()?String.valueOf(1):String.valueOf(0));
                 item.exceptions[ExceptionConsts.EXCEPTION_AIRPLANE_MODE_DISABLED]=(cb_airplane_mode_off.isChecked()?String.valueOf(1):String.valueOf(0));
+            }
+            break;
+            case R.id.exceptions_incall_coming:{
+                CheckBox cb_incall_coming=findViewById(R.id.exceptions_incall_coming_cb);
+                //CheckBox cb_incall_connected=findViewById(R.id.exceptions_incall_connected_cb);
+                //CheckBox cb_incall_finished=findViewById(R.id.exceptions_incall_finished_cb);
+                cb_incall_coming.toggle();
+                /*if(cb_incall_coming.isChecked()){
+                    cb_incall_connected.setChecked(false);
+                    cb_incall_finished.setChecked(false);
+                    item.exceptions[ExceptionConsts.EXCEPTION_IS_NOT_IN_CALL_STATE]=String.valueOf(0);
+                    item.exceptions[ExceptionConsts.EXCEPTION_IS_IN_CALL_CONNECTED_STATE]=String.valueOf(0);
+                }*/
+                item.exceptions[ExceptionConsts.EXCEPTION_IS_IN_CALL_COMING_STATE]=cb_incall_coming.isChecked()?String.valueOf(1):String.valueOf(0);
+            }
+            break;
+            case R.id.exceptions_incall_connected:{
+                //CheckBox cb_incall_coming=findViewById(R.id.exceptions_incall_coming_cb);
+                CheckBox cb_incall_connected=findViewById(R.id.exceptions_incall_connected_cb);
+                //CheckBox cb_incall_finished=findViewById(R.id.exceptions_incall_finished_cb);
+                cb_incall_connected.toggle();
+                /*if(cb_incall_connected.isChecked()){
+                    cb_incall_coming.setChecked(false);
+                    cb_incall_finished.setChecked(false);
+                    item.exceptions[ExceptionConsts.EXCEPTION_IS_IN_CALL_COMING_STATE]=String.valueOf(0);
+                    item.exceptions[ExceptionConsts.EXCEPTION_IS_NOT_IN_CALL_STATE]=String.valueOf(0);
+                }*/
+                item.exceptions[ExceptionConsts.EXCEPTION_IS_IN_CALL_CONNECTED_STATE]=cb_incall_connected.isChecked()?String.valueOf(1):String.valueOf(0);
+            }
+            break;
+            case R.id.exceptions_incall_finished:{
+                //CheckBox cb_incall_coming=findViewById(R.id.exceptions_incall_coming_cb);
+                //CheckBox cb_incall_connected=findViewById(R.id.exceptions_incall_connected_cb);
+                CheckBox cb_incall_finished=findViewById(R.id.exceptions_incall_finished_cb);
+                cb_incall_finished.toggle();
+                /*if(cb_incall_finished.isChecked()){
+                    cb_incall_coming.setChecked(false);
+                    cb_incall_connected.setChecked(false);
+                    item.exceptions[ExceptionConsts.EXCEPTION_IS_IN_CALL_COMING_STATE]=String.valueOf(0);
+                    item.exceptions[ExceptionConsts.EXCEPTION_IS_IN_CALL_CONNECTED_STATE]=String.valueOf(0);
+                }*/
+                item.exceptions[ExceptionConsts.EXCEPTION_IS_NOT_IN_CALL_STATE]=cb_incall_finished.isChecked()?String.valueOf(1):String.valueOf(0);
             }
             break;
             case R.id.exceptions_battery_percentage:{

@@ -54,8 +54,10 @@ public class ExceptionConsts {
     public static final int EXCEPTION_BATTERY_MORE_THAN_PERCENTAGE					=	27;
     public static final int EXCEPTION_BATTERY_LOWER_THAN_TEMPERATURE				=	28;
     public static final int EXCEPTION_BATTERY_HIGHER_THAN_TEMPERATURE				=	29;
-    //public static final int EXCEPTION_HEADSET_STATUS								=	30;
-    //the locales 30~34 is not used now and the initial value is 0.
+    public static final int EXCEPTION_IS_IN_CALL_COMING_STATE                     =	30;
+    public static final int EXCEPTION_IS_IN_CALL_CONNECTED_STATE                  =   31;
+    public static final int EXCEPTION_IS_NOT_IN_CALL_STATE                        =   32;
+    //the locales 33,34 is not used now and the initial value is 0.
     //the following initial values are -1.from the locale 35 and on.
     public static final int EXCEPTION_WIFI_STATUS   								=	35;
     public static final int EXCEPTION_WIFI_VALUE_DISCONNECTED                       =   -9;

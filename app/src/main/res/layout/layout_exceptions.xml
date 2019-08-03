@@ -619,6 +619,117 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/exceptions_incall_coming"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:clickable="true"
+                android:background="?attr/selectableItemBackground">
+                <ImageView
+                    android:id="@+id/exceptions_incall_coming_img"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/icon_call"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/exceptions_incall_coming_img"
+                    android:layout_marginLeft="15dp"
+                    android:layout_centerVertical="true"
+                    android:textSize="14sp"
+                    android:textColor="@color/color_text_normal"
+                    android:text="@string/activity_taskgui_exception_incall_ring" />
+                <CheckBox
+                    android:id="@+id/exceptions_incall_coming_cb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:clickable="false"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="#dddddd"
+                    android:layout_alignParentBottom="true"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/exceptions_incall_connected"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:clickable="true"
+                android:background="?attr/selectableItemBackground">
+                <ImageView
+                    android:id="@+id/exceptions_incall_connected_img"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/icon_call_incall"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/exceptions_incall_connected_img"
+                    android:layout_marginLeft="15dp"
+                    android:layout_centerVertical="true"
+                    android:textSize="14sp"
+                    android:textColor="@color/color_text_normal"
+                    android:text="@string/activity_taskgui_exception_incall_connected" />
+                <CheckBox
+                    android:id="@+id/exceptions_incall_connected_cb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:clickable="false"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="#dddddd"
+                    android:layout_alignParentBottom="true"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/exceptions_incall_finished"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:clickable="true"
+                android:background="?attr/selectableItemBackground">
+                <ImageView
+                    android:id="@+id/exceptions_incall_finished_img"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/icon_call_end"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/exceptions_incall_finished_img"
+                    android:layout_marginLeft="15dp"
+                    android:layout_centerVertical="true"
+                    android:textSize="14sp"
+                    android:textColor="@color/color_text_normal"
+                    android:text="@string/activity_taskgui_exception_incall_disconnected" />
+                <CheckBox
+                    android:id="@+id/exceptions_incall_finished_cb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:clickable="false"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="#dddddd"
+                    android:layout_alignParentBottom="true"/>
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:id="@+id/exceptions_headset"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
@@ -915,11 +1026,6 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="10dp"
                     android:src="@drawable/drawable_arrow_right"/>
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:background="#dddddd"
-                    android:layout_alignParentBottom="true"/>
             </RelativeLayout>
 
         </com.github.ghmxr.timeswitch.ui.CustomLinearLayout>

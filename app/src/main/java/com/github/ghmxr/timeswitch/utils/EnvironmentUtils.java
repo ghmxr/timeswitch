@@ -38,6 +38,7 @@ import android.telecom.TelecomManager;
 import android.telephony.SmsManager;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
+import android.telephony.TelephonyManager;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
@@ -47,6 +48,7 @@ import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.adapters.ContentAdapter;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.receivers.SMSReceiver;
+import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -822,13 +824,14 @@ public class EnvironmentUtils {
     }
 
     /**
-     * 获取当前是否为通话状态,API21及以上生效，否则返回默认值false
-     * @return true-当前为通话状态
+     * 获取当前是否为通话状态，此方法仅在TimeSwitchService活动状态下获得的为正确数据。
+     * @return true-当前为通话状态（来电、接通状态）
      */
-    public static boolean isInCall(Context context){
+    public static boolean isInCall(){
         try{
-            if(Build.VERSION.SDK_INT<21) return false;
-            return ((TelecomManager) context.getSystemService(Context.TELECOM_SERVICE)).isInCall();
+            //return ((TelecomManager) context.getSystemService(Context.TELECOM_SERVICE)).isInCall();
+            return TimeSwitchService.CallStateInvoker.getCallState()== TelephonyManager.CALL_STATE_RINGING
+                    || TimeSwitchService.CallStateInvoker.getCallState()==TelephonyManager.CALL_STATE_OFFHOOK;
         }catch (SecurityException se){
             return false;
         }catch (Exception e){
