@@ -522,7 +522,7 @@
     <string name="popup_profile_delete">删除</string>
 	<string name="popup_profile_export">导出</string>
     <string name="title_activity_about">关于</string>
-	<string name="activity_about_content_title">部件触发器 (Build 16)</string>
+	<string name="activity_about_content_title">部件触发器 (Build 17)</string>
     <string name="large_text">
         这是一个通过设置一些触发条件来自动触发并执行一些任务的APP。应用在运行时会自动创建后台服务并维持运行状态。\n\n
 
@@ -538,6 +538,9 @@
 		开源地址:\n
 		https://github.com/ghmxr/timeswitch \n\n\n
 
+		<b>Build 17 更新日志：\n
+			修复：触发行为“设备控制”选项选择操作时状态显示错乱的问题。\n
+		</b>\n\n
 		<b>Build 16 更新日志：\n
 			修复：“按指定时间重复”类型任务拖放时触发指示器刷新错误的问题；\n
 			修复：应用选择对话框清空选择时无效的问题；\n

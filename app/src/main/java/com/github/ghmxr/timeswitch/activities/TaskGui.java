@@ -630,7 +630,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		int action_device_control=Integer.parseInt(taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]);
 		if(action_device_control>=0){
 			View view=getActionItemViewForViewGroup(group,R.drawable.icon_screen_on,resources.getString(R.string.activity_taskgui_actions_device_control)
-			, ContentAdapter.ActionContentAdapter.getGeneralDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]));
+			, ContentAdapter.ActionContentAdapter.getDeviceControlDisplayValue(this,taskitem.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DEVICE_CONTROL_LOCALE]));
 			view.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
