@@ -1,6 +1,7 @@
 package com.github.ghmxr.timeswitch.services;
 
 import android.app.Activity;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -236,19 +237,24 @@ public class TimeSwitchService extends Service {
        NotificationManager notificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
        if(Build.VERSION.SDK_INT>=26){
            final String channelID="channel_service";
-           NotificationChannel channel=new NotificationChannel(channelID,"OngoingService",NotificationManager.IMPORTANCE_LOW);
+           NotificationChannel channel=new NotificationChannel(channelID,
+                   getResources().getString(R.string.notification_channel_ongoing),
+                   NotificationManager.IMPORTANCE_NONE);
            notificationManager.createNotificationChannel(channel);
            notification=new NotificationCompat.Builder(this,channelID);
        }else{
            notification=new NotificationCompat.Builder(this);
        }
+       notification.setPriority(NotificationCompat.PRIORITY_MIN);
        notification.setContentIntent(PendingIntent.getActivity(this,0,new Intent(this,MainActivity.class),PendingIntent.FLAG_UPDATE_CURRENT));
        notification.setSmallIcon(R.drawable.ic_launcher);
        notification.setContentTitle("Widget Trigger");
        notification.setContentText("Widget Trigger is running");
+       notification.setGroup("OngoingService");
+       notification.setGroupSummary(false);
        startForeground(1,getRefreshedNotificationBuilder(notification).build());
        refreshForegroundNotification();
-       Log.d("FOREGROUND","STARTED");
+       //Log.d("FOREGROUND","STARTED");
    }
 
    private void makeThisBackground(){

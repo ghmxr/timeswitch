@@ -132,6 +132,11 @@ public class TaskItem implements Comparable<TaskItem>,Serializable{
 	 */
 	public boolean autoclose=false;
 
+	/**
+	 * 延迟执行操作并通知
+	 */
+	public boolean delayed=true;
+
 	public String addition_exception_connector=String.valueOf(-1);
 
 	public String addition_title_color="#16a085";
@@ -199,13 +204,16 @@ public class TaskItem implements Comparable<TaskItem>,Serializable{
 				", interval_milliseconds=" + interval_milliseconds +
 				", battery_percentage=" + battery_percentage +
 				", battery_temperature=" + battery_temperature +
+				", light_brightness=" + light_brightness +
 				", selectedAction='" + selectedAction + '\'' +
 				", package_names=" + Arrays.toString(package_names) +
+				", call_state_numbers=" + Arrays.toString(call_state_numbers) +
 				", exceptions=" + Arrays.toString(exceptions) +
 				", actions=" + Arrays.toString(actions) +
 				", uri_ring_notification='" + uri_ring_notification + '\'' +
 				", uri_ring_call='" + uri_ring_call + '\'' +
 				", uri_wallpaper_desktop='" + uri_wallpaper_desktop + '\'' +
+				", uri_play='" + uri_play + '\'' +
 				", sms_address='" + sms_address + '\'' +
 				", sms_message='" + sms_message + '\'' +
 				", notification_title='" + notification_title + '\'' +
@@ -214,6 +222,7 @@ public class TaskItem implements Comparable<TaskItem>,Serializable{
 				", notify=" + notify +
 				", autodelete=" + autodelete +
 				", autoclose=" + autoclose +
+				", delayed=" + delayed +
 				", addition_exception_connector='" + addition_exception_connector + '\'' +
 				", addition_title_color='" + addition_title_color + '\'' +
 				", addition_isFolded=" + addition_isFolded +

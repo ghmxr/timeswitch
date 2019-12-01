@@ -53,6 +53,11 @@
             android:layout_height="wrap_content"
             android:text="@string/privilege_button_write_settings"/>
         <Button
+            android:id="@+id/privilege_ignore_battery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/privilege_button_ignore_battery"/>
+        <Button
             android:id="@+id/privilege_notification_policy_page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

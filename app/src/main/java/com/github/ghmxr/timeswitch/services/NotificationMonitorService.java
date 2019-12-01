@@ -1,9 +1,14 @@
 package com.github.ghmxr.timeswitch.services;
 
 import android.annotation.TargetApi;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.support.annotation.NonNull;
+
+import com.github.ghmxr.timeswitch.utils.EnvironmentUtils;
 
 import java.util.LinkedList;
 
@@ -20,8 +25,8 @@ public class NotificationMonitorService extends NotificationListenerService{
     }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
+    public void onListenerConnected() {
+        super.onListenerConnected();
         service=this;
     }
 
@@ -77,7 +82,19 @@ public class NotificationMonitorService extends NotificationListenerService{
     }
 
     @Override
-    public void onDestroy(){
+    public void onListenerDisconnected() {
+        super.onListenerDisconnected();
         service=null;
+    }
+
+    public static void checkAndRestartService(@NonNull Context context){
+        try{
+            if(EnvironmentUtils.SpecialPermissionCheckUtil.isReadingNotificationPermissionGranted(context)){
+                ComponentName componentName=new ComponentName(context,NotificationMonitorService.class);
+                PackageManager packageManager=context.getPackageManager();
+                packageManager.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
+                packageManager.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_ENABLED,PackageManager.DONT_KILL_APP);
+            }
+        }catch (Exception e){e.printStackTrace();}
     }
 }

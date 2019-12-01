@@ -178,6 +178,7 @@
 	<string name="activity_taskgui_additional_notify_cb">触发时推送通知</string>
 	<string name="activity_taskgui_additional_autodelete_cb">触发后删除</string>
 	<string name="activity_taskgui_additional_autoclose_cb">触发后关闭</string>
+	<string name="activity_taskgui_additional_deleyed_cb">延迟执行并通知</string>
 	<string name="activity_taskgui_additional_titlecolor_att">标题颜色</string>
 	<string name="activity_taskgui_additional_titlecolor_hint">输入#RGB颜色</string>
 	<string name="activity_taskgui_additional_titlecolor_preset">预设颜色</string>
@@ -428,6 +429,7 @@
 	<string name="privilege_button_read_external_storage">读取存储权限测试</string>
 	<string name="privilege_button_send_sms">发送短信测试</string>
 	<string name="privilege_button_write_settings">写入设置测试</string>
+	<string name="privilege_button_ignore_battery">忽略电池优化</string>
 	<string name="privilege_button_notification_policy_page">跳转至勿扰模式权限页面</string>
 	<string name="privilege_button_usage_page">跳转至应用使用情况权限页面</string>
 	<string name="privilege_button_read_notification_page">跳转至读取通知权限页面</string>
@@ -454,6 +456,9 @@
 	<string name="log_gps_disabled">系统:GPS已关闭</string>
 	<string name="log_ap_enabled">系统:热点已打开</string>
 	<string name="log_ap_disabled">系统:热点已关闭</string>
+	<string name="notification_channel_task">任务通知</string>
+	<string name="notification_channel_ongoing">前台通知</string>
+	<string name="snack_ignore_battery">请忽略电池优化以确保任务能够生效</string>
 	<string name="monday">周一</string>
 	<string name="tuesday">周二</string>
 	<string name="wednesday">周三</string>
@@ -518,6 +523,9 @@
 	<string name="action_import">导入</string>
 	<string name="action_export">导出</string>
 	<string name="permission_required">请检查本应用的权限</string>
+	<string name="notification_task_cancel">取消执行</string>
+	<string name="notification_delayed_title">5秒后将执行:</string>
+	<string name="notification_delayed_message">点击取消执行来取消</string>
 	<string name="dialog_setinterval_edittext_hint">输入数值</string>
 	<string name="dialog_period_start_time">开始时间</string>
 	<string name="dialog_period_end_time">结束时间</string>
@@ -525,7 +533,7 @@
     <string name="popup_profile_delete">删除</string>
 	<string name="popup_profile_export">导出</string>
     <string name="title_activity_about">关于</string>
-	<string name="activity_about_content_title">部件触发器 (Build 17)</string>
+	<string name="activity_about_content_title">部件触发器 (Build 18)</string>
     <string name="large_text">
         这是一个通过设置一些触发条件来自动触发并执行一些任务的APP。应用在运行时会自动创建后台服务并维持运行状态。\n\n
 
@@ -541,18 +549,11 @@
 		开源地址:\n
 		https://github.com/ghmxr/timeswitch \n\n\n
 
-		<b>Build 17 更新日志：\n
-			修复：触发行为“设备控制”选项选择操作时状态显示错乱以及设置无效的问题；\n
-			新增：判断当前来电/通话状态(触发例外规则)；\n
-			改动：当通过返回键正常退出应用时，将不会出现在最近任务栏。\n
-		</b>\n\n
-		<b>Build 16 更新日志：\n
-			修复：“按指定时间重复”类型任务拖放时触发指示器刷新错误的问题；\n
-			修复：应用选择对话框清空选择时无效的问题；\n
-			修复：触发例外判断模式为“与”连接且例外设置项为空时任务项不会触发的问题；\n
-			新增：播放声音功能（触发行为）；\n
-			新增：清理通知栏通知功能（触发行为）；\n
-			新增：通话/来电状态监听器（触发器）。\n
+		<b>Build 18 更新日志：\n
+			修复：触发行为“启用、关闭指定任务”无效的问题；\n
+			适配：Android7.0及以上版本的网络连接触发器（WiFi、移动数据的连接/断开）；\n
+			新增：延迟触发并通知选项；\n
+			变动：忽略电池优化选项。\n
 		</b>\n\n
 
 

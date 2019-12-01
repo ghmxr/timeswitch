@@ -2,6 +2,7 @@ package com.github.ghmxr.timeswitch.triggers;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
@@ -15,6 +16,7 @@ import com.github.ghmxr.timeswitch.triggers.receivers.CallStateReceiver;
 import com.github.ghmxr.timeswitch.triggers.receivers.CustomBroadcastReceiver;
 import com.github.ghmxr.timeswitch.triggers.receivers.HeadsetPlugReceiver;
 import com.github.ghmxr.timeswitch.triggers.receivers.NetworkReceiver;
+import com.github.ghmxr.timeswitch.triggers.receivers.NetworkReceiver2;
 import com.github.ghmxr.timeswitch.triggers.receivers.NotificationReceiver;
 import com.github.ghmxr.timeswitch.triggers.receivers.RingModeReceiver;
 import com.github.ghmxr.timeswitch.triggers.sensors.LightSensor;
@@ -60,7 +62,8 @@ public class TriggerUtil {
             case TriggerTypeConsts.TRIGGER_TYPE_WIFI_CONNECTED: case TriggerTypeConsts.TRIGGER_TYPE_WIFI_DISCONNECTED:
             case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_WIFI_ON: case TriggerTypeConsts.TRIGGER_TYPE_WIDGET_WIFI_OFF:
             case TriggerTypeConsts.TRIGGER_TYPE_NET_ON: case TriggerTypeConsts.TRIGGER_TYPE_NET_OFF:{
-                return new NetworkReceiver(context,item);
+                if(Build.VERSION.SDK_INT>=24)return new NetworkReceiver2(context,item);
+                else return new NetworkReceiver(context,item);
             }
 
             case TriggerTypeConsts.TRIGGER_TYPE_APP_LAUNCHED: case TriggerTypeConsts.TRIGGER_TYPE_APP_CLOSED:{

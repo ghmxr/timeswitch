@@ -255,6 +255,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper{
 		additions[AdditionConsts.ADDITION_TITLE_COLOR_LOCALE]=taskitem.addition_title_color;
 		additions[AdditionConsts.ADDITION_EXCEPTION_CONNECTOR_LOCALE]=taskitem.addition_exception_connector;
 		additions[AdditionConsts.ADDITION_TITLE_FOLDED_VALUE_LOCALE]=taskitem.addition_isFolded?String.valueOf(0):String.valueOf(-1);
+		additions[AdditionConsts.ADDITION_DELAYED]=taskitem.delayed?String.valueOf(0):String.valueOf(-1);
 		values.put(SQLConsts.SQL_TASK_COLUMN_ADDITIONS,ValueUtils.stringArray2String(PublicConsts.SEPARATOR_FIRST_LEVEL,additions));
 		long result;
 		if(id==null) {

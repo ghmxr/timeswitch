@@ -110,6 +110,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		findViewById(R.id.layout_taskgui_area_additional_notify).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_area_additional_autodelete).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_area_additional_autoclose).setOnClickListener(this);
+		findViewById(R.id.layout_taskgui_area_additional_delayed).setOnClickListener(this);
 		findViewById(R.id.layout_taskgui_additional_titlecolor).setOnClickListener(this);
 
 		findViewById(R.id.layout_taskgui_area_exception_additem).setOnClickListener(listener_on_exception_item_clicked);
@@ -123,6 +124,7 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 		((TextView)findViewById(R.id.layout_taskgui_area_name_text)).setText(taskitem.name);
 		((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autoclose_cb)).setChecked(taskitem.autoclose);
 		((CheckBox)findViewById(R.id.layout_taskgui_area_additional_autodelete_cb)).setChecked(taskitem.autodelete);
+		((CheckBox)findViewById(R.id.layout_taskgui_area_additional_delayed_cb)).setChecked(taskitem.delayed);
 		//activateTriggerType(taskitem.trigger_type);
 		try{
 			(findViewById(R.id.layout_taskgui_additional_titlecolor_img)).setBackgroundColor(Color.parseColor(taskitem.addition_title_color));
@@ -837,6 +839,12 @@ public abstract class TaskGui extends BaseActivity implements View.OnClickListen
 				}
 			}
 			break;
+            case R.id.layout_taskgui_area_additional_delayed:{
+                CheckBox cb_delayed=findViewById(R.id.layout_taskgui_area_additional_delayed_cb);
+                cb_delayed.toggle();
+                taskitem.delayed=cb_delayed.isChecked();
+            }
+            break;
 			case R.id.layout_taskgui_additional_titlecolor:{
 				DialogForColor dialog=new DialogForColor(this,taskitem.addition_title_color);
 				dialog.setTitle(getResources().getString(R.string.activity_taskgui_additional_titlecolor_att));

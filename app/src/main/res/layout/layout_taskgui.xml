@@ -456,6 +456,42 @@
                             android:background="#dddddd"/>
 
                         <RelativeLayout
+                            android:id="@+id/layout_taskgui_area_additional_delayed"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:clickable="true"
+                            android:background="?android:attr/selectableItemBackground">
+
+                            <TextView
+                                android:id="@+id/layout_taskgui_additional_delayed_att"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="15sp"
+                                android:layout_centerVertical="true"
+                                android:layout_alignParentLeft="true"
+                                android:layout_marginLeft="10dp"
+                                android:textColor="@color/color_text_normal"
+                                android:text="@string/activity_taskgui_additional_deleyed_cb"/>
+
+                            <CheckBox
+                                android:id="@+id/layout_taskgui_area_additional_delayed_cb"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_alignParentRight="true"
+                                android:layout_marginRight="15dp"
+                                android:clickable="false"/>
+
+
+                        </RelativeLayout>
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="1px"
+                            android:layout_alignParentTop="true"
+                            android:background="#dddddd"/>
+
+                        <RelativeLayout
                             android:id="@+id/layout_taskgui_additional_titlecolor"
                             android:layout_width="match_parent"
                             android:layout_height="50dp"

@@ -37,6 +37,7 @@ public class PrivilegeTestActivity extends BaseActivity implements View.OnClickL
         findViewById(R.id.privilege_write_settings_page).setOnClickListener(this);
         findViewById(R.id.privilege_app_detail).setOnClickListener(this);
         findViewById(R.id.privilege_read_notification_page).setOnClickListener(this);
+        findViewById(R.id.privilege_ignore_battery).setOnClickListener(this);
     }
 
     @Override
@@ -172,6 +173,12 @@ public class PrivilegeTestActivity extends BaseActivity implements View.OnClickL
             break;
             case R.id.privilege_read_notification_page:{
                 startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"));
+            }
+            break;
+            case R.id.privilege_ignore_battery:{
+                Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                intent.setData(Uri.parse("package:"+getPackageName()));
+                startActivity(intent);
             }
             break;
         }

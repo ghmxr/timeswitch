@@ -1,7 +1,7 @@
 package com.github.ghmxr.timeswitch.data.v2;
 
 public class AdditionConsts {
-    public static final int ADDITION_LENGTH =6;
+    public static final int ADDITION_LENGTH =7;
     /**
      * @deprecated
      */
@@ -11,4 +11,5 @@ public class AdditionConsts {
     public static final int ADDITION_TITLE_COLOR_LOCALE=3;
     public static final int ADDITION_EXCEPTION_CONNECTOR_LOCALE=4;
     public static final int ADDITION_TITLE_FOLDED_VALUE_LOCALE=5;
+    public static final int ADDITION_DELAYED=6;
 }

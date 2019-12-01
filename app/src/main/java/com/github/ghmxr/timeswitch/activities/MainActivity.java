@@ -5,6 +5,7 @@ import com.github.ghmxr.timeswitch.R;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
+import com.github.ghmxr.timeswitch.services.NotificationMonitorService;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 import com.github.ghmxr.timeswitch.data.v2.MySQLiteOpenHelper;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
@@ -17,10 +18,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -221,6 +225,28 @@ public class MainActivity extends BaseActivity {
                 setServiceEnabled(true);
             }
         });
+
+        NotificationMonitorService.checkAndRestartService(this);
+        if(Build.VERSION.SDK_INT>=23){
+            try{
+                PowerManager powerManager=(PowerManager)getSystemService(Context.POWER_SERVICE);
+                if(!powerManager.isIgnoringBatteryOptimizations(getPackageName())){
+                    Snackbar snackbar=Snackbar.make(fab,
+                            getResources().getString(R.string.snack_ignore_battery),Snackbar.LENGTH_LONG);
+                    snackbar.setAction(getResources().getString(R.string.permission_grant_action_att), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                            intent.setData(Uri.parse("package:"+getPackageName()));
+                            startActivity(intent);
+                        }
+                    });
+                    snackbar.show();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
 	}
 
     @Override
@@ -317,7 +343,9 @@ public class MainActivity extends BaseActivity {
     private void setFabVisibility(boolean isVisible){
         if(fab==null) return;
         fab.setAnimation(isVisible?AnimationUtils.loadAnimation(MainActivity.this,R.anim.anim_fab_enter):AnimationUtils.loadAnimation(MainActivity.this,R.anim.anim_fab_exit));
-        fab.setVisibility(isVisible?View.VISIBLE:View.GONE);
+        //fab.setVisibility(isVisible?View.VISIBLE:View.GONE);
+        if(isVisible)fab.show();
+        else fab.hide();
         //isFabVisible=isVisible;
     }
 

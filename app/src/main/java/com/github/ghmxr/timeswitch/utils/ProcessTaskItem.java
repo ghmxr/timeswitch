@@ -10,8 +10,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -21,24 +21,28 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 import com.github.ghmxr.timeswitch.Global;
 import com.github.ghmxr.timeswitch.R;
+import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.activities.MainActivity;
+import com.github.ghmxr.timeswitch.adapters.ContentAdapter;
 import com.github.ghmxr.timeswitch.data.v2.ActionConsts;
 import com.github.ghmxr.timeswitch.data.v2.AdditionConsts;
 import com.github.ghmxr.timeswitch.data.v2.ExceptionConsts;
 import com.github.ghmxr.timeswitch.data.v2.MySQLiteOpenHelper;
 import com.github.ghmxr.timeswitch.data.v2.PublicConsts;
 import com.github.ghmxr.timeswitch.data.v2.SQLConsts;
-import com.github.ghmxr.timeswitch.TaskItem;
 import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.services.NotificationMonitorService;
 import com.github.ghmxr.timeswitch.services.TimeSwitchService;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 处理并执行TaskItem中的exceptions,actions和一些附加选项的类
@@ -51,6 +55,7 @@ public class ProcessTaskItem {
     private static int notification_id=2;
 
     private static Thread flash_light_thread;
+    private static final Map<Integer,Thread> delayeds=new HashMap<>();
 
     public static synchronized void checkExceptionsAndRunActions(@NonNull Context context,@NonNull TaskItem item){
         if(!(context instanceof TimeSwitchService)){
@@ -122,6 +127,63 @@ public class ProcessTaskItem {
                 }catch (Exception e){e.printStackTrace();}
             }
             MainActivity.sendEmptyMessage(MainActivity.MESSAGE_REQUEST_UPDATE_LIST);
+        }
+
+        if(item.delayed){
+            int id=notification_id+1;
+            delayeds.put(id,Thread.currentThread());
+            NotificationManager manager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationCompat.Builder builder;
+            if(Build.VERSION.SDK_INT>=26){
+                String channel_id="channel_tasks";
+                NotificationChannel channel=new NotificationChannel(channel_id,
+                        context.getResources().getString(R.string.notification_channel_task),
+                        NotificationManager.IMPORTANCE_DEFAULT);
+                manager.createNotificationChannel(channel);
+                builder=new NotificationCompat.Builder(context,channel_id);
+            }else{
+                builder=new NotificationCompat.Builder(context);
+            }
+            builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+            builder.setSmallIcon(R.drawable.ic_launcher);
+
+            builder.setContentTitle(context.getResources().getString(R.string.notification_delayed_title)+item.name);
+            builder.setContentText(context.getResources().getString(R.string.notification_delayed_message));
+
+            Intent cancelIntent=new Intent(context,CancelTaskReceiver.class);
+            cancelIntent.putExtra("threadId",id);
+
+
+            builder.setContentIntent(PendingIntent.getActivity(context,1,new Intent(context,MainActivity.class),
+                    PendingIntent.FLAG_UPDATE_CURRENT));
+            builder.setAutoCancel(true);
+
+            builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+            builder.setFullScreenIntent(PendingIntent.getActivity(context,2,new Intent(),PendingIntent.FLAG_UPDATE_CURRENT)
+                    ,true);
+
+            RemoteViews remoteViews=new RemoteViews(context.getPackageName(),R.layout.layout_notification_delay);
+
+            remoteViews.setOnClickPendingIntent(R.id.notification_task_cancel,PendingIntent.getBroadcast(context,
+                   id,cancelIntent,PendingIntent.FLAG_UPDATE_CURRENT));
+            remoteViews.setTextViewText(R.id.notification_task_title,context.getResources().getString(R.string.notification_delayed_title)+item.name);
+            remoteViews.setTextViewText(R.id.notification_task_message,context.getResources().getString(R.string.notification_delayed_message));
+            remoteViews.setImageViewResource(R.id.notification_task_icon, (Integer) ContentAdapter.TriggerContentAdapter
+                    .getContentForTriggerType(context
+                            ,ContentAdapter.TriggerContentAdapter.CONTENT_TYPE_ICON_RESOURCE_DRAWABLE_ID
+                            ,item));
+            builder.setCustomContentView(remoteViews);
+            builder.setGroupSummary(false);
+            builder.setGroup("IncomingTask");
+            manager.notify(id,builder.build());
+            try{
+                Thread.sleep(5000);
+                manager.cancel(id);
+                delayeds.values().remove(Thread.currentThread());
+            }catch (InterruptedException ie){
+                Log.d("Canceled",notification_id+" 任务取消执行");
+                return;
+            }
         }
 
         if(canTrigger){
@@ -686,7 +748,7 @@ public class ProcessTaskItem {
         if(type==-1)return;
         int if_custom=Integer.parseInt(notification_values[ActionConsts.ActionSecondLevelLocaleConsts.NOTIFICATION_TYPE_IF_CUSTOM_LOCALE]);
         if(type== ActionConsts.ActionValueConsts.NOTIFICATION_TYPE_NOT_OVERRIDE){
-            if(notification_id<102) notification_id++;
+            if(notification_id<Integer.MAX_VALUE-1) notification_id++;
             else notification_id=2;
         }
         String title,message;
@@ -697,7 +759,17 @@ public class ProcessTaskItem {
             title=context.getResources().getString(R.string.notification_task_activated_title);
             message=item.name;
         }
-        EnvironmentUtils.sendNotification(context,notification_id,title,message);
+        try {
+            EnvironmentUtils.sendNotification(context,
+                    notification_id,
+                    (Integer) ContentAdapter.TriggerContentAdapter
+                            .getContentForTriggerType(context
+                                    ,ContentAdapter.TriggerContentAdapter.CONTENT_TYPE_ICON_RESOURCE_DRAWABLE_ID
+                                    ,item),
+                    title,message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static void launchAppsByPackageName(Context context,String values){
@@ -722,16 +794,20 @@ public class ProcessTaskItem {
      * 启用或者关闭指定任务
      */
     private static void switchTasks(Context context,TaskItem item){
-        SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getWritableDatabase();
+        SQLiteDatabase database=MySQLiteOpenHelper.getInstance(context).getReadableDatabase();
         String[] enable_ids=item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_ENABLE_TASKS_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
         String[] disable_ids=item.actions[ActionConsts.ActionFirstLevelLocaleConsts.ACTION_DISABLE_TASKS_LOCALE].split(PublicConsts.SPLIT_SEPARATOR_SECOND_LEVEL);
         if(Integer.parseInt(enable_ids[0])>=0){
             for(String s:enable_ids){
                 int id=Integer.parseInt(s);
                 Cursor cursor=database.rawQuery("select * from "+ MySQLiteOpenHelper.getCurrentTableName(context)+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
-                if(cursor.getCount()>0){
+                if(cursor.moveToFirst()){
                     //int position=getPosition(id);
-                    setTaskEnabled(context,item,true,MySQLiteOpenHelper.getCurrentTableName(context));
+                    synchronized (TimeSwitchService.class){
+                        setTaskEnabled(context,getTaskItemOfId(TimeSwitchService.list
+                                ,cursor.getInt(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ID)))
+                                ,true,MySQLiteOpenHelper.getCurrentTableName(context));
+                    }
                 }
                 cursor.close();
             }
@@ -740,8 +816,12 @@ public class ProcessTaskItem {
             for(String s:disable_ids){
                 int id=Integer.parseInt(s);
                 Cursor cursor=database.rawQuery("select * from "+ MySQLiteOpenHelper.getCurrentTableName(context)+" where "+SQLConsts.SQL_TASK_COLUMN_ID+"="+id,null);
-                if(cursor.getCount()>0){
-                    setTaskEnabled(context,item,false,MySQLiteOpenHelper.getCurrentTableName(context));
+                if(cursor.moveToFirst()){
+                    synchronized (TimeSwitchService.class){
+                        setTaskEnabled(context
+                                ,getTaskItemOfId(TimeSwitchService.list,cursor.getInt(cursor.getColumnIndex(SQLConsts.SQL_TASK_COLUMN_ID)))
+                                ,false,MySQLiteOpenHelper.getCurrentTableName(context));
+                    }
                 }
                 cursor.close();
             }
@@ -834,6 +914,19 @@ public class ProcessTaskItem {
             database.close();
         }
         item.addition_isFolded=isFolded;
+    }
+
+    public static class CancelTaskReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try{
+                int notiId=intent.getIntExtra("threadId",-1);
+                Thread thread=delayeds.get(notiId);
+                if(thread!=null)thread.interrupt();
+                ((NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(notiId);
+                delayeds.remove(notiId);
+            }catch (Exception e){e.printStackTrace();}
+        }
     }
 
 }

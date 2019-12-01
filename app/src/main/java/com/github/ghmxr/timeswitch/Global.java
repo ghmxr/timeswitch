@@ -125,6 +125,7 @@ public class Global {
                     item.autodelete=(Integer.parseInt(initial_additions[AdditionConsts.ADDITION_AUTO_DELETE])==1);
                     item.autoclose=(Integer.parseInt(initial_additions[AdditionConsts.ADDITION_AUTO_CLOSE])==1);
                     item.addition_isFolded=(Integer.parseInt(initial_additions[AdditionConsts.ADDITION_TITLE_FOLDED_VALUE_LOCALE])>=0);
+                    item.delayed=(Integer.parseInt(initial_additions[AdditionConsts.ADDITION_DELAYED])>=0);
                     if(!initial_additions[AdditionConsts.ADDITION_TITLE_COLOR_LOCALE].equals(String.valueOf(-1))){
                         item.addition_title_color=initial_additions[AdditionConsts.ADDITION_TITLE_COLOR_LOCALE];
                     }

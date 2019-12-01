@@ -1,5 +1,6 @@
 package com.github.ghmxr.timeswitch.utils;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -29,6 +30,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Vibrator;
 import android.provider.Settings;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -344,6 +346,8 @@ public class EnvironmentUtils {
         vibrator.vibrate(vibrate_array,-1);
     }
 
+    private static Toast toast;
+
     /**
      * 显示一个Toast，非UI线程也可调用
      * @param context context
@@ -355,7 +359,8 @@ public class EnvironmentUtils {
             @Override
             public void run() {
                 try{
-                    Toast toast=Toast.makeText(context,content,Toast.LENGTH_SHORT);
+                    if(toast!=null)toast.cancel();
+                    toast=Toast.makeText(context,content,Toast.LENGTH_SHORT);
                     if(offsets!=null){
                         toast.setGravity(Gravity.TOP|Gravity.START,offsets[0],offsets[1]);
                     }
@@ -576,19 +581,21 @@ public class EnvironmentUtils {
      * @param title 通知标题
      * @param message 通知内容
      */
-    public static void sendNotification(Context context, int id, @NonNull String title, @NonNull String message){
+    public static void sendNotification(Context context, int id, @DrawableRes int icon_res , @NonNull String title, @NonNull String message){
         NotificationManager manager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder builder;
         if(Build.VERSION.SDK_INT>=26){
             String channel_id="channel_tasks";
-            NotificationChannel channel=new NotificationChannel(channel_id,"Tasks", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channel=new NotificationChannel(channel_id,
+                    context.getResources().getString(R.string.notification_channel_task),
+                    NotificationManager.IMPORTANCE_DEFAULT);
             manager.createNotificationChannel(channel);
             builder=new NotificationCompat.Builder(context,channel_id);
         }else{
             builder=new NotificationCompat.Builder(context);
         }
         builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        builder.setSmallIcon(R.drawable.ic_launcher);
+        builder.setSmallIcon(icon_res);
         builder.setContentTitle(title);
         builder.setContentText(message);
         PendingIntent pi =PendingIntent.getActivity(context,1,new Intent(),PendingIntent.FLAG_UPDATE_CURRENT);
@@ -596,6 +603,8 @@ public class EnvironmentUtils {
         builder.setAutoCancel(true);
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
         builder.setFullScreenIntent(pi,false);
+        builder.setGroupSummary(false);
+        builder.setGroup("TaskNotification");
         manager.notify(id,builder.build());
     }
 
@@ -840,6 +849,7 @@ public class EnvironmentUtils {
         }
     }
 
+    @SuppressLint("MissingPermission")
     public static List<SubscriptionInfo> getAvailableSubscribtionInfos(Context context){
         try{
             if(Build.VERSION.SDK_INT<22) return null;
