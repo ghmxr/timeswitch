@@ -8,8 +8,8 @@ android {
         applicationId "com.github.ghmxr.timeswitch"
         minSdkVersion 14
         targetSdkVersion 27
-        versionCode 18
-        versionName "Build 18"
+        versionCode 19
+        versionName "Build 19"
     }
 
     buildTypes {

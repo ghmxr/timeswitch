@@ -129,7 +129,7 @@ public class ProcessTaskItem {
             MainActivity.sendEmptyMessage(MainActivity.MESSAGE_REQUEST_UPDATE_LIST);
         }
 
-        if(item.delayed){
+        if(item.delayed&&canTrigger){
             int id=notification_id+1;
             delayeds.put(id,Thread.currentThread());
             NotificationManager manager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);

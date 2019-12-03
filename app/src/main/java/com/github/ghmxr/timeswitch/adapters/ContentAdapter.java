@@ -14,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
+import android.text.TextUtils;
 
 import com.github.ghmxr.timeswitch.Global;
 import com.github.ghmxr.timeswitch.R;
@@ -34,8 +35,14 @@ import java.util.Calendar;
 public class ContentAdapter {
     public static String getAdditionDisplayValue(Context context, TaskItem item){
         try{
-            if(item.autodelete) return context.getResources().getString(R.string.activity_taskgui_additional_autodelete_cb);
-            if(item.autoclose) return context.getResources().getString(R.string.activity_taskgui_additional_autoclose_cb);
+            String result="";
+            if(item.autodelete) result= context.getResources().getString(R.string.activity_taskgui_additional_autodelete_cb);
+            if(item.autoclose) result= context.getResources().getString(R.string.activity_taskgui_additional_autoclose_cb);
+            if(item.delayed){
+                if(!TextUtils.isEmpty(result))result+=",";
+                result+=context.getResources().getString(R.string.activity_taskgui_additional_deleyed_cb);
+            }
+            return result;
         }catch (Exception e){
             e.printStackTrace();
         }

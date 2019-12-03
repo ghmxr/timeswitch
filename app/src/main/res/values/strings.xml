@@ -533,7 +533,7 @@
     <string name="popup_profile_delete">删除</string>
 	<string name="popup_profile_export">导出</string>
     <string name="title_activity_about">关于</string>
-	<string name="activity_about_content_title">部件触发器 (Build 18)</string>
+	<string name="activity_about_content_title">部件触发器 (Build 19)</string>
     <string name="large_text">
         这是一个通过设置一些触发条件来自动触发并执行一些任务的APP。应用在运行时会自动创建后台服务并维持运行状态。\n\n
 
@@ -549,16 +549,15 @@
 		开源地址:\n
 		https://github.com/ghmxr/timeswitch \n\n\n
 
-		<b>Build 18 更新日志：\n
-			修复：触发行为“启用、关闭指定任务”无效的问题；\n
-			适配：Android7.0及以上版本的网络连接触发器（WiFi、移动数据的连接/断开）；\n
-			新增：延迟触发并通知选项；\n
-			变动：忽略电池优化选项。\n
+		<b>Build 19 更新日志：\n
+			修复：任务触发并达到触发例外时延迟通知选项仍会弹出的问题；\n
+			修复：移动数据网络触发器在某些情况下无法触发的问题；\n
+			修复：主页任务卡附加选项“延迟触发”没有展示的问题。\n
 		</b>\n\n
 
 
 		mxremail@qq.com \n\n
 
-		如果您喜欢本应用，欢迎您捐赠来支持作者。
+		打赏作者
     </string>
 </resources>

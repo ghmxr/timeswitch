@@ -692,7 +692,7 @@ public class MainActivity extends BaseActivity {
            holder.tv_exception.setText(item.display_exception);
            holder.tv_action.setText(item.display_actions);
            holder.tv_addition.setText(item.display_additions);
-           if(item.autodelete||item.autoclose){
+           if(item.autodelete||item.autoclose||item.delayed){
                holder.addition.setVisibility(View.VISIBLE);
                if(!item.autodelete&&item.trigger_type== TriggerTypeConsts.TRIGGER_TYPE_SINGLE) holder.addition.setVisibility(View.GONE);
            }else holder.addition.setVisibility(View.GONE);

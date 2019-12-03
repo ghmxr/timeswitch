@@ -5,8 +5,10 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -18,9 +20,13 @@ import com.github.ghmxr.timeswitch.data.v2.TriggerTypeConsts;
 import com.github.ghmxr.timeswitch.triggers.Trigger;
 import com.github.ghmxr.timeswitch.utils.ProcessTaskItem;
 
+/**
+ * 本触发器可能激活1秒后才能正确触发执行任务
+ */
 @TargetApi(24)
 public class NetworkReceiver2 implements Trigger {
-    private boolean mLock=true;
+    private boolean mLock=false;
+    private boolean isFirstRegistered=true;
     private final Context context;
     private final MyNetworkCallback callback;
     private final ConnectivityManager connectivityManager;
@@ -41,11 +47,19 @@ public class NetworkReceiver2 implements Trigger {
 
     @Override
     public void activate() {
+        isFirstRegistered=true;
         try{
             if(connectivityManager!=null)connectivityManager.registerDefaultNetworkCallback(callback);
         }catch (Exception e){
             e.printStackTrace();
         }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SystemClock.sleep(1000);//如果当前有连接网络，则在注册触发器后会引起触发器触发回调，在这里睡1000毫秒来等待这个回调，然后更改变量。当然这是个蠢办法。。。
+                isFirstRegistered=false;
+            }
+        }).start();
     }
 
     @Override
@@ -57,6 +71,8 @@ public class NetworkReceiver2 implements Trigger {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        connectedType=ConnectedType.NULL;
+        mLock=false;
     }
 
     private void onWifiConnected(){
@@ -180,13 +196,25 @@ public class NetworkReceiver2 implements Trigger {
             NetworkCapabilities networkCapabilities=connectivityManager.getNetworkCapabilities(network);
             if(networkCapabilities==null)return;
             if(networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)){
+                if(connectedType==ConnectedType.CELLULAR){
+                    onCellDisconnected();
+                }
                 connectedType=ConnectedType.WIFI;
-                onWifiConnected();
-            }else if(networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-            &&networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)){
-                connectedType=ConnectedType.CELLULAR;
-                onCellConnected();
+                if(!isFirstRegistered)onWifiConnected();
+            }/*else if(networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+                        &&networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)){
+                    connectedType=ConnectedType.CELLULAR;
+                    onCellConnected();
+                }*/
+            else {
+                NetworkInfo networkInfo=connectivityManager.getActiveNetworkInfo();
+                if(networkInfo==null)return;
+                if(networkInfo.getType()==ConnectivityManager.TYPE_MOBILE){
+                    connectedType=ConnectedType.CELLULAR;
+                    if(!isFirstRegistered)onCellConnected();
+                }
             }
+
         }
 
         @Override
